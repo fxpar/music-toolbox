@@ -3,7 +3,12 @@
 Liste de petits outils pour aider à travailler un instrument ou à éditer ses partitions. Certains outils sont basés sur la "notation abc" pour la musique. 
 
 ## Metronome graduel
-👉 [metronome-graduel](metronome-graduel.html) 
+
+* 🚀 Tester l'application : [Ouvrir l'outil (Démo interactive)](https://fxpar.github.io/abc-notation-artifacts/metronome-graduel.html)
+* 📄 Code source : [metronome-graduel.html](https://github.com/fxpar/abc-notation-artifacts/blob/main/metronome-graduel.html)
+
+
+https://github.com/fxpar/abc-notation-artifacts/blob/main/metronome-graduel.html
 
 **Un métronome "geek" pour s'entrainer en accélérant (ou en décélérant), soit de manière simple, soit en utilisant des formules complexes: rester 3 mesures au même tempo, accélerer de 5bpm les 4 suivantes, revenir à un rythme intermédiaire...**
 
@@ -23,12 +28,16 @@ Liste de petits outils pour aider à travailler un instrument ou à éditer ses 
 Librairies utilisées: 
 * bootstrap
 * boostrap-icons
+* popper (l'outil d'affichage d'aide de bootstrap)
 
 Code créé par IA (Deepseek), et prompté par moi 😉
 Licence: CC BY-NC 4.0
 
 ## Moteur de recherche d'accord de ukulele
-👉 [ukulele-chords-search](ukulele-chords-search.html) 
+
+* 🚀 Tester l'application : [Ouvrir l'outil (Démo interactive)](https://fxpar.github.io/abc-notation-artifacts/ukulele-chords-search.html)
+* 📄 Code source : [metronome-graduel.html](https://github.com/fxpar/abc-notation-artifacts/blob/main/ukulele-chords-search.html)
+
 
 **Plus de 2000 position d'accord en schéma. Filtrable par fondamentale, par type d'accord et par position.**
 
@@ -48,7 +57,10 @@ Code créé par IA (Gemini), et prompté par moi 😉
 Licence: CC BY-NC 4.0
 
 ## Grille de blues trainer
-👉 [blues-grids.html](blues-grids.html) 
+
+* 🚀 Tester l'application : [Ouvrir l'outil (Démo interactive)](https://fxpar.github.io/abc-notation-artifacts/blues-grids.html)
+* 📄 Code source : [metronome-graduel.html](https://github.com/fxpar/abc-notation-artifacts/blob/main/blues-grids.html)
+
 
 **Entrainement au changement sur des grilles de blues pour ukulélé ou guitare. 4 grilles proposée, de simple à complexe. On voit le schéma de chaque accord et le métronome glisse de schéma en schéma.**
 
@@ -68,7 +80,10 @@ Code créé par IA (Gemini), et prompté par moi 😉
 Licence: CC BY-NC 4.0
 
 ## Chord change trainer
-👉 [chord-change.html](chord-change.html) 
+
+* 🚀 Tester l'application : [Ouvrir l'outil (Démo interactive)](https://fxpar.github.io/abc-notation-artifacts/chord-change.html)
+* 📄 Code source : [metronome-graduel.html](https://github.com/fxpar/abc-notation-artifacts/blob/main/chord-change.html)
+
 
 **Entrainement au changement d'accords pour ukulélé ou guitare. On voit le prochain accord pour se préparer, et on entend le métronome.**
 
@@ -90,7 +105,10 @@ Code créé par IA (Gemini, je crois), et prompté par moi 😉
 Licence: CC BY-NC 4.0
 
 ## Ear chord trainer
-👉 [chord-ear-trainer.html](chord-ear-trainer.html)
+
+* 🚀 Tester l'application : [Ouvrir l'outil (Démo interactive)](https://fxpar.github.io/abc-notation-artifacts/chord-ear-trainer.html)
+* 📄 Code source : [metronome-graduel.html](https://github.com/fxpar/abc-notation-artifacts/blob/main/chord-ear-trainer.html)
+
 
 **Entrainement à la reconnaissance d'accord. L'accord est joué sur deux mesure. La réponse est affichée avec les notes sur la portée, le nom des notes et le schéma d'accord pour ukulélé ou guitare. L'audio continue durant deux mesures pour bien assosier la réponse au son.**
 
@@ -114,7 +132,11 @@ Licence: CC BY-NC 4.0
 
 
 ## Grid creation
-👉 [abc-grid.html](abc-grid.html)
+
+* 🚀 Tester l'application : [Ouvrir l'outil (Démo interactive)](https://fxpar.github.io/abc-notation-artifacts/abc-grid.html)
+* 📄 Code source : [metronome-graduel.html](https://github.com/fxpar/abc-notation-artifacts/blob/main/abc-grid.html)
+
+
 
 **Création rapide d'un accompagnement à partir d'une liste ecrite d'accord (sous forme de grille écrite en texte). On tape la série d'accords et on obtient les accords sous forme de partition et d'audio. Possibilité de jouer en boucle.**
 
@@ -143,7 +165,11 @@ Licence: CC BY-NC 4.0
 
 
 ##  Abc editor player
-👉 [abc-editor-player.html](abc-editor-player.html)
+
+* 🚀 Tester l'application : [Ouvrir l'outil (Démo interactive)](https://fxpar.github.io/abc-notation-artifacts/abc-editor-player.html)
+* 📄 Code source : [metronome-graduel.html](https://github.com/fxpar/abc-notation-artifacts/blob/main/abc-editor-player.html)
+
+
 
 **Première version d'un éditeur abc notation. Visualisation de la partition et création de l'audio. Plus de paramètres sont disponibles en cliquant sur les "⁝" à la fin de la barre du player, notamment pour la transposition.**
 
