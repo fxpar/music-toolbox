@@ -4,12 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Métronome graduel</title>
-    <!-- Bootstrap CSS -->
-	<!-- <link rel="stylesheet" href="./css/bootstrap-icons.min.css"> -->
-    <!-- Bootstrap Icons -->
+    <!-- <link rel="stylesheet" href="./css/bootstrap-icons.min.css"> -->
+	<!-- <link rel="stylesheet" href="./css/bootstrap.min.css"/> -->
+	
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-</head>
-<!-- <link rel="stylesheet" href="./css/bootstrap.min.css"/> -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         /* --- Styles pour la visualisation des beats --- */
@@ -324,7 +322,7 @@ body.dark-mode .preset-card {
                     <div class="col-md-6">
                         <label for="baseTempo" class="form-label">Tempo de base (BPM)</label>
                         <input type="range" class="form-control" id="baseTempo" value="120" min="0" max="300">
-						<span id="tempoDisplayValue" style="min-width: 3rem; text-align: center;">120</span>
+						<span id="tempoDisplayValue" class="d-none" style="min-width: 3rem; text-align: center;">120</span>
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Nombre de temps par mesure</label>
@@ -332,10 +330,10 @@ body.dark-mode .preset-card {
                             <input type="radio" class="btn-check" name="beatsPerMeasure" id="bpm2" value="2" autocomplete="off">
                             <label class="btn btn-outline-secondary" for="bpm2">2/4</label>
 
-                            <input type="radio" class="btn-check" name="beatsPerMeasure" id="bpm3" value="3" autocomplete="off" checked>
+                            <input type="radio" class="btn-check" name="beatsPerMeasure" id="bpm3" value="3" autocomplete="off" >
                             <label class="btn btn-outline-secondary" for="bpm3">3/4</label>
 
-                            <input type="radio" class="btn-check" name="beatsPerMeasure" id="bpm4" value="4" autocomplete="off">
+                            <input type="radio" class="btn-check" name="beatsPerMeasure" id="bpm4" value="4" autocomplete="off" checked>
                             <label class="btn btn-outline-secondary" for="bpm4">4/4</label>
 
                             <input type="radio" class="btn-check" name="beatsPerMeasure" id="bpm6" value="6" autocomplete="off">
@@ -543,7 +541,10 @@ body.dark-mode .preset-card {
 
     <!-- Bootstrap JS -->
 	
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <!-- <script src="./js/popper.min.js"></script> -->
+    <!-- <script src="./js/bootstrap.min.js"></script> -->
+	
+	<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
     
     <!-- Le script JavaScript viendra ici -->
@@ -891,36 +892,57 @@ function computeTempo(instruction, baseTempo, currentTempo) {
     // 10. GÉRER LA FIN DU PATTERN
     // ============================================================
     function handleEndOfPattern() {
-        var loopStart = state.hasInit ? state.initSteps.length : 0;
-        
-        if (state.repeatMode === 'R') {
-            state.startingTempo = state.baseTempo;
-            state.currentStep = loopStart;
-            applyStep(state.currentStep);
-            return;
-        }
-        
-        if (state.repeatMode === 'C') {
-            state.currentStep = loopStart;
-            applyStep(state.currentStep);
-            return;
-        }
-        
-        if (state.repeatMode === 'L') {
-            // Appliquer la dernière instruction au tempo de départ
-            var last = state.steps[state.steps.length - 1];
-            if (last) {
-                state.startingTempo = computeTempo(last, state.startingTempo, state.currentTempo);
-                state.currentTempo = state.startingTempo;
+    var loopStart = state.hasInit ? state.initSteps.length : 0;
+    
+    if (state.repeatMode === 'R') {
+        state.startingTempo = state.baseTempo;
+        state.currentStep = loopStart;
+        var rInst = state.steps[state.currentStep];
+        if (rInst) {
+            state.currentRepeat = rInst.repeat;
+            state.currentTempo = computeTempo(rInst, state.startingTempo, state.currentTempo);
+            if (!rInst.useCurrent) {
+                state.startingTempo = state.currentTempo;
             }
-            state.currentStep = loopStart;
-            applyStep(state.currentStep);
-            return;
+            updateDisplay();
+            resetInterval();
         }
-        
-        // Pas de mode de répétition
-        stopMetronome();
+        return;
     }
+    
+    if (state.repeatMode === 'C') {
+        state.currentStep = loopStart;
+        var cInst = state.steps[state.currentStep];
+        if (cInst) {
+            state.currentRepeat = cInst.repeat;
+            updateDisplay();
+            resetInterval();
+        }
+        return;
+    }
+    
+    if (state.repeatMode === 'L') {
+        // --- CORRECTION : startingTempo devient la valeur actuelle de currentTempo ---
+        // On ne calcule PAS une nouvelle variation, on prend la valeur finale
+        state.startingTempo = state.currentTempo;
+        
+        state.currentStep = loopStart;
+        var lInst = state.steps[state.currentStep];
+        if (lInst) {
+            state.currentRepeat = lInst.repeat;
+            // On applique l'instruction sur le nouveau startingTempo
+            state.currentTempo = computeTempo(lInst, state.startingTempo, state.currentTempo);
+            if (!lInst.useCurrent) {
+                state.startingTempo = state.currentTempo;
+            }
+            updateDisplay();
+            resetInterval();
+        }
+        return;
+    }
+    
+    stopMetronome();
+}
 
     // ============================================================
     // 11. AVANCER D'UNE MESURE
@@ -1129,7 +1151,7 @@ function advanceMeasure() {
     function loadPreset(card) {
         if (state.isRunning) {
             <!-- if (!confirm('Un métronome est en cours. Voulez-vous l\'arrêter pour charger ce preset ?')) { -->
-                return;
+                <!-- return; -->
             <!-- } -->
             stopMetronome();
         }
@@ -1225,32 +1247,53 @@ function advanceMeasure() {
     // ============================================================
     // 18. INITIALISATION
     // ============================================================
-    setBeatsPerMeasure(4);
-    loadFormula(patternInput.value);
-    stopMetronome();
-    
-    console.log('♪ Métronome intelligent prêt !');
-    console.log('📝 Formule :', patternInput.value);
-    console.log('🎯 Tempo :', state.baseTempo, 'BPM ·', state.beatsPerMeasure, 'temps');
-	
+
+	setBeatsPerMeasure(4);
+	loadFormula(patternInput.value);
+	stopMetronome();
+
+	// --- CORRECTION : Synchroniser le curseur et l'affichage ---
+	// Forcer la valeur du curseur à celle affichée
+	var initialTempo = parseInt(tempoDisplayValue.textContent, 10) || 120;
+	baseTempoSlider.value = initialTempo;
+	state.baseTempo = initialTempo;
+	state.currentTempo = initialTempo;
+	currentTempoDisplay.textContent = initialTempo;
+
+	// Si le curseur a une valeur différente, on met à jour l'affichage
+	baseTempoSlider.addEventListener('input', function() {
+		if (tempoDisplayValue) {
+			tempoDisplayValue.textContent = this.value;
+		}
+		if (!state.isRunning) {
+			state.baseTempo = parseFloat(this.value) || 120;
+			state.currentTempo = state.baseTempo;
+			currentTempoDisplay.textContent = Math.round(state.currentTempo);
+		}
+	});
+
+	console.log('♪ Métronome intelligent prêt !');
+	console.log('📝 Formule :', patternInput.value);
+	console.log('🎯 Tempo :', state.baseTempo, 'BPM ·', state.beatsPerMeasure, 'temps');
+		
+		// ============================================================
+	// INITIALISATION DU POPOVER D'AIDE
 	// ============================================================
-// INITIALISATION DU POPOVER D'AIDE
-// ============================================================
-var formulaHelpBtn = document.getElementById('formulaHelpBtn');
-if (formulaHelpBtn) {
-    var popover = new bootstrap.Popover(formulaHelpBtn, {
-        trigger: 'click',
-        html: true,
-        placement: 'bottom'
-    });
-    
-    // Fermer le popover en cliquant ailleurs
-    document.addEventListener('click', function(e) {
-        if (!formulaHelpBtn.contains(e.target)) {
-            popover.hide();
-        }
-    });
-}
+	var formulaHelpBtn = document.getElementById('formulaHelpBtn');
+	if (formulaHelpBtn) {
+		var popover = new bootstrap.Popover(formulaHelpBtn, {
+			trigger: 'click',
+			html: true,
+			placement: 'bottom'
+		});
+		
+		// Fermer le popover en cliquant ailleurs
+		document.addEventListener('click', function(e) {
+			if (!formulaHelpBtn.contains(e.target)) {
+				popover.hide();
+			}
+		});
+	}
 	
 });
     </script>
