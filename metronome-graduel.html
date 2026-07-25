@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Métronome intelligent</title>
+    <title>Métronome graduel</title>
     <!-- Bootstrap CSS -->
 	<!-- <link rel="stylesheet" href="./css/bootstrap-icons.min.css"> -->
     <!-- Bootstrap Icons -->
@@ -20,38 +20,78 @@
             margin: 20px 0;
             min-height: 60px;
         }
-        .beat-dot {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background-color: #e9ecef;
-            border: 3px solid #ced4da;
-            transition: all 0.1s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.8rem;
-            font-weight: bold;
-            color: #6c757d;
-        }
-        .beat-dot.active {
-            background-color: #0d6efd;
-            border-color: #0a58ca;
-            transform: scale(1.2);
-            color: white;
-            box-shadow: 0 0 20px rgba(13, 110, 253, 0.5);
-        }
-        .beat-dot.accent {
+		/* --- Visualisation des beats (Version Haute Précision) --- */
+.beat-dot {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #e9ecef;
+    border: 3px solid #ced4da;
+    /* On garde une transition uniquement pour l'EXTINCTION du temps (effet retour) */
+    transition: background-color 0.15s ease-out, transform 0.15s ease-out;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    font-weight: bold;
+    color: #6c757d;
+}
+
+.beat-dot.active {
+    background-color: #0d6efd;
+    border-color: #0a58ca;
+    transform: scale(1.2);
+    color: white;
+    box-shadow: 0 0 20px rgba(13, 110, 253, 0.5);
+    /* ⚡ CRUCIAL : Pas de transition à l'ALLUMAGE -> Impact instantané ! */
+    transition: none !important; 
+}
+
+.beat-dot.accent.active {
+    background-color: #ff6b6b;
+    border-color: #dc3545;
+    transform: scale(1.3);
+    box-shadow: 0 0 25px rgba(220, 53, 69, 0.6);
+    /* ⚡ Instantané pour l'accentuation aussi */
+    transition: none !important; 
+}
+.beat-dot.accent {
             background-color: #dc3545;
             border-color: #b02a37;
             color: white;
         }
-        .beat-dot.accent.active {
-            background-color: #ff6b6b;
-            border-color: #dc3545;
-            transform: scale(1.3);
-            box-shadow: 0 0 25px rgba(220, 53, 69, 0.6);
-        }
+        <!-- .beat-dot { -->
+            <!-- width: 40px; -->
+            <!-- height: 40px; -->
+            <!-- border-radius: 50%; -->
+            <!-- background-color: #e9ecef; -->
+            <!-- border: 3px solid #ced4da; -->
+            <!-- transition: all 0.1s ease; -->
+            <!-- display: flex; -->
+            <!-- align-items: center; -->
+            <!-- justify-content: center; -->
+            <!-- font-size: 0.8rem; -->
+            <!-- font-weight: bold; -->
+            <!-- color: #6c757d; -->
+        <!-- } -->
+        <!-- .beat-dot.active { -->
+            <!-- background-color: #0d6efd; -->
+            <!-- border-color: #0a58ca; -->
+            <!-- transform: scale(1.2); -->
+            <!-- color: white; -->
+            <!-- box-shadow: 0 0 20px rgba(13, 110, 253, 0.5); -->
+        <!-- } -->
+        <!-- .beat-dot.accent { -->
+            <!-- background-color: #dc3545; -->
+            <!-- border-color: #b02a37; -->
+            <!-- color: white; -->
+        <!-- } -->
+        <!-- .beat-dot.accent.active { -->
+            <!-- background-color: #ff6b6b; -->
+            <!-- border-color: #dc3545; -->
+            <!-- transform: scale(1.3); -->
+            <!-- box-shadow: 0 0 25px rgba(220, 53, 69, 0.6); -->
+        <!-- } -->
         
         /* Style pour les presets */
         .preset-card {
@@ -257,10 +297,11 @@ body.dark-mode .preset-card {
             <div class="card-body">
 			<!-- En-tête avec le bouton mode nuit -->
         <div class="d-flex justify-content-between align-items-center mb-3">
-            <h5 class="card-title mb-0">🎵 Métronome à progression</h5>
+            <h5 class="card-title mb-0">🎵 Métronome graduel</h5>
             <button id="darkModeToggle" class="btn btn-outline-secondary btn-sm">
-                🌙 Nuit
-            </button>
+    <i class="bi bi-moon-fill"></i>
+    <span class="d-none d-md-inline"> Nuit</span>
+</button>
         </div>
                
 
@@ -283,6 +324,7 @@ body.dark-mode .preset-card {
                     <div class="col-md-6">
                         <label for="baseTempo" class="form-label">Tempo de base (BPM)</label>
                         <input type="range" class="form-control" id="baseTempo" value="120" min="0" max="300">
+						<span id="tempoDisplayValue" style="min-width: 3rem; text-align: center;">120</span>
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Nombre de temps par mesure</label>
@@ -304,17 +346,40 @@ body.dark-mode .preset-card {
 
                 <!-- --- FORMULE DE PROGRESSION --- -->
                 <div class="mb-3">
-                    <label for="patternInput" class="form-label">Formule de progression</label>
-                    <input type="text" class="form-control" id="patternInput" 
-                           placeholder="Ex: 3x0, 5x5, 2x-10, R" 
-                           value="2x0, 3x5, 2x-10, R">
-                    <div class="form-text">
-    <strong>Format :</strong> <code>nombre x variation</code> (séparés par des virgules). 
-    <strong>R</strong> = revient au tempo de base · 
-    <strong>C</strong> = garde le tempo actuel · 
-    <strong>L</strong> = boucle (cumul des variations)
+    <label for="patternInput" class="form-label">Formule de progression</label>
+    <div class="input-group">
+        <input type="text" class="form-control" id="patternInput" 
+               placeholder="Ex: (3D), 3T+5, L" 
+               value="(3D), 3T+5, L">
+        <button class="btn btn-outline-secondary" type="button" 
+                id="formulaHelpBtn" 
+                data-bs-toggle="popover" 
+                data-bs-placement="bottom" 
+                data-bs-html="true"
+                data-bs-content="
+                    <strong>Format :</strong><br>
+                    <code>3D</code> = 3 mesures au tempo de <strong>D</strong>épart<br>
+                    <code>3T+5</code> = 3 mesures au <strong>T</strong>empo courant +5<br>
+                    <code>3D*2</code> = 3 mesures au tempo de départ ×2<br>
+                    <code>3T/2</code> = 3 mesures au tempo courant ÷2<br>
+                    <br>
+                    <strong>Modificateurs :</strong><br>
+                    <code>R</code> = retour au tempo de base<br>
+                    <code>C</code> = continue (garde le tempo)<br>
+                    <code>L</code> = boucle (cumul des variations)<br>
+                    <code>( )</code> = mesures entre parenthèse jouées une seule fois au début, non reprises dans la boucle<br>
+                    <br>
+                    <strong>Exemple :</strong><br>
+                    <code>(3D), 3T+5, L</code> → 72, 77, 82...
+                ">
+            <i class="bi bi-info-circle"></i>
+        </button>
+    </div>
+    <div class="form-text" id="formulaHelpShort">
+        Ex: <code>(3D), 3T+5, L</code> · 
+        <span class="text-muted">Cliquez sur <i class="bi bi-info-circle"></i> pour l'aide</span>
+    </div>
 </div>
-                </div>
 
                 <!-- --- BOUTONS DE CONTRÔLE --- -->
                 <!-- --- BOUTONS DE CONTRÔLE (version icônes + responsive) --- -->
@@ -374,14 +439,14 @@ body.dark-mode .preset-card {
         
         <!-- 72 bpm +5 -->
         <button type="button" class="btn btn-primary btn-sm position-relative preset-card preset-progress" 
-                data-pattern="(3x0), 3x5, L" data-tempo="72" data-beats="3">
+                data-pattern="(3D), 3T+5, L" data-tempo="72" data-beats="3">
             72 bpm 3/4
             <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.6rem; padding: 0.2rem 0.4rem; margin-left: 2px;">
                 +5
             </span>
         </button>
         <button type="button" class="btn btn-primary btn-sm position-relative preset-card preset-progress" 
-                data-pattern="(3x0), 3x5, L" data-tempo="72" data-beats="4">
+                data-pattern="(3D), 3T+5, L" data-tempo="72" data-beats="4">
             72 bpm 4/4
             <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.6rem; padding: 0.2rem 0.4rem; margin-left: 2px;">
                 +5
@@ -390,14 +455,14 @@ body.dark-mode .preset-card {
         
         <!-- 100 bpm +5 -->
         <button type="button" class="btn btn-primary btn-sm position-relative preset-card preset-progress" 
-                data-pattern="(3x0), 3x5, L" data-tempo="100" data-beats="3">
+                data-pattern="(3D), 3T+5, L" data-tempo="100" data-beats="3">
             100 bpm 3/4
             <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.6rem; padding: 0.2rem 0.4rem; margin-left: 2px;">
                 +5
             </span>
         </button>
         <button type="button" class="btn btn-primary btn-sm position-relative preset-card preset-progress" 
-                data-pattern="(3x0), 3x5, L" data-tempo="100" data-beats="4">
+                data-pattern="(3D), 3T+5, L" data-tempo="100" data-beats="4">
             100 bpm 4/4
             <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.6rem; padding: 0.2rem 0.4rem; margin-left: 2px;">
                 +5
@@ -406,14 +471,14 @@ body.dark-mode .preset-card {
         
         <!-- 120 bpm +5 -->
         <button type="button" class="btn btn-primary btn-sm position-relative preset-card preset-progress" 
-                data-pattern="(3x0), 3x5, L" data-tempo="120" data-beats="3">
+                data-pattern="(3D), 3T+5, L" data-tempo="120" data-beats="3">
             120 bpm 3/4
             <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.6rem; padding: 0.2rem 0.4rem; margin-left: 2px;">
                 +5
             </span>
         </button>
         <button type="button" class="btn btn-primary btn-sm position-relative preset-card preset-progress" 
-                data-pattern="(3x0), 3x5, L" data-tempo="120" data-beats="4">
+                data-pattern="(3D), 3T+5, L" data-tempo="120" data-beats="4">
             120 bpm 4/4
             <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.6rem; padding: 0.2rem 0.4rem; margin-left: 2px;">
                 +5
@@ -424,98 +489,120 @@ body.dark-mode .preset-card {
 </div>
                    
                     <div class="row g-2">
-                        <!-- Chaque preset a maintenant data-tempo et data-beats -->
-                        <div class="col-6 col-md-3">
-                            <div class="card preset-card" data-pattern="(5x0), 5x5, R" data-tempo="72" data-beats="4">
-                                <div class="card-body p-2 text-center">
-                                    <small class="fw-bold">Gammes lentes</small>
-                                    <div><span class="badge bg-primary">72 BPM</span> <span class="badge bg-secondary">4/4</span></div>
-                                    <small class="text-muted">(5x0), 5x5, R</small>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-6 col-md-3">
-                            <div class="card preset-card" data-pattern="(2x0), 2x10, 2x-5, L" data-tempo="70" data-beats="3">
-                                <div class="card-body p-2 text-center">
-                                    <small class="fw-bold">Valse progressive</small>
-                                    <div><span class="badge bg-primary">100 BPM</span> <span class="badge bg-secondary">3/4</span></div>
-                                    <small class="text-muted">(2x0), 2x10, 2x-5, L</small>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-6 col-md-3">
-                            <div class="card preset-card" data-pattern="4x0, 10x2, 4x0, 10x-2, R" data-tempo="80" data-beats="4">
-                                <div class="card-body p-2 text-center">
-                                    <small class="fw-bold">Montée/Descente</small>
-                                    <div><span class="badge bg-primary">80 BPM</span> <span class="badge bg-secondary">4/4</span></div>
-                                    <small class="text-muted">4x0, 10x2, 4x0, 10x-2, R</small>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-6 col-md-3">
-                            <div class="card preset-card" data-pattern="2x0, 3x5, 2x-10, C" data-tempo="140" data-beats="6">
-                                <div class="card-body p-2 text-center">
-                                    <small class="fw-bold">Rythme ternaire</small>
-                                    <div><span class="badge bg-primary">140 BPM</span> <span class="badge bg-secondary">6/8</span></div>
-                                    <small class="text-muted">2x0, 3x5, 2x-10, C</small>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+    <!-- Gammes lentes -->
+    <div class="col-6 col-md-3">
+        <div class="card preset-card" data-pattern="(5D), 5T+5, R" data-tempo="72" data-beats="4">
+            <div class="card-body p-2 text-center">
+                <small class="fw-bold">Gammes lentes</small>
+                <div><span class="badge bg-primary">72 BPM</span> <span class="badge bg-secondary">4/4</span></div>
+                <small class="text-muted">(5D), 5T+5, R</small>
+            </div>
+        </div>
+    </div>
+
+    <!-- Valse progressive -->
+    <div class="col-6 col-md-3">
+        <div class="card preset-card" data-pattern="(2D), 2T+10, 2T-5, L" data-tempo="100" data-beats="3">
+            <div class="card-body p-2 text-center">
+                <small class="fw-bold">Valse progressive</small>
+                <div><span class="badge bg-primary">100 BPM</span> <span class="badge bg-secondary">3/4</span></div>
+                <small class="text-muted">(2D), 2T+10, 2T-5, L</small>
+            </div>
+        </div>
+    </div>
+
+    <!-- Montée/Descente -->
+    <div class="col-6 col-md-3">
+        <div class="card preset-card" data-pattern="(4D), 10T+2, 4D, 10T-2, R" data-tempo="80" data-beats="4">
+            <div class="card-body p-2 text-center">
+                <small class="fw-bold">Montée/Descente</small>
+                <div><span class="badge bg-primary">80 BPM</span> <span class="badge bg-secondary">4/4</span></div>
+                <small class="text-muted">(4D), 10T+2, 4D, 10T-2, R</small>
+            </div>
+        </div>
+    </div>
+
+    <!-- Rythme ternaire -->
+    <div class="col-6 col-md-3">
+        <div class="card preset-card" data-pattern="(2D), 3T+5, 2T-10, C" data-tempo="140" data-beats="6">
+            <div class="card-body p-2 text-center">
+                <small class="fw-bold">Rythme ternaire</small>
+                <div><span class="badge bg-primary">140 BPM</span> <span class="badge bg-secondary">6/8</span></div>
+                <small class="text-muted">(2D), 3T+5, 2T-10, C</small>
+            </div>
+        </div>
+    </div>
+</div>
+					
+					
+					
                 </div>
             </div>
         </div>
     </div>
 
     <!-- Bootstrap JS -->
+	
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
     
     <!-- Le script JavaScript viendra ici -->
     <script>
    document.addEventListener('DOMContentLoaded', function() {
-    // ========================================
-    // 1. RÉFÉRENCES AUX ÉLÉMENTS DOM
-    // ========================================
+    // ============================================================
+    // 1. RÉFÉRENCES DOM
+    // ============================================================
     const currentTempoDisplay = document.getElementById('currentTempo');
     const stepInfoDisplay = document.getElementById('stepInfo');
     const beatVisualization = document.getElementById('beatVisualization');
-    const baseTempoInput = document.getElementById('baseTempo');
+    const baseTempoSlider = document.getElementById('baseTempo');
+    const tempoDisplayValue = document.getElementById('tempoDisplayValue');
     const patternInput = document.getElementById('patternInput');
     const startBtn = document.getElementById('startBtn');
     const pauseBtn = document.getElementById('pauseBtn');
     const stopBtn = document.getElementById('stopBtn');
     const presetCards = document.querySelectorAll('.preset-card');
     const beatRadioButtons = document.querySelectorAll('input[name="beatsPerMeasure"]');
+    const darkModeToggle = document.getElementById('darkModeToggle');
 
-    // ========================================
-    // 2. ÉTAT DU MÉTRONOME
-    // ========================================
-    let state = {
-        baseTempo: 120,
-        currentTempo: 120,
+    // ============================================================
+    // 2. ÉTAT (modèle de données unique)
+    // ============================================================
+    var state = {
+        // Tempos
+        baseTempo: 120,          // Tempo de départ (D)
+        startingTempo: 120,      // D actuel (peut évoluer avec L)
+        currentTempo: 120,       // Tempo courant (T)
+        
+        // Rythme
         beatsPerMeasure: 4,
         beatCounter: 0,
+		
+		isNewMeasure: false,
         
-        pattern: [],
-        currentStepIndex: 0,
-        currentRepeatCount: 0,
-        repeatMode: 'R',
+        // Pattern
+        steps: [],               // [{repeat, expression, useCurrent}]
+        repeatMode: 'R',         // 'R' | 'C' | 'L'
+        initSteps: [],           // Étapes d'initialisation
+        hasInit: false,
+        initCompleted: false,
+        currentStep: 0,
+        currentRepeat: 0,
         
+        // Contrôle
         isRunning: false,
         isPaused: false,
         intervalId: null,
-        audioCtx: null,
-        
-        lastBeatTime: 0
+        audioCtx: null
     };
 
-    // ========================================
+    // ============================================================
     // 3. VISUALISATION DES BEATS
-    // ========================================
+    // ============================================================
     function renderBeats(count) {
         beatVisualization.innerHTML = '';
-        for (let i = 0; i < count; i++) {
-            const dot = document.createElement('div');
+        for (var i = 0; i < count; i++) {
+            var dot = document.createElement('div');
             dot.className = 'beat-dot';
             if (i === 0) {
                 dot.classList.add('accent');
@@ -530,8 +617,8 @@ body.dark-mode .preset-card {
     }
 
     function updateBeatVisualization(activeIndex) {
-        const dots = beatVisualization.querySelectorAll('.beat-dot');
-        dots.forEach((dot, index) => {
+        var dots = beatVisualization.querySelectorAll('.beat-dot');
+        dots.forEach(function(dot, index) {
             dot.classList.remove('active');
             if (index === activeIndex) {
                 dot.classList.add('active');
@@ -539,227 +626,17 @@ body.dark-mode .preset-card {
         });
     }
 
-    // ========================================
-    // 4. PARSER LA FORMULE
-    // ========================================
-    function parsePattern(formula) {
-    if (!formula || formula.trim() === '') {
-        return {
-            steps: [{ repeat: Infinity, variation: 0 }],
-            repeatMode: 'R'
-        };
-    }
-    
-    var parts = formula.split(',').map(function(s) { return s.trim(); });
-    var instructions = [];
-    var repeatMode = 'R';
-    var initSteps = []; // Pour stocker les instructions d'initialisation
-    
-    // --- Détecter si la formule commence par une parenthèse ---
-    var hasInit = false;
-    var initPattern = '';
-    var loopPattern = '';
-    
-    // Chercher "(...)" dans la formule
-    var matchParens = formula.match(/^\(([^)]+)\)\s*,\s*(.+)$/);
-    if (matchParens) {
-        hasInit = true;
-        initPattern = matchParens[1].trim();
-        loopPattern = matchParens[2].trim();
-        
-        // Parser la partie initialisation
-        var initParts = initPattern.split(',').map(function(s) { return s.trim(); });
-        var initInstructions = [];
-        for (var i = 0; i < initParts.length; i++) {
-            var initPart = initParts[i];
-            var match = initPart.match(/^(\d+)\s*x\s*(-?\d+)$/);
-            if (match) {
-                initInstructions.push({
-                    repeat: parseInt(match[1], 10),
-                    variation: parseInt(match[2], 10)
-                });
-            }
-        }
-        
-        // Parser la partie boucle (avec la logique existante)
-        var loopResult = parsePattern(loopPattern);
-        if (loopResult) {
-            // On combine : initSteps + loopSteps
-            var allSteps = initInstructions.concat(loopResult.steps);
-            return {
-                steps: allSteps,
-                repeatMode: loopResult.repeatMode,
-                initSteps: initInstructions,
-                loopStartIndex: initInstructions.length
-            };
-        }
-    }
-    
-    // --- Format existant (sans parenthèses) ---
-    var parts2 = formula.split(',').map(function(s) { return s.trim(); });
-    var instructions2 = [];
-    var repeatMode2 = 'R';
-
-    for (var j = 0; j < parts2.length; j++) {
-        var part = parts2[j];
-        var upperPart = part.toUpperCase();
-        if (upperPart === 'R') {
-            repeatMode2 = 'R';
-            continue;
-        }
-        if (upperPart === 'C') {
-            repeatMode2 = 'C';
-            continue;
-        }
-        if (upperPart === 'L') {
-            repeatMode2 = 'L';
-            continue;
-        }
-
-        var match = part.match(/^(\d+)\s*x\s*(-?\d+)$/);
-        if (match) {
-            var repeat = parseInt(match[1], 10);
-            var variation = parseInt(match[2], 10);
-            instructions2.push({ repeat: repeat, variation: variation });
-        } else {
-            console.warn('Format ignoré : "' + part + '". Utilise "nombre x variation".');
+    function setBeatsPerMeasure(count) {
+        state.beatsPerMeasure = count;
+        renderBeats(count);
+        if (!state.isRunning) {
+            state.beatCounter = 0;
         }
     }
 
-    if (instructions2.length === 0) {
-        return {
-            steps: [{ repeat: Infinity, variation: 0 }],
-            repeatMode: 'R'
-        };
-    }
-
-    return {
-        steps: instructions2,
-        repeatMode: repeatMode2,
-        initSteps: [],
-        loopStartIndex: 0
-    };
-}
-
-    // ========================================
-    // 5. CHARGER UN MOTIF
-    // ========================================
-    function loadPattern(formula) {
-    var parsed = parsePattern(formula);
-    
-    state.pattern = parsed.steps;
-    state.repeatMode = parsed.repeatMode;
-    state.initSteps = parsed.initSteps || [];
-    state.loopStartIndex = parsed.loopStartIndex || 0;
-    state.currentStepIndex = 0;
-    state.currentRepeatCount = (state.pattern[0] && state.pattern[0].repeat) || 0;
-    state.currentTempo = state.baseTempo;
-    state.hasInit = state.initSteps.length > 0;
-    state.initCompleted = false;
-    
-    updateDisplay();
-    return true;
-}
-
-    // ========================================
-    // 6. AVANCER D'UNE MESURE
-    // ========================================
-    function nextMeasure() {
-    if (!state.isRunning || state.isPaused) return;
-
-    // --- Vérifier si on est à la fin d'une instruction (début de mesure) ---
-    if (state.beatCounter === 0 && state.currentRepeatCount <= 0) {
-        state.currentStepIndex++;
-
-        // --- GESTION DE L'INITIALISATION ---
-        if (state.hasInit && !state.initCompleted) {
-            // Vérifier si on a fini toutes les étapes d'init
-            if (state.currentStepIndex >= state.initSteps.length) {
-                state.initCompleted = true;
-                // On passe à la boucle : on repart du début de la boucle
-                state.currentStepIndex = state.loopStartIndex;
-                // On applique la variation de la première étape de boucle
-                var loopFirstVariation = state.pattern[state.loopStartIndex].variation;
-                state.currentTempo = state.baseTempo + loopFirstVariation;
-                state.currentRepeatCount = state.pattern[state.loopStartIndex].repeat;
-            } else {
-                // Étape d'init suivante
-                var initVariation = state.pattern[state.currentStepIndex].variation;
-                state.currentTempo = state.baseTempo + initVariation;
-                state.currentRepeatCount = state.pattern[state.currentStepIndex].repeat;
-            }
-            
-            updateDisplay();
-            resetInterval();
-            // On ne joue pas encore le temps, on le fait après
-        }
-        // --- FIN GESTION INIT ---
-
-        // --- LOGIQUE DE BOUCLE NORMALE (pour les étapes après l'init) ---
-        // Ne pas exécuter si on est encore dans l'init
-        if (!state.hasInit || state.initCompleted) {
-            if (state.currentStepIndex >= state.pattern.length) {
-                if (state.repeatMode === 'R') {
-                    state.currentStepIndex = state.loopStartIndex || 0;
-                    state.currentRepeatCount = state.pattern[state.loopStartIndex || 0].repeat;
-                    state.currentTempo = state.baseTempo + state.pattern[state.loopStartIndex || 0].variation;
-                } else if (state.repeatMode === 'C') {
-                    state.currentStepIndex = state.loopStartIndex || 0;
-                    state.currentRepeatCount = state.pattern[state.loopStartIndex || 0].repeat;
-                } else if (state.repeatMode === 'L') {
-                    var lastVariation = state.pattern[state.pattern.length - 1].variation;
-                    state.baseTempo += lastVariation;
-                    state.currentStepIndex = state.loopStartIndex || 0;
-                    state.currentRepeatCount = state.pattern[state.loopStartIndex || 0].repeat;
-                    state.currentTempo = state.baseTempo + state.pattern[state.loopStartIndex || 0].variation;
-                } else {
-                    stopMetronome();
-                    return;
-                }
-            } else {
-                var variation = state.pattern[state.currentStepIndex].variation;
-                state.currentTempo = state.baseTempo + variation;
-                state.currentRepeatCount = state.pattern[state.currentStepIndex].repeat;
-            }
-            
-            updateDisplay();
-            resetInterval();
-        }
-    }
-
-    // --- Jouer le temps actuel ---
-    updateBeatVisualization(state.beatCounter);
-    playClick();
-    
-    // --- Passer au temps suivant ---
-    state.beatCounter++;
-
-    // --- Fin de la mesure : décrémenter le compteur ---
-    if (state.beatCounter >= state.beatsPerMeasure) {
-        state.beatCounter = 0;
-        if (state.currentRepeatCount !== Infinity) {
-            state.currentRepeatCount--;
-        }
-    }
-}
-
-    // ========================================
-    // 7. GESTION DE L'INTERVALLE
-    // ========================================
-    function resetInterval() {
-        if (state.intervalId) {
-            clearInterval(state.intervalId);
-            state.intervalId = null;
-        }
-        if (state.isRunning && !state.isPaused) {
-            const intervalMs = (60 / state.currentTempo) * 1000;
-            state.intervalId = setInterval(nextMeasure, intervalMs);
-        }
-    }
-
-    // ========================================
-    // 8. AUDIO
-    // ========================================
+    // ============================================================
+    // 4. AUDIO
+    // ============================================================
     function playClick() {
         try {
             if (!state.audioCtx) {
@@ -769,19 +646,19 @@ body.dark-mode .preset-card {
                 state.audioCtx.resume();
             }
 
-            const isAccent = state.beatCounter === 0;
-            const frequency = isAccent ? 1200 : 800;
-            const gain = isAccent ? 0.4 : 0.25;
+            var isAccent = state.beatCounter === 0;
+            var frequency = isAccent ? 1200 : 800;
+            var gain = isAccent ? 0.4 : 0.25;
 
-            const oscillator = state.audioCtx.createOscillator();
-            const gainNode = state.audioCtx.createGain();
+            var oscillator = state.audioCtx.createOscillator();
+            var gainNode = state.audioCtx.createGain();
             oscillator.connect(gainNode);
             gainNode.connect(state.audioCtx.destination);
 
             oscillator.frequency.value = frequency;
             oscillator.type = 'sine';
 
-            const now = state.audioCtx.currentTime;
+            var now = state.audioCtx.currentTime;
             gainNode.gain.setValueAtTime(gain, now);
             gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.05);
 
@@ -789,98 +666,410 @@ body.dark-mode .preset-card {
             oscillator.stop(now + 0.05);
 
             currentTempoDisplay.classList.add('pulse');
-            setTimeout(() => currentTempoDisplay.classList.remove('pulse'), 100);
+            setTimeout(function() {
+                currentTempoDisplay.classList.remove('pulse');
+            }, 100);
 
         } catch (e) {
             console.warn('Erreur audio :', e);
         }
     }
 
-    // ========================================
-    // 9. AFFICHAGE
-    // ========================================
-    function updateDisplay() {
-    currentTempoDisplay.textContent = Math.round(state.currentTempo);
-    
-    const totalSteps = state.pattern.length;
-    const currentStep = state.currentStepIndex + 1;
-    const repeatLeft = state.currentRepeatCount;
-    const beatNum = state.beatCounter + 1;
-    const beatsTotal = state.beatsPerMeasure;
-
-    const isInfinite = state.pattern.length === 1 && state.pattern[0]?.repeat === Infinity;
-
-    if (isInfinite && state.isRunning) {
-        stepInfoDisplay.innerHTML = `
-            🔄 Métronome simple · ${state.baseTempo} BPM
-            <br><small class="text-muted">Temps ${beatNum}/${beatsTotal}</small>
-        `;
-    } else if (totalSteps > 0 && state.isRunning) {
-        // --- MODIFICATION : Ajouter 'L' ---
-        let modeText = '';
-        if (state.repeatMode === 'R') modeText = '↺ Reset';
-        else if (state.repeatMode === 'C') modeText = '↻ Garde tempo';
-        else if (state.repeatMode === 'L') modeText = '🔁 Loop (cumul)';
+    // ============================================================
+    // 5. PARSER UNE INSTRUCTION
+    // ============================================================
+    function parseInstruction(text) {
+        text = text.trim();
         
-        stepInfoDisplay.innerHTML = `
-            📊 Mesure ${currentStep}/${totalSteps} · ${repeatLeft === Infinity ? '∞' : repeatLeft} restante(s) · ${modeText}
-            <br><small class="text-muted">Temps ${beatNum}/${beatsTotal}</small>
-        `;
-    } else if (!state.isRunning && state.pattern.length > 0) {
-        if (state.pattern[0]?.repeat === Infinity) {
-            stepInfoDisplay.textContent = '⏸ Prêt · Mode simple';
+        // Cas spéciaux : D ou T tout seul
+        if (text === 'D') return { repeat: 1, expression: 'D', useCurrent: false };
+        if (text === 'T') return { repeat: 1, expression: 'T', useCurrent: true };
+        
+        // Extraire le nombre de mesures
+        var match = text.match(/^(\d*)\s*(.*)$/);
+        if (!match) return null;
+        
+        var repeat = match[1] === '' ? 1 : parseInt(match[1], 10);
+        var rest = match[2].trim();
+        
+        // Si après le nombre il n'y a rien, c'est "D"
+        if (rest === '') rest = 'D';
+        
+        // Déterminer la variable utilisée
+        var useCurrent = false;
+        var expression = rest;
+        
+        if (rest.indexOf('T') === 0) {
+            useCurrent = true;
+        } else if (rest.indexOf('D') === 0) {
+            useCurrent = false;
         } else {
-            stepInfoDisplay.textContent = '⏸ Prêt · ' + state.pattern.length + ' étapes';
+            // Par défaut, on suppose D
+            expression = 'D' + rest;
         }
-    } else {
-        stepInfoDisplay.textContent = '⏸ Prêt';
+        
+        // Nettoyer l'expression
+        expression = expression.replace(/\s/g, '');
+        
+        return {
+            repeat: repeat,
+            expression: expression,
+            useCurrent: useCurrent
+        };
+    }
+
+    // ============================================================
+    // 6. PARSER UNE FORMULE
+    // ============================================================
+    function parseFormula(formula) {
+        if (!formula || formula.trim() === '') {
+            return {
+                steps: [{ repeat: Infinity, expression: 'D', useCurrent: false }],
+                mode: 'R',
+                init: [],
+                hasInit: false
+            };
+        }
+        
+        // Détecter les parenthèses : (3D, 3T+5), 3T*2, L
+        var parensMatch = formula.match(/^\(([^)]+)\)\s*,\s*(.+)$/);
+        if (parensMatch) {
+            var initFormula = parensMatch[1].trim();
+            var loopFormula = parensMatch[2].trim();
+            
+            var initParts = initFormula.split(',').map(function(s) { return s.trim(); });
+            var initSteps = [];
+            for (var i = 0; i < initParts.length; i++) {
+                var instr = parseInstruction(initParts[i]);
+                if (instr) initSteps.push(instr);
+            }
+            
+            var loopResult = parseFormula(loopFormula);
+            return {
+                steps: initSteps.concat(loopResult.steps),
+                mode: loopResult.mode,
+                init: initSteps,
+                hasInit: true
+            };
+        }
+        
+        // Sans parenthèses
+        var parts = formula.split(',').map(function(s) { return s.trim(); });
+        var steps = [];
+        var mode = 'R';
+        
+        for (var j = 0; j < parts.length; j++) {
+            var part = parts[j];
+            var upper = part.toUpperCase();
+            
+            if (upper === 'R') {
+                mode = 'R';
+                continue;
+            }
+            if (upper === 'C') {
+                mode = 'C';
+                continue;
+            }
+            if (upper === 'L') {
+                mode = 'L';
+                continue;
+            }
+            
+            var instr = parseInstruction(part);
+            if (instr) {
+                steps.push(instr);
+            } else {
+                console.warn('Format ignoré : "' + part + '"');
+            }
+        }
+        
+        if (steps.length === 0) {
+            steps = [{ repeat: Infinity, expression: 'D', useCurrent: false }];
+        }
+        
+        return {
+            steps: steps,
+            mode: mode,
+            init: [],
+            hasInit: false
+        };
+    }
+
+
+// Sécurisation : vérifie que l'expression ne contient QUE du calcul mathématique
+function isSafeExpression(expr) {
+    // 1. Autoriser uniquement : chiffres, espaces, points, parenthèses, + - * / %
+    // On interdit TOUTE lettre, tout crochet, guillemet, point-virgule, etc.
+    const safeMathRegex = /^[0-9\s\.\+\-\*\/\%\(\)]+$/;
+    return safeMathRegex.test(expr);
+}
+
+
+    // ============================================================
+    // 7. CALCULER LE TEMPO
+    // ============================================================
+    // ============================================================
+// 7. CALCULER LE TEMPO (VERSION SÉCURISÉE)
+// ============================================================
+function computeTempo(instruction, baseTempo, currentTempo) {
+    if (!instruction) return currentTempo;
+    
+    try {
+        // 1. Remplacement des variables par leurs valeurs numériques
+        let expr = instruction.expression
+            .replace(/D/g, '(' + baseTempo + ')')
+            .replace(/T/g, '(' + currentTempo + ')');
+        
+        // 2. Vérification de sécurité STRICTE
+        if (!isSafeExpression(expr)) {
+            console.error('⚠️ Expression potentiellement dangereuse bloquée :', instruction.expression);
+            return currentTempo; // On refuse d'évaluer et on garde le tempo courant
+        }
+        
+        // 3. Évaluation sécurisée (uniquement de l'arithmétique pure)
+        let result = new Function('return ' + expr)();
+        
+        // 4. Protection contre NaN, Infinity ou valeurs aberrantes/négatives
+        if (typeof result !== 'number' || isNaN(result) || !isFinite(result) || result <= 0) {
+            console.warn('Résultat de tempo invalide :', result);
+            return currentTempo;
+        }
+
+        return Math.round(result * 100) / 100;
+
+    } catch (e) {
+        console.warn('Erreur de calcul sur l\'expression :', instruction.expression, e);
+        return currentTempo;
     }
 }
 
-    // ========================================
-    // 10. CHANGER LE NOMBRE DE TEMPS
-    // ========================================
-    function setBeatsPerMeasure(count) {
-        state.beatsPerMeasure = count;
-        renderBeats(count);
-        if (!state.isRunning) {
-            state.beatCounter = 0;
+    // ============================================================
+    // 8. CHARGER UNE FORMULE
+    // ============================================================
+    function loadFormula(formula) {
+        var parsed = parseFormula(formula);
+        
+        state.steps = parsed.steps;
+        state.repeatMode = parsed.mode;
+        state.initSteps = parsed.init || [];
+        state.hasInit = parsed.hasInit || false;
+        state.initCompleted = false;
+        state.currentStep = 0;
+        state.currentRepeat = state.steps[0] ? state.steps[0].repeat : 0;
+        state.startingTempo = state.baseTempo;
+        state.currentTempo = state.baseTempo;
+        
+        // Calculer le premier tempo
+        if (state.steps[0]) {
+            state.currentTempo = computeTempo(state.steps[0], state.startingTempo, state.currentTempo);
+        }
+        
+        updateDisplay();
+        return true;
+    }
+
+    // ============================================================
+    // 9. APPLIQUER UNE ÉTAPE
+    // ============================================================
+    function applyStep(index) {
+        var instruction = state.steps[index];
+        if (!instruction) return;
+        
+        state.currentRepeat = instruction.repeat;
+        state.currentTempo = computeTempo(instruction, state.startingTempo, state.currentTempo);
+        
+        // Si l'instruction utilise D, on met à jour startingTempo
+        if (!instruction.useCurrent) {
+            state.startingTempo = state.currentTempo;
+        }
+        
+        updateDisplay();
+        resetInterval();
+    }
+
+    // ============================================================
+    // 10. GÉRER LA FIN DU PATTERN
+    // ============================================================
+    function handleEndOfPattern() {
+        var loopStart = state.hasInit ? state.initSteps.length : 0;
+        
+        if (state.repeatMode === 'R') {
+            state.startingTempo = state.baseTempo;
+            state.currentStep = loopStart;
+            applyStep(state.currentStep);
+            return;
+        }
+        
+        if (state.repeatMode === 'C') {
+            state.currentStep = loopStart;
+            applyStep(state.currentStep);
+            return;
+        }
+        
+        if (state.repeatMode === 'L') {
+            // Appliquer la dernière instruction au tempo de départ
+            var last = state.steps[state.steps.length - 1];
+            if (last) {
+                state.startingTempo = computeTempo(last, state.startingTempo, state.currentTempo);
+                state.currentTempo = state.startingTempo;
+            }
+            state.currentStep = loopStart;
+            applyStep(state.currentStep);
+            return;
+        }
+        
+        // Pas de mode de répétition
+        stopMetronome();
+    }
+
+    // ============================================================
+    // 11. AVANCER D'UNE MESURE
+    // ============================================================
+    // ============================================================
+// 11. AVANCER D'UNE MESURE (VERSION CORRIGÉE)
+// ============================================================
+function advanceMeasure() {
+    if (!state.isRunning || state.isPaused) return;
+
+    // 1. Si on est sur le 1er temps (un début de mesure)
+    if (state.beatCounter === 0) {
+        // Si ce n'est pas le tout premier démarrage de l'exercice
+        if (state.isNewMeasure) {
+            state.currentRepeat--;
+            
+            // Si la série de mesures de cette étape est terminée
+            if (state.currentRepeat <= 0) {
+                state.currentStep++;
+                
+                // Gestion de l'initialisation
+                if (state.hasInit && !state.initCompleted) {
+                    if (state.currentStep >= state.initSteps.length) {
+                        state.initCompleted = true;
+                    }
+                }
+                
+                // Fin du pattern ?
+                if (state.currentStep >= state.steps.length) {
+                    handleEndOfPattern();
+                } else {
+                    // On applique la nouvelle étape EXACTEMENT au premier temps !
+                    applyStep(state.currentStep);
+                }
+            }
+        } else {
+            // Au tout premier tick du démarrage, on active le drapeau
+            state.isNewMeasure = true;
         }
     }
 
-    // ========================================
-    // 11. COMMANDES
-    // ========================================
+    // 2. Jouer le clic du temps courant & mettre à jour l'IHM
+    playClick();
+    updateBeatVisualization(state.beatCounter);
+    updateDisplay(); // L'IHM bascule sur le nouveau tempo PILE au moment du clic !
+
+    // 3. Préparer le temps suivant
+    state.beatCounter++;
+    if (state.beatCounter >= state.beatsPerMeasure) {
+        state.beatCounter = 0; // Le prochain tick sera un 1er temps
+    }
+}
+
+    // ============================================================
+    // 12. GESTION DE L'INTERVALLE
+    // ============================================================
+    function resetInterval() {
+        if (state.intervalId) {
+            clearInterval(state.intervalId);
+            state.intervalId = null;
+        }
+        if (state.isRunning && !state.isPaused) {
+            var intervalMs = (60 / state.currentTempo) * 1000;
+            state.intervalId = setInterval(advanceMeasure, intervalMs);
+        }
+    }
+
+    // ============================================================
+    // 13. AFFICHAGE
+    // ============================================================
+    function updateDisplay() {
+        currentTempoDisplay.textContent = Math.round(state.currentTempo);
+        
+        var totalSteps = state.steps.length;
+        var currentStep = state.currentStep + 1;
+        var repeatLeft = state.currentRepeat;
+        var beatNum = state.beatCounter + 1;
+        var beatsTotal = state.beatsPerMeasure;
+        
+        var isInfinite = state.steps.length === 1 && state.steps[0] && state.steps[0].repeat === Infinity;
+        
+        if (isInfinite && state.isRunning) {
+            stepInfoDisplay.innerHTML = '🔄 Métronome simple · ' + state.baseTempo + ' BPM<br><small class="text-muted">Temps ' + beatNum + '/' + beatsTotal + '</small>';
+            return;
+        }
+        
+        if (totalSteps > 0 && state.isRunning) {
+            var modeText = '';
+            if (state.repeatMode === 'R') modeText = '↺ Reset';
+            else if (state.repeatMode === 'C') modeText = '↻ Garde tempo';
+            else if (state.repeatMode === 'L') modeText = '🔁 Loop (cumul)';
+            
+            stepInfoDisplay.innerHTML = '📊 Mesure ' + currentStep + '/' + totalSteps + ' · ' + (repeatLeft === Infinity ? '∞' : repeatLeft) + ' restante(s) · ' + modeText + '<br><small class="text-muted">Temps ' + beatNum + '/' + beatsTotal + ' · D=' + Math.round(state.startingTempo) + ' C=' + Math.round(state.currentTempo) + '</small>';
+            return;
+        }
+        
+        if (!state.isRunning && state.steps.length > 0) {
+            if (state.steps[0] && state.steps[0].repeat === Infinity) {
+                stepInfoDisplay.textContent = '⏸ Prêt · Mode simple';
+            } else {
+                stepInfoDisplay.textContent = '⏸ Prêt · ' + state.steps.length + ' étapes';
+            }
+            return;
+        }
+        
+        stepInfoDisplay.textContent = '⏸ Prêt';
+    }
+
+    // ============================================================
+    // 14. COMMANDES DU MÉTRONOME
+    // ============================================================
     function startMetronome() {
-        state.baseTempo = parseFloat(baseTempoInput.value) || 120;
-        const formula = patternInput.value.trim();
-
-        if (!loadPattern(formula)) return;
-
-        const selectedBeats = document.querySelector('input[name="beatsPerMeasure"]:checked');
+        state.baseTempo = parseFloat(baseTempoSlider.value) || 120;
+        var formula = patternInput.value.trim();
+        
+        if (!loadFormula(formula)) return;
+        
+        var selectedBeats = document.querySelector('input[name="beatsPerMeasure"]:checked');
         if (selectedBeats) {
             setBeatsPerMeasure(parseInt(selectedBeats.value, 10));
         }
-
+        
         if (state.audioCtx && state.audioCtx.state === 'running') {
             state.audioCtx.close();
             state.audioCtx = null;
         }
-
+        
         state.isRunning = true;
         state.isPaused = false;
         state.beatCounter = 0;
+        state.startingTempo = state.baseTempo;
         state.currentTempo = state.baseTempo;
-        state.currentRepeatCount = state.pattern[0]?.repeat || 0;
-        state.currentStepIndex = 0;
-
+        state.initCompleted = false;
+        state.currentStep = 0;
+        state.currentRepeat = state.steps[0] ? state.steps[0].repeat : 0;
+		state.isNewMeasure = false;
+        
+        if (state.steps[0]) {
+            state.currentTempo = computeTempo(state.steps[0], state.startingTempo, state.currentTempo);
+        }
+        
         updateDisplay();
         updateBeatVisualization(0);
         resetInterval();
-
-        baseTempoInput.disabled = true;
+        
+        // Désactiver les contrôles
+        baseTempoSlider.disabled = true;
         patternInput.disabled = true;
-        beatRadioButtons.forEach(rb => rb.disabled = true);
+        beatRadioButtons.forEach(function(rb) { rb.disabled = true; });
         startBtn.disabled = true;
         pauseBtn.disabled = false;
         pauseBtn.innerHTML = '<i class="bi bi-pause-fill"></i><span class="d-none d-md-inline"> Pause</span>';
@@ -890,19 +1079,16 @@ body.dark-mode .preset-card {
     function pauseMetronome() {
         if (!state.isRunning) return;
         state.isPaused = !state.isPaused;
-        if (state.isPaused) {
-			pauseBtn.innerHTML = '<i class="bi bi-play-fill"></i><span class="d-none d-md-inline"> Reprendre</span>';
-		} else {
-			pauseBtn.innerHTML = '<i class="bi bi-pause-fill"></i><span class="d-none d-md-inline"> Pause</span>';
-		}
         
         if (state.isPaused) {
+            pauseBtn.innerHTML = '<i class="bi bi-play-fill"></i><span class="d-none d-md-inline"> Reprendre</span>';
             if (state.intervalId) {
                 clearInterval(state.intervalId);
                 state.intervalId = null;
             }
-            stepInfoDisplay.innerHTML = '<i class="bi bi-pause-fill"></i><span class="d-none d-md-inline"> En pause</span>';
+            stepInfoDisplay.textContent = '⏸ En pause';
         } else {
+            pauseBtn.innerHTML = '<i class="bi bi-pause-fill"></i><span class="d-none d-md-inline"> Pause</span>';
             resetInterval();
             updateDisplay();
         }
@@ -921,69 +1107,102 @@ body.dark-mode .preset-card {
             state.audioCtx.close();
             state.audioCtx = null;
         }
-
-        baseTempoInput.disabled = false;
+        
+        // Réactiver les contrôles
+        baseTempoSlider.disabled = false;
         patternInput.disabled = false;
-        beatRadioButtons.forEach(rb => rb.disabled = false);
+        beatRadioButtons.forEach(function(rb) { rb.disabled = false; });
         startBtn.disabled = false;
         pauseBtn.disabled = true;
         pauseBtn.innerHTML = '<i class="bi bi-pause-fill"></i><span class="d-none d-md-inline"> Pause</span>';
         stopBtn.disabled = true;
-
-        state.currentTempo = parseFloat(baseTempoInput.value) || 120;
+        
+        state.currentTempo = parseFloat(baseTempoSlider.value) || 120;
         currentTempoDisplay.textContent = Math.round(state.currentTempo);
-        stepInfoDisplay.innerHTML = '<i class="bi bi-stop-fill"></i><span class="d-none d-md-inline"> Arrêté</span>';
+        stepInfoDisplay.textContent = '⏹ Arrêté';
         updateBeatVisualization(0);
     }
 
-    // ========================================
-    // 12. PRESETS
-    // ========================================
+    // ============================================================
+    // 15. CHARGER UN PRESET
+    // ============================================================
     function loadPreset(card) {
-        <!-- if (state.isRunning) { -->
+        if (state.isRunning) {
             <!-- if (!confirm('Un métronome est en cours. Voulez-vous l\'arrêter pour charger ce preset ?')) { -->
-                <!-- return; -->
+                return;
             <!-- } -->
             stopMetronome();
-        <!-- } -->
-
-        const pattern = card.dataset.pattern || '';
-        const tempo = card.dataset.tempo;
-        const beats = card.dataset.beats;
-
+        }
+        
+        var pattern = card.dataset.pattern || '';
+        var tempo = card.dataset.tempo;
+        var beats = card.dataset.beats;
+        
         patternInput.value = pattern;
+        
         if (tempo) {
-            baseTempoInput.value = tempo;
+            baseTempoSlider.value = tempo;
+            tempoDisplayValue.textContent = tempo;
             state.baseTempo = parseFloat(tempo);
             state.currentTempo = state.baseTempo;
             currentTempoDisplay.textContent = Math.round(state.currentTempo);
         }
+        
         if (beats) {
-            const radio = document.querySelector(`input[name="beatsPerMeasure"][value="${beats}"]`);
+            var radio = document.querySelector('input[name="beatsPerMeasure"][value="' + beats + '"]');
             if (radio) {
                 radio.checked = true;
                 setBeatsPerMeasure(parseInt(beats, 10));
             }
         }
-
-        loadPattern(pattern);
+        
+        loadFormula(pattern);
         stepInfoDisplay.textContent = '📝 Preset chargé';
     }
 
-    // ========================================
-    // 13. ÉVÉNEMENTS
-    // ========================================
+    // ============================================================
+    // 16. MODE NUIT
+    // ============================================================
+    var isDarkMode = false;
+    var savedMode = localStorage.getItem('metronome-dark-mode');
+    
+    if (savedMode === 'true') {
+        isDarkMode = true;
+        document.body.classList.add('dark-mode');
+        darkModeToggle.innerHTML = '<i class="bi bi-sun-fill"></i><span class="d-none d-md-inline"> Jour</span>';
+    }
+    
+    darkModeToggle.addEventListener('click', function() {
+        isDarkMode = !isDarkMode;
+        document.body.classList.toggle('dark-mode', isDarkMode);
+        
+        var icon = this.querySelector('i');
+        var text = this.querySelector('span');
+        if (isDarkMode) {
+            icon.className = 'bi bi-sun-fill';
+            if (text) text.textContent = ' Jour';
+        } else {
+            icon.className = 'bi bi-moon-fill';
+            if (text) text.textContent = ' Nuit';
+        }
+        
+        localStorage.setItem('metronome-dark-mode', isDarkMode);
+    });
+
+    // ============================================================
+    // 17. ÉVÉNEMENTS
+    // ============================================================
     startBtn.addEventListener('click', startMetronome);
     pauseBtn.addEventListener('click', pauseMetronome);
     stopBtn.addEventListener('click', stopMetronome);
-
-    presetCards.forEach(card => {
+    
+    presetCards.forEach(function(card) {
         card.addEventListener('click', function() {
             loadPreset(this);
         });
     });
-
-    beatRadioButtons.forEach(radio => {
+    
+    beatRadioButtons.forEach(function(radio) {
         radio.addEventListener('change', function() {
             if (!state.isRunning) {
                 setBeatsPerMeasure(parseInt(this.value, 10));
@@ -993,8 +1212,9 @@ body.dark-mode .preset-card {
             }
         });
     });
-
-    baseTempoInput.addEventListener('input', function() {
+    
+    baseTempoSlider.addEventListener('input', function() {
+        tempoDisplayValue.textContent = this.value;
         if (!state.isRunning) {
             state.baseTempo = parseFloat(this.value) || 120;
             state.currentTempo = state.baseTempo;
@@ -1002,40 +1222,36 @@ body.dark-mode .preset-card {
         }
     });
 
-    // ========================================
-    // 14. INITIALISATION
-    // ========================================
+    // ============================================================
+    // 18. INITIALISATION
+    // ============================================================
     setBeatsPerMeasure(4);
-    loadPattern(patternInput.value);
+    loadFormula(patternInput.value);
     stopMetronome();
-
-    console.log('🎵 Métronome intelligent prêt !');
-});
-
-
-// ========================================
-// 15. MODE NUIT
-// ========================================
-const darkModeToggle = document.getElementById('darkModeToggle');
-let isDarkMode = false;
-
-// Vérifier si une préférence est sauvegardée
-const savedMode = localStorage.getItem('metronome-dark-mode');
-if (savedMode === 'true') {
-    isDarkMode = true;
-    document.body.classList.add('dark-mode');
-    darkModeToggle.textContent = '☀️ Jour';
+    
+    console.log('♪ Métronome intelligent prêt !');
+    console.log('📝 Formule :', patternInput.value);
+    console.log('🎯 Tempo :', state.baseTempo, 'BPM ·', state.beatsPerMeasure, 'temps');
+	
+	// ============================================================
+// INITIALISATION DU POPOVER D'AIDE
+// ============================================================
+var formulaHelpBtn = document.getElementById('formulaHelpBtn');
+if (formulaHelpBtn) {
+    var popover = new bootstrap.Popover(formulaHelpBtn, {
+        trigger: 'click',
+        html: true,
+        placement: 'bottom'
+    });
+    
+    // Fermer le popover en cliquant ailleurs
+    document.addEventListener('click', function(e) {
+        if (!formulaHelpBtn.contains(e.target)) {
+            popover.hide();
+        }
+    });
 }
-
-darkModeToggle.addEventListener('click', function() {
-    isDarkMode = !isDarkMode;
-    document.body.classList.toggle('dark-mode', isDarkMode);
-    
-    // Mettre à jour le texte du bouton
-    this.textContent = isDarkMode ? '☀️ Jour' : '🌙 Nuit';
-    
-    // Sauvegarder la préférence
-    localStorage.setItem('metronome-dark-mode', isDarkMode);
+	
 });
     </script>
 </body>
