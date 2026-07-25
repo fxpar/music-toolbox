@@ -374,14 +374,14 @@ body.dark-mode .preset-card {
         
         <!-- 72 bpm +5 -->
         <button type="button" class="btn btn-primary btn-sm position-relative preset-card preset-progress" 
-                data-pattern="3x0, 1x5, L" data-tempo="72" data-beats="3">
+                data-pattern="(3x0), 3x5, L" data-tempo="72" data-beats="3">
             72 bpm 3/4
             <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.6rem; padding: 0.2rem 0.4rem; margin-left: 2px;">
                 +5
             </span>
         </button>
         <button type="button" class="btn btn-primary btn-sm position-relative preset-card preset-progress" 
-                data-pattern="3x0, 1x5, L" data-tempo="72" data-beats="4">
+                data-pattern="(3x0), 3x5, L" data-tempo="72" data-beats="4">
             72 bpm 4/4
             <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.6rem; padding: 0.2rem 0.4rem; margin-left: 2px;">
                 +5
@@ -390,14 +390,14 @@ body.dark-mode .preset-card {
         
         <!-- 100 bpm +5 -->
         <button type="button" class="btn btn-primary btn-sm position-relative preset-card preset-progress" 
-                data-pattern="3x0, 1x5, L" data-tempo="100" data-beats="3">
+                data-pattern="(3x0), 3x5, L" data-tempo="100" data-beats="3">
             100 bpm 3/4
             <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.6rem; padding: 0.2rem 0.4rem; margin-left: 2px;">
                 +5
             </span>
         </button>
         <button type="button" class="btn btn-primary btn-sm position-relative preset-card preset-progress" 
-                data-pattern="3x0, 1x5, L" data-tempo="100" data-beats="4">
+                data-pattern="(3x0), 3x5, L" data-tempo="100" data-beats="4">
             100 bpm 4/4
             <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.6rem; padding: 0.2rem 0.4rem; margin-left: 2px;">
                 +5
@@ -406,14 +406,14 @@ body.dark-mode .preset-card {
         
         <!-- 120 bpm +5 -->
         <button type="button" class="btn btn-primary btn-sm position-relative preset-card preset-progress" 
-                data-pattern="3x0, 1x5, L" data-tempo="120" data-beats="3">
+                data-pattern="(3x0), 3x5, L" data-tempo="120" data-beats="3">
             120 bpm 3/4
             <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.6rem; padding: 0.2rem 0.4rem; margin-left: 2px;">
                 +5
             </span>
         </button>
         <button type="button" class="btn btn-primary btn-sm position-relative preset-card preset-progress" 
-                data-pattern="3x0, 1x5, L" data-tempo="120" data-beats="4">
+                data-pattern="(3x0), 3x5, L" data-tempo="120" data-beats="4">
             120 bpm 4/4
             <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.6rem; padding: 0.2rem 0.4rem; margin-left: 2px;">
                 +5
@@ -426,20 +426,20 @@ body.dark-mode .preset-card {
                     <div class="row g-2">
                         <!-- Chaque preset a maintenant data-tempo et data-beats -->
                         <div class="col-6 col-md-3">
-                            <div class="card preset-card" data-pattern="3x0, 1x5, R" data-tempo="72" data-beats="4">
+                            <div class="card preset-card" data-pattern="(5x0), 5x5, R" data-tempo="72" data-beats="4">
                                 <div class="card-body p-2 text-center">
                                     <small class="fw-bold">Gammes lentes</small>
                                     <div><span class="badge bg-primary">72 BPM</span> <span class="badge bg-secondary">4/4</span></div>
-                                    <small class="text-muted">3x0, 1x5, R</small>
+                                    <small class="text-muted">(5x0), 5x5, R</small>
                                 </div>
                             </div>
                         </div>
                         <div class="col-6 col-md-3">
-                            <div class="card preset-card" data-pattern="2x0, 2x10, 2x-5, C" data-tempo="100" data-beats="3">
+                            <div class="card preset-card" data-pattern="(2x0), 2x10, 2x-5, L" data-tempo="70" data-beats="3">
                                 <div class="card-body p-2 text-center">
                                     <small class="fw-bold">Valse progressive</small>
                                     <div><span class="badge bg-primary">100 BPM</span> <span class="badge bg-secondary">3/4</span></div>
-                                    <small class="text-muted">2x0, 2x10, 2x-5, C</small>
+                                    <small class="text-muted">(2x0), 2x10, 2x-5, L</small>
                                 </div>
                             </div>
                         </div>
@@ -550,37 +550,83 @@ body.dark-mode .preset-card {
         };
     }
     
-    const parts = formula.split(',').map(s => s.trim());
-    const instructions = [];
-    let repeatMode = 'R';
+    var parts = formula.split(',').map(function(s) { return s.trim(); });
+    var instructions = [];
+    var repeatMode = 'R';
+    var initSteps = []; // Pour stocker les instructions d'initialisation
+    
+    // --- Détecter si la formule commence par une parenthèse ---
+    var hasInit = false;
+    var initPattern = '';
+    var loopPattern = '';
+    
+    // Chercher "(...)" dans la formule
+    var matchParens = formula.match(/^\(([^)]+)\)\s*,\s*(.+)$/);
+    if (matchParens) {
+        hasInit = true;
+        initPattern = matchParens[1].trim();
+        loopPattern = matchParens[2].trim();
+        
+        // Parser la partie initialisation
+        var initParts = initPattern.split(',').map(function(s) { return s.trim(); });
+        var initInstructions = [];
+        for (var i = 0; i < initParts.length; i++) {
+            var initPart = initParts[i];
+            var match = initPart.match(/^(\d+)\s*x\s*(-?\d+)$/);
+            if (match) {
+                initInstructions.push({
+                    repeat: parseInt(match[1], 10),
+                    variation: parseInt(match[2], 10)
+                });
+            }
+        }
+        
+        // Parser la partie boucle (avec la logique existante)
+        var loopResult = parsePattern(loopPattern);
+        if (loopResult) {
+            // On combine : initSteps + loopSteps
+            var allSteps = initInstructions.concat(loopResult.steps);
+            return {
+                steps: allSteps,
+                repeatMode: loopResult.repeatMode,
+                initSteps: initInstructions,
+                loopStartIndex: initInstructions.length
+            };
+        }
+    }
+    
+    // --- Format existant (sans parenthèses) ---
+    var parts2 = formula.split(',').map(function(s) { return s.trim(); });
+    var instructions2 = [];
+    var repeatMode2 = 'R';
 
-    for (let part of parts) {
-        const upperPart = part.toUpperCase();
+    for (var j = 0; j < parts2.length; j++) {
+        var part = parts2[j];
+        var upperPart = part.toUpperCase();
         if (upperPart === 'R') {
-            repeatMode = 'R';
+            repeatMode2 = 'R';
             continue;
         }
         if (upperPart === 'C') {
-            repeatMode = 'C';
+            repeatMode2 = 'C';
             continue;
         }
-        // --- NOUVEAU : Gérer 'L' ---
         if (upperPart === 'L') {
-            repeatMode = 'L';
+            repeatMode2 = 'L';
             continue;
         }
 
-        const match = part.match(/^(\d+)\s*x\s*(-?\d+)$/);
+        var match = part.match(/^(\d+)\s*x\s*(-?\d+)$/);
         if (match) {
-            const repeat = parseInt(match[1], 10);
-            const variation = parseInt(match[2], 10);
-            instructions.push({ repeat, variation });
+            var repeat = parseInt(match[1], 10);
+            var variation = parseInt(match[2], 10);
+            instructions2.push({ repeat: repeat, variation: variation });
         } else {
-            console.warn(`Format ignoré : "${part}". Utilise "nombre x variation".`);
+            console.warn('Format ignoré : "' + part + '". Utilise "nombre x variation".');
         }
     }
 
-    if (instructions.length === 0) {
+    if (instructions2.length === 0) {
         return {
             steps: [{ repeat: Infinity, variation: 0 }],
             repeatMode: 'R'
@@ -588,8 +634,10 @@ body.dark-mode .preset-card {
     }
 
     return {
-        steps: instructions,
-        repeatMode: repeatMode
+        steps: instructions2,
+        repeatMode: repeatMode2,
+        initSteps: [],
+        loopStartIndex: 0
     };
 }
 
@@ -597,17 +645,21 @@ body.dark-mode .preset-card {
     // 5. CHARGER UN MOTIF
     // ========================================
     function loadPattern(formula) {
-        const parsed = parsePattern(formula);
-        
-        state.pattern = parsed.steps;
-        state.repeatMode = parsed.repeatMode;
-        state.currentStepIndex = 0;
-        state.currentRepeatCount = state.pattern[0]?.repeat || 0;
-        state.currentTempo = state.baseTempo;
-        
-        updateDisplay();
-        return true;
-    }
+    var parsed = parsePattern(formula);
+    
+    state.pattern = parsed.steps;
+    state.repeatMode = parsed.repeatMode;
+    state.initSteps = parsed.initSteps || [];
+    state.loopStartIndex = parsed.loopStartIndex || 0;
+    state.currentStepIndex = 0;
+    state.currentRepeatCount = (state.pattern[0] && state.pattern[0].repeat) || 0;
+    state.currentTempo = state.baseTempo;
+    state.hasInit = state.initSteps.length > 0;
+    state.initCompleted = false;
+    
+    updateDisplay();
+    return true;
+}
 
     // ========================================
     // 6. AVANCER D'UNE MESURE
@@ -619,32 +671,60 @@ body.dark-mode .preset-card {
     if (state.beatCounter === 0 && state.currentRepeatCount <= 0) {
         state.currentStepIndex++;
 
-        if (state.currentStepIndex >= state.pattern.length) {
-            if (state.repeatMode === 'R') {
-                state.currentStepIndex = 0;
-                state.currentRepeatCount = state.pattern[0].repeat;
-                state.currentTempo = state.baseTempo;
-            } else if (state.repeatMode === 'C') {
-                state.currentStepIndex = 0;
-                state.currentRepeatCount = state.pattern[0].repeat;
-            } else if (state.repeatMode === 'L') {
-                const lastVariation = state.pattern[state.pattern.length - 1].variation;
-                state.baseTempo += lastVariation;
-                state.currentStepIndex = 0;
-                state.currentRepeatCount = state.pattern[0].repeat;
-                state.currentTempo = state.baseTempo + state.pattern[0].variation;
+        // --- GESTION DE L'INITIALISATION ---
+        if (state.hasInit && !state.initCompleted) {
+            // Vérifier si on a fini toutes les étapes d'init
+            if (state.currentStepIndex >= state.initSteps.length) {
+                state.initCompleted = true;
+                // On passe à la boucle : on repart du début de la boucle
+                state.currentStepIndex = state.loopStartIndex;
+                // On applique la variation de la première étape de boucle
+                var loopFirstVariation = state.pattern[state.loopStartIndex].variation;
+                state.currentTempo = state.baseTempo + loopFirstVariation;
+                state.currentRepeatCount = state.pattern[state.loopStartIndex].repeat;
             } else {
-                stopMetronome();
-                return;
+                // Étape d'init suivante
+                var initVariation = state.pattern[state.currentStepIndex].variation;
+                state.currentTempo = state.baseTempo + initVariation;
+                state.currentRepeatCount = state.pattern[state.currentStepIndex].repeat;
             }
-        } else {
-            const variation = state.pattern[state.currentStepIndex].variation;
-            state.currentTempo = state.baseTempo + variation;
-            state.currentRepeatCount = state.pattern[state.currentStepIndex].repeat;
+            
+            updateDisplay();
+            resetInterval();
+            // On ne joue pas encore le temps, on le fait après
         }
-        
-        updateDisplay();
-        resetInterval(); // Le tempo change IMMÉDIATEMENT pour le premier temps
+        // --- FIN GESTION INIT ---
+
+        // --- LOGIQUE DE BOUCLE NORMALE (pour les étapes après l'init) ---
+        // Ne pas exécuter si on est encore dans l'init
+        if (!state.hasInit || state.initCompleted) {
+            if (state.currentStepIndex >= state.pattern.length) {
+                if (state.repeatMode === 'R') {
+                    state.currentStepIndex = state.loopStartIndex || 0;
+                    state.currentRepeatCount = state.pattern[state.loopStartIndex || 0].repeat;
+                    state.currentTempo = state.baseTempo + state.pattern[state.loopStartIndex || 0].variation;
+                } else if (state.repeatMode === 'C') {
+                    state.currentStepIndex = state.loopStartIndex || 0;
+                    state.currentRepeatCount = state.pattern[state.loopStartIndex || 0].repeat;
+                } else if (state.repeatMode === 'L') {
+                    var lastVariation = state.pattern[state.pattern.length - 1].variation;
+                    state.baseTempo += lastVariation;
+                    state.currentStepIndex = state.loopStartIndex || 0;
+                    state.currentRepeatCount = state.pattern[state.loopStartIndex || 0].repeat;
+                    state.currentTempo = state.baseTempo + state.pattern[state.loopStartIndex || 0].variation;
+                } else {
+                    stopMetronome();
+                    return;
+                }
+            } else {
+                var variation = state.pattern[state.currentStepIndex].variation;
+                state.currentTempo = state.baseTempo + variation;
+                state.currentRepeatCount = state.pattern[state.currentStepIndex].repeat;
+            }
+            
+            updateDisplay();
+            resetInterval();
+        }
     }
 
     // --- Jouer le temps actuel ---
@@ -860,12 +940,12 @@ body.dark-mode .preset-card {
     // 12. PRESETS
     // ========================================
     function loadPreset(card) {
-        if (state.isRunning) {
-            if (!confirm('Un métronome est en cours. Voulez-vous l\'arrêter pour charger ce preset ?')) {
-                return;
-            }
+        <!-- if (state.isRunning) { -->
+            <!-- if (!confirm('Un métronome est en cours. Voulez-vous l\'arrêter pour charger ce preset ?')) { -->
+                <!-- return; -->
+            <!-- } -->
             stopMetronome();
-        }
+        <!-- } -->
 
         const pattern = card.dataset.pattern || '';
         const tempo = card.dataset.tempo;
