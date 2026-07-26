@@ -4,11 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>Entraînement Accords Jazz</title>
-    <!-- Material Icons & Material Fonts -->
+    <!-- Icons & Typography Material -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     
     <style>
+        /* Variables Mode Clair (par défaut) */
         :root {
             --md-sys-color-primary: #6750A4;
             --md-sys-color-on-primary: #FFFFFF;
@@ -18,8 +19,24 @@
             --md-sys-color-surface-variant: #E7E0EC;
             --md-sys-color-on-surface: #1D1B20;
             --md-sys-color-outline: #79747E;
+            --md-sys-color-card-bg: #FFFFFF;
             --md-sys-color-success: #2e7d32;
             --md-sys-color-error: #b71c1c;
+        }
+
+        /* Variables Mode Sombre */
+        body.dark-mode {
+            --md-sys-color-primary: #D0BCFF;
+            --md-sys-color-on-primary: #381E72;
+            --md-sys-color-primary-container: #4F378B;
+            --md-sys-color-on-primary-container: #EADDFF;
+            --md-sys-color-surface: #141218;
+            --md-sys-color-surface-variant: #2B2930;
+            --md-sys-color-on-surface: #E6E0E9;
+            --md-sys-color-outline: #938F99;
+            --md-sys-color-card-bg: #211F26;
+            --md-sys-color-success: #81c784;
+            --md-sys-color-error: #e57373;
         }
 
         * {
@@ -38,31 +55,59 @@
             align-items: center;
             min-height: 100vh;
             padding: 16px;
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
 
         .app-container {
             width: 100%;
             max-width: 480px;
-            background: #FFFFFF;
+            background: var(--md-sys-color-card-bg);
             border-radius: 28px;
             padding: 24px;
-            box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+            box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.15);
             display: flex;
             flex-direction: column;
             gap: 20px;
+            position: relative;
+            transition: background-color 0.3s ease;
         }
 
-        .header {
-            text-align: center;
+        .header-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
-        .header h1 {
-            font-size: 1.5rem;
+        .header-title h1 {
+            font-size: 1.4rem;
             color: var(--md-sys-color-on-surface);
-            margin-bottom: 8px;
         }
 
-        /* Tabs Material 3 pour le niveau */
+        .header-title p {
+            font-size: 0.85rem;
+            color: var(--md-sys-color-outline);
+        }
+
+        /* Bouton Theme Switcher */
+        .theme-toggle-btn {
+            background: var(--md-sys-color-surface-variant);
+            border: none;
+            color: var(--md-sys-color-on-surface);
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .theme-toggle-btn:active {
+            scale: 0.92;
+        }
+
+        /* Sélecteur de niveau */
         .level-selector {
             display: flex;
             background-color: var(--md-sys-color-surface-variant);
@@ -104,7 +149,7 @@
         }
 
         .formula-display {
-            font-size: 1.6rem;
+            font-size: 1.5rem;
             font-weight: 500;
             letter-spacing: 2px;
             margin: 16px 0;
@@ -117,10 +162,10 @@
             color: var(--md-sys-color-primary);
             font-weight: 700;
             border-bottom: 3px solid var(--md-sys-color-primary);
-            padding: 0 8px;
+            padding: 0 6px;
         }
 
-        /* Options de réponses (Grille de choix) */
+        /* Options de réponses (Grille) */
         .options-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -129,6 +174,7 @@
 
         .option-btn {
             background-color: var(--md-sys-color-surface);
+            color: var(--md-sys-color-on-surface);
             border: 1px solid var(--md-sys-color-outline);
             border-radius: 12px;
             padding: 14px;
@@ -139,8 +185,9 @@
         }
 
         .option-btn:active {
-            scale: 0.96;
+            scale: 0.95;
             background-color: var(--md-sys-color-primary-container);
+            color: var(--md-sys-color-on-primary-container);
         }
 
         .feedback {
@@ -166,15 +213,21 @@
 <body>
 
 <div class="app-container">
-    <div class="header">
-        <h1>Formules d'Accords Jazz</h1>
-        <p style="font-size:0.85rem; color: var(--md-sys-color-outline)">Trouvez l'intervalle manquant</p>
+    <!-- En-tête + Bouton Nuit/Jour -->
+    <div class="header-bar">
+        <div class="header-title">
+            <h1>Accords Jazz</h1>
+            <p>Trouvez l'intervalle manquant</p>
+        </div>
+        <button class="theme-toggle-btn" id="theme-btn" onclick="toggleTheme()" aria-label="Changer le thème">
+            <span class="material-icons-outlined" id="theme-icon">dark_mode</span>
+        </button>
     </div>
 
     <!-- Sélecteur de niveau -->
     <div class="level-selector">
-        <button class="level-btn active" onclick="setLevel('simple')">Simple</button>
-        <button class="level-btn" onclick="setLevel('advanced')">Avancé</button>
+        <button class="level-btn active" onclick="setLevel('simple', this)">Simple</button>
+        <button class="level-btn" onclick="setLevel('advanced', this)">Avancé</button>
     </div>
 
     <!-- Question -->
@@ -184,7 +237,7 @@
         <div class="feedback" id="feedback"></div>
     </div>
 
-    <!-- Boutons d'options -->
+    <!-- Boutons de choix -->
     <div class="options-grid" id="options-grid"></div>
 
     <!-- Statistiques -->
@@ -195,7 +248,7 @@
 </div>
 
 <script>
-    // Base de données des accords (Note: R = Fondamentale / Root)
+    // Base de données des accords
     const CHORDS = {
         simple: [
             { name: "maj7", formula: ["R", "3", "5", "7"] },
@@ -218,8 +271,14 @@
         ]
     };
 
-    // Tous les intervalles possibles pour générer les pièges (distracteurs)
-    const ALL_INTERVALS = ["R", "b2", "2", "b3", "3", "4", "b5", "5", "#5", "6", "bb7", "b7", "7", "b9", "9", "#9", "11", "#11", "b13", "13"];
+    // Catégories d'intervalles pour générer des pièges ciblés et difficiles
+    const INTERVAL_CATEGORIES = {
+        root: ["R", "1"],
+        third: ["b3", "3", "4", "bb3"],
+        fifth: ["b5", "5", "#5"],
+        seventh: ["bb7", "b7", "7", "6"],
+        tension: ["b9", "9", "#9", "11", "#11", "b13", "13"]
+    };
 
     let currentLevel = 'simple';
     let currentChord = null;
@@ -228,10 +287,32 @@
     let score = 0;
     let streak = 0;
 
-    function setLevel(level) {
+    // --- GESTION DU THÈME SOMBRE / CLAIR ---
+    function initTheme() {
+        const savedTheme = localStorage.getItem('theme');
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        
+        if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
+            document.body.classList.add('dark-mode');
+            document.getElementById('theme-icon').innerText = 'light_mode';
+        } else {
+            document.body.classList.remove('dark-mode');
+            document.getElementById('theme-icon').innerText = 'dark_mode';
+        }
+    }
+
+    function toggleTheme() {
+        document.body.classList.toggle('dark-mode');
+        const isDark = document.body.classList.contains('dark-mode');
+        document.getElementById('theme-icon').innerText = isDark ? 'light_mode' : 'dark_mode';
+        localStorage.setItem('theme', isDark ? 'dark' : 'light');
+    }
+
+    // --- LOGIQUE DU JEU ---
+    function setLevel(level, btnElement) {
         currentLevel = level;
         document.querySelectorAll('.level-btn').forEach(btn => btn.classList.remove('active'));
-        event.target.classList.add('active');
+        btnElement.classList.add('active');
         nextQuestion();
     }
 
@@ -240,42 +321,56 @@
     }
 
     function shuffle(arr) {
-        return arr.sort(() => Math.random() - 0.5);
+        return [...arr].sort(() => Math.random() - 0.5);
+    }
+
+    function getCategoryForInterval(interval) {
+        for (const [cat, items] of Object.entries(INTERVAL_CATEGORIES)) {
+            if (items.includes(interval)) return cat;
+        }
+        return 'tension';
     }
 
     function nextQuestion() {
         document.getElementById('feedback').innerText = "";
         document.getElementById('feedback').className = "feedback";
 
-        // Choisir un accord au hasard dans la liste selon le niveau
         const list = CHORDS[currentLevel];
         currentChord = getRandomItem(list);
 
-        // Choisir un élément manquant au hasard (sauf la fondamentale R pour rendre l'exercice pertinent)
+        // Masquer un élément (sauf la fondamentale "R")
         missingIndex = Math.floor(Math.random() * (currentChord.formula.length - 1)) + 1;
         correctAnswer = currentChord.formula[missingIndex];
 
-        // Affichage du nom de l'accord
         document.getElementById('chord-name').innerText = currentChord.name;
 
-        // Construction du texte de la formule avec le "?"
         const displayFormula = currentChord.formula.map((item, idx) => 
             idx === missingIndex ? '<span class="missing-slot">?</span>' : item
         ).join(' - ');
 
         document.getElementById('formula-display').innerHTML = displayFormula;
 
-        // Générer les options (1 bonne réponse + 5 mauvaises)
         generateOptions();
     }
 
     function generateOptions() {
         const optionsSet = new Set([correctAnswer]);
+        const targetCategory = getCategoryForInterval(correctAnswer);
 
-        // Ajouter des faux choix réalistes
-        while(optionsSet.size < 6) {
-            const randomInt = getRandomItem(ALL_INTERVALS);
-            optionsSet.add(randomInt);
+        // 1. Ajouter en priorité les pièges de la MÊME catégorie d'intervalle
+        const sameCatItems = shuffle(INTERVAL_CATEGORIES[targetCategory]);
+        for (const item of sameCatItems) {
+            if (optionsSet.size < 4) {
+                optionsSet.add(item);
+            }
+        }
+
+        // 2. Completer avec d'autres intervalles plausibles
+        const fallbackPool = shuffle(["b3", "3", "b5", "5", "#5", "b7", "7", "b9", "9", "#9", "#11", "b13", "13"]);
+        for (const item of fallbackPool) {
+            if (optionsSet.size < 6) {
+                optionsSet.add(item);
+            }
         }
 
         const optionsArray = shuffle(Array.from(optionsSet));
@@ -295,24 +390,24 @@
         const feedbackEl = document.getElementById('feedback');
         
         if (selected === correctAnswer) {
-            feedbackEl.innerText = "Excellent !";
+            feedbackEl.innerText = "Parfait !";
             feedbackEl.className = "feedback correct";
             score += 10;
             streak += 1;
             document.getElementById('score-val').innerText = score;
             document.getElementById('streak-val').innerText = streak;
             
-            // Attendre un court instant puis passer à la question suivante
-            setTimeout(nextQuestion, 800);
+            setTimeout(nextQuestion, 700);
         } else {
-            feedbackEl.innerText = `Dommage ! La réponse était : ${correctAnswer}`;
+            feedbackEl.innerText = `Erreur ! La réponse était : ${correctAnswer}`;
             feedbackEl.className = "feedback incorrect";
             streak = 0;
             document.getElementById('streak-val').innerText = streak;
         }
     }
 
-    // Démarrage initial
+    // Initialisation
+    initTheme();
     nextQuestion();
 </script>
 
