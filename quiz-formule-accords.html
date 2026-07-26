@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Entraînement Accords Jazz</title>
+    <!-- Material Icons & Material Fonts -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --md-sys-color-primary: #6750A4;
+            --md-sys-color-on-primary: #FFFFFF;
+            --md-sys-color-primary-container: #EADDFF;
+            --md-sys-color-on-primary-container: #21005D;
+            --md-sys-color-surface: #FEF7FF;
+            --md-sys-color-surface-variant: #E7E0EC;
+            --md-sys-color-on-surface: #1D1B20;
+            --md-sys-color-outline: #79747E;
+            --md-sys-color-success: #2e7d32;
+            --md-sys-color-error: #b71c1c;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Roboto', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--md-sys-color-surface);
+            color: var(--md-sys-color-on-surface);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 16px;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 480px;
+            background: #FFFFFF;
+            border-radius: 28px;
+            padding: 24px;
+            box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .header {
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 1.5rem;
+            color: var(--md-sys-color-on-surface);
+            margin-bottom: 8px;
+        }
+
+        /* Tabs Material 3 pour le niveau */
+        .level-selector {
+            display: flex;
+            background-color: var(--md-sys-color-surface-variant);
+            border-radius: 100px;
+            padding: 4px;
+        }
+
+        .level-btn {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            background: transparent;
+            border-radius: 100px;
+            font-weight: 500;
+            color: var(--md-sys-color-on-surface);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .level-btn.active {
+            background-color: var(--md-sys-color-primary-container);
+            color: var(--md-sys-color-on-primary-container);
+        }
+
+        /* Card de la Question */
+        .card {
+            background-color: var(--md-sys-color-surface);
+            border: 1px solid var(--md-sys-color-outline);
+            border-radius: 16px;
+            padding: 24px;
+            text-align: center;
+        }
+
+        .chord-name {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--md-sys-color-primary);
+            margin-bottom: 12px;
+        }
+
+        .formula-display {
+            font-size: 1.6rem;
+            font-weight: 500;
+            letter-spacing: 2px;
+            margin: 16px 0;
+            padding: 12px;
+            background: var(--md-sys-color-surface-variant);
+            border-radius: 12px;
+        }
+
+        .missing-slot {
+            color: var(--md-sys-color-primary);
+            font-weight: 700;
+            border-bottom: 3px solid var(--md-sys-color-primary);
+            padding: 0 8px;
+        }
+
+        /* Options de réponses (Grille de choix) */
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+        }
+
+        .option-btn {
+            background-color: var(--md-sys-color-surface);
+            border: 1px solid var(--md-sys-color-outline);
+            border-radius: 12px;
+            padding: 14px;
+            font-size: 1.1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .option-btn:active {
+            scale: 0.96;
+            background-color: var(--md-sys-color-primary-container);
+        }
+
+        .feedback {
+            min-height: 24px;
+            text-align: center;
+            font-weight: 500;
+            font-size: 1rem;
+        }
+
+        .feedback.correct { color: var(--md-sys-color-success); }
+        .feedback.incorrect { color: var(--md-sys-color-error); }
+
+        .score-board {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            color: var(--md-sys-color-outline);
+            border-top: 1px solid var(--md-sys-color-surface-variant);
+            padding-top: 12px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    <div class="header">
+        <h1>Formules d'Accords Jazz</h1>
+        <p style="font-size:0.85rem; color: var(--md-sys-color-outline)">Trouvez l'intervalle manquant</p>
+    </div>
+
+    <!-- Sélecteur de niveau -->
+    <div class="level-selector">
+        <button class="level-btn active" onclick="setLevel('simple')">Simple</button>
+        <button class="level-btn" onclick="setLevel('advanced')">Avancé</button>
+    </div>
+
+    <!-- Question -->
+    <div class="card">
+        <div class="chord-name" id="chord-name">m7</div>
+        <div class="formula-display" id="formula-display">R - ? - 5 - b7</div>
+        <div class="feedback" id="feedback"></div>
+    </div>
+
+    <!-- Boutons d'options -->
+    <div class="options-grid" id="options-grid"></div>
+
+    <!-- Statistiques -->
+    <div class="score-board">
+        <span>Score: <strong id="score-val">0</strong></span>
+        <span>Série: <strong id="streak-val">0</strong></span>
+    </div>
+</div>
+
+<script>
+    // Base de données des accords (Note: R = Fondamentale / Root)
+    const CHORDS = {
+        simple: [
+            { name: "maj7", formula: ["R", "3", "5", "7"] },
+            { name: "7 (Dominant)", formula: ["R", "3", "5", "b7"] },
+            { name: "m7", formula: ["R", "b3", "5", "b7"] },
+            { name: "m7b5 (Demi-dim)", formula: ["R", "b3", "b5", "b7"] },
+            { name: "dim7", formula: ["R", "b3", "b5", "bb7"] },
+            { name: "6", formula: ["R", "3", "5", "6"] },
+            { name: "m6", formula: ["R", "b3", "5", "6"] }
+        ],
+        advanced: [
+            { name: "7b9", formula: ["R", "3", "5", "b7", "b9"] },
+            { name: "7#9", formula: ["R", "3", "5", "b7", "#9"] },
+            { name: "7b13", formula: ["R", "3", "b7", "b13"] },
+            { name: "7alt", formula: ["R", "3", "b7", "b9", "#9", "b5", "#5"] },
+            { name: "maj7(#11)", formula: ["R", "3", "5", "7", "#11"] },
+            { name: "m9", formula: ["R", "b3", "5", "b7", "9"] },
+            { name: "13", formula: ["R", "3", "5", "b7", "9", "13"] },
+            { name: "maj9", formula: ["R", "3", "5", "7", "9"] }
+        ]
+    };
+
+    // Tous les intervalles possibles pour générer les pièges (distracteurs)
+    const ALL_INTERVALS = ["R", "b2", "2", "b3", "3", "4", "b5", "5", "#5", "6", "bb7", "b7", "7", "b9", "9", "#9", "11", "#11", "b13", "13"];
+
+    let currentLevel = 'simple';
+    let currentChord = null;
+    let missingIndex = -1;
+    let correctAnswer = "";
+    let score = 0;
+    let streak = 0;
+
+    function setLevel(level) {
+        currentLevel = level;
+        document.querySelectorAll('.level-btn').forEach(btn => btn.classList.remove('active'));
+        event.target.classList.add('active');
+        nextQuestion();
+    }
+
+    function getRandomItem(arr) {
+        return arr[Math.floor(Math.random() * arr.length)];
+    }
+
+    function shuffle(arr) {
+        return arr.sort(() => Math.random() - 0.5);
+    }
+
+    function nextQuestion() {
+        document.getElementById('feedback').innerText = "";
+        document.getElementById('feedback').className = "feedback";
+
+        // Choisir un accord au hasard dans la liste selon le niveau
+        const list = CHORDS[currentLevel];
+        currentChord = getRandomItem(list);
+
+        // Choisir un élément manquant au hasard (sauf la fondamentale R pour rendre l'exercice pertinent)
+        missingIndex = Math.floor(Math.random() * (currentChord.formula.length - 1)) + 1;
+        correctAnswer = currentChord.formula[missingIndex];
+
+        // Affichage du nom de l'accord
+        document.getElementById('chord-name').innerText = currentChord.name;
+
+        // Construction du texte de la formule avec le "?"
+        const displayFormula = currentChord.formula.map((item, idx) => 
+            idx === missingIndex ? '<span class="missing-slot">?</span>' : item
+        ).join(' - ');
+
+        document.getElementById('formula-display').innerHTML = displayFormula;
+
+        // Générer les options (1 bonne réponse + 5 mauvaises)
+        generateOptions();
+    }
+
+    function generateOptions() {
+        const optionsSet = new Set([correctAnswer]);
+
+        // Ajouter des faux choix réalistes
+        while(optionsSet.size < 6) {
+            const randomInt = getRandomItem(ALL_INTERVALS);
+            optionsSet.add(randomInt);
+        }
+
+        const optionsArray = shuffle(Array.from(optionsSet));
+        const grid = document.getElementById('options-grid');
+        grid.innerHTML = '';
+
+        optionsArray.forEach(opt => {
+            const btn = document.createElement('button');
+            btn.className = 'option-btn';
+            btn.innerText = opt;
+            btn.onclick = () => checkAnswer(opt);
+            grid.appendChild(btn);
+        });
+    }
+
+    function checkAnswer(selected) {
+        const feedbackEl = document.getElementById('feedback');
+        
+        if (selected === correctAnswer) {
+            feedbackEl.innerText = "Excellent !";
+            feedbackEl.className = "feedback correct";
+            score += 10;
+            streak += 1;
+            document.getElementById('score-val').innerText = score;
+            document.getElementById('streak-val').innerText = streak;
+            
+            // Attendre un court instant puis passer à la question suivante
+            setTimeout(nextQuestion, 800);
+        } else {
+            feedbackEl.innerText = `Dommage ! La réponse était : ${correctAnswer}`;
+            feedbackEl.className = "feedback incorrect";
+            streak = 0;
+            document.getElementById('streak-val').innerText = streak;
+        }
+    }
+
+    // Démarrage initial
+    nextQuestion();
+</script>
+
+</body>
+</html>
