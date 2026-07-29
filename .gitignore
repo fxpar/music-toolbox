@@ -1,0 +1,103 @@
+# ============================================
+# IGNORE TOUS LES FICHIERS CONTENANT "_local"
+# ============================================
+*_local*
+*_local/
+**_local/**
+**/_local/**
+
+# ============================================
+# RÈGLES SPÉCIALES POUR CSS, FONT, JS
+# ============================================
+# On ignore tout ce qui est dans css/, font/, js/
+css/*
+font/*
+js/*
+fonts/*
+libs/*
+
+# MAIS on EXCLUT (on garde) les fichiers qui contiennent "fx"
+# La syntaxe ! signifie "ne pas ignorer"
+!css/*fx*
+!font/*fx*
+!fonts/*fx*
+!js/*fx*
+!libs/*fx*
+
+# ============================================
+# IGNORE LES AUTRES DOSSIERS CLASSIQUES
+# ============================================
+# Environnements virtuels
+venv/
+env/
+ENV/
+.venv/
+.virtualenv/
+pythonenv*
+
+# Fichiers de cache Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# Dossiers d'IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# Fichiers de logs et temporaires
+*.log
+*.tmp
+*.temp
+*.cache
+*.bak
+*.backup
+
+# Dossiers de build
+dist/
+build/
+*.egg-info/
+*.egg
+.eggs/
+
+# Fichiers de configuration sensibles
+.env
+.env.local
+.env.*.local
+*.secret
+*.key
+*.pem
+
+# ============================================
+# IGNORE MES ESSAIS DANS ARCHIVES
+# ============================================
+
+# Dossiers d'archives
+_archives/
+
+# ============================================
+# EXEMPLES DE CE QUI SERA IGNORÉ VS GARDÉ
+# ============================================
+# 
+# IGNORÉ (ne sera PAS sur GitHub) :
+#   - css/style_local.css
+#   - font/roboto_local.ttf
+#   - js/script_local.js
+#   - css/bootstrap_local/
+#   - n'importe quel fichier contenant "_local"
+#
+# GARDÉ (sera sur GitHub) :
+#   - css/style_fx.css
+#   - font/roboto_fx.ttf
+#   - js/script_fx.js
+#   - libs/jquery_fx.js
+#   - css/fx_style.css (contient "fx")
+#   - n'importe quel fichier contenant "fx"
+#
+# ============================================
