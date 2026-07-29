@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-  <title>Ukulele Chord Trainer - MD3</title>
+  <title>Ukulele Intervals & Shape Trainer - MD3</title>
   <style>
     /* ==========================================================================
        1. MATERIAL DESIGN 3 DESIGN TOKENS (LIGHT / DARK)
@@ -25,16 +25,14 @@
       --md-sys-color-outline: #938f99;
       --md-sys-color-outline-variant: #49454f;
       
-      /* Colors specific to chords */
       --chord-root: #ffb4ab;
       --chord-root-text: #690005;
       --chord-interval: #a8c7ff;
       --chord-interval-text: #003062;
-      --chord-target: #ffdbc5;
-      --chord-target-text: #6e3000;
+      --chord-error: #ffb4ab;
       
-      --fretboard-wood: #2a2421;
-      --fret-wire: #79747e;
+      --fretboard-wood: #231f20;
+      --fret-wire: #49454f;
       --string-color: #e6e0e9;
     }
 
@@ -59,10 +57,9 @@
       --chord-root-text: #ffffff;
       --chord-interval: #0061a4;
       --chord-interval-text: #ffffff;
-      --chord-target: #8b5000;
-      --chord-target-text: #ffffff;
+      --chord-error: #ba1a1a;
 
-      --fretboard-wood: #5c4d44;
+      --fretboard-wood: #4a3e3d;
       --fret-wire: #938f99;
       --string-color: #1d1b20;
     }
@@ -86,7 +83,7 @@
     }
 
     /* ==========================================================================
-       2. HEADER & NAVIGATION (MD3 TOP APP BAR & DRAWER)
+       2. HEADER & NAVIGATION (FIXED TOP APP BAR & DRAWER)
        ========================================================================== */
     .top-bar {
       height: 72px;
@@ -95,7 +92,7 @@
       align-items: center;
       justify-content: space-between;
       padding: 0 16px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
       z-index: 10;
       flex-shrink: 0;
     }
@@ -103,6 +100,9 @@
     .top-bar .title-container {
       display: flex;
       flex-direction: column;
+      align-items: center;
+      text-align: center;
+      flex: 1;
     }
 
     .top-bar h1 {
@@ -111,16 +111,18 @@
       color: var(--md-sys-color-primary);
     }
 
-    .top-bar .subtitle {
-      font-size: 0.85rem;
-      color: var(--md-sys-color-on-surface-variant);
+    .top-bar .instruction {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--md-sys-color-on-surface);
+      margin-top: 2px;
     }
 
     .icon-btn {
       background: none;
       border: none;
       color: var(--md-sys-color-on-surface);
-      font-size: 1.5rem;
+      font-size: 1.4rem;
       width: 44px;
       height: 44px;
       border-radius: 50%;
@@ -172,7 +174,7 @@
 
     .drawer h2 {
       font-size: 1.2rem;
-      margin-bottom: 12px;
+      margin-bottom: 8px;
       color: var(--md-sys-color-on-surface);
     }
 
@@ -194,7 +196,7 @@
     }
 
     /* ==========================================================================
-       3. UKULELE FRETBOARD (SCROLLABLE & INTERACTIVE)
+       3. INTERVAL MATRIX FRETBOARD (SCROLLABLE & INFINITE LOOP)
        ========================================================================== */
     .fretboard-viewport {
       flex: 1;
@@ -203,22 +205,35 @@
       background-color: var(--fretboard-wood);
       display: flex;
       justify-content: center;
-      padding-bottom: 140px; /* Space for BottomSheet */
+      padding-bottom: 180px; /* Leave space for bottom sheet */
     }
 
     .fretboard {
       width: 100%;
-      max-width: 360px;
+      max-width: 380px;
       position: relative;
       display: flex;
       flex-direction: column;
-      box-shadow: 0 0 20px rgba(0,0,0,0.5);
+      box-shadow: 0 0 25px rgba(0,0,0,0.6);
     }
 
-    /* String lines extending along the neck */
+    .string-header {
+      position: sticky;
+      top: 0;
+      background-color: var(--md-sys-color-surface-container-high);
+      display: flex;
+      justify-content: space-around;
+      padding: 8px 0;
+      font-weight: bold;
+      color: var(--md-sys-color-primary);
+      z-index: 5;
+      border-bottom: 2px solid var(--md-sys-color-outline-variant);
+      font-size: 0.85rem;
+    }
+
     .strings-container {
       position: absolute;
-      top: 0;
+      top: 36px;
       bottom: 0;
       left: 0;
       right: 0;
@@ -232,15 +247,14 @@
       width: 2px;
       background-color: var(--string-color);
       height: 100%;
-      box-shadow: 1px 0 3px rgba(0,0,0,0.4);
+      box-shadow: 1px 0 3px rgba(0,0,0,0.5);
     }
-    .string-line:nth-child(2) { width: 3px; } /* C string is thickest */
-    .string-line:nth-child(3) { width: 2.5px; }
+    .string-line:nth-child(2) { width: 3.2px; } /* C string */
+    .string-line:nth-child(3) { width: 2.5px; } /* E string */
 
-    /* Fret box */
-    .fret {
-      height: 90px; /* 6 frets fit visually on standard screen height */
-      border-bottom: 4px solid var(--fret-wire);
+    .fret-row {
+      height: 75px;
+      border-bottom: 3px solid var(--fret-wire);
       position: relative;
       display: flex;
       justify-content: space-around;
@@ -248,59 +262,45 @@
       z-index: 3;
     }
 
-    /* Fret markers (inlays at fret 3, 5, 7, 10, 12) */
-    .fret-marker {
-      position: absolute;
-      width: 12px;
-      height: 12px;
-      background-color: rgba(255, 255, 255, 0.25);
-      border-radius: 50%;
-      pointer-events: none;
-    }
-    .fret-number {
-      position: absolute;
-      left: 8px;
-      top: 50%;
-      transform: translateY(-50%);
-      font-size: 0.75rem;
-      font-weight: bold;
-      color: rgba(255, 255, 255, 0.4);
-    }
-
-    /* Fret position placement targets */
     .note-spot {
-      width: 44px;
-      height: 44px;
+      width: 46px;
+      height: 46px;
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
-      transition: transform 0.15s ease, background-color 0.2s ease;
+      transition: transform 0.15s ease, background-color 0.2s ease, box-shadow 0.2s;
       z-index: 4;
+      font-weight: 700;
+      font-size: 0.95rem;
+      background-color: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: transparent;
     }
 
     .note-spot.active {
       background-color: var(--chord-interval);
       color: var(--chord-interval-text);
-      box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-      font-weight: bold;
-      font-size: 0.95rem;
-      transform: scale(1.05);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+      border: none;
+      transform: scale(1.08);
     }
 
     .note-spot.active.root {
       background-color: var(--chord-root);
       color: var(--chord-root-text);
+      box-shadow: 0 0 12px var(--chord-root);
     }
 
-    .note-spot.target-ghost {
+    .note-spot.correct-solution {
       border: 2px dashed var(--md-sys-color-primary);
-      background-color: rgba(208, 188, 255, 0.15);
+      background-color: rgba(208, 188, 255, 0.25);
+      color: var(--md-sys-color-on-surface);
     }
 
     /* ==========================================================================
-       4. BOTTOM SHEET & ACTION BUTTONS (MD3)
+       4. BOTTOM SHEET & CONTROLS
        ========================================================================== */
     .bottom-sheet {
       position: fixed;
@@ -309,34 +309,44 @@
       right: 0;
       background-color: var(--md-sys-color-surface-container-high);
       border-radius: 28px 28px 0 0;
-      padding: 16px 24px 24px 24px;
-      box-shadow: 0 -4px 16px rgba(0,0,0,0.25);
+      padding: 16px 20px 24px 20px;
+      box-shadow: 0 -4px 20px rgba(0,0,0,0.3);
       z-index: 20;
       display: flex;
       flex-direction: column;
-      gap: 14px;
+      gap: 12px;
     }
 
     .sheet-handle {
-      width: 32px;
+      width: 36px;
       height: 4px;
       background-color: var(--md-sys-color-outline);
       border-radius: 2px;
       align-self: center;
-      margin-bottom: 4px;
     }
 
     .feedback-text {
       font-size: 0.95rem;
       color: var(--md-sys-color-on-surface);
       text-align: center;
-      min-height: 24px;
+      min-height: 22px;
       font-weight: 500;
+    }
+
+    .hint-box {
+      display: none;
+      background-color: var(--md-sys-color-surface-container);
+      border-radius: 12px;
+      padding: 10px 14px;
+      font-size: 0.85rem;
+      color: var(--md-sys-color-on-surface-variant);
+      text-align: center;
+      border: 1px solid var(--md-sys-color-outline-variant);
     }
 
     .actions-row {
       display: flex;
-      gap: 12px;
+      gap: 10px;
       justify-content: space-between;
     }
 
@@ -354,7 +364,13 @@
       gap: 6px;
       transition: opacity 0.2s ease, transform 0.1s;
     }
-    .btn:active { transform: scale(0.98); }
+    .btn:active { transform: scale(0.97); }
+
+    .btn-outlined {
+      background-color: transparent;
+      color: var(--md-sys-color-primary);
+      border: 1px solid var(--md-sys-color-outline);
+    }
 
     .btn-secondary {
       background-color: var(--md-sys-color-surface-container);
@@ -375,60 +391,68 @@
       color: var(--md-sys-color-on-primary-container);
       font-size: 0.8rem;
       font-weight: bold;
-      margin-left: 8px;
     }
   </style>
 </head>
 <body>
 
-  <!-- Top App Bar Fixed -->
+  <!-- Top App Bar -->
   <header class="top-bar">
     <button class="icon-btn" id="btn-menu" aria-label="Menu">☰</button>
     <div class="title-container">
-      <h1 id="game-title">Ukulele Chord Shift</h1>
-      <span class="subtitle" id="instruction-text">Transformez l'accord : C Majeur ➔ C Mineur</span>
+      <h1>Ukulele Shape Shift</h1>
+      <div class="instruction" id="instruction-text">Majeur ➔ Mineur</div>
     </div>
     <button class="icon-btn" id="btn-theme" aria-label="Toggle Theme">🌙</button>
   </header>
 
-  <!-- Navigation Drawer (Options) -->
+  <!-- Navigation Drawer -->
   <div class="drawer-overlay" id="drawer-overlay">
     <nav class="drawer">
-      <h2>Options de Jeu</h2>
-      <div class="menu-item active" data-mode="shift">
-        <span>1. Shift d'Accords (Actif)</span>
+      <h2>Modes de Jeu</h2>
+      <div class="menu-item active">
+        <span>1. Shift de Formes (Actif)</span>
       </div>
-      <div class="menu-item" data-mode="identify">
-        <span>2. Identifier l'accord</span>
-      </div>
-      <div class="menu-item" data-mode="find">
-        <span>3. Placer la fondamentale</span>
+      <div class="menu-item">
+        <span>2. Prochainement...</span>
       </div>
       <hr style="border: 0.5px solid var(--md-sys-color-outline-variant); margin: 8px 0;">
-      <div style="font-size: 0.85rem; color: var(--md-sys-color-on-surface-variant)">
-        Score Cumulé : <span class="score-badge" id="total-score">0 pts</span>
+      <div style="font-size: 0.9rem; color: var(--md-sys-color-on-surface-variant)">
+        Score : <span class="score-badge" id="total-score">0 pts</span>
       </div>
     </nav>
   </div>
 
-  <!-- Scrollable Ukulele Neck -->
+  <!-- Scrollable Matrix Viewport -->
   <main class="fretboard-viewport" id="viewport">
     <div class="fretboard" id="fretboard">
-      <div class="strings-container">
-        <div class="string-line"></div> <!-- G string (4th) -->
-        <div class="string-line"></div> <!-- C string (3rd) -->
-        <div class="string-line"></div> <!-- E string (2nd) -->
-        <div class="string-line"></div> <!-- A string (1st) -->
+      <div class="string-header">
+        <span>G (4)</span>
+        <span>C (3)</span>
+        <span>E (2)</span>
+        <span>A (1)</span>
       </div>
-      <!-- 12 Frets generated by JavaScript -->
+      <div class="strings-container">
+        <div class="string-line"></div>
+        <div class="string-line"></div>
+        <div class="string-line"></div>
+        <div class="string-line"></div>
+      </div>
+      <!-- Rows generated via JS -->
     </div>
   </main>
 
   <!-- Bottom Sheet Controls -->
   <footer class="bottom-sheet">
     <div class="sheet-handle"></div>
-    <div class="feedback-text" id="feedback">Modifiez la position des pastilles pour former le nouvel accord.</div>
+    <div class="feedback-text" id="feedback">Déplacez les notes pour obtenir la forme cible.</div>
+    
+    <div class="hint-box" id="hint-box">
+      <!-- Hidden formula hints displayed on request -->
+    </div>
+
     <div class="actions-row">
+      <button class="btn btn-outlined" id="btn-hint">❓ Indice</button>
       <button class="btn btn-secondary" id="btn-correct">💡 Correction</button>
       <button class="btn btn-primary" id="btn-validate">✓ Valider</button>
       <button class="btn btn-primary" id="btn-next" style="display: none;">Suivant ➔</button>
@@ -437,214 +461,282 @@
 
   <script>
     /* ==========================================================================
-       5. GAME STATE & DATA ENGINE
+       5. MATRIX & MUSIC THEORY DATA ENGINE
        ========================================================================== */
-    // Strings order left to right: G (4), C (3), E (2), A (1)
-    const STRINGS = ['G', 'C', 'E', 'A'];
-    const TOTAL_FRETS = 12;
+    // Strings order: [G, C, E, A]
+    // Base semitones relative to Root C (C=0, E=4, G=7, A=9)
+    const STRING_OFFSETS = [7, 0, 4, 9];
+    const TOTAL_ROWS = 36; // 3 cycles of 12 semitones
 
-    // Sample Question Dataset for Game 1 (Chord Alteration / Shift)
-    const chordQuestions = [
-      {
-        startChordName: "C Majeur (R - 3 - 5 - R)",
-        targetChordName: "C Mineur (R - b3 - 5 - R)",
-        // Initial positions per string [G, C, E, A] (fret numbers)
-        initial: [0, 0, 0, 3], 
-        initialLabels: ["R", "3", "5", "R"],
-        // Target answer positions
-        target: [0, 0, 0, 3], // Notice: C Minor can be played 0-0-3-3 (G-C-Eb-C) or 0-3-3-3
-        targetSolutions: [
-          [0, 0, 3, 3], // G-C-Eb-C (Frets)
-        ],
-        targetLabels: ["R", "5", "b3", "R"]
-      },
-      {
-        startChordName: "A Mineur (0 - 0 - 0 - 0)",
-        targetChordName: "A Majeur (2 - 1 - 0 - 0)",
-        initial: [2, 0, 0, 0],
-        initialLabels: ["R", "b3", "5", "R"],
-        targetSolutions: [
-          [2, 1, 0, 0]
-        ],
-        targetLabels: ["R", "3", "5", "R"]
-      },
-      {
-        startChordName: "F Majeur",
-        targetChordName: "F7 (Septième)",
-        initial: [2, 0, 1, 0],
-        initialLabels: ["R", "3", "5", "R"],
-        targetSolutions: [
-          [2, 3, 1, 0]
-        ],
-        targetLabels: ["R", "b7", "5", "R"]
+    // Pitch Class to standard interval names
+    const INTERVAL_MAP = {
+      0:  { name: 'R',  alt: 'R' },
+      1:  { name: 'b9', alt: 'b2' },
+      2:  { name: '9',  alt: '2' },
+      3:  { name: 'b3', alt: '#2' },
+      4:  { name: '3',  alt: '3' },
+      5:  { name: '4',  alt: '#11' },
+      6:  { name: 'b5', alt: '#4' },
+      7:  { name: '5',  alt: '5' },
+      8:  { name: 'b6', alt: '#5' },
+      9:  { name: '6',  alt: 'bb7' },
+      10: { name: 'b7', alt: '#6' },
+      11: { name: '7',  alt: 'maj7' }
+    };
+
+    // 1. DÉFINITION GLOBALE DES ACCORDS (Formules théoriques)
+const CHORDS = {
+  'Majeur':     { intervals: [0, 4, 7],     labels: {0:'R', 4:'3', 7:'5'},     hint: 'R - 3 - 5' },
+  'Mineur':     { intervals: [0, 3, 7],     labels: {0:'R', 3:'b3', 7:'5'},    hint: 'R - b3 - 5' },
+  '7 (Dom)':    { intervals: [0, 4, 7, 10], labels: {0:'R', 4:'3', 7:'5', 10:'b7'}, hint: 'R - 3 - 5 - b7' },
+  'm7':         { intervals: [0, 3, 7, 10], labels: {0:'R', b3:'b3', 7:'5', 10:'b7'},hint: 'R - b3 - 5 - b7' },
+  'maj7':       { intervals: [0, 4, 7, 11], labels: {0:'R', 4:'3', 7:'5', 11:'7'}, hint: 'R - 3 - 5 - 7' },
+  'Diminué':    { intervals: [0, 3, 6],     labels: {0:'R', 3:'b3', 6:'b5'},   hint: 'R - b3 - b5' },
+  'Augmenté':   { intervals: [0, 4, 8],     labels: {0:'R', 4:'3', 8:'#5'},    hint: 'R - 3 - #5' },
+  'sus4':       { intervals: [0, 5, 7],     labels: {0:'R', 5:'4', 7:'5'},     hint: 'R - 4 - 5' }
+};
+
+let currentQuestion = null;
+
+// Générateur de question aléatoire
+function generateRandomQuestion() {
+  const keys = Object.keys(CHORDS);
+  const fromKey = keys[Math.floor(Math.random() * keys.length)];
+  let toKey = fromKey;
+  
+  // S'assurer que l'accord cible est différent de l'accord de départ
+  while (toKey === fromKey) {
+    toKey = keys[Math.floor(Math.random() * keys.length)];
+  }
+
+  // Ancre la Fondamentale (Root) sur la corde de C (colonne index 1) à la ligne 12
+  const rootRow = 12;
+  const initialRows = generateValidShape(CHORDS[fromKey], rootRow);
+
+  return {
+    from: fromKey,
+    to: toKey,
+    rootRow: rootRow,
+    rootString: 1, // C-String
+    initialRows: initialRows
+  };
+}
+
+// Fonction auxiliaire pour générer une forme initiale valide pour l'accord de départ
+function generateValidShape(chordDef, rootRow) {
+  const rootPitch = getPitchClass(rootRow, 1);
+  let shape = [0, rootRow, 0, 0]; // C-String est figée comme Root principale
+
+  [0, 2, 3].forEach(s => {
+    // Trouve la ligne la plus proche sur la corde 's' qui appartient à la formule
+    let bestRow = rootRow;
+    let minDiff = 99;
+    for (let r = rootRow - 3; r <= rootRow + 4; r++) {
+      const pitch = getPitchClass(r, s);
+      const interval = (pitch - rootPitch + 12) % 12;
+      if (chordDef.intervals.includes(interval)) {
+        if (Math.abs(r - rootRow) < minDiff) {
+          minDiff = Math.abs(r - rootRow);
+          bestRow = r;
+        }
       }
-    ];
-
-    let currentQuestionIdx = 0;
-    let userState = [0, 0, 0, 0]; // Current fret chosen per string [G, C, E, A]
+    }
+    shape[s] = bestRow;
+  });
+  return shape;
+}
+    let currentQIdx = 0;
+    let userState = [0, 0, 0, 0]; // Selected row per string [G, C, E, A]
     let score = 0;
 
     /* ==========================================================================
-       6. DOM ELEMENTS & INITIALIZATION
+       6. DOM GENERATION & GAME LOGIC
        ========================================================================== */
     const fretboardEl = document.getElementById('fretboard');
     const viewportEl = document.getElementById('viewport');
-    const feedbackEl = document.getElementById('feedback');
     const instructionEl = document.getElementById('instruction-text');
+    const feedbackEl = document.getElementById('feedback');
+    const hintBoxEl = document.getElementById('hint-box');
     const btnValidate = document.getElementById('btn-validate');
     const btnCorrect = document.getElementById('btn-correct');
     const btnNext = document.getElementById('btn-next');
+    const btnHint = document.getElementById('btn-hint');
     const totalScoreEl = document.getElementById('total-score');
-    const themeBtn = document.getElementById('btn-theme');
 
-    // Generate 12 frets dynamically
-    function buildFretboard() {
-      // Clear previous frets (keep strings container)
-      const stringsContainer = fretboardEl.querySelector('.strings-container');
-      fretboardEl.innerHTML = '';
-      fretboardEl.appendChild(stringsContainer);
+    function getPitchClass(row, stringIdx) {
+      return (STRING_OFFSETS[stringIdx] + row) % 12;
+    }
 
-      for (let f = 1; f <= TOTAL_FRETS; f++) {
-        const fretEl = document.createElement('div');
-        fretEl.className = 'fret';
-        fretEl.dataset.fret = f;
+    function buildMatrix() {
+      for (let r = 0; r < TOTAL_ROWS; r++) {
+        const rowEl = document.createElement('div');
+        rowEl.className = 'fret-row';
+        rowEl.dataset.row = r;
 
-        // Add fret marker dots on standard frets (3, 5, 7, 10, 12)
-        if ([3, 5, 7, 10].includes(f)) {
-          const marker = document.createElement('div');
-          marker.className = 'fret-marker';
-          fretEl.appendChild(marker);
-        } else if (f === 12) {
-          // Double marker for 12th fret
-          const m1 = document.createElement('div');
-          m1.className = 'fret-marker';
-          m1.style.top = '25%';
-          const m2 = document.createElement('div');
-          m2.className = 'fret-marker';
-          m2.style.top = '75%';
-          fretEl.appendChild(m1);
-          fretEl.appendChild(m2);
-        }
-
-        // Fret number label
-        const numLabel = document.createElement('span');
-        numLabel.className = 'fret-number';
-        numLabel.innerText = f;
-        fretEl.appendChild(numLabel);
-
-        // 4 String interactive spots per fret
         for (let s = 0; s < 4; s++) {
           const spot = document.createElement('div');
           spot.className = 'note-spot';
           spot.dataset.string = s;
-          spot.dataset.fret = f;
-          spot.addEventListener('click', () => handleSpotClick(s, f));
-          fretEl.appendChild(spot);
-        }
+          spot.dataset.row = r;
 
-        fretboardEl.appendChild(fretEl);
+          spot.addEventListener('click', () => handleSpotClick(s, r));
+          rowEl.appendChild(spot);
+        }
+        fretboardEl.appendChild(rowEl);
       }
     }
 
-    /* ==========================================================================
-       7. INTERACTION LOGIC & GAME RENDER
-       ========================================================================== */
-    function loadQuestion(idx) {
-      const q = chordQuestions[idx];
-      instructionEl.innerText = `${q.startChordName} ➔ ${q.targetChordName}`;
-      userState = [...q.initial];
-      feedbackEl.innerText = "Déplacez les pastilles pour créer le nouvel accord.";
-      feedbackEl.style.color = "var(--md-sys-color-on-surface)";
-      
-      btnValidate.style.display = "inline-flex";
-      btnNext.style.display = "none";
-
-      renderFretboardState();
-      centerFretboardOnActiveNotes();
+    function handleSpotClick(stringIdx, rowIdx) {
+      // Exactly 1 note per string constraint
+      userState[stringIdx] = rowIdx;
+      renderState();
     }
 
-    function handleSpotClick(stringIdx, fretIdx) {
-      // Toggle position: if clicked on active fret, set to open string (0), else move to fret
-      if (userState[stringIdx] === fretIdx) {
-        userState[stringIdx] = 0;
-      } else {
-        userState[stringIdx] = fretIdx;
+    function renderState(showSolutions = false) {
+  const q = currentQuestion;
+  const rootRow = q.rootRow;
+  const rootString = q.rootString; // Corde de C (index 1)
+  const rootPitch = getPitchClass(rootRow, rootString);
+
+  const spots = fretboardEl.querySelectorAll('.note-spot');
+  spots.forEach(spot => {
+    const s = parseInt(spot.dataset.string);
+    const r = parseInt(spot.dataset.row);
+
+    spot.classList.remove('active', 'root', 'correct-solution');
+    spot.innerText = '';
+
+    // Affichage des notes sélectionnées par l'utilisateur
+    if (userState[s] === r) {
+      spot.classList.add('active');
+      
+      const spotPitch = getPitchClass(r, s);
+      const intervalVal = (spotPitch - rootPitch + 12) % 12;
+
+      // Récupère le nom de l'intervalle selon la cible
+      const targetChord = CHORDS[q.to];
+      let label = targetChord.labels[intervalVal] || INTERVAL_MAP[intervalVal].name;
+      spot.innerText = label;
+
+      // REGLE 2 : Seule la Root figée (C-String à rootRow) a la couleur spéciale .root
+      if (s === rootString && r === rootRow) {
+        spot.classList.add('root');
       }
-      renderFretboardState();
     }
 
-    function renderFretboardState(overrideLabels = null) {
-      const spots = fretboardEl.querySelectorAll('.note-spot');
-      spots.forEach(spot => {
-        const s = parseInt(spot.dataset.string);
-        const f = parseInt(spot.dataset.fret);
-
-        spot.classList.remove('active', 'root');
-        spot.innerText = '';
-
-        if (userState[s] === f) {
-          spot.classList.add('active');
-          const q = chordQuestions[currentQuestionIdx];
-          const label = overrideLabels ? overrideLabels[s] : (q.targetLabels[s] || '•');
-          spot.innerText = label;
-          if (label === 'R') spot.classList.add('root');
-        }
-      });
+    // Affichage d'une correction visuelle si demandée
+    if (showSolutions) {
+      const sol = generateValidShape(CHORDS[q.to], rootRow);
+      if (sol[s] === r && userState[s] !== r) {
+        spot.classList.add('correct-solution');
+        const spotPitch = getPitchClass(r, s);
+        const intervalVal = (spotPitch - rootPitch + 12) % 12;
+        spot.innerText = targetChord.labels[intervalVal] || INTERVAL_MAP[intervalVal].name;
+      }
     }
+  });
+}
 
-    // Centers the scroll viewport around the active frets (defaulting around fret 3-5)
-    function centerFretboardOnActiveNotes() {
-      const activeFrets = userState.filter(f => f > 0);
-      const avgFret = activeFrets.length > 0 
-        ? Math.round(activeFrets.reduce((a,b)=>a+b, 0) / activeFrets.length) 
-        : 3;
-      
-      const targetFretEl = fretboardEl.querySelector(`.fret[data-fret="${Math.max(1, avgFret)}"]`);
-      if (targetFretEl) {
-        const scrollPos = targetFretEl.offsetTop - (viewportEl.clientHeight / 2) + 45;
+    function loadQuestion() {
+  currentQuestion = generateRandomQuestion();
+  instructionEl.innerText = `${currentQuestion.from} ➔ ${currentQuestion.to}`;
+  userState = [...currentQuestion.initialRows];
+
+  feedbackEl.innerText = "Déplacez les notes pour obtenir la forme cible.";
+  feedbackEl.style.color = "var(--md-sys-color-on-surface)";
+  hintBoxEl.style.display = "none";
+  
+  btnValidate.style.display = "inline-flex";
+  btnNext.style.display = "none";
+
+  renderState();
+  centerViewportOnActiveChord();
+}
+
+// Mise à jour du bouton Suivant
+btnNext.addEventListener('click', () => {
+  loadQuestion();
+});
+
+    function centerViewportOnActiveChord() {
+      const avgRow = Math.round(userState.reduce((a, b) => a + b, 0) / userState.length);
+      const rowEl = fretboardEl.querySelector(`.fret-row[data-row="${avgRow}"]`);
+      if (rowEl) {
+        const scrollPos = rowEl.offsetTop - (viewportEl.clientHeight / 2) + 38;
         viewportEl.scrollTo({ top: Math.max(0, scrollPos), behavior: 'smooth' });
       }
     }
 
     /* ==========================================================================
-       8. VALIDATION & CORRECTION SYSTEM
+       7. BUTTON HANDLERS & VALIDATION
        ========================================================================== */
-    btnValidate.addEventListener('click', () => {
-      const q = chordQuestions[currentQuestionIdx];
-      const isCorrect = q.targetSolutions.some(sol => 
-        sol.every((fret, stringIdx) => fret === userState[stringIdx])
-      );
+    // Validation harmonique (Formule)
+btnValidate.addEventListener('click', () => {
+  const q = currentQuestion;
+  const targetChord = CHORDS[q.to];
+  const rootPitch = getPitchClass(q.rootRow, q.rootString);
 
-      if (isCorrect) {
-        score += 100;
-        totalScoreEl.innerText = `${score} pts`;
-        feedbackEl.innerText = "🎉 Parfait ! Accord correct (+100 pts)";
-        feedbackEl.style.color = "var(--md-sys-color-primary)";
-        btnValidate.style.display = "none";
-        btnNext.style.display = "inline-flex";
-      } else {
-        feedbackEl.innerText = "❌ Ce n'est pas tout à fait ça. Réessayez ou utilisez 'Correction'.";
-        feedbackEl.style.color = "var(--chord-root)";
-      }
-    });
+  // 1. Vérifie si l'ancre Root a bougé
+  if (userState[q.rootString] !== q.rootRow) {
+    feedbackEl.innerText = "❌ La fondamentale principale (Corde C) ne doit pas être déplacée.";
+    feedbackEl.style.color = "var(--chord-error)";
+    return;
+  }
+
+  // 2. Extraire les intervalles joués sur les 4 cordes
+  const playedIntervals = userState.map((r, s) => {
+    const pitch = getPitchClass(r, s);
+    return (pitch - rootPitch + 12) % 12;
+  });
+
+  // 3. Vérifier si TOUS les intervalles joués font partie de la formule cible
+  const allNotesInFormula = playedIntervals.every(interval => 
+    targetChord.intervals.includes(interval)
+  );
+
+  // 4. Vérifier que CHAQUE note obligatoire de la formule est présente au moins une fois
+  const allRequiredNotesPresent = targetChord.intervals.every(requiredInterval => 
+    playedIntervals.includes(requiredInterval)
+  );
+
+  if (allNotesInFormula && allRequiredNotesPresent) {
+    score += 100;
+    totalScoreEl.innerText = `${score} pts`;
+    feedbackEl.innerText = "🎉 Bravo ! Formule harmonique parfaitement respectée.";
+    feedbackEl.style.color = "var(--md-sys-color-primary)";
+    btnValidate.style.display = "none";
+    btnNext.style.display = "inline-flex";
+  } else {
+    feedbackEl.innerText = "❌ Formule incomplète ou note hors accord. Vérifiez votre forme.";
+    feedbackEl.style.color = "var(--chord-error)";
+  }
+});
 
     btnCorrect.addEventListener('click', () => {
-      const q = chordQuestions[currentQuestionIdx];
-      userState = [...q.targetSolutions[0]]; // Show first valid solution
-      renderFretboardState(q.targetLabels);
-      centerFretboardOnActiveNotes();
-      feedbackEl.innerText = "Voici la correction proposée !";
+      const q = questions[currentQIdx];
+      userState = [...q.targetRowsSolutions[0]];
+      renderState(true);
+      centerViewportOnActiveChord();
+      feedbackEl.innerText = "Voici la forme requise !";
       feedbackEl.style.color = "var(--md-sys-color-on-surface)";
     });
 
+    // Indice dynamique
+btnHint.addEventListener('click', () => {
+  const q = currentQuestion;
+  hintBoxEl.innerHTML = `<b>Départ (${q.from}) :</b> ${CHORDS[q.from].hint}<br><b>Cible (${q.to}) :</b> ${CHORDS[q.to].hint}`;
+  hintBoxEl.style.display = hintBoxEl.style.display === "block" ? "none" : "block";
+});
+
     btnNext.addEventListener('click', () => {
-      currentQuestionIdx = (currentQuestionIdx + 1) % chordQuestions.length;
-      loadQuestion(currentQuestionIdx);
+      const nextIdx = (currentQIdx + 1) % questions.length;
+      loadQuestion(nextIdx);
     });
 
     /* ==========================================================================
-       9. THEME & DRAWER CONTROLS
+       8. THEME & DRAWER CONTROLS
        ========================================================================== */
+    const themeBtn = document.getElementById('btn-theme');
     themeBtn.addEventListener('click', () => {
       const html = document.documentElement;
       const current = html.getAttribute('data-theme');
@@ -664,8 +756,8 @@
       }
     });
 
-    // Initialize UI
-    buildFretboard();
+    // Initialize App
+    buildMatrix();
     loadQuestion(0);
   </script>
 </body>
