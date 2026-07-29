@@ -500,39 +500,47 @@ const CHORDS = {
 let currentQuestion = null;
 
 // Générateur de question aléatoire
+// Générateur de question avec Racine sur N'IMPORTE QUELLE corde
 function generateRandomQuestion() {
   const keys = Object.keys(CHORDS);
   const fromKey = keys[Math.floor(Math.random() * keys.length)];
   let toKey = fromKey;
   
-  // S'assurer que l'accord cible est différent de l'accord de départ
   while (toKey === fromKey) {
     toKey = keys[Math.floor(Math.random() * keys.length)];
   }
 
-  // Ancre la Fondamentale (Root) sur la corde de C (colonne index 1) à la ligne 12
-  const rootRow = 12;
-  const initialRows = generateValidShape(CHORDS[fromKey], rootRow);
+  // 1. Choix aléatoire de la corde qui porte la racine (0=G, 1=C, 2=E, 3=A)
+  const rootString = Math.floor(Math.random() * 4);
+  const rootRow = 12; // On garde la ligne 12 au centre pour la lisibilité
+
+  // 2. Génération de la forme initiale autour de cette racine
+  const initialRows = generateValidShape(CHORDS[fromKey], rootRow, rootString);
 
   return {
     from: fromKey,
     to: toKey,
     rootRow: rootRow,
-    rootString: 1, // C-String
+    rootString: rootString, // Dynamique !
     initialRows: initialRows
   };
 }
 
-// Fonction auxiliaire pour générer une forme initiale valide pour l'accord de départ
-function generateValidShape(chordDef, rootRow) {
-  const rootPitch = getPitchClass(rootRow, 1);
-  let shape = [0, rootRow, 0, 0]; // C-String est figée comme Root principale
+// Génère une forme valide selon la corde de racine choisie
+function generateValidShape(chordDef, rootRow, rootString) {
+  const rootPitch = getPitchClass(rootRow, rootString);
+  let shape = [0, 0, 0, 0];
+  shape[rootString] = rootRow; // On fixe la racine sur la corde choisie
 
-  [0, 2, 3].forEach(s => {
-    // Trouve la ligne la plus proche sur la corde 's' qui appartient à la formule
+  // Pour les 3 autres cordes
+  [0, 1, 2, 3].forEach(s => {
+    if (s === rootString) return;
+
     let bestRow = rootRow;
     let minDiff = 99;
-    for (let r = rootRow - 3; r <= rootRow + 4; r++) {
+    
+    // Cherche la case la plus proche (+/- 3 cases) qui contient une note de la formule
+    for (let r = rootRow - 3; r <= rootRow + 3; r++) {
       const pitch = getPitchClass(r, s);
       const interval = (pitch - rootPitch + 12) % 12;
       if (chordDef.intervals.includes(interval)) {
@@ -679,7 +687,7 @@ btnValidate.addEventListener('click', () => {
 
   // 1. Vérifie si l'ancre Root a bougé
   if (userState[q.rootString] !== q.rootRow) {
-    feedbackEl.innerText = "❌ La fondamentale principale (Corde C) ne doit pas être déplacée.";
+    feedbackEl.innerText = "❌ La fondamentale principale ne doit pas être déplacée.";
     feedbackEl.style.color = "var(--chord-error)";
     return;
   }
