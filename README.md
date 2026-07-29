@@ -2,36 +2,30 @@
 
 Liste de petits outils pour aider à travailler un instrument ou à éditer ses partitions. Certains outils sont basés sur la "notation abc" pour la musique. 
 
-## Metronome graduel
+## Quiz position des accord ukulélé
 
-* 🚀 Tester l'application : [Ouvrir l'outil (Démo interactive)](https://fxpar.github.io/abc-notation-artifacts/metronome-graduel.html)
-* 📄 Code source : [metronome-graduel.html](https://github.com/fxpar/abc-notation-artifacts/blob/main/metronome-graduel.html)
-
-
-https://github.com/fxpar/abc-notation-artifacts/blob/main/metronome-graduel.html
-
-**Un métronome "geek" pour s'entrainer en accélérant (ou en décélérant), soit de manière simple, soit en utilisant des formules complexes: rester 3 mesures au même tempo, accélerer de 5bpm les 4 suivantes, revenir à un rythme intermédiaire...**
+* 🚀 Tester l'application : [Ouvrir l'outil (Démo interactive)](https://fxpar.github.io/abc-notation-artifacts/ukulele-position-accord-quiz.html)
+* 📄 Code source : [metronome-graduel.html](https://github.com/fxpar/abc-notation-artifacts/blob/main/ukulele-position-accord-quiz.html)
 
 
-|Fonctionnalité|Statut|
-|---|---|
-|Métronome simple (formule vide)|✅|
-|Progression personnalisée (R / C / L)|✅|
-|Visualisation des beats avec temps fort|✅|
-|Audio différencié (aigu/grave)|✅|
-|Presets cards + boutons rapides|✅|
-|Mode nuit avec sauvegarde|✅|
-|Curseur de tempo|✅|
-|Responsive mobile/desktop|✅|
-|Icônes Bootstrap modernes|✅|
+**Tester vos connaissances pour passer d'une forme d'accord à une autre. **
 
 Librairies utilisées: 
-* bootstrap
-* boostrap-icons
-* popper (l'outil d'affichage d'aide de bootstrap)
+* aucune
 
-Code créé par IA (Deepseek), et prompté par moi 😉
-Licence: CC BY-NC 4.0
+
+## Quiz formules d'accord
+
+* 🚀 Tester l'application : [Ouvrir l'outil (Démo interactive)](https://fxpar.github.io/abc-notation-artifacts/quiz-formule-accords.html)
+* 📄 Code source : [metronome-graduel.html](https://github.com/fxpar/abc-notation-artifacts/blob/main/quiz-formule-accords.html)
+
+
+**Questions à trou sur les formules d'accord. Ex: m7: R-b3-5-?**
+
+Librairies utilisées: 
+* aucune
+
+
 
 ## Moteur de recherche d'accord de ukulele
 
@@ -197,6 +191,39 @@ Librairies utilisées:
 Code créé par IA (Gemini), et prompté par moi 😉
 
 Licence: CC BY-NC 4.0
+
+
+## Metronome graduel
+
+* 🚀 Tester l'application : [Ouvrir l'outil (Démo interactive)](https://fxpar.github.io/abc-notation-artifacts/metronome-graduel.html)
+* 📄 Code source : [metronome-graduel.html](https://github.com/fxpar/abc-notation-artifacts/blob/main/metronome-graduel.html)
+
+
+https://github.com/fxpar/abc-notation-artifacts/blob/main/metronome-graduel.html
+
+**Un métronome "geek" pour s'entrainer en accélérant (ou en décélérant), soit de manière simple, soit en utilisant des formules complexes: rester 3 mesures au même tempo, accélerer de 5bpm les 4 suivantes, revenir à un rythme intermédiaire...**
+
+
+|Fonctionnalité|Statut|
+|---|---|
+|Métronome simple (formule vide)|✅|
+|Progression personnalisée (R / C / L)|✅|
+|Visualisation des beats avec temps fort|✅|
+|Audio différencié (aigu/grave)|✅|
+|Presets cards + boutons rapides|✅|
+|Mode nuit avec sauvegarde|✅|
+|Curseur de tempo|✅|
+|Responsive mobile/desktop|✅|
+|Icônes Bootstrap modernes|✅|
+
+Librairies utilisées: 
+* bootstrap
+* boostrap-icons
+* popper (l'outil d'affichage d'aide de bootstrap)
+
+Code créé par IA (Deepseek), et prompté par moi 😉
+Licence: CC BY-NC 4.0
+
 
 # Code source
 
