@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="fr" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Générateur de Grille ABCJS</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/abcjs@6.6.3/abcjs-audio.min.css">
+    <!-- Ukulele Chords Web Component -->
+    <!-- <script src="https://pianosnake.github.io/uke-chord/uke-chord.js"></script> -->
+    <script src="./js/uke-chord3fx.js"></script>
+    <style>
+        .abc-paper {
+            background: transparent;
+            padding: 10px;
+        }
+        /* Intégration du player abcjs */
+        .abcjs-audio .abcjs-btn {
+            background-color: var(--bs-primary) !important;
+            color: white !important;
+            border-radius: 4px;
+        }
+        .abcjs-audio {
+            border-radius: var(--bs-border-radius);
+            background: var(--bs-secondary-bg);
+            border: 1px solid var(--bs-border-color);
+        }
+        
+        /* --- Styles du Curseur SVG et de la surbrillance --- */
+        .abcjs-cursor {
+            stroke: rgba(220, 53, 69, 0.75);
+            stroke-width: 2.5px;
+        }
+        .abcjs-highlight {
+            fill: rgba(220, 53, 69, 0.2) !important;
+        }
+
+        /* --- Styles pour les diagrammes d'accords --- */
+        .chord-diagrams-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+            align-items: center;
+        }
+		
+		/* Astuce magique pour le schéma d'accord (SVG) */
+			[data-bs-theme="dark"] uke-chord {
+    filter: invert(0.9) hue-rotate(180deg);
+}
+    </style>
+</head>
+<body class="bg-body-tertiary min-vh-100 d-flex flex-column">
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4 shadow">
+        <div class="container-fluid">
+            <a class="navbar-brand d-flex align-items-center" href="#">
+                <i class="bi bi-music-note-list me-2 text-primary"></i> Grille-To-ABC Editor
+            </a>
+            <button class="btn btn-outline-light btn-sm ms-auto d-flex align-items-center" id="themeToggleBtn" onclick="toggleTheme()">
+                <i class="bi bi-sun-fill" id="themeIcon"></i>
+            </button>
+        </div>
+    </nav>
+
+    <div class="container my-2 flex-grow-1">
+        <div class="row g-4">
+            
+            <div class="col-lg-5">
+                <div class="card shadow-sm h-100">
+                    <div class="card-header bg-primary text-white py-3">
+                        <h5 class="card-title mb-0"><i class="bi bi-sliders me-2"></i>Configuration</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label for="chordGrid" class="form-label fw-bold">Votre grille d'accords :</label>
+                            <textarea class="form-control font-monospace" id="chordGrid" rows="3" placeholder="Ex: C(0003) C7(0001) C F7(5556) C(3433) F7 C"></textarea>
+                            <div class="form-text">Séparez par des espaces. Utilisez <code>/</code> pour répéter la mesure.</div>
+                        </div>
+
+                        <div class="row g-3 mb-3">
+                            <div class="col-sm-6">
+                                <label for="gchordStyle" class="form-label fw-bold">Style :</label>
+                                <select class="form-select" id="gchordStyle">
+                                    <option value="zczczczc">Boom Chick (Standard)</option>
+                                    <option value="bzzcbzcz">Tango</option>
+                                    <option value="GIGIGJHJ">Arpège</option>
+                                    <option value="zzzz">Silencieux</option>
+                                </select>
+                            </div>
+                            <div class="col-sm-6">
+                                <label for="timeSignature" class="form-label fw-bold">Mesure :</label>
+                                <select class="form-select" id="timeSignature">
+                                    <option value="4/4" selected>4/4</option>
+                                    <option value="3/4">3/4</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2 pt-2">
+                            <button class="btn btn-success btn-lg" onclick="generateABC()">
+                                <i class="bi bi-play-circle-fill me-2"></i>Appliquer & Générer
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-7">
+                <div class="card shadow-sm h-100">
+                    <div class="card-header bg-secondary text-white py-3 d-flex justify-content-between align-items-center">
+                        <h5 class="card-title mb-0"><i class="bi bi-eye me-2"></i>Rendu</h5>
+                        <div>
+                            <button class="btn btn-sm btn-light me-1" type="button" data-bs-toggle="collapse" data-bs-target="#chordsCodeCollapse">
+                                Code Accords
+                            </button>
+                            <button class="btn btn-sm btn-light" type="button" data-bs-toggle="collapse" data-bs-target="#abcCodeCollapse">
+                                Code ABC
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body d-flex flex-column">
+                        
+                        <!-- Code HTML pour Chords -->
+                        <div class="collapse mb-3" id="chordsCodeCollapse">
+                            <label class="form-label small fw-bold">Code HTML des Diagrammes :</label>
+                            <textarea class="form-control font-monospace bg-body-secondary small" id="chordsSource" rows="3" readonly></textarea>
+                        </div>
+
+                        <!-- Code ABC -->
+                        <div class="collapse mb-3" id="abcCodeCollapse">
+                            <label class="form-label small fw-bold">Code ABC :</label>
+                            <textarea class="form-control font-monospace bg-body-secondary small" id="abcSource" rows="4" readonly></textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <div class="d-flex align-items-stretch gap-1">
+                                <div id="audio-player" class="flex-grow-1"></div>
+                                <button class="btn btn-secondary btn-sm" type="button" data-bs-toggle="collapse" data-bs-target="#moreControls" title="Plus d'options">
+                                    <i class="bi bi-three-dots-vertical"></i>
+                                </button>
+                            </div>
+                            
+                            <div class="collapse border border-top-0 rounded-bottom p-3 bg-body-secondary" id="moreControls">
+                                <div class="row g-3 align-items-end">
+                                    <div class="col-auto">
+                                        <label for="abc-sel-transpose" class="form-label small fw-bold">Transposer (demi-tons) :</label>
+                                        <select id="abc-sel-transpose" class="form-select form-select-sm" style="width: 120px;">
+                                            <option value="0" selected>0 (Défaut)</option>
+                                            <option value="1">+1</option>
+                                            <option value="2">+2</option>
+                                            <option value="3">+3</option>
+                                            <option value="4">+4</option>
+                                            <option value="5">+5</option>
+                                            <option value="6">+6</option>
+                                            <option value="7">+7</option>
+                                            <option value="8">+8</option>
+                                            <option value="-1">-1</option>
+                                            <option value="-2">-2</option>
+                                            <option value="-3">-3</option>
+                                            <option value="-4">-4</option>
+                                            <option value="-5">-5</option>
+                                            <option value="-6">-6</option>
+                                            <option value="-7">-7</option>
+                                            <option value="-8">-8</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-auto">
+                                        <button class="btn btn-primary btn-sm" onclick="generateABC()">Appliquer</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Section d'affichage des diagrammes -->
+                        <div class="border rounded p-3 mb-3 bg-card">
+                            <div id="chord-diagrams" class="chord-diagrams-container"></div>
+                        </div>
+
+                        <div class="flex-grow-1 border rounded p-2 bg-card d-flex align-items-center justify-content-center">
+                            <div id="paper" class="w-100 abc-paper"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/abcjs@6.4.0/dist/abcjs-basic-min.js"></script>
+
+    <script>
+        document.getElementById('chordGrid').value = "C(0003) C7(0001) C7(1211b1111p3s7b,3,5,R) F7(2313) C7(3433) F7 C7";
+
+        let synthControl = null;
+
+        // --- GESTIONNAIRE DU CURSEUR AUDIO ---
+        function CursorControl() {
+            var self = this;
+            self.onStart = function() {
+                var svg = document.querySelector("#paper svg");
+                if (!svg) return;
+                var cursor = document.createElementNS("http://www.w3.org/2000/svg", "line");
+                cursor.setAttribute("class", "abcjs-cursor");
+                cursor.setAttributeNS(null, 'x1', "0");
+                cursor.setAttributeNS(null, 'y1', "0");
+                cursor.setAttributeNS(null, 'x2', "0");
+                cursor.setAttributeNS(null, 'y2', "0");
+                svg.appendChild(cursor);
+            };
+            self.onEvent = function(ev) {
+                if (ev.measureStart && ev.left === null) return;
+                
+                document.querySelectorAll("#paper svg .abcjs-highlight").forEach(el => el.classList.remove("abcjs-highlight"));
+                
+                if (ev.elements) {
+                    for (var i = 0; i < ev.elements.length; i++) {
+                        var note = ev.elements[i];
+                        for (var j = 0; j < note.length; j++) {
+                            note[j].classList.add("abcjs-highlight");
+                        }
+                    }
+                }
+                
+                var cursor = document.querySelector("#paper svg .abcjs-cursor");
+                if (cursor && ev.left !== null) {
+                    cursor.setAttributeNS(null, 'x1', (ev.left - 2).toString());
+                    cursor.setAttributeNS(null, 'x2', (ev.left - 2).toString());
+                    cursor.setAttributeNS(null, 'y1', ev.top.toString());
+                    cursor.setAttributeNS(null, 'y2', (ev.top + ev.height).toString());
+                }
+            };
+            self.onFinished = function() {
+                document.querySelectorAll("#paper svg .abcjs-highlight").forEach(el => el.classList.remove("abcjs-highlight"));
+                var cursor = document.querySelector("#paper svg .abcjs-cursor");
+                if (cursor) { 
+                    cursor.setAttributeNS(null, 'x1', "0"); 
+                    cursor.setAttributeNS(null, 'x2', "0"); 
+                }
+            };
+        }
+        const cursorControl = new CursorControl();
+
+        function toggleTheme() {
+            const html = document.documentElement;
+            const currentTheme = html.getAttribute('data-bs-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            html.setAttribute('data-bs-theme', newTheme);
+            
+            const btn = document.getElementById('themeToggleBtn');
+            if (newTheme === 'dark') {
+                btn.innerHTML = '<i class="bi bi-sun-fill"></i>';
+            } else {
+                btn.innerHTML = '<i class="bi bi-moon-fill"></i>';
+            }
+        }
+
+        // --- PARSER D'ACCORDS ET GENERATEUR DUKE-CHORD ---
+        function parseChordToken(token, knownChords) {
+            // Expression régulière capturant le nom de l'accord et optionnellement ce qui est entre parenthèses
+            const regex = /^([A-G][a-zA-Z0-9#b\/]*)(?:\(([^)]+)\))?$/;
+            const match = token.match(regex);
+
+            if (!match) return null;
+
+            const chordName = match[1];
+            const fingeringSpec = match[2];
+
+            let chordObj = {
+                name: chordName,
+                frets: "",
+                barre: "",
+                position: "0",
+                length: "5",
+                fingers: "",
+                sub: ""
+            };
+
+            if (fingeringSpec) {
+                // Analyse de la spécification avancée ou simple
+                // Ex: 0003 ou 10,11,12,10 ou 0003p1l6b22f1234
+                let fretsPart = fingeringSpec;
+                let optPart = "";
+
+                // Trouver où commence la première option avancée (p, l, b, f, s)
+                const optIndex = fingeringSpec.search(/[plbfs]/);
+                if (optIndex !== -1) {
+                    fretsPart = fingeringSpec.substring(0, optIndex);
+                    optPart = fingeringSpec.substring(optIndex);
+                }
+
+                chordObj.frets = fretsPart;
+
+                // Extraire les paramètres avancés le cas échéant
+                if (optPart) {
+                    const pMatch = optPart.match(/p([^lbfs]+)/);
+                    if (pMatch) chordObj.position = pMatch[1];
+
+                    const lMatch = optPart.match(/l([^pbfs]+)/);
+                    if (lMatch) chordObj.length = lMatch[1];
+
+                    const bMatch = optPart.match(/b([^plfs]+)/);
+                    if (bMatch) chordObj.barre = bMatch[1];
+
+                    const fMatch = optPart.match(/f([^pbls]+)/);
+                    if (fMatch) chordObj.fingers = fMatch[1];
+
+                    const sMatch = optPart.match(/s([^pblf]+)/);
+                    if (sMatch) chordObj.sub = sMatch[1];
+                }
+
+                // Mémoriser cette configuration pour réutilisation ultérieure
+                knownChords[chordName] = { ...chordObj };
+            } else if (knownChords[chordName]) {
+                // Si pas de digramme spécifié, réutiliser la dernière configuration
+                chordObj = { ...knownChords[chordName] };
+            }
+
+            return chordObj;
+        }
+
+        function generateABC() {
+            if (synthControl) {
+                synthControl.pause();
+                synthControl = null;
+            }
+
+            const gridText = document.getElementById('chordGrid').value.trim();
+            const gchord = document.getElementById('gchordStyle').value;
+            const timeSig = document.getElementById('timeSignature').value;
+            const transposeValue = parseInt(document.getElementById('abc-sel-transpose').value, 10) || 0;
+            
+            const tokens = gridText.replace(/\|/g, ' ').split(/\s+/).filter(t => t.length > 0);
+            
+            let abcMeasures = [];
+            let lastChordName = "C"; 
+            const beatsPerMeasure = timeSig === "3/4" ? 3 : 4;
+            const rests = " z".repeat(beatsPerMeasure).trim();
+
+            const knownChords = {};
+            const uniqueChordsList = [];
+
+            tokens.forEach(token => {
+                if (token === "/" || token === "///" || token === "//") {
+                    const count = token.length;
+                    for (let i = 0; i < count; i++) {
+                        abcMeasures.push(`"${lastChordName}" ${rests}`);
+                    }
+                } else {
+                    const parsedChord = parseChordToken(token, knownChords);
+                    if (parsedChord) {
+                        lastChordName = parsedChord.name;
+                        uniqueChordsList.push(parsedChord);
+                    } else {
+                        // Traitement par défaut en cas de chaîne libre sans nom standard
+                        lastChordName = token;
+                    }
+                    abcMeasures.push(`"${lastChordName}" ${rests}`);
+                }
+            });
+
+            // 1. Rendu des Diagrammes Ukulélé & Génération du code HTML
+            const diagramContainer = document.getElementById('chord-diagrams');
+            diagramContainer.innerHTML = '';
+
+            let chordsHtmlOutput = "";
+            uniqueChordsList.forEach(chord => {
+                const chordTag = `<uke-chord name="${chord.name}" frets="${chord.frets}" barre="${chord.barre}" position="${chord.position}" length="${chord.length}" fingers="${chord.fingers}" sub="${chord.sub}"></uke-chord>`;
+                chordsHtmlOutput += chordTag + "\n";
+                diagramContainer.innerHTML += chordTag;
+            });
+
+            document.getElementById('chordsSource').value = chordsHtmlOutput.trim();
+
+            // 2. Rendu de la partition ABC
+            let formattedMeasures = "";
+            for (let i = 0; i < abcMeasures.length; i++) {
+                formattedMeasures += abcMeasures[i] + " | ";
+                if ((i + 1) % 4 === 0 && i !== abcMeasures.length - 1) {
+                    formattedMeasures += "\n ";
+                }
+            }
+
+            const abcString = `X:1\nT:Grille Rythmique\nM:${timeSig}\nL:1/4\nQ:100\nK:C\n%%MIDI transpose ${transposeValue}\n%%MIDI gchord ${gchord}\n${formattedMeasures}`;
+            document.getElementById('abcSource').value = abcString;
+
+            const renderOptions = { 
+                responsive: "resize",
+                add_classes: true,
+                visualTranspose: transposeValue
+            };
+
+            const visualObj = ABCJS.renderAbc("paper", abcString, renderOptions)[0];
+
+            // 3. Rendu Audio
+            if (ABCJS.synth.supportsAudio()) {
+                const audioOptions = {
+                    displayLoop: true,
+                    displayRestart: true,
+                    displayPlay: true,
+                    displayProgress: true,
+                    displayWarp: true,
+                    midiTranspose: transposeValue
+                };
+                
+                synthControl = new ABCJS.synth.SynthController();
+                synthControl.load("#audio-player", cursorControl, audioOptions);
+
+                const createSynth = new ABCJS.synth.CreateSynth();
+                createSynth.init({ visualObj: visualObj }).then(function () {
+                    synthControl.setTune(visualObj, false).then(function () {
+                        console.log("Lecteur audio et curseur synchronisés.");
+                    }).catch(function (error) {
+                        console.warn("Erreur d'initialisation du morceau :", error);
+                    });
+                }).catch(function (error) {
+                    console.warn("Erreur de création de la synthèse audio :", error);
+                });
+            } else {
+                document.getElementById("audio-player").innerHTML = "<div class='alert alert-warning p-2 small'>L'audio n'est pas supporté.</div>";
+            }
+        }
+
+        window.onload = function() {
+            generateABC();
+        };
+    </script>
+</body>
+</html>
