@@ -2,6 +2,8 @@
 
 Liste de petits outils pour aider à travailler un instrument ou à éditer ses partitions. Certains outils sont basés sur la "notation abc" pour la musique. 
 
+---
+
 ## Entrainement rythme batterie
 
 * 🚀 Tester l'application : [Ouvrir l'outil (Démo interactive)](https://fxpar.github.io/abc-notation-artifacts/drum-licks.html)
@@ -11,9 +13,23 @@ Liste de petits outils pour aider à travailler un instrument ou à éditer ses 
 
 **Plusieurs activité ludiques pour s'entrainer au rythme à partir d'un choix de "licks" (petits exercices).**
 
+Activités:
+* Charger des licks ou choisir un rythme dans la liste existante
+* Activité 1: jouer le rythme, varier les tempos, mettre en boucle
+* Activité 2: jouer le rythme 4 fois avec une fin (boucle possible)
+* Activité 3: jouer le rythme sans le curseur ni la partition (masquée)
+* Activité 4: jouer le rythme pendant les mesures silencieuses et retomber sur le bon rythme au retour de la musique.
+* Activité 5: alterne avec le rythme précédent
 
+Librairies utilisées: 
+* abcjs Paul Rosen
+* bootstrap
 
+Code créé par IA (Gemini), et prompté par moi 😉
 
+Licence: CC BY-NC 4.0
+
+---
 
 ## Grille d'accords avec diagrammes
 
@@ -44,7 +60,7 @@ Code créé par IA (Gemini), et prompté par moi 😉
 Licence: CC BY-NC 4.0
 
 
-
+---
 
 ## Quiz position des accord ukulélé
 
@@ -69,6 +85,7 @@ Librairies utilisées:
 Librairies utilisées: 
 * aucune
 
+---
 
 
 ## Moteur de recherche d'accord de ukulele
@@ -94,6 +111,8 @@ Librairies utilisées:
 Code créé par IA (Gemini), et prompté par moi 😉
 Licence: CC BY-NC 4.0
 
+---
+
 ## Grille de blues trainer
 
 * 🚀 Tester l'application : [Ouvrir l'outil (Démo interactive)](https://fxpar.github.io/abc-notation-artifacts/blues-grids.html)
@@ -116,6 +135,10 @@ Librairies utilisées:
 
 Code créé par IA (Gemini), et prompté par moi 😉
 Licence: CC BY-NC 4.0
+
+
+---
+
 
 ## Chord change trainer
 
@@ -142,6 +165,9 @@ Librairies utilisées:
 Code créé par IA (Gemini, je crois), et prompté par moi 😉
 Licence: CC BY-NC 4.0
 
+---
+
+
 ## Ear chord trainer
 
 * 🚀 Tester l'application : [Ouvrir l'outil (Démo interactive)](https://fxpar.github.io/abc-notation-artifacts/chord-ear-trainer.html)
@@ -167,6 +193,8 @@ Librairies utilisées:
 Code créé par IA (Gemini), et prompté par moi 😉
 
 Licence: CC BY-NC 4.0
+
+---
 
 
 ## Grid creation
@@ -201,6 +229,7 @@ Code créé par IA (Gemini, je crois), et prompté par moi 😉
 
 Licence: CC BY-NC 4.0
 
+---
 
 ##  Abc editor player
 
@@ -236,6 +265,8 @@ Code créé par IA (Gemini), et prompté par moi 😉
 
 Licence: CC BY-NC 4.0
 
+---
+
 
 ## Metronome graduel
 
@@ -267,6 +298,8 @@ Librairies utilisées:
 
 Code créé par IA (Deepseek), et prompté par moi 😉
 Licence: CC BY-NC 4.0
+
+---
 
 
 # Code source
