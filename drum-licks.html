@@ -4,7 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Générateur ABCJS - Percussions</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- <link href="./css/bootstrap@5.3.0/bootstrap.min.css" rel="stylesheet"> -->
+    <!-- <link rel="stylesheet" href="./bootstrap-icons@1.11.1/font/bootstrap-icons.min.css"> -->
+    <!-- <link rel="stylesheet" href="./css/abcjs-audio.css"> -->
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/abcjs@6.6.3/abcjs-audio.min.css">
     <style>
@@ -201,7 +204,9 @@ body {
   </div>
 </footer>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- <script src="./js/bootstrap@5.3.0/bootstrap.bundle.min.js"></script> -->
+    <!-- <script src="./js/abcjs@6.4.0/dist/abcjs-basic-min.js"></script> -->
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/abcjs@6.4.0/dist/abcjs-basic-min.js"></script>
 
     <script>
@@ -424,14 +429,14 @@ V:1 stem=up`;
 		// Génère une mesure de silence "z" adaptée à la mesure M: (ex: "z z z z" pour 4/4, "z z z" pour 3/4)
 		function getRestMeasure(mHeader) {
 			const match = mHeader.match(/M:\s*(\d+)\/(\d+)/);
-			if (!match) return "z z z z"; // Valeur par défaut si non trouvée
+			if (!match) return "z2 z2 z2 z2"; // Valeur par défaut si non trouvée
 			
 			const beats = parseInt(match[1], 10);
 			// Si la mesure a par exemple 12 croches (12/8), on peut ajuster ou générer autant de silences que de temps principaux
 			// Pour une mesure standard X/Y :
 			let rests = [];
 			for (let i = 0; i < beats; i++) {
-				rests.push("z");
+				rests.push("z2");
 			}
 			return rests.join(" ");
 		}
