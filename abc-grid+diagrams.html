@@ -77,7 +77,114 @@
                             <label for="chordGrid" class="form-label fw-bold">Votre grille d'accords :</label>
                             <textarea class="form-control font-monospace" id="chordGrid" rows="3" placeholder="Ex: C(0003) C7(0001) C F7(5556) C(3433) F7 C"></textarea>
                             <div class="form-text">Séparez par des espaces. Utilisez <code>/</code> pour répéter la mesure.</div>
-                        </div>
+                        </div
+						
+						<!-- Bouton / Panneau d'aide sur la syntaxe des accords -->
+<div class="mt-2">
+    <button class="btn btn-sm btn-outline-info w-100 text-start d-flex align-items-center justify-content-between" 
+            type="button" 
+            data-bs-toggle="collapse" 
+            data-bs-target="#chordSyntaxHelp">
+        <span><i class="bi bi-question-circle-fill me-1"></i> Aide sur la syntaxe des accords</span>
+        <i class="bi bi-chevron-down"></i>
+    </button>
+    
+    <div class="collapse mt-2" id="chordSyntaxHelp">
+        <div class="card card-body bg-body-tertiary small p-2">
+            <p class="mb-2"><strong>Syntaxe de base :</strong> <code>NomAccord(DoigtéOptions)</code></p>
+            <ul class="mb-2 ps-3">
+                <li><code>C /// G // Am</code> : Utilise <code>/</code> pour répéter la mesure.</li>
+                <li><code>C(0003)</code> : Les 4 chiffres représentent les cases des 4 cordes (ex: <code>0003</code>).</li>
+                <li><code>G7(10,11,12,10)</code> : Utilisez des virgules pour les numéros de case > 9.</li>
+                <li><code>C°</code>, <code>G7/D</code>, <code>Am?</code>, <code>??</code> : Les symboles <code>°</code>, <code>/</code> et <code>?</code> sont acceptés dans les noms.</li>
+            </ul>
+
+            <div class="fw-bold mb-1 border-top pt-2">Options avancées (à la suite des cases) :</div>
+            <table class="table table-sm table-borderless mb-0 align-middle">
+                <tbody>
+                    <tr>
+                        <td><code>p</code></td>
+                        <td><strong>Position :</strong> Numéro de la case de départ (défaut : <code>0</code>). Ex: <code>p3</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>b</code></td>
+                        <td><strong>Barré :</strong> Cases du barré. Ex: <code>b1111</code> ou <code>b22</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>f</code></td>
+                        <td><strong>Doigts :</strong> Doigts utilisés ou annotations (chiffres, <code>R</code>, <code>b3</code>...). Ex: <code>f1234</code>, <code>f5,R,b3,6</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>s</code></td>
+                        <td><strong>Sub :</strong> Texte/intervalle affiché sous le schéma. Ex: <code>s7b,3,5,R</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>l</code></td>
+                        <td><strong>Longueur :</strong> Nombre de cases affichées (défaut : <code>5</code>). Ex: <code>l6</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>c</code></td>
+                        <td><strong>Calcul automatique :</strong> Convertit automatiquement les numéros de cases à partir de la position <code>p</code>. Ex: <code>C(9,10,8,12p8c)</code> → devient cases <code>2,3,1,5</code> en position <code>8</code>.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+<!-- English Chord Syntax Help Panel -->
+<div class="mt-2">
+    <button class="btn btn-sm btn-outline-info w-100 text-start d-flex align-items-center justify-content-between" 
+            type="button" 
+            data-bs-toggle="collapse" 
+            data-bs-target="#chordSyntaxHelpEN">
+        <span><i class="bi bi-question-circle-fill me-1"></i> Chord Syntax Help (English)</span>
+        <i class="bi bi-chevron-down"></i>
+    </button>
+    
+    <div class="collapse mt-2" id="chordSyntaxHelpEN">
+        <div class="card card-body bg-body-tertiary small p-2">
+            <p class="mb-2"><strong>Basic Syntax:</strong> <code>ChordName(FingeringOptions)</code></p>
+            <ul class="mb-2 ps-3">
+                <li><code>C /// G // Am</code>: Use <code>/</code> to repeat the measure.</li>
+                <li><code>C(0003)</code>: The 4 digits represent frets for the 4 strings (e.g., <code>0003</code>).</li>
+                <li><code>G7(10,11,12,10)</code>: Use commas for fret numbers > 9.</li>
+                <li><code>C°</code>, <code>G7/D</code>, <code>Am?</code>, <code>??</code>: Symbols like <code>°</code>, <code>/</code> and <code>?</code> are accepted in chord names.</li>
+            </ul>
+
+            <div class="fw-bold mb-1 border-top pt-2">Advanced Options (following the frets):</div>
+            <table class="table table-sm table-borderless mb-0 align-middle">
+                <tbody>
+                    <tr>
+                        <td><code>p</code></td>
+                        <td><strong>Position:</strong> Starting fret position (default: <code>0</code>). Ex: <code>p3</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>b</code></td>
+                        <td><strong>Barre:</strong> Barre frets. Ex: <code>b1111</code> or <code>b22</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>f</code></td>
+                        <td><strong>Fingers:</strong> Finger numbers or annotations (digits, <code>R</code>, <code>b3</code>...). Ex: <code>f1234</code>, <code>f5,R,b3,6</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>s</code></td>
+                        <td><strong>Sub:</strong> Subtitle/intervals displayed below the diagram. Ex: <code>s7b,3,5,R</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>l</code></td>
+                        <td><strong>Length:</strong> Number of visible frets (default: <code>5</code>). Ex: <code>l6</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>c</code></td>
+                        <td><strong>Calculate:</strong> Automatically calculates relative fret numbers based on position <code>p</code>. Ex: <code>C(9,10,8,12p8c)</code> → becomes frets <code>2,3,1,5</code> at position <code>8</code>.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
 
                         <div class="row g-3 mb-3">
                             <div class="col-sm-6">
@@ -87,6 +194,7 @@
                                     <option value="bzzcbzcz">Tango</option>
                                     <option value="GIGIGJHJ">Arpège</option>
                                     <option value="zzzz">Silencieux</option>
+                                    <option value="cccccccc">Percussion Accords</option>
                                 </select>
                             </div>
                             <div class="col-sm-6">
@@ -97,12 +205,22 @@
                                 </select>
                             </div>
                         </div>
+						
+						<div class="form-check form-switch mb-3">
+    <input class="form-check-input" type="checkbox" id="chordRestsToggle">
+    <label class="form-check-label fw-bold" for="chordRestsToggle">
+        Répéter l'accord sur chaque temps (<code>" c"</code>)
+    </label>
+</div>
 
                         <div class="d-grid gap-2 pt-2">
                             <button class="btn btn-success btn-lg" onclick="generateABC()">
                                 <i class="bi bi-play-circle-fill me-2"></i>Appliquer & Générer
                             </button>
                         </div>
+						
+						
+						
                     </div>
                 </div>
             </div>
@@ -192,7 +310,7 @@
     <script src="https://cdn.jsdelivr.net/npm/abcjs@6.4.0/dist/abcjs-basic-min.js"></script>
 
     <script>
-        document.getElementById('chordGrid').value = "C(0003) C7(0001) C7(1211b1111p3s7b,3,5,R) F7(2313) C7(3433) F7 C7";
+        document.getElementById('chordGrid').value = "C(0003) C7(0001) C7(1211b1111p3s7b,3,5,Rf5R36) F7(2313) C7(3433) F7 C7";
 
         let synthControl = null;
 
@@ -259,67 +377,87 @@
 
         // --- PARSER D'ACCORDS ET GENERATEUR DUKE-CHORD ---
         function parseChordToken(token, knownChords) {
-            // Expression régulière capturant le nom de l'accord et optionnellement ce qui est entre parenthèses
-            const regex = /^([A-G][a-zA-Z0-9#b\/]*)(?:\(([^)]+)\))?$/;
-            const match = token.match(regex);
+    const regex = /^([A-G\?\/][a-zA-Z0-9#b\/°\?]*)(?:\(([^)]+)\))?$/;
+    const match = token.match(regex);
 
-            if (!match) return null;
+    if (!match) return null;
 
-            const chordName = match[1];
-            const fingeringSpec = match[2];
+    const chordName = match[1];
+    const fingeringSpec = match[2];
 
-            let chordObj = {
-                name: chordName,
-                frets: "",
-                barre: "",
-                position: "0",
-                length: "5",
-                fingers: "",
-                sub: ""
-            };
+    let chordObj = {
+        name: chordName,
+        frets: "",
+        barre: "",
+        position: "0",
+        length: "5",
+        fingers: "",
+        sub: ""
+    };
 
-            if (fingeringSpec) {
-                // Analyse de la spécification avancée ou simple
-                // Ex: 0003 ou 10,11,12,10 ou 0003p1l6b22f1234
-                let fretsPart = fingeringSpec;
-                let optPart = "";
+    if (fingeringSpec) {
+        let fretsPart = fingeringSpec;
+        let optPart = "";
 
-                // Trouver où commence la première option avancée (p, l, b, f, s)
-                const optIndex = fingeringSpec.search(/[plbfs]/);
-                if (optIndex !== -1) {
-                    fretsPart = fingeringSpec.substring(0, optIndex);
-                    optPart = fingeringSpec.substring(optIndex);
-                }
+        // Trouver le premier drapeau d'option
+        const optIndex = fingeringSpec.search(/[plbfsc]/);
+        if (optIndex !== -1) {
+            fretsPart = fingeringSpec.substring(0, optIndex);
+            optPart = fingeringSpec.substring(optIndex);
+        }
 
-                chordObj.frets = fretsPart;
+        chordObj.frets = fretsPart;
 
-                // Extraire les paramètres avancés le cas échéant
-                if (optPart) {
-                    const pMatch = optPart.match(/p([^lbfs]+)/);
-                    if (pMatch) chordObj.position = pMatch[1];
-
-                    const lMatch = optPart.match(/l([^pbfs]+)/);
-                    if (lMatch) chordObj.length = lMatch[1];
-
-                    const bMatch = optPart.match(/b([^plfs]+)/);
-                    if (bMatch) chordObj.barre = bMatch[1];
-
-                    const fMatch = optPart.match(/f([^pbls]+)/);
-                    if (fMatch) chordObj.fingers = fMatch[1];
-
-                    const sMatch = optPart.match(/s([^pblf]+)/);
-                    if (sMatch) chordObj.sub = sMatch[1];
-                }
-
-                // Mémoriser cette configuration pour réutilisation ultérieure
-                knownChords[chordName] = { ...chordObj };
-            } else if (knownChords[chordName]) {
-                // Si pas de digramme spécifié, réutiliser la dernière configuration
-                chordObj = { ...knownChords[chordName] };
+        if (optPart) {
+            // Découpage propre de chaque option selon les drapeaux p, l, b, f, s, c
+            const options = {};
+            const matches = optPart.matchAll(/([plbfsc])([^plbfsc]*)/g);
+            
+            for (const m of matches) {
+                const key = m[1];
+                const val = m[2];
+                options[key] = val;
             }
 
-            return chordObj;
+            if (options.p !== undefined) chordObj.position = options.p;
+            if (options.l !== undefined) chordObj.length = options.l;
+            if (options.b !== undefined) chordObj.barre = options.b;
+            if (options.f !== undefined) chordObj.fingers = options.f;
+            if (options.s !== undefined) chordObj.sub = options.s;
+
+            // --- LOGIQUE POUR L'OPTION "c" (CALCULATE) ---
+            if (options.c !== undefined) {
+                const pos = parseInt(chordObj.position, 10) || 1;
+                
+                const items = chordObj.frets.includes(',') 
+                    ? chordObj.frets.split(',') 
+                    : chordObj.frets.split('');
+
+                const calculatedFrets = items.map(item => {
+                    const cleanItem = item.trim();
+                    if (cleanItem === '0' || cleanItem.toLowerCase() === 'x' || cleanItem === '') {
+                        return cleanItem;
+                    }
+                    const fretNum = parseInt(cleanItem, 10);
+                    if (!isNaN(fretNum)) {
+                        return fretNum - pos + 1;
+                    }
+                    return cleanItem;
+                });
+
+                chordObj.frets = chordObj.frets.includes(',') 
+                    ? calculatedFrets.join(',') 
+                    : calculatedFrets.join('');
+            }
         }
+
+        knownChords[chordName] = { ...chordObj };
+    } else if (knownChords[chordName]) {
+        chordObj = { ...knownChords[chordName] };
+    }
+
+    return chordObj;
+}
 
         function generateABC() {
             if (synthControl) {
@@ -337,7 +475,12 @@
             let abcMeasures = [];
             let lastChordName = "C"; 
             const beatsPerMeasure = timeSig === "3/4" ? 3 : 4;
-            const rests = " z".repeat(beatsPerMeasure).trim();
+            //const rests = " z".repeat(beatsPerMeasure).trim();
+			// Remplace les z par des c en attendant un vrai custom rhythm
+			// Récupération de l'état de la case à cocher
+const useChordRests = document.getElementById('chordRestsToggle').checked;
+			const restSymbol = useChordRests ? " c" : " z";
+			const rests = restSymbol.repeat(beatsPerMeasure).trim();
 
             const knownChords = {};
             const uniqueChordsList = [];
