@@ -2,6 +2,19 @@
 
 Liste de petits outils pour aider à travailler un instrument ou à éditer ses partitions. Certains outils sont basés sur la "notation abc" pour la musique. 
 
+## Entrainement rythme batterie
+
+* 🚀 Tester l'application : [Ouvrir l'outil (Démo interactive)](https://fxpar.github.io/abc-notation-artifacts/drum-licks.html)
+* 📄 Code source : [metronome-graduel.html](https://github.com/fxpar/abc-notation-artifacts/blob/main/drum-licks.html)
+
+
+
+**Plusieurs activité ludiques pour s'entrainer au rythme à partir d'un choix de "licks" (petits exercices).**
+
+
+
+
+
 ## Grille d'accords avec diagrammes
 
 * 🚀 Tester l'application : [Ouvrir l'outil (Démo interactive)](https://fxpar.github.io/abc-notation-artifacts/abc-grid+diagrams.html)

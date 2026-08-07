@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="fr" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Générateur ABCJS - Percussions</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/abcjs@6.6.3/abcjs-audio.min.css">
+    <style>
+        .abc-paper {
+            background: transparent;
+            padding: 10px;
+        }
+        .abcjs-audio .abcjs-btn {
+            background-color: var(--bs-primary) !important;
+            color: white !important;
+            border-radius: 4px;
+        }
+        .abcjs-audio {
+            border-radius: var(--bs-border-radius);
+            background: var(--bs-secondary-bg);
+            border: 1px solid var(--bs-border-color);
+        }
+        .abcjs-cursor {
+            stroke: rgba(220, 53, 69, 0.75);
+            stroke-width: 2.5px;
+        }
+        .abcjs-highlight {
+            fill: rgba(220, 53, 69, 0.2) !important;
+        }
+    </style>
+</head>
+<body class="bg-body-tertiary min-vh-100 d-flex flex-column">
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4 shadow">
+        <div class="container-fluid">
+            <a class="navbar-brand d-flex align-items-center" href="#">
+                <i class="bi bi-music-note-beamed me-2 text-primary"></i> Percussion Licks Player
+            </a>
+            <button class="btn btn-outline-light btn-sm ms-auto d-flex align-items-center" id="themeToggleBtn" onclick="toggleTheme()">
+                <i class="bi bi-sun-fill" id="themeIcon"></i>
+            </button>
+        </div>
+    </nav>
+
+    <div class="container my-2 flex-grow-1">
+        <div class="row g-4">
+            
+            <!-- SECTION SELECTION -->
+            <div class="col-lg-5">
+                <div class="card shadow-sm h-100">
+                    <div class="card-header bg-primary text-white py-3">
+                        <h5 class="card-title mb-0"><i class="bi bi-collection-play me-2"></i>Sélection</h5>
+                    </div>
+                    <div class="card-body d-flex flex-column gap-3">
+                        <div>
+                            <label for="licksBatch" class="form-label fw-bold">Série de Licks (ABC Notation) :</label>
+                            <textarea class="form-control font-monospace" id="licksBatch" rows="6" placeholder="Collez vos licks séparés par une ligne vide..."></textarea>
+                        </div>
+
+                        <button class="btn btn-primary" onclick="loadBatch()">
+                            <i class="bi bi-download me-2"></i>Charger
+                        </button>
+
+                        <hr class="my-1">
+
+                        <!-- Navigation -->
+                        <div class="d-flex gap-2 align-items-center">
+                            <button class="btn btn-outline-primary" id="btnPrev" onclick="navigateLick(-1)" disabled>
+                                <i class="bi bi-chevron-left"></i> Précédent
+                            </button>
+                            <select class="form-select font-monospace" id="lickSelect" onchange="selectLick(parseInt(this.value))" disabled>
+                                <option value="">- Aucun lick -</option>
+                            </select>
+                            <button class="btn btn-outline-primary" id="btnNext" onclick="navigateLick(1)" disabled>
+                                Suivant <i class="bi bi-chevron-right"></i>
+                            </button>
+                        </div>
+
+                        <!-- Lick Sélectionné Brut -->
+                        <div class="flex-grow-1">
+                            <label class="form-label fw-bold">Lick sélectionné :</label>
+                            <div class="border rounded p-2 bg-body-secondary font-monospace small text-wrap overflow-auto" id="selectedLickDisplay" style="max-height: 180px; white-space: pre-wrap;">
+                                <em>Aucun lick chargé.</em>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SECTION RENDU ET ACTIVITES -->
+            <div class="col-lg-7">
+                <div class="card shadow-sm h-100">
+                    <div class="card-header bg-secondary text-white py-2 d-flex justify-content-between align-items-center">
+                        <h5 class="card-title mb-0"><i class="bi bi-play-btn me-2"></i>Rendu</h5>
+                        <button class="btn btn-sm btn-light" type="button" data-bs-toggle="collapse" data-bs-target="#abcCodeCollapse">
+                            Éditeur Code ABC
+                        </button>
+                    </div>
+
+                    <!-- Barre d'Onglets d'Activités -->
+                    <ul class="nav nav-tabs px-3 pt-2 bg-body-secondary" id="activityTabs">
+                        <li class="nav-item">
+                            <button class="nav-link active" onclick="switchActivity(1)">Activité 1</button>
+                        </li>
+                        <li class="nav-item">
+                            <button class="nav-link" onclick="switchActivity(2)">Activité 2</button>
+                        </li>
+                        <li class="nav-item">
+                            <button class="nav-link" onclick="switchActivity(3)">Activité 3</button>
+                        </li>
+                        <li class="nav-item">
+                            <button class="nav-link" onclick="switchActivity(4)">Activité 4</button>
+                        </li>
+                        <li class="nav-item">
+                            <button class="nav-link" onclick="switchActivity(5)">Activité 5</button>
+                        </li>
+                    </ul>
+
+                    <div class="card-body d-flex flex-column">
+
+                        <!-- Champ spécifique à l'Activité 2 et 3 : Remplissage -->
+                        <div id="fillContainer" class="mb-3 d-none">
+                            <label for="fillPattern" class="form-label fw-bold small mb-1">Remplissage (Fill) :</label>
+                            <textarea class="form-control font-monospace form-control-sm" id="fillPattern" rows="2" oninput="renderCurrentState()">c/4c/4c/4c/4 c/4 c/4 c/4 c/4</textarea>
+                        </div>
+                        
+                        <!-- ÉDITEUR ABC MODIFIABLE EN DIRECT -->
+                        <div class="collapse mb-3" id="abcCodeCollapse">
+                            <label for="abcSource" class="form-label fw-bold small mb-1">Code ABC complet (Modifiable) :</label>
+                            <textarea class="form-control font-monospace bg-body-secondary small" id="abcSource" rows="6" oninput="renderFromEditor()"></textarea>
+                        </div>
+
+                        <!-- LECTEUR AUDIO -->
+                        <div class="mb-3">
+                            <div class="d-flex align-items-stretch gap-1">
+                                <div id="audio-player" class="flex-grow-1"></div>
+                            </div>
+                        </div>
+
+                        <!-- PARTITION (Affichée ou Masquée selon activité) -->
+                        <div id="paperContainer" class="flex-grow-1 border rounded p-2 bg-card d-flex align-items-center justify-content-center">
+                            <div id="paper" class="w-100 abc-paper"></div>
+                        </div>
+                        <div id="hiddenPaperMsg" class="flex-grow-1 border rounded p-4 bg-body-secondary d-none align-items-center justify-content-center text-center text-muted">
+                            <div>
+                                <i class="bi bi-eye-slash fs-1 d-block mb-2"></i>
+                                Partition masquée pour cette activité. Écoutez puis répétez !
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/abcjs@6.4.0/dist/abcjs-basic-min.js"></script>
+
+    <script>
+        let licksList = [];
+        let currentIndex = -1;
+        let currentActivity = 1;
+        let synthControl = null;
+
+        // Exemple par défaut injecté
+        const defaultBatch = `L:1/8
+"^1"g"^et"g "^2"g"^et"g "^3"g"^et"g "^4"g"^et"g
+
+"^1"L[Bg]"^et"g "^2"g"^et"L[Bg] "^3"L[Bg]"^et"g "^4"g"^et"g
+"^1"g"^et"g "^2"g"^et"g "^3"g"^et"g "^4"g"^et"g
+
+L:1/4
+M:12/8
+"^1"[Bg]"^et"g "^2"[Bg]"^et"g "^3"[Bg]"^et"g "^4"[Bg]"^et"g`;
+
+        document.getElementById('licksBatch').value = defaultBatch;
+
+        // Directives MIDI par défaut pour percussions
+        const midiDirectives = `%%MIDI channel 10\n%%MIDI drummap B 76\n%%percmap B low-tom`;
+
+        // --- GESTION DU CURSEUR AUDIO ---
+        function CursorControl() {
+            var self = this;
+            self.onStart = function() {
+                var svg = document.querySelector("#paper svg");
+                if (!svg) return;
+                var cursor = document.createElementNS("http://www.w3.org/2000/svg", "line");
+                cursor.setAttribute("class", "abcjs-cursor");
+                cursor.setAttributeNS(null, 'x1', "0");
+                cursor.setAttributeNS(null, 'y1', "0");
+                cursor.setAttributeNS(null, 'x2', "0");
+                cursor.setAttributeNS(null, 'y2', "0");
+                svg.appendChild(cursor);
+            };
+            self.onEvent = function(ev) {
+                if (ev.measureStart && ev.left === null) return;
+                document.querySelectorAll("#paper svg .abcjs-highlight").forEach(el => el.classList.remove("abcjs-highlight"));
+                if (ev.elements) {
+                    for (var i = 0; i < ev.elements.length; i++) {
+                        var note = ev.elements[i];
+                        for (var j = 0; j < note.length; j++) {
+                            note[j].classList.add("abcjs-highlight");
+                        }
+                    }
+                }
+                var cursor = document.querySelector("#paper svg .abcjs-cursor");
+                if (cursor && ev.left !== null) {
+                    cursor.setAttributeNS(null, 'x1', (ev.left - 2).toString());
+                    cursor.setAttributeNS(null, 'x2', (ev.left - 2).toString());
+                    cursor.setAttributeNS(null, 'y1', ev.top.toString());
+                    cursor.setAttributeNS(null, 'y2', (ev.top + ev.height).toString());
+                }
+            };
+            self.onFinished = function() {
+                document.querySelectorAll("#paper svg .abcjs-highlight").forEach(el => el.classList.remove("abcjs-highlight"));
+                var cursor = document.querySelector("#paper svg .abcjs-cursor");
+                if (cursor) { 
+                    cursor.setAttributeNS(null, 'x1', "0"); 
+                    cursor.setAttributeNS(null, 'x2', "0"); 
+                }
+            };
+        }
+        const cursorControl = new CursorControl();
+
+        function toggleTheme() {
+            const html = document.documentElement;
+            const newTheme = html.getAttribute('data-bs-theme') === 'dark' ? 'light' : 'dark';
+            html.setAttribute('data-bs-theme', newTheme);
+            document.getElementById('themeToggleBtn').innerHTML = newTheme === 'dark' ? '<i class="bi bi-sun-fill"></i>' : '<i class="bi bi-moon-fill"></i>';
+        }
+
+        // --- DECOUPE ET NETTOYAGE DU BATCH DE LICKS ---
+        function loadBatch() {
+            const rawText = document.getElementById('licksBatch').value;
+            
+            // Nettoyage des lignes avec seulement espaces/tabs puis split sur lignes vides
+            const lines = rawText.split('\n').map(line => line.trim().length === 0 ? '' : line);
+            const cleanedText = lines.join('\n');
+            
+            licksList = cleanedText.split(/\n\s*\n/).map(block => block.trim()).filter(block => block.length > 0);
+
+            const select = document.getElementById('lickSelect');
+            select.innerHTML = '';
+
+            if (licksList.length === 0) {
+                select.innerHTML = '<option value="">- Aucun lick -</option>';
+                document.getElementById('selectedLickDisplay').innerText = 'Aucun lick trouvé.';
+                updateNavButtons();
+                return;
+            }
+
+            licksList.forEach((_, idx) => {
+                const opt = document.createElement('option');
+                opt.value = idx;
+                opt.textContent = `Lick N° ${idx + 1}`;
+                select.appendChild(opt);
+            });
+
+            selectLick(0);
+        }
+
+        function selectLick(index) {
+            if (index < 0 || index >= licksList.length) return;
+            currentIndex = index;
+            document.getElementById('lickSelect').value = index;
+            document.getElementById('selectedLickDisplay').innerText = licksList[index];
+            updateNavButtons();
+            
+            // Revenir à l'Activité 1 par défaut au choix d'un nouveau lick
+            switchActivity(1);
+        }
+
+        function navigateLick(step) {
+            selectLick(currentIndex + step);
+        }
+
+        function updateNavButtons() {
+            document.getElementById('btnPrev').disabled = (currentIndex <= 0);
+            document.getElementById('btnNext').disabled = (currentIndex >= licksList.length - 1 || currentIndex === -1);
+            document.getElementById('lickSelect').disabled = (licksList.length === 0);
+        }
+
+        // --- EXTRACTION DES PARAMETRES ET GENERATION ABC ---
+        function parseLickParams(lickText) {
+            let xHeader = "X:1";
+            let lHeader = lickText.match(/^L:\s*\S+/m)?.[0] || "L:1/8";
+            let mHeader = lickText.match(/^M:\s*\S+/m)?.[0] || "M:4/4";
+            let qHeader = lickText.match(/^Q:\s*\S+/m)?.[0] || "Q:60";
+
+            // Retirer les en-têtes détectés pour isoler le corps de la musique
+            let body = lickText
+                .replace(/^X:.*$/gm, '')
+                .replace(/^L:.*$/gm, '')
+                .replace(/^M:.*$/gm, '')
+                .replace(/^Q:.*$/gm, '')
+                .trim();
+
+            return { xHeader, lHeader, mHeader, qHeader, body };
+        }
+
+        function generateABCString() {
+            if (currentIndex === -1 || !licksList[currentIndex]) return "";
+
+            const params = parseLickParams(licksList[currentIndex]);
+            const fill = document.getElementById('fillPattern').value.trim();
+
+            let finalBody = "";
+
+            switch (currentActivity) {
+                case 1:
+                    finalBody = params.body;
+                    break;
+                case 2:
+                case 3:
+                    // Répétition 4 fois + remplissage
+                    finalBody = `${params.body} | ${params.body} | ${params.body} | ${params.body} | ${fill}`;
+                    break;
+                case 4:
+                    // TODO: Implémenter Activité 4
+                    finalBody = `%% Emplacement Activité 4\n${params.body}`;
+                    break;
+                case 5:
+                    // TODO: Implémenter Activité 5
+                    finalBody = `%% Emplacement Activité 5\n${params.body}`;
+                    break;
+                case 6:
+                    // TODO: Implémenter Activité 6
+                    finalBody = `%% Emplacement Activité 6\n${params.body}`;
+                    break;
+            }
+
+            return `${params.xHeader}\n${params.mHeader}\n${params.lHeader}\n${params.qHeader}\nK:C clef=perc\n${midiDirectives}\n${finalBody}`;
+        }
+
+        function switchActivity(actNumber) {
+            currentActivity = actNumber;
+
+            // Mise à jour de la navigation onglets
+            const tabs = document.querySelectorAll('#activityTabs .nav-link');
+            tabs.forEach((tab, i) => {
+                tab.classList.toggle('active', (i + 1) === actNumber);
+            });
+
+            // Afficher/masquer la zone de remplissage
+            const fillContainer = document.getElementById('fillContainer');
+            if (actNumber === 2 || actNumber === 3) {
+                fillContainer.classList.remove('d-none');
+            } else {
+                fillContainer.classList.add('d-none');
+            }
+
+            // Masquer la partition pour l'activité 3
+            const paperContainer = document.getElementById('paperContainer');
+            const hiddenMsg = document.getElementById('hiddenPaperMsg');
+            if (actNumber === 3) {
+                paperContainer.classList.add('d-none');
+                hiddenMsg.classList.remove('d-none');
+                hiddenMsg.classList.add('d-flex');
+            } else {
+                paperContainer.classList.remove('d-none');
+                hiddenMsg.classList.add('d-none');
+                hiddenMsg.classList.remove('d-flex');
+            }
+
+            renderCurrentState();
+        }
+
+        function renderCurrentState() {
+            const abcString = generateABCString();
+            document.getElementById('abcSource').value = abcString;
+            renderABC(abcString);
+        }
+
+        function renderFromEditor() {
+            const abcString = document.getElementById('abcSource').value;
+            renderABC(abcString);
+        }
+
+        // --- RENDU ABCJS (VISUEL + AUDIO) ---
+        function renderABC(abcString) {
+            if (synthControl) {
+                synthControl.pause();
+                synthControl = null;
+            }
+
+            if (!abcString.trim()) {
+                document.getElementById("paper").innerHTML = "";
+                document.getElementById("audio-player").innerHTML = "";
+                return;
+            }
+
+            const visualObj = ABCJS.renderAbc("paper", abcString, { 
+                responsive: "resize",
+                add_classes: true
+            })[0];
+
+            if (ABCJS.synth.supportsAudio()) {
+                const audioOptions = {
+                    displayLoop: true,
+                    displayRestart: true,
+                    displayPlay: true,
+                    displayProgress: true,
+                    displayWarp: true
+                };
+                
+                synthControl = new ABCJS.synth.SynthController();
+                synthControl.load("#audio-player", cursorControl, audioOptions);
+
+                const createSynth = new ABCJS.synth.CreateSynth();
+                createSynth.init({ visualObj: visualObj }).then(function () {
+                    synthControl.setTune(visualObj, false).catch(function (error) {
+                        console.warn("Erreur d'initialisation du morceau :", error);
+                    });
+                }).catch(function (error) {
+                    console.warn("Erreur de création de la synthèse audio :", error);
+                });
+            } else {
+                document.getElementById("audio-player").innerHTML = "<div class='alert alert-warning p-2 small'>L'audio n'est pas supporté par ce navigateur.</div>";
+            }
+        }
+
+        window.onload = function() {
+            loadBatch();
+        };
+    </script>
+</body>
+</html>
