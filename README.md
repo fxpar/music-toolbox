@@ -2,6 +2,37 @@
 
 Liste de petits outils pour aider à travailler un instrument ou à éditer ses partitions. Certains outils sont basés sur la "notation abc" pour la musique. 
 
+## Grille d'accords avec diagrammes
+
+* 🚀 Tester l'application : [Ouvrir l'outil (Démo interactive)](https://fxpar.github.io/abc-notation-artifacts/abc-grid+diagrams.html)
+* 📄 Code source : [metronome-graduel.html](https://github.com/fxpar/abc-notation-artifacts/blob/main/abc-grid+diagrams.html)
+
+
+
+**Création rapide d'une grille de blues partition et audio et diagrammes d'accords, à partir d'une liste ecrite d'accord avec numéro de tablature. Créé principalement pour transcrire les morceaux de blues des méthodes tablatures en diagramme et pouvoir accélérer le tempo.**
+
+Paramètres:
+* Saisie des noms d'accords
+* Saisie avec numérotation
+* Réutilisation des numérotations précédente pour un accord
+* Calcul des décalages à partir d'une position sur le manche (10 en position 8 devient 3)
+* Mode Jour / Nuit
+
+A faire:
+* [ ] Lié à la base de données des accords pour simplifier la saisie
+
+Librairies utilisées: 
+* [uke chord](https://github.com/pianosnake/uke-chord)(MIT Licence)
+* abcjs Paul Rosen
+* bootstrap
+
+Code créé par IA (Gemini), et prompté par moi 😉
+
+Licence: CC BY-NC 4.0
+
+
+
+
 ## Quiz position des accord ukulélé
 
 * 🚀 Tester l'application : [Ouvrir l'outil (Démo interactive)](https://fxpar.github.io/abc-notation-artifacts/ukulele-position-accord-quiz.html)
