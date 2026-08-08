@@ -520,10 +520,11 @@ V:2 stem=down
 			document.getElementById('selectedLickDisplay').innerText = licksList[index];
 			updateNavButtons();
 			
-			// Détecter le tempo d'origine du lick (ou 60 par défaut)
-			const qMatch = licksList[index].match(/^Q:\s*(\d+)/m);
-			document.getElementById('tempoInput').value = qMatch ? qMatch[1] : 60;
-
+			// Détecter le tempo d'origine du lick s'il existe, sinon conserver le tempo actuel de l'utilisateur
+			var qMatch = licksList[index].match(/^Q:\s*(\d+)/m);
+			if (qMatch) {
+				document.getElementById('tempoInput').value = qMatch[1];
+			}
 			switchActivity(1);
 		}
 
