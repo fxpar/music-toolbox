@@ -353,17 +353,16 @@ L:1/8
  
 # Latino
 
-%%score (1 2)
 V:1 stem=up
-[Bg]g [Bg]g [Bg]g [Bg]^g |
+[Bg]g [Bg]g [Bg]g [Bg]^g 
 V:2 stem=down
 [DF]2 z D D2 z2`;
 
         document.getElementById('licksBatch').value = defaultBatch;
 
         // Directives MIDI par défaut pour percussions
-        const midiDirectives = `%%percmap D  pedal-hi-hat x
-%%percmap F  bass-drum-1
+        const midiDirectives = `%%percmap D  pedal-hi-hat
+%%percmap F  bass-drum-1 x
 %%percmap E  acoustic-bass-drum
 %%percmap G  low-floor-tom
 %%percmap A  high-floor-tom
@@ -384,7 +383,8 @@ V:2 stem=down
 %%percmap g  closed-hi-hat x
 %%percmap ^g open-hi-hat x
 %%percmap a  crash-cymbal-1  x
-%%percmap ^a open-triangle     triangle`;
+%%percmap ^a open-triangle     triangle
+%%score (1 2 3 4 5 6)`;
 
         // --- GESTION DU CURSEUR AUDIO ---
         function CursorControl() {
@@ -538,32 +538,61 @@ V:2 stem=down
         }
 
         // --- EXTRACTION DES PARAMETRES ET GENERATION ABC ---
+		// version multi voix
         function parseLickParams(lickText) {
-            let xHeader = "X:1";
-			
-			// version pour tablette
-            //let lHeader = lickText.match(/^L:\s*\S+/m)?.[0] || "L:1/8";
-            //let mHeader = lickText.match(/^M:\s*\S+/m)?.[0] || "M:4/4";
-            //let qHeader = lickText.match(/^Q:\s*\S+/m)?.[0] || "Q:60";
-			let lMatch = lickText.match(/^L:\s*\S+/m);
-			let lHeader = (lMatch && lMatch[0]) ? lMatch[0] : "L:1/8";
+			var lHeader = lickText.match(/^L:\s*\S+/m) ? lickText.match(/^L:\s*\S+/m)[0] : "L:1/8";
+			var mHeader = lickText.match(/^M:\s*\S+/m) ? lickText.match(/^M:\s*\S+/m)[0] : "M:4/4";
+			var qHeader = lickText.match(/^Q:\s*\S+/m) ? lickText.match(/^Q:\s*\S+/m)[0] : "Q:60";
+			var xHeader = "X:1";
 
-			let mMatch = lickText.match(/^M:\s*\S+/m);
-			let mHeader = (mMatch && mMatch[0]) ? mMatch[0] : "M:4/4";
+			// Retirer les en-têtes
+			var rawBody = lickText
+				.replace(/^X:.*$/gm, '')
+				.replace(/^L:.*$/gm, '')
+				.replace(/^M:.*$/gm, '')
+				.replace(/^Q:.*$/gm, '')
+				.trim();
 
-			let qMatch = lickText.match(/^Q:\s*\S+/m);
-			let qHeader = (qMatch && qMatch[0]) ? qMatch[0] : "Q:60";
+			var voices = [];
+			var lines = rawBody.split("\n");
+			var currentVoice = null;
 
-            // Retirer les en-têtes détectés pour isoler le corps de la musique
-            let body = lickText
-                .replace(/^X:.*$/gm, '')
-                .replace(/^L:.*$/gm, '')
-                .replace(/^M:.*$/gm, '')
-                .replace(/^Q:.*$/gm, '')
-                .trim();
+			for (var i = 0; i < lines.length; i++) {
+				var line = lines[i].trim();
+				if (line.length === 0) continue;
 
-            return { xHeader, lHeader, mHeader, qHeader, body };
-        }
+				// Détection d'une ligne de voix (ex: V:1 stem=up)
+				var voiceMatch = line.match(/^V:\s*(\d+)(.*)/);
+				if (voiceMatch) {
+					if (currentVoice) voices.push(currentVoice);
+					currentVoice = {
+						id: voiceMatch[1],
+						params: voiceMatch[2] ? voiceMatch[2].trim() : "",
+						lines: []
+					};
+				} else {
+					if (!currentVoice) {
+						// Voix unique par défaut
+						currentVoice = { id: "1", params: "stem=up", lines: [] };
+					}
+					currentVoice.lines.push(line);
+				}
+			}
+			if (currentVoice) voices.push(currentVoice);
+
+			// Finaliser le corps de chaque voix
+			for (var j = 0; j < voices.length; j++) {
+				voices[j].body = voices[j].lines.join("\n");
+			}
+
+			return {
+				xHeader: xHeader,
+				lHeader: lHeader,
+				mHeader: mHeader,
+				qHeader: qHeader,
+				voices: voices
+			};
+		}
 		
 		
 		// Génère une mesure de silence "z" adaptée à la mesure M: (ex: "z z z z" pour 4/4, "z z z" pour 3/4)
@@ -635,77 +664,93 @@ V:2 stem=down
 
 
         function generateABCString() {
-            if (currentIndex === -1 || !licksList[currentIndex]) return "";
+    if (currentIndex === -1 || !licksList[currentIndex]) return "";
 
-            const params = parseLickParams(licksList[currentIndex]);
-            const fill = document.getElementById('fillPattern').value.trim();
-			
-			
-			// Récupération de la valeur du tempo en BPM (compatible anciennes tablettes)
-			var tempoElem = document.getElementById('tempoInput');
-			var currentBpm = (tempoElem && tempoElem.value) ? tempoElem.value : 60;
-			var qHeader = "Q:" + currentBpm;
-	
-			// Détection du métronome (compatible anciennes tablettes)
-			var metronomeElem = document.getElementById('enableMetronome');
-			var useMetronome = (metronomeElem && metronomeElem.checked) ? true : false;
-			var metronomeCode = useMetronome ? ("\n" + getMetronomeDirective(params.mHeader)) : "";
-			
-			
-			// Analyse du corps du lick
-			var bodyLines = params.body.split("\n");
-			var cleanLines = [];
+    var params = parseLickParams(licksList[currentIndex]);
+    var fill = document.getElementById('fillPattern').value.trim();
+    
+    // Récupération Tempo & Métronome
+    var tempoElem = document.getElementById('tempoInput');
+    var currentBpm = (tempoElem && tempoElem.value) ? tempoElem.value : 60;
+    var qHeader = "Q:" + currentBpm;
 
-			// Nettoyage des lignes vides
-			for (var i = 0; i < bodyLines.length; i++) {
-				if (bodyLines[i].trim().length > 0) {
-					cleanLines.push(bodyLines[i]);
-				}
-			}
+    var metronomeElem = document.getElementById('enableMetronome');
+    var useMetronome = (metronomeElem && metronomeElem.checked) ? true : false;
+    var metronomeCode = useMetronome ? ("\n" + getMetronomeDirective(params.mHeader)) : "";
 
-			// Si le lick ne contient qu'une seule ligne, on ajoute la voix avec hampes vers le haut
-			var stemDirective = (cleanLines.length === 1) ? "V:1 stem=up\n" : "";
+    // Analyse du lick précédent pour l'Activité 5
+    var prevParams = null;
+    if (currentActivity === 5 && currentIndex > 0) {
+        prevParams = parseLickParams(licksList[currentIndex - 1]);
+    }
 
+    var restMeasure = getRestMeasure(params.mHeader);
+    var fallbackMeasure = getFallbackMeasure(params.mHeader);
 
+    var finalBody = "";
 
+    // Traitement Voix par Voix
+    for (var v = 0; v < params.voices.length; v++) {
+        var voice = params.voices[v];
+        var vHeader = "V:" + voice.id + (voice.params ? " " + voice.params : "") + "\n";
+        
+        var vBody = voice.body;
+        var vRest = restMeasure;
+        var vFill = (v === 0) ? fill : restMeasure; // Le remplissage va sur la V:1, du silence pour les autres voix
 
-            let finalBody = "";
-
-            switch (currentActivity) {
-                case 1:
-                    finalBody = params.body;
-                    break;
-                case 2:
-                case 3:
-                    // Répétition 4 fois + remplissage
-                    finalBody = `${params.body} | ${params.body} | ${params.body} | ${params.body} | ${fill}`;
-                    break;
-                case 4:
-                    // Répétition alternée : Lick | Silence | Lick | Silence | Fill
-                    const restMeasure = getRestMeasure(params.mHeader);
-                    finalBody = `${params.body} | ${restMeasure} | ${params.body} | ${restMeasure} | ${fill}`;
-                    break;
-                case 5:
-                    // Alternance : Lick actuel | Lick précédent (ou "gg") | Lick actuel | Lick précédent | Fill
-                    let altMeasure = "";
-                    if (currentIndex > 0) {
-                        // On récupère le corps du lick précédent
-                        const prevParams = parseLickParams(licksList[currentIndex - 1]);
-                        altMeasure = prevParams.body;
-                    } else {
-                        // S'il n'y a pas de lick précédent (Index 0), on met la mesure par défaut
-                        altMeasure = getFallbackMeasure(params.mHeader);
+        // Gestion de l'alternative pour l'Activité 5
+        var vAlt = "";
+        if (currentActivity === 5) {
+            if (prevParams) {
+                // Trouver la voix correspondante dans le lick précédent
+                var matchedVoice = null;
+                for (var pv = 0; pv < prevParams.voices.length; pv++) {
+                    if (prevParams.voices[pv].id === voice.id) {
+                        matchedVoice = prevParams.voices[pv];
+                        break;
                     }
-                    finalBody = `${params.body} | ${altMeasure} | ${params.body} | ${altMeasure} | ${fill}`;
-                    break;
-                case 6:
-                    // TODO: Implémenter Activité 6
-                    finalBody = `%% Emplacement Activité 6\n${params.body}`;
-                    break;
+                }
+                vAlt = matchedVoice ? matchedVoice.body : restMeasure;
+            } else {
+                vAlt = (v === 0) ? fallbackMeasure : restMeasure;
             }
-
-            return `${params.xHeader}\n${params.mHeader}\n${params.lHeader}\n${params.qHeader}\n${qHeader}\nK:C clef=perc\n${midiDirectives}${metronomeCode}\n${stemDirective} \n${finalBody}|`;
         }
+
+
+		// Variable pour le saut de ligne : '\n' si plusieurs voix, un espace ' ' si voix unique
+		var lineBreak = (params.voices.length > 1) ? "\n" : " ";
+
+        // Assemblage des activités par voix
+        finalBody += vHeader;
+
+        switch (currentActivity) {
+			case 1:
+				finalBody += vBody + "| \n";
+				break;
+			case 2:
+			case 3:
+				finalBody += vBody + " |" + lineBreak + vBody + " |" + lineBreak + vBody + " |" + lineBreak + vBody + " |" + lineBreak + vFill + "| \n";
+				break;
+			case 4:
+				finalBody += vBody + " |" + lineBreak + vRest + " |" + lineBreak + vBody + " |" + lineBreak + vRest + " |" + lineBreak + vFill + "| \n";
+				break;
+			case 5:
+				finalBody += vBody + " |" + lineBreak + vAlt + " |" + lineBreak + vBody + " |" + lineBreak + vAlt + " |" + lineBreak + vFill + "| \n";
+				break;
+		}
+    }
+
+    // Directives finales avec le support multivoix %%score
+    var fullDirectives = midiDirectives + "\n%%score (1 2 3 4 5 6)";
+
+    return params.xHeader + "\n" + 
+           params.mHeader + "\n" + 
+           params.lHeader + "\n" + 
+           qHeader + "\nK:C clef=perc\n" + 
+           fullDirectives + 
+           metronomeCode + "\n" + 
+           finalBody;
+}
 
         function switchActivity(actNumber) {
             currentActivity = actNumber;
