@@ -4,9 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Générateur ABCJS - Percussions</title>
-    <!-- <link href="./css/bootstrap@5.3.0/bootstrap.min.css" rel="stylesheet"> -->
-    <!-- <link rel="stylesheet" href="./bootstrap-icons@1.11.1/font/bootstrap-icons.min.css"> -->
+    <!-- <link href="./css/bootstrap.min.css" rel="stylesheet"> -->
+    <!-- <link rel="stylesheet" href="./css/bootstrap-icons.min.css"> -->
     <!-- <link rel="stylesheet" href="./css/abcjs-audio.css"> -->
+	
 	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/abcjs@6.6.3/abcjs-audio.min.css">
@@ -95,13 +96,13 @@ body {
                         <!-- Navigation -->
                         <div class="d-flex gap-2 align-items-center">
                             <button class="btn btn-outline-primary" id="btnPrev" onclick="navigateLick(-1)" disabled>
-                                <i class="bi bi-chevron-left"></i> Précédent
+                                <i class="bi bi-chevron-left"></i> <span class="d-none d-md-inline">Précédent</span>
                             </button>
                             <select class="form-select font-monospace" id="lickSelect" onchange="selectLick(parseInt(this.value))" disabled>
                                 <option value="">- Aucun lick -</option>
                             </select>
                             <button class="btn btn-outline-primary" id="btnNext" onclick="navigateLick(1)" disabled>
-                                Suivant <i class="bi bi-chevron-right"></i>
+                                <span class="d-none d-md-inline">Suivant</span> <i class="bi bi-chevron-right"></i>
                             </button>
                         </div>
 
@@ -158,15 +159,8 @@ body {
                             <label for="abcSource" class="form-label fw-bold small mb-1">Code ABC complet (Modifiable) :</label>
                             <textarea class="form-control font-monospace bg-body-secondary small" id="abcSource" rows="6" oninput="renderFromEditor()"></textarea>
                         </div>
-
-                        <!-- LECTEUR AUDIO -->
-                        <div class="mb-3">
-                            <div class="d-flex align-items-stretch gap-1">
-                                <div id="audio-player" class="flex-grow-1"></div>
-                            </div>
-                        </div>
-
-                        <!-- PARTITION (Affichée ou Masquée selon activité) -->
+						
+						<!-- PARTITION (Affichée ou Masquée selon activité) -->
                         <div id="paperContainer" class="flex-grow-1 border rounded p-2 bg-card d-flex align-items-center justify-content-center">
                             <div id="paper" class="w-100 abc-paper"></div>
                         </div>
@@ -176,6 +170,38 @@ body {
                                 Partition masquée pour cette activité. Écoutez puis répétez !
                             </div>
                         </div>
+
+                        <!-- LECTEUR AUDIO -->
+                        <div class="mb-3">
+                            <div class="d-flex align-items-stretch gap-1">
+                                <div id="audio-player" class="flex-grow-1"></div>
+                            </div>
+                        </div>
+						
+						
+						
+						<div class="d-flex flex-wrap align-items-center gap-3 mb-3 p-2 bg-body-secondary rounded border">
+							<!-- Switch Métronome -->
+							<div class="form-check form-switch m-0">
+								<input class="form-check-input" type="checkbox" id="enableMetronome" onchange="renderCurrentState()">
+								<label class="form-check-label fw-bold small" for="enableMetronome">
+									<i class="bi bi-metronome me-1"></i>Métronome
+								</label>
+							</div>
+
+							<div class="vr d-none d-sm-block"></div>
+
+							<!-- Contrôle du Tempo (BPM) -->
+							<div class="d-flex align-items-center gap-1">
+								<label for="tempoInput" class="form-label fw-bold small mb-0 me-1">Tempo :</label>
+								<button class="btn btn-outline-secondary btn-sm px-2 py-0" type="button" onclick="adjustTempo(-5)">-5</button>
+								<input type="number" class="form-control form-control-sm text-center font-monospace" id="tempoInput" value="60" min="30" max="280" style="width: 65px;" onchange="updateTempoFromInput()">
+								<button class="btn btn-outline-secondary btn-sm px-2 py-0" type="button" onclick="adjustTempo(5)">+5</button>
+								<span class="small text-muted ms-1">BPM</span>
+							</div>
+						</div>
+
+                        
 
                     </div>
                 </div>
@@ -212,8 +238,9 @@ body {
   </div>
 </footer>
 
-    <!-- <script src="./js/bootstrap@5.3.0/bootstrap.bundle.min.js"></script> -->
-    <!-- <script src="./js/abcjs@6.4.0/dist/abcjs-basic-min.js"></script> -->
+    <!-- <script src="./js/bootstrap.bundle.min.js"></script> -->
+    <!-- <script type="text/javascript" src="./js/abcjs-basicfx.js"></script> -->
+	
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/abcjs@6.4.0/dist/abcjs-basic-min.js"></script>
 
@@ -224,7 +251,10 @@ body {
         let synthControl = null;
 
         // Exemple par défaut injecté
-        const defaultBatch = `L:1/8
+        const defaultBatch = `
+# Licks simples
+
+L:1/8
 "^1"g"^et"g "^2"g"^et"g "^3"g"^et"g "^4"g"^et"g
 
 "^1"L[Bg]"^et"g "^2"g"^et"L[Bg] "^3"L[Bg]"^et"g "^4"g"^et"g
@@ -283,7 +313,43 @@ body {
 
 [Eg]g [EBg]g [Eg][Eg] [EBg]g
 
-[Eg][Eg] [Bg][Eg] [Eg][Eg] [Bg][Eg]`;
+[Eg][Eg] [Bg][Eg] [Eg][Eg] [Bg][Eg]
+
+# Accomp
+
+ c3 c z4 
+
+ z4 c3 c 
+
+ ccz2z4 
+
+ z2ccz4 
+
+ z4 cc z2 
+
+ z4 z2 cc 
+
+ c2 z2 c3 c 
+
+ z c z2 c3 c 
+
+ z c3 c2 z2 
+
+ c c2 c z4 
+
+ z2 cc -cc z2
+
+ z4 c c2 c 
+
+ z4 z c3 | c2 z2  z4 
+
+ cc z2 c2 z2 | c2 z c-c4 
+
+ c6 cc 
+
+ c c3-c2 cc 
+
+ z4 c2 z2| c2 z c-c4`;
 
         document.getElementById('licksBatch').value = defaultBatch;
 
@@ -366,44 +432,93 @@ V:1 stem=up`;
 
         // --- DECOUPE ET NETTOYAGE DU BATCH DE LICKS ---
         function loadBatch() {
-            const rawText = document.getElementById('licksBatch').value;
+    const rawText = document.getElementById('licksBatch').value;
+    
+    // Nettoyage des lignes avec seulement espaces/tabs
+    const lines = rawText.split('\n').map(line => line.trim().length === 0 ? '' : line);
+    const cleanedText = lines.join('\n');
+    
+    // Découpage par bloc séparé par une ou plusieurs lignes vides
+    const rawBlocks = cleanedText.split(/\n\s*\n/).map(block => block.trim()).filter(block => block.length > 0);
+
+    licksList = [];
+    const select = document.getElementById('lickSelect');
+    select.innerHTML = '';
+
+    let currentGroup = null; // Élément <optgroup> en cours
+    let currentCategoryName = ""; 
+    let lickCount = 0;
+
+    rawBlocks.forEach((block) => {
+        // 1. Détection si le bloc est uniquement un Titre de Section (ex: "# Licks simples" ou "T: Section 1")
+        if (block.startsWith('#') || (block.startsWith('T:') && !block.includes('\n'))) {
+            const groupTitle = block.replace(/^#\s*/, '').replace(/^T:\s*/, '').trim();
             
-            // Nettoyage des lignes avec seulement espaces/tabs puis split sur lignes vides
-            const lines = rawText.split('\n').map(line => line.trim().length === 0 ? '' : line);
-            const cleanedText = lines.join('\n');
-            
-            licksList = cleanedText.split(/\n\s*\n/).map(block => block.trim()).filter(block => block.length > 0);
-
-            const select = document.getElementById('lickSelect');
-            select.innerHTML = '';
-
-            if (licksList.length === 0) {
-                select.innerHTML = '<option value="">- Aucun lick -</option>';
-                document.getElementById('selectedLickDisplay').innerText = 'Aucun lick trouvé.';
-                updateNavButtons();
-                return;
-            }
-
-            licksList.forEach((_, idx) => {
-                const opt = document.createElement('option');
-                opt.value = idx;
-                opt.textContent = `Lick N° ${idx + 1}`;
-                select.appendChild(opt);
-            });
-
-            selectLick(0);
+            currentGroup = document.createElement('optgroup');
+            currentGroup.label = groupTitle;
+            select.appendChild(currentGroup);
+            return; // On passe au bloc suivant, ce n'est pas un lick jouable
         }
+
+        // 2. Si c'est un lick : recherche d'un titre interne avec "T:" ou un commentaire "# " au début du bloc
+        lickCount++;
+        let lickTitle = "";
+        
+        // Chercher une ligne "T: ..."
+        const titleMatch = block.match(/^T:\s*(.+)$/m);
+        if (titleMatch) {
+            lickTitle = titleMatch[1].trim();
+        } else {
+            // Chercher une première ligne commençant par "# ..."
+            const commentMatch = block.match(/^#\s*(.+)$/m);
+            if (commentMatch) {
+                lickTitle = commentMatch[1].trim();
+            }
+        }
+
+        // Si aucun titre n'est trouvé, nom par défaut "Lick N° X"
+        const displayName = lickTitle ? `${lickCount}. ${lickTitle}` : `Lick N° ${lickCount}`;
+
+        // Sauvegarde du lick dans le tableau global
+        licksList.push(block);
+        const lickIndex = licksList.length - 1;
+
+        // Création de l'option <option>
+        const opt = document.createElement('option');
+        opt.value = lickIndex;
+        opt.textContent = displayName;
+
+        // Ajout dans l'optgroup actuel ou directement dans le select
+        if (currentGroup) {
+            currentGroup.appendChild(opt);
+        } else {
+            select.appendChild(opt);
+        }
+    });
+
+    if (licksList.length === 0) {
+        select.innerHTML = '<option value="">- Aucun lick -</option>';
+        document.getElementById('selectedLickDisplay').innerText = 'Aucun lick trouvé.';
+        updateNavButtons();
+        return;
+    }
+
+    selectLick(0);
+}
 
         function selectLick(index) {
-            if (index < 0 || index >= licksList.length) return;
-            currentIndex = index;
-            document.getElementById('lickSelect').value = index;
-            document.getElementById('selectedLickDisplay').innerText = licksList[index];
-            updateNavButtons();
-            
-            // Revenir à l'Activité 1 par défaut au choix d'un nouveau lick
-            switchActivity(1);
-        }
+			if (index < 0 || index >= licksList.length) return;
+			currentIndex = index;
+			document.getElementById('lickSelect').value = index;
+			document.getElementById('selectedLickDisplay').innerText = licksList[index];
+			updateNavButtons();
+			
+			// Détecter le tempo d'origine du lick (ou 60 par défaut)
+			const qMatch = licksList[index].match(/^Q:\s*(\d+)/m);
+			document.getElementById('tempoInput').value = qMatch ? qMatch[1] : 60;
+
+			switchActivity(1);
+		}
 
         function navigateLick(step) {
             selectLick(currentIndex + step);
@@ -418,9 +533,19 @@ V:1 stem=up`;
         // --- EXTRACTION DES PARAMETRES ET GENERATION ABC ---
         function parseLickParams(lickText) {
             let xHeader = "X:1";
-            let lHeader = lickText.match(/^L:\s*\S+/m)?.[0] || "L:1/8";
-            let mHeader = lickText.match(/^M:\s*\S+/m)?.[0] || "M:4/4";
-            let qHeader = lickText.match(/^Q:\s*\S+/m)?.[0] || "Q:60";
+			
+			// version pour tablette
+            //let lHeader = lickText.match(/^L:\s*\S+/m)?.[0] || "L:1/8";
+            //let mHeader = lickText.match(/^M:\s*\S+/m)?.[0] || "M:4/4";
+            //let qHeader = lickText.match(/^Q:\s*\S+/m)?.[0] || "Q:60";
+			let lMatch = lickText.match(/^L:\s*\S+/m);
+			let lHeader = (lMatch && lMatch[0]) ? lMatch[0] : "L:1/8";
+
+			let mMatch = lickText.match(/^M:\s*\S+/m);
+			let mHeader = (mMatch && mMatch[0]) ? mMatch[0] : "M:4/4";
+
+			let qMatch = lickText.match(/^Q:\s*\S+/m);
+			let qHeader = (qMatch && qMatch[0]) ? qMatch[0] : "Q:60";
 
             // Retirer les en-têtes détectés pour isoler le corps de la musique
             let body = lickText
@@ -448,6 +573,45 @@ V:1 stem=up`;
 			}
 			return rests.join(" ");
 		}
+		
+		// Génère la directive %%MIDI drum en adaptant le nombre de battements au temps fort (76) / faibles (77)
+		function getMetronomeDirective(mHeader) {
+			const match = mHeader.match(/M:\s*(\d+)\/(\d+)/);
+			const beats = match ? parseInt(match[1], 10) : 4;
+			
+			// Le premier temps est accentué (76 - High Wood Block), les suivants sont faibles (77 - Low Wood Block)
+			let pattern = "76";
+			let dString = "d";
+			
+			for (let i = 1; i < beats; i++) {
+				pattern += " 77";
+				dString += "d";
+			}
+			
+			// Si la mesure dépasse 4 temps (ex: 6/8, 12/8), on duplique pour couvrir tout le motif si besoin
+			<!-- return `%%MIDI drum ${dString} ${pattern} ${pattern}\n%%MIDI drumon\n%%MIDI program 1`; -->
+			return `%%MIDI drum ${dString} ${pattern} ${pattern}\n%%MIDI drumon`;
+		}
+		
+		
+		// Ajuste le tempo via les boutons -5 / +5
+		function adjustTempo(delta) {
+			const tempoInput = document.getElementById('tempoInput');
+			let currentTempo = parseInt(tempoInput.value, 10) || 60;
+			currentTempo = Math.max(30, Math.min(280, currentTempo + delta));
+			tempoInput.value = currentTempo;
+			renderCurrentState();
+		}
+
+		// S'assure que la valeur saisie reste valide lors de la frappe manuelle
+		function updateTempoFromInput() {
+			const tempoInput = document.getElementById('tempoInput');
+			let val = parseInt(tempoInput.value, 10);
+			if (isNaN(val) || val < 30) val = 30;
+			if (val > 280) val = 280;
+			tempoInput.value = val;
+			renderCurrentState();
+		}
 
 		// Génère une mesure de "gg" adaptée à la mesure M: pour le tout premier lick
 		function getFallbackMeasure(mHeader) {
@@ -468,6 +632,14 @@ V:1 stem=up`;
 
             const params = parseLickParams(licksList[currentIndex]);
             const fill = document.getElementById('fillPattern').value.trim();
+			
+			// Récupération de la valeur du tempo en BPM
+			const currentBpm = document.getElementById('tempoInput')?.value || 60;
+			const qHeader = `Q:${currentBpm}`;
+	
+			// Vérification de la case métronome
+			const useMetronome = document.getElementById('enableMetronome')?.checked || false;
+			const metronomeCode = useMetronome ? `\n${getMetronomeDirective(params.mHeader)}` : "";
 
             let finalBody = "";
 
@@ -504,7 +676,7 @@ V:1 stem=up`;
                     break;
             }
 
-            return `${params.xHeader}\n${params.mHeader}\n${params.lHeader}\n${params.qHeader}\nK:C clef=perc\n${midiDirectives}\n${finalBody}`;
+            return `${params.xHeader}\n${params.mHeader}\n${params.lHeader}\n${params.qHeader}\n${qHeader}\nK:C clef=perc\n${midiDirectives}${metronomeCode}\n${finalBody}|`;
         }
 
         function switchActivity(actNumber) {
@@ -594,7 +766,7 @@ V:1 stem=up`;
                     displayRestart: true,
                     displayPlay: true,
                     displayProgress: true,
-                    displayWarp: true
+                    displayWarp: false
                 };
                 
                 synthControl = new ABCJS.synth.SynthController();
