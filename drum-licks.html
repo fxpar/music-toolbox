@@ -696,7 +696,9 @@ V:2 stem=down
         
         var vBody = voice.body;
         var vRest = restMeasure;
-        var vFill = (v === 0) ? fill : restMeasure; // Le remplissage va sur la V:1, du silence pour les autres voix
+        // Si le remplissage est vide, on ne met rien pour aucune voix.
+		// Sinon, on met le remplissage sur la V:1 et du silence pour les autres voix.
+		var vFill = (fill === "") ? "" : ((v === 0) ? fill : restMeasure);
 
         // Gestion de l'alternative pour l'Activité 5
         var vAlt = "";
@@ -729,7 +731,7 @@ V:2 stem=down
 				break;
 			case 2:
 			case 3:
-				finalBody += vBody + " |" + lineBreak + vBody + " |" + lineBreak + vBody + " |" + lineBreak + vBody + " |" + lineBreak + vFill + "| \n";
+				finalBody += vBody + " |" +  vBody + " |" +  vBody + " |" +  vBody + " |" +  vFill + "| \n";
 				break;
 			case 4:
 				finalBody += vBody + " |" + lineBreak + vRest + " |" + lineBreak + vBody + " |" + lineBreak + vRest + " |" + lineBreak + vFill + "| \n";
