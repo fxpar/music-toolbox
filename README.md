@@ -6,8 +6,8 @@ Liste de petits outils pour aider à travailler un instrument ou à éditer ses 
 
 ## Entrainement rythme batterie
 
-* 🚀 Tester l'application : [Ouvrir l'outil (Démo interactive)](https://fxpar.github.io/abc-notation-artifacts/drum-licks.html)
-* 📄 Code source : [drum-licks.html](https://github.com/fxpar/abc-notation-artifacts/blob/main/drum-licks.html)
+* 🚀 Tester l'application : [Ouvrir l'outil (Démo interactive)](https://fxpar.github.io/music-toolbox/drum-licks.html)
+* 📄 Code source : [drum-licks.html](https://github.com/fxpar/music-toolbox/blob/main/drum-licks.html)
 
 
 
@@ -33,8 +33,8 @@ Licence: CC BY-NC 4.0
 
 ## Grille d'accords avec diagrammes
 
-* 🚀 Tester l'application : [Ouvrir l'outil (Démo interactive)](https://fxpar.github.io/abc-notation-artifacts/abc-grid+diagrams.html)
-* 📄 Code source : [abc-grid+diagrams.html](https://github.com/fxpar/abc-notation-artifacts/blob/main/abc-grid+diagrams.html)
+* 🚀 Tester l'application : [Ouvrir l'outil (Démo interactive)](https://fxpar.github.io/music-toolbox/abc-grid+diagrams.html)
+* 📄 Code source : [abc-grid+diagrams.html](https://github.com/fxpar/music-toolbox/blob/main/abc-grid+diagrams.html)
 
 
 
@@ -64,8 +64,8 @@ Licence: CC BY-NC 4.0
 
 ## Quiz position des accord ukulélé
 
-* 🚀 Tester l'application : [Ouvrir l'outil (Démo interactive)](https://fxpar.github.io/abc-notation-artifacts/ukulele-position-accord-quiz.html)
-* 📄 Code source : [ukulele-position-accord-quiz.html](https://github.com/fxpar/abc-notation-artifacts/blob/main/ukulele-position-accord-quiz.html)
+* 🚀 Tester l'application : [Ouvrir l'outil (Démo interactive)](https://fxpar.github.io/music-toolbox/ukulele-position-accord-quiz.html)
+* 📄 Code source : [ukulele-position-accord-quiz.html](https://github.com/fxpar/music-toolbox/blob/main/ukulele-position-accord-quiz.html)
 
 
 **Tester vos connaissances pour passer d'une forme d'accord à une autre. **
@@ -76,8 +76,8 @@ Librairies utilisées:
 
 ## Quiz formules d'accord
 
-* 🚀 Tester l'application : [Ouvrir l'outil (Démo interactive)](https://fxpar.github.io/abc-notation-artifacts/quiz-formule-accords.html)
-* 📄 Code source : [quiz-formule-accords.html](https://github.com/fxpar/abc-notation-artifacts/blob/main/quiz-formule-accords.html)
+* 🚀 Tester l'application : [Ouvrir l'outil (Démo interactive)](https://fxpar.github.io/music-toolbox/quiz-formule-accords.html)
+* 📄 Code source : [quiz-formule-accords.html](https://github.com/fxpar/music-toolbox/blob/main/quiz-formule-accords.html)
 
 
 **Questions à trou sur les formules d'accord. Ex: m7: R-b3-5-?**
@@ -90,8 +90,8 @@ Librairies utilisées:
 
 ## Moteur de recherche d'accord de ukulele
 
-* 🚀 Tester l'application : [Ouvrir l'outil (Démo interactive)](https://fxpar.github.io/abc-notation-artifacts/ukulele-chords-search.html)
-* 📄 Code source : [ukulele-chords-search.html](https://github.com/fxpar/abc-notation-artifacts/blob/main/ukulele-chords-search.html)
+* 🚀 Tester l'application : [Ouvrir l'outil (Démo interactive)](https://fxpar.github.io/music-toolbox/ukulele-chords-search.html)
+* 📄 Code source : [ukulele-chords-search.html](https://github.com/fxpar/music-toolbox/blob/main/ukulele-chords-search.html)
 
 
 **Plus de 2000 position d'accord en schéma. Filtrable par fondamentale, par type d'accord et par position.**
@@ -115,8 +115,8 @@ Licence: CC BY-NC 4.0
 
 ## Grille de blues trainer
 
-* 🚀 Tester l'application : [Ouvrir l'outil (Démo interactive)](https://fxpar.github.io/abc-notation-artifacts/blues-grids.html)
-* 📄 Code source : [blues-grids.html](https://github.com/fxpar/abc-notation-artifacts/blob/main/blues-grids.html)
+* 🚀 Tester l'application : [Ouvrir l'outil (Démo interactive)](https://fxpar.github.io/music-toolbox/blues-grids.html)
+* 📄 Code source : [blues-grids.html](https://github.com/fxpar/music-toolbox/blob/main/blues-grids.html)
 
 
 **Entrainement au changement sur des grilles de blues pour ukulélé ou guitare. 4 grilles proposée, de simple à complexe. On voit le schéma de chaque accord et le métronome glisse de schéma en schéma.**
@@ -142,8 +142,8 @@ Licence: CC BY-NC 4.0
 
 ## Chord change trainer
 
-* 🚀 Tester l'application : [Ouvrir l'outil (Démo interactive)](https://fxpar.github.io/abc-notation-artifacts/chord-change.html)
-* 📄 Code source : [chord-change.html](https://github.com/fxpar/abc-notation-artifacts/blob/main/chord-change.html)
+* 🚀 Tester l'application : [Ouvrir l'outil (Démo interactive)](https://fxpar.github.io/music-toolbox/chord-change.html)
+* 📄 Code source : [chord-change.html](https://github.com/fxpar/music-toolbox/blob/main/chord-change.html)
 
 
 **Entrainement au changement d'accords pour ukulélé ou guitare. On voit le prochain accord pour se préparer, et on entend le métronome.**
@@ -170,8 +170,8 @@ Licence: CC BY-NC 4.0
 
 ## Ear chord trainer
 
-* 🚀 Tester l'application : [Ouvrir l'outil (Démo interactive)](https://fxpar.github.io/abc-notation-artifacts/chord-ear-trainer.html)
-* 📄 Code source : [chord-ear-trainer.html](https://github.com/fxpar/abc-notation-artifacts/blob/main/chord-ear-trainer.html)
+* 🚀 Tester l'application : [Ouvrir l'outil (Démo interactive)](https://fxpar.github.io/music-toolbox/chord-ear-trainer.html)
+* 📄 Code source : [chord-ear-trainer.html](https://github.com/fxpar/music-toolbox/blob/main/chord-ear-trainer.html)
 
 
 **Entrainement à la reconnaissance d'accord. L'accord est joué sur deux mesure. La réponse est affichée avec les notes sur la portée, le nom des notes et le schéma d'accord pour ukulélé ou guitare. L'audio continue durant deux mesures pour bien assosier la réponse au son.**
@@ -199,8 +199,8 @@ Licence: CC BY-NC 4.0
 
 ## Grid creation
 
-* 🚀 Tester l'application : [Ouvrir l'outil (Démo interactive)](https://fxpar.github.io/abc-notation-artifacts/abc-grid.html)
-* 📄 Code source : [abc-grid.html](https://github.com/fxpar/abc-notation-artifacts/blob/main/abc-grid.html)
+* 🚀 Tester l'application : [Ouvrir l'outil (Démo interactive)](https://fxpar.github.io/music-toolbox/abc-grid.html)
+* 📄 Code source : [abc-grid.html](https://github.com/fxpar/music-toolbox/blob/main/abc-grid.html)
 
 
 
@@ -233,8 +233,8 @@ Licence: CC BY-NC 4.0
 
 ##  Abc editor player
 
-* 🚀 Tester l'application : [Ouvrir l'outil (Démo interactive)](https://fxpar.github.io/abc-notation-artifacts/abc-editor-player.html)
-* 📄 Code source : [abc-editor-player.html](https://github.com/fxpar/abc-notation-artifacts/blob/main/abc-editor-player.html)
+* 🚀 Tester l'application : [Ouvrir l'outil (Démo interactive)](https://fxpar.github.io/music-toolbox/abc-editor-player.html)
+* 📄 Code source : [abc-editor-player.html](https://github.com/fxpar/music-toolbox/blob/main/abc-editor-player.html)
 
 
 
@@ -270,11 +270,11 @@ Licence: CC BY-NC 4.0
 
 ## Metronome graduel
 
-* 🚀 Tester l'application : [Ouvrir l'outil (Démo interactive)](https://fxpar.github.io/abc-notation-artifacts/metronome-graduel.html)
-* 📄 Code source : [metronome-graduel.html](https://github.com/fxpar/abc-notation-artifacts/blob/main/metronome-graduel.html)
+* 🚀 Tester l'application : [Ouvrir l'outil (Démo interactive)](https://fxpar.github.io/music-toolbox/metronome-graduel.html)
+* 📄 Code source : [metronome-graduel.html](https://github.com/fxpar/music-toolbox/blob/main/metronome-graduel.html)
 
 
-https://github.com/fxpar/abc-notation-artifacts/blob/main/metronome-graduel.html
+https://github.com/fxpar/music-toolbox/blob/main/metronome-graduel.html
 
 **Un métronome "geek" pour s'entrainer en accélérant (ou en décélérant), soit de manière simple, soit en utilisant des formules complexes: rester 3 mesures au même tempo, accélerer de 5bpm les 4 suivantes, revenir à un rythme intermédiaire...**
 
@@ -306,7 +306,7 @@ Licence: CC BY-NC 4.0
 
 Le code de ces outils est disponible sur Github:
 
- [https://github.com/fxpar/abc-notation-artifacts](https://github.com/fxpar/abc-notation-artifacts)
+ [https://github.com/fxpar/music-toolbox](https://github.com/fxpar/music-toolbox)
 
 # Licence
 
