@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en-us" xmlns="http://www.w3.org/1999/html"><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8"><style>body {transition: opacity ease-in 0.2s; } 
+body[unresolved] {opacity: 0; display: block; overflow: hidden; position: relative; } 
+</style>
+  <meta charset="UTF-8">
+  <title>uke-chord by pianosnake</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <link href="./css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="./css/bootstrap-icons.min.css">
+	
+ <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"> -->
+    <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.min.css"> -->
+<style>
+/* Mode Jour (par défaut) */
+/* Mode Jour (par défaut) */
+uke-chord-advanced {
+  --uke-bubble-p-bg: #000000;
+  --uke-bubble-p-text: #ffffff;
+  --uke-bubble-p-stroke: none;
+  
+  --uke-bubble-s-bg: #ffffff;
+  --uke-bubble-s-stroke: #000000;
+  --uke-bubble-s-text: #000000;
+
+  --uke-bubble-t-bg: #2196f3;
+  --uke-bubble-t-text: #ffffff;
+  --uke-bubble-t-stroke: none;
+}
+
+/* Filtre automatique pour le mode nuit de Bootstrap */
+[data-bs-theme="dark"] uke-chord-advanced {
+  filter: invert(0.9) hue-rotate(180deg);
+}
+</style>
+
+
+<script src="./js/uke-chord3fx.js"></script>
+<script src="./js/uke-chord-advanced.js"></script>
+<script src="./js/bootstrap.bundle.min.js"></script>
+<!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script> -->
+</head>
+
+<body >
+ <body class="bg-body-tertiary min-vh-100 d-flex flex-column">
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4 shadow">
+        <div class="container-fluid">
+            <a class="navbar-brand d-flex align-items-center" href="#">
+                <i class="bi bi-music-note-list me-2 text-primary"></i> Uke Chord Advanced
+            </a>
+            <button class="btn btn-outline-light btn-sm ms-auto d-flex align-items-center" id="themeToggleBtn" onclick="toggleTheme()">
+                <i class="bi bi-sun-fill" id="themeIcon"></i>
+            </button>
+        </div>
+    </nav>
+
+	
+<br/>
+<section class="main-content">
+<uke-chord-advanced 
+	frets="0000"
+	size="2"
+	length="5"
+  position="0" 
+  name="Cmaj7"
+  fret-2="bubbles:_,_,P,S; fingers:_,_,#5,R"
+  fret-3="bubbles:P,T,_,_; fingers:b7,b3,_,_"
+  sub="G,C,E,A"
+></uke-chord-advanced>
+
+<code>
+<pre>
+  frets="0000"
+  size="2"
+  length="5"
+  position="0" 
+  name="Cmaj7"
+  fret-2="bubbles:_,_,P,S; fingers:_,_,#5,R"
+  fret-3="bubbles:P,T,_,_; fingers:b7,b3,_,_"
+  sub="G,C,E,A"
+</pre>
+</code>
+
+  </section>
+
+<script>
+function toggleTheme() {
+            const html = document.documentElement;
+            const currentTheme = html.getAttribute('data-bs-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            html.setAttribute('data-bs-theme', newTheme);
+            
+            const btn = document.getElementById('themeToggleBtn');
+            if (newTheme === 'dark') {
+                btn.innerHTML = '<i class="bi bi-sun-fill"></i>';
+            } else {
+                btn.innerHTML = '<i class="bi bi-moon-fill"></i>';
+            }
+        }
+</script>
+
+</body></html>
