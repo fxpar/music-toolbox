@@ -349,7 +349,15 @@ L:1/8
 
  c c3-c2 cc 
 
- z4 c2 z2| c2 z c-c4`;
+ z4 c2 z2| c2 z c-c4
+ 
+# Latino
+
+%%score (1 2)
+V:1 stem=up
+[Bg]g [Bg]g [Bg]g [Bg]^g |
+V:2 stem=down
+[DF]2 z D D2 z2`;
 
         document.getElementById('licksBatch').value = defaultBatch;
 
@@ -376,8 +384,7 @@ L:1/8
 %%percmap g  closed-hi-hat x
 %%percmap ^g open-hi-hat x
 %%percmap a  crash-cymbal-1  x
-%%percmap ^a open-triangle     triangle
-V:1 stem=up`;
+%%percmap ^a open-triangle     triangle`;
 
         // --- GESTION DU CURSEUR AUDIO ---
         function CursorControl() {
@@ -643,6 +650,24 @@ V:1 stem=up`;
 			var metronomeElem = document.getElementById('enableMetronome');
 			var useMetronome = (metronomeElem && metronomeElem.checked) ? true : false;
 			var metronomeCode = useMetronome ? ("\n" + getMetronomeDirective(params.mHeader)) : "";
+			
+			
+			// Analyse du corps du lick
+			var bodyLines = params.body.split("\n");
+			var cleanLines = [];
+
+			// Nettoyage des lignes vides
+			for (var i = 0; i < bodyLines.length; i++) {
+				if (bodyLines[i].trim().length > 0) {
+					cleanLines.push(bodyLines[i]);
+				}
+			}
+
+			// Si le lick ne contient qu'une seule ligne, on ajoute la voix avec hampes vers le haut
+			var stemDirective = (cleanLines.length === 1) ? "V:1 stem=up\n" : "";
+
+
+
 
             let finalBody = "";
 
@@ -679,7 +704,7 @@ V:1 stem=up`;
                     break;
             }
 
-            return `${params.xHeader}\n${params.mHeader}\n${params.lHeader}\n${params.qHeader}\n${qHeader}\nK:C clef=perc\n${midiDirectives}${metronomeCode}\n${finalBody}|`;
+            return `${params.xHeader}\n${params.mHeader}\n${params.lHeader}\n${params.qHeader}\n${qHeader}\nK:C clef=perc\n${midiDirectives}${metronomeCode}\n${stemDirective} \n${finalBody}|`;
         }
 
         function switchActivity(actNumber) {
