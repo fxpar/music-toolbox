@@ -254,14 +254,16 @@
     .string-line:nth-child(3) { width: 2.5px; } /* E string */
 
     .fret-row {
-      height: 75px;
-      border-bottom: 3px solid var(--fret-wire);
-      position: relative;
-      display: flex;
-      justify-content: space-around;
-      align-items: center;
-      z-index: 3;
-    }
+  height: 75px;
+  min-height: 75px; /*  AJOUTER : Empêche la compression sur vieux WebViews */
+  flex-shrink: 0;   /*  AJOUTER : Force le conteneur à déborder et à scroller */
+  border-bottom: 3px solid var(--fret-wire);
+  position: relative;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  z-index: 3;
+}
 
     .note-spot {
       width: 46px;
@@ -635,12 +637,12 @@ function generateValidShape(chordDef, rootRow, rootString) {
 
     // Affichage d'une correction visuelle si demandée
     if (showSolutions) {
-      const sol = generateValidShape(CHORDS[q.to], rootRow);
+      const sol = generateValidShape(CHORDS[q.to], q.rootRow, q.rootString);
       if (sol[s] === r && userState[s] !== r) {
         spot.classList.add('correct-solution');
         const spotPitch = getPitchClass(r, s);
         const intervalVal = (spotPitch - rootPitch + 12) % 12;
-        spot.innerText = targetChord.labels[intervalVal] || INTERVAL_MAP[intervalVal].name;
+        spot.innerText = CHORDS[q.to].labels[intervalVal] || INTERVAL_MAP[intervalVal].name;
       }
     }
   });
@@ -722,13 +724,17 @@ btnValidate.addEventListener('click', () => {
 });
 
     btnCorrect.addEventListener('click', () => {
-      const q = questions[currentQIdx];
-      userState = [...q.targetRowsSolutions[0]];
-      renderState(true);
-      centerViewportOnActiveChord();
-      feedbackEl.innerText = "Voici la forme requise !";
-      feedbackEl.style.color = "var(--md-sys-color-on-surface)";
-    });
+  const q = currentQuestion;
+  // Génère la forme de solution basée sur l'accord cible (q.to) et la racine active
+  userState = generateValidShape(CHORDS[q.to], q.rootRow, q.rootString);
+  
+  // Re-rend l'état en activant l'affichage des solutions
+  renderState(true);
+  centerViewportOnActiveChord();
+  
+  feedbackEl.innerText = "Voici une forme correcte possible !";
+  feedbackEl.style.color = "var(--md-sys-color-on-surface)";
+});
 
     // Indice dynamique
 btnHint.addEventListener('click', () => {
