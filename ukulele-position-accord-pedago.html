@@ -485,7 +485,7 @@
   <header class="top-bar">
     <button class="icon-btn" id="btn-menu" aria-label="Menu">☰</button>
     <div class="title-container">
-      <h1>Ukulele Shape Shift</h1>
+      <h1>Ukulele Harmony</h1>
       <div class="instruction" id="instruction-text">Majeur ➔ Mineur</div>
     </div>
     <button class="icon-btn" id="btn-theme" aria-label="Toggle Theme">🌙</button>
@@ -523,6 +523,14 @@
 			<small style="opacity: 0.7;">Valeurs en demi-tons : C=0, C#=1, D=2, D#=3, E=4, F=5, F#=6, G=7, G#=8, A=9, A#=10, B=11</small>
 		  </div>
 
+		  <hr style="margin: 15px 0; opacity: 0.2;">
+			
+			<div class="config-group">
+				<label for="string-name-input"><b>Noms des cordes :</b></label>
+				<input type="text" id="string-name-input" class="drawer-input" value="G, C, E, A">
+				<small style="opacity: 0.7;">Séparés par des virgules (ex: Sol, Do, Mi, La)</small>
+			  </div>
+		  
 		  <hr style="margin: 15px 0; opacity: 0.2;">
 
 		  <!-- Noms des 12 Intervalles -->
@@ -617,6 +625,8 @@
   let STRING_OFFSETS = [7, 0, 4, 9];
   const TOTAL_ROWS = 36; // 3 cycles complets de 12 demi-tons
   const ANCHOR_ROW = 12; // Ligne de référence du milieu
+  let STRING_NAMES = ["G", "C", "E", "A"];
+  //let STRING_NAMES = ["Sol", "Do", "Mi", "La"];
 
   // Noms d'intervalles relatifs
   let INTERVAL_NAMES = {
@@ -654,6 +664,7 @@
     const rawIntervals = document.getElementById('intervals-input').value;
     const parsedArray = rawIntervals.split(',').map(s => s.trim());
 
+
     if (parsedArray.length === 12) {
       parsedArray.forEach((name, index) => {
         INTERVAL_NAMES[index] = name;
@@ -662,6 +673,22 @@
       alert("Attention : Vous devez fournir exactement 12 noms séparés par des virgules.");
       return;
     }
+	
+	// 2. Récupération du nom des 4 cordes
+	
+	const rawStringNames = document.getElementById('string-name-input').value;
+    const parsedStringNameArray = rawStringNames.split(',').map(s => s.trim());
+	
+	if (parsedStringNameArray.length === 4) {
+      parsedStringNameArray.forEach((name, index) => {
+        STRING_NAMES[index] = name;
+      });
+    } else {
+      alert("Attention : Vous devez fournir exactement 4 noms séparés par des virgules.");
+      return;
+    }
+	
+	
 
     // 2. Récupération de l'accordage des 4 cordes
     STRING_OFFSETS = [
@@ -670,9 +697,19 @@
       parseInt(document.getElementById('tune-2').value) || 0,
       parseInt(document.getElementById('tune-3').value) || 0
     ];
+	
+	
+    
 
     // 3. Rafraîchissement de l'affichage sur le manche
     renderState();
+	
+	const presetButtons = document.querySelectorAll('.bottom-sheet .actions-row .btn');
+presetButtons.forEach((btn, idx) => {
+  const stringNumber = 4 - idx;
+  const stringName = STRING_NAMES[idx];
+  btn.innerHTML = `<span class="d-none d-md-inline">Corde ${stringNumber}</span> (${stringName})`;
+});
 
     // 4. Fermer le drawer
     drawerOverlay.classList.remove('open');
@@ -795,9 +832,12 @@
       }
     }
 
-    const stringNames = ['G (4)', 'C (3)', 'E (2)', 'A (1)'];
-    instructionEl.innerText = `Racine Corde ${stringNames[rootStringIdx]}`;
-    feedbackEl.innerText = `Intervalles fixés sur la Corde ${stringNames[rootStringIdx]}.`;
+    // Numéro de la corde en notation traditionnelle ukulélé (Corde 4 à Corde 1)
+  const stringNumber = 4 - rootStringIdx; 
+  const stringName = STRING_NAMES[rootStringIdx];
+
+  instructionEl.innerText = `Référence fixée : Corde ${stringNumber} (${stringName})`;
+  feedbackEl.innerText = `Intervalles fixés sur la Corde ${stringNumber} (${stringName}).`;
 
     renderState();
     centerViewportOnAnchor();
