@@ -2,6 +2,9 @@
 
 Liste de petits outils pour aider à travailler un instrument ou à éditer ses partitions. Certains outils sont basés sur la "notation abc" pour la musique. 
 
+
+
+
 ---
 
 ## Entrainement rythme batterie
@@ -62,7 +65,7 @@ Licence: CC BY-NC 4.0
 
 ---
 
-## Quiz position des accord ukulélé
+## Quiz position des accords ukulélé
 
 * 🚀 Tester l'application : [Ouvrir l'outil (Démo interactive)](https://fxpar.github.io/music-toolbox/ukulele-position-accord-quiz.html)
 * 📄 Code source : [ukulele-position-accord-quiz.html](https://github.com/fxpar/music-toolbox/blob/main/ukulele-position-accord-quiz.html)
@@ -73,6 +76,31 @@ Licence: CC BY-NC 4.0
 Librairies utilisées: 
 * aucune
 
+
+---
+
+## Position des accords ukulélé (outil pédagogique)
+
+* 🚀 Tester l'application : [Ouvrir l'outil (Démo interactive)](https://fxpar.github.io/music-toolbox/ukulele-position-accord-pedago.html)
+* 📄 Code source : [ukulele-position-accord-pedago.html](https://github.com/fxpar/music-toolbox/blob/main/ukulele-position-accord-pedago.html)
+
+
+**Permet aux enseignants de montrer les positions relatives de notes en prenant la fondamentale sur l'une ou l'autre de cordes. **
+
+Paramètres:
+* Changer le nom des intervalles (b2 ou b9, 6 ou #5)
+* Changer le nom des cordes (G ou Sol, C ou Do, E ou Mi, A ou La)
+* Changer le tuning (écarts entre les cordes en demi tons)
+* Quatre "couleurs" des cases: invisible, Orange, Bleu , X  en cliquant plusieurs fois
+* Ajout du sillet à n'importe quelle position en cliquant sur une frette
+* Application relative du nom de case par bouton en fonction de chaque corde
+* Mode jour / nuit
+
+Librairies utilisées: 
+* aucune
+
+
+---
 
 ## Quiz formules d'accord
 
