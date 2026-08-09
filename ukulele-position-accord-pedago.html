@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Ukulele Intervals & Shape Trainer - MD3</title>
+  <style>
+    /* ==========================================================================
+       1. MATERIAL DESIGN 3 DESIGN TOKENS (LIGHT / DARK)
+       ========================================================================== */
+    :root[data-theme="dark"] {
+      --md-sys-color-background: #141218;
+      --md-sys-color-on-background: #e6e0e9;
+      --md-sys-color-surface: #141218;
+      --md-sys-color-surface-container: #211f26;
+      --md-sys-color-surface-container-high: #2b2930;
+      --md-sys-color-on-surface: #e6e0e9;
+      --md-sys-color-on-surface-variant: #cac4d0;
+      --md-sys-color-primary: #d0bcff;
+      --md-sys-color-on-primary: #381e72;
+      --md-sys-color-primary-container: #4f378b;
+      --md-sys-color-on-primary-container: #eaddff;
+      --md-sys-color-secondary: #ccc2dc;
+      --md-sys-color-on-secondary: #332d41;
+      --md-sys-color-outline: #938f99;
+      --md-sys-color-outline-variant: #49454f;
+      
+      --chord-root: #ffb4ab;
+      --chord-root-text: #690005;
+      --chord-interval: #a8c7ff;
+      --chord-interval-text: #003062;
+      --chord-error: #ffb4ab;
+      
+      --fretboard-wood: #231f20;
+      --fret-wire: #49454f;
+      --string-color: #e6e0e9;
+    }
+
+    :root[data-theme="light"] {
+      --md-sys-color-background: #fef7ff;
+      --md-sys-color-on-background: #1d1b20;
+      --md-sys-color-surface: #fef7ff;
+      --md-sys-color-surface-container: #f3edf7;
+      --md-sys-color-surface-container-high: #ece6f0;
+      --md-sys-color-on-surface: #1d1b20;
+      --md-sys-color-on-surface-variant: #49454f;
+      --md-sys-color-primary: #6750a4;
+      --md-sys-color-on-primary: #ffffff;
+      --md-sys-color-primary-container: #eaddff;
+      --md-sys-color-on-primary-container: #21005d;
+      --md-sys-color-secondary: #625b71;
+      --md-sys-color-on-secondary: #ffffff;
+      --md-sys-color-outline: #79747e;
+      --md-sys-color-outline-variant: #c9c5d0;
+
+      --chord-root: #ba1a1a;
+      --chord-root-text: #ffffff;
+      --chord-interval: #0061a4;
+      --chord-interval-text: #ffffff;
+      --chord-error: #ba1a1a;
+
+      --fretboard-wood: #4a3e3d;
+      --fret-wire: #938f99;
+      --string-color: #1d1b20;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, -apple-system, Roboto, sans-serif;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background-color: var(--md-sys-color-background);
+      color: var(--md-sys-color-on-background);
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* ==========================================================================
+       2. HEADER & NAVIGATION (FIXED TOP APP BAR & DRAWER)
+       ========================================================================== */
+    .top-bar {
+      height: 72px;
+      background-color: var(--md-sys-color-surface-container);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+      z-index: 10;
+      flex-shrink: 0;
+    }
+
+    .top-bar .title-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      flex: 1;
+    }
+
+    .top-bar h1 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--md-sys-color-primary);
+    }
+
+    .top-bar .instruction {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--md-sys-color-on-surface);
+      margin-top: 2px;
+    }
+
+    .icon-btn {
+      background: none;
+      border: none;
+      color: var(--md-sys-color-on-surface);
+      font-size: 1.4rem;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .icon-btn:active {
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+
+    /* Navigation Drawer */
+    .drawer-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 100;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+
+    .drawer-overlay.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .drawer {
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      left: -300px;
+      width: 280px;
+      background-color: var(--md-sys-color-surface-container-high);
+      z-index: 101;
+      padding: 24px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      transition: transform 0.3s ease;
+      border-radius: 0 16px 16px 0;
+    }
+
+    .drawer-overlay.open .drawer {
+      transform: translateX(300px);
+    }
+
+    .drawer h2 {
+      font-size: 1.2rem;
+      margin-bottom: 8px;
+      color: var(--md-sys-color-on-surface);
+    }
+
+/* Panneau latéral du Drawer */
+.drawer-content, 
+.nav-drawer {
+  max-height: 100vh;                 /* S'assure qu'il ne dépasse pas de l'écran */
+  overflow-y: auto;                  /* Active le scroll vertical si le contenu déborde */
+  -webkit-overflow-scrolling: touch; /* Garantit le scroll fluide sur mobiles (Android/iOS) */
+  display: flex;
+  flex-direction: column;
+}
+.drawer-content {
+  padding-bottom: 32px; /* Marge interne en bas du texte */
+}
+
+    .menu-item {
+      padding: 12px 16px;
+      border-radius: 28px;
+      background-color: transparent;
+      color: var(--md-sys-color-on-surface-variant);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      font-weight: 500;
+    }
+
+    .menu-item.active {
+      background-color: var(--md-sys-color-primary-container);
+      color: var(--md-sys-color-on-primary-container);
+    }
+
+    /* ==========================================================================
+       3. INTERVAL MATRIX FRETBOARD (SCROLLABLE & INFINITE LOOP)
+       ========================================================================== */
+    .fretboard-viewport {
+      flex: 1;
+      overflow-y: auto;
+      position: relative;
+      background-color: var(--fretboard-wood);
+      display: flex;
+      justify-content: center;
+      padding-bottom: 180px; /* Leave space for bottom sheet */
+    }
+
+    .fretboard {
+      width: 100%;
+      max-width: 380px;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      <!-- box-shadow: 0 0 25px rgba(0,0,0,0.6); -->
+    }
+
+    .string-header {
+      position: sticky;
+      top: 0;
+      background-color: var(--md-sys-color-surface-container-high);
+      display: flex;
+      justify-content: space-around;
+      padding: 8px 0;
+      font-weight: bold;
+      color: var(--md-sys-color-primary);
+      z-index: 5;
+      border-bottom: 2px solid var(--md-sys-color-outline-variant);
+      font-size: 0.85rem;
+    }
+
+    .strings-container {
+      position: absolute;
+      top: 36px;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      display: flex;
+      justify-content: space-around;
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    .string-line {
+	display:none;
+      width: 2px;
+      background-color: var(--string-color);
+      height: 100%;
+      box-shadow: 1px 0 3px rgba(0,0,0,0.5);
+    }
+    .string-line:nth-child(2) { width: 3.2px; } /* C string */
+    .string-line:nth-child(3) { width: 2.5px; } /* E string */
+
+    .fret-row {
+  height: 75px;
+  min-height: 75px; /*  AJOUTER : Empêche la compression sur vieux WebViews */
+  flex-shrink: 0;   /*  AJOUTER : Force le conteneur à déborder et à scroller */
+  border-bottom: 3px solid var(--fret-wire);
+  position: relative;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  z-index: 3;
+}
+
+    .note-spot {
+      width: 46px;
+      height: 46px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: transform 0.15s ease, background-color 0.2s ease, box-shadow 0.2s;
+      z-index: 4;
+      font-weight: 700;
+      font-size: 0.95rem;
+      background-color: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: transparent;
+    }
+
+    .note-spot.active {
+      background-color: var(--chord-interval);
+      color: var(--chord-interval-text);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+      border: none;
+      transform: scale(1.08);
+    }
+
+    .note-spot.active.root {
+      background-color: var(--chord-root);
+      color: var(--chord-root-text);
+      box-shadow: 0 0 12px var(--chord-root);
+    }
+
+    .note-spot.correct-solution {
+      border: 2px dashed var(--md-sys-color-primary);
+      background-color: rgba(208, 188, 255, 0.25);
+      color: var(--md-sys-color-on-surface);
+    }
+
+    /* ==========================================================================
+       4. BOTTOM SHEET & CONTROLS
+       ========================================================================== */
+    .bottom-sheet {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background-color: var(--md-sys-color-surface-container-high);
+      border-radius: 28px 28px 0 0;
+      padding: 16px 20px 24px 20px;
+      box-shadow: 0 -4px 20px rgba(0,0,0,0.3);
+      z-index: 20;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .sheet-handle {
+      width: 36px;
+      height: 4px;
+      background-color: var(--md-sys-color-outline);
+      border-radius: 2px;
+      align-self: center;
+    }
+
+    .feedback-text {
+      font-size: 0.95rem;
+      color: var(--md-sys-color-on-surface);
+      text-align: center;
+      min-height: 22px;
+      font-weight: 500;
+    }
+
+    .hint-box {
+      display: none;
+      background-color: var(--md-sys-color-surface-container);
+      border-radius: 12px;
+      padding: 10px 14px;
+      font-size: 0.85rem;
+      color: var(--md-sys-color-on-surface-variant);
+      text-align: center;
+      border: 1px solid var(--md-sys-color-outline-variant);
+    }
+
+    .actions-row {
+      display: flex;
+      gap: 10px;
+      justify-content: space-between;
+    }
+
+    .btn {
+      flex: 1;
+      height: 48px;
+      border-radius: 24px;
+      border: none;
+      font-weight: 600;
+      font-size: 0.9rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: opacity 0.2s ease, transform 0.1s;
+    }
+    .btn:active { transform: scale(0.97); }
+
+    .btn-outlined {
+      background-color: transparent;
+      color: var(--md-sys-color-primary);
+      border: 1px solid var(--md-sys-color-outline);
+    }
+
+    .btn-secondary {
+      background-color: var(--md-sys-color-surface-container);
+      color: var(--md-sys-color-primary);
+      border: 1px solid var(--md-sys-color-outline-variant);
+    }
+
+    .btn-primary {
+      background-color: var(--md-sys-color-primary);
+      color: var(--md-sys-color-on-primary);
+    }
+
+    .score-badge {
+      display: inline-block;
+      padding: 2px 10px;
+      border-radius: 12px;
+      background-color: var(--md-sys-color-primary-container);
+      color: var(--md-sys-color-on-primary-container);
+      font-size: 0.8rem;
+      font-weight: bold;
+    }
+	
+	
+	/* Style du sillet / frette renforcée */
+.fret-row.nut-active::after {
+  content: '';
+  position: absolute;
+  bottom: -4px; /* Recouvre la bordure standard */
+  left: 0;
+  right: 0;
+  height: 8px; /* Épaisseur du sillet */
+  background-color: var(--md-sys-color-primary, #ffd700); /* Couleur d'accentuation / Sillet */
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.4);
+  z-index: 10;
+  pointer-events: none; /* Laisse passer le clic à travers */
+}
+
+/* Curseur d'indication au survol des lignes de frette */
+.fret-row {
+  cursor: pointer;
+}
+
+
+/* Utilitaires Responsive (style Bootstrap) */
+
+/* Masqué sur tous les écrans par défaut */
+.d-none {
+  display: none !important;
+}
+
+/* Visible à partir des écrans moyens (tablettes/desktop >= 768px) */
+@media (min-width: 768px) {
+  .d-md-inline {
+    display: inline !important;
+  }
+}
+
+
+  </style>
+</head>
+<body>
+
+  <!-- Top App Bar -->
+  <header class="top-bar">
+    <button class="icon-btn" id="btn-menu" aria-label="Menu">☰</button>
+    <div class="title-container">
+      <h1>Ukulele Shape Shift</h1>
+      <div class="instruction" id="instruction-text">Majeur ➔ Mineur</div>
+    </div>
+    <button class="icon-btn" id="btn-theme" aria-label="Toggle Theme">🌙</button>
+  </header>
+
+  <!-- Navigation Drawer -->
+  <div class="drawer-overlay" id="drawer-overlay">
+    <nav class="drawer">
+      <h2>Rappels théorie</h2>
+      <!-- <div class="menu-item active"> -->
+        <!-- <span>1. Shift de Formes (Actif)</span> -->
+      <!-- </div> -->
+      <!-- <div class="menu-item"> -->
+        <!-- <span>2. Prochainement...</span> -->
+      <!-- </div> -->
+      <hr style="border: 0.5px solid var(--md-sys-color-outline-variant); margin: 8px 0;">
+      <!-- <div style="font-size: 0.9rem; color: var(--md-sys-color-on-surface-variant)"> -->
+        <!-- Score : <span class="score-badge" id="total-score">0 pts</span> -->
+      <!-- </div> -->
+	  
+	  <div class="drawer-content">
+        <p>Les formules d'accords expriment la distance (les intervalles) entre la <strong>Fondamentale (R)</strong> et les autres notes.</p>
+
+        <h3>Symbologie classique</h3>
+        <ul>
+            <li><strong>R</strong> : Root (Fondamentale)</li>
+            <li><strong>b3 / 3</strong> : Tierce mineure / majeure</li>
+            <li><strong>b5 / 5 / #5</strong> : Quinte dim / juste / aug</li>
+            <li><strong>b7 / 7 / bb7</strong> : Septième min / maj / diminuée</li>
+        </ul>
+
+        <h3>Les 4 Familles d'Accords (7e)</h3>
+        <table class="chord-table">
+            <thead>
+                <tr>
+                    <th>Type</th>
+                    <th>Formule</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>Majeur 7</strong> (maj7)</td><td>R - 3 - 5 - 7</td></tr>
+                <tr><td><strong>Dominante</strong> (7)</td><td>R - 3 - 5 - b7</td></tr>
+                <tr><td><strong>Mineur 7</strong> (m7)</td><td>R - b3 - 5 - b7</td></tr>
+                <tr><td><strong>Demi-diminué</strong> (m7b5)</td><td>R - b3 - b5 - b7</td></tr>
+                <tr><td><strong>Diminué 7</strong> (dim7)</td><td>R - b3 - b5 - bb7</td></tr>
+            </tbody>
+        </table>
+
+        <h3>Tensions complexes</h3>
+        <p>Les altérations de dominante (7alt) comportent des tensions enrichies : <strong>b9, #9, b5 (#11), #5 (b13)</strong>.</p>
+    </div>
+	
+    </nav>
+  </div>
+
+  <!-- Scrollable Matrix Viewport -->
+  <main class="fretboard-viewport" id="viewport">
+    <div class="fretboard" id="fretboard">
+      <div class="string-header">
+        <span>G (4)</span>
+        <span>C (3)</span>
+        <span>E (2)</span>
+        <span>A (1)</span>
+      </div>
+      <div class="strings-container">
+        <div class="string-line"></div>
+        <div class="string-line"></div>
+        <div class="string-line"></div>
+        <div class="string-line"></div>
+      </div>
+      <!-- Rows generated via JS -->
+    </div>
+  </main>
+
+  <!-- Bottom Sheet Controls -->
+  <!-- Bottom Sheet Controls (Mode Outil Pédagogique) -->
+  <footer class="bottom-sheet">
+    <div class="sheet-handle"></div>
+    <div class="feedback-text" id="feedback">Sélectionnez l'emplacement de la racine (Root) :</div>
+
+    <div class="actions-row">
+      <button class="btn btn-secondary" onclick="applyPreset(0)"><span class="d-none d-md-inline">Corde 4</span> (G)</button>
+      <button class="btn btn-secondary" onclick="applyPreset(1)"><span class="d-none d-md-inline">Corde 3</span> (C)</button>
+      <button class="btn btn-secondary" onclick="applyPreset(2)"><span class="d-none d-md-inline">Corde 2</span> (E)</button>
+      <button class="btn btn-secondary" onclick="applyPreset(3)"><span class="d-none d-md-inline">Corde 1</span> (A)</button>
+    </div>
+  </footer>
+
+  <script>
+   /* ==========================================================================
+     1. CONSTANTES & LOGIQUE MUSICALE
+     ========================================================================== */
+  // Cordes : [G (4), C (3), E (2), A (1)]
+  const STRING_OFFSETS = [7, 0, 4, 9];
+  const TOTAL_ROWS = 36; // 3 cycles complets de 12 demi-tons
+  const ANCHOR_ROW = 12; // Ligne de référence du milieu
+
+  // Noms d'intervalles relatifs
+  const INTERVAL_NAMES = {
+    0: 'R', 1: 'b9', 2: '9', 3: 'b3', 4: '3', 5: '4',
+    6: 'b5', 7: '5', 8: '#5', 9: '6', 10: 'b7', 11: '7'
+  };
+
+  /* 
+     États possibles pour chaque case [string][row] :
+     0 = Inactif / Invisible
+     1 = Note / Intervalle (Bleu)
+     2 = Racine / Root (Orange)
+     3 = Ne pas jouer / Mute (X Gris)
+  */
+  let gridState = Array.from({ length: 4 }, () => Array(TOTAL_ROWS).fill(0));
+  
+  // Racine de référence FIXE définissant la grille harmonique active
+  let fixedRootString = 1; // Corde de C par défaut
+
+  /* ==========================================================================
+     2. ELEMENTS DOM & INITIALISATION
+     ========================================================================== */
+  const fretboardEl = document.getElementById('fretboard');
+  const viewportEl = document.getElementById('viewport');
+  const instructionEl = document.getElementById('instruction-text');
+  const feedbackEl = document.getElementById('feedback');
+  const themeBtn = document.getElementById('btn-theme');
+  const drawerOverlay = document.getElementById('drawer-overlay');
+
+  function getPitchClass(row, stringIdx) {
+    return (STRING_OFFSETS[stringIdx] + row) % 12;
+  }
+
+  // Construction dynamique des 36 lignes de la matrice
+  function buildMatrix() {
+    const stringsContainer = fretboardEl.querySelector('.strings-container');
+    const stringHeader = fretboardEl.querySelector('.string-header');
+    fretboardEl.innerHTML = '';
+    if (stringHeader) fretboardEl.appendChild(stringHeader);
+    if (stringsContainer) fretboardEl.appendChild(stringsContainer);
+
+    // À mettre à jour dans buildMatrix() :
+  for (let r = 0; r < TOTAL_ROWS; r++) {
+    const rowEl = document.createElement('div');
+    rowEl.className = 'fret-row';
+    rowEl.dataset.row = r;
+
+    // --- AJOUT : Clic sur la ligne pour activer/désactiver le sillet ---
+    rowEl.addEventListener('click', (e) => {
+      // On vérifie que le clic visait bien la ligne et pas un spot de note
+      if (e.target === rowEl) {
+        rowEl.classList.toggle('nut-active');
+      }
+    });
+
+    for (let s = 0; s < 4; s++) {
+      const spot = document.createElement('div');
+      spot.className = 'note-spot';
+      spot.dataset.string = s;
+      spot.dataset.row = r;
+
+      spot.addEventListener('click', (e) => {
+        e.stopPropagation(); // Empêche le clic sur la note d'activer le sillet
+        handleSpotClick(s, r);
+      });
+      rowEl.appendChild(spot);
+    }
+    fretboardEl.appendChild(rowEl);
+  }
+  }
+
+  /* ==========================================================================
+     3. CYCLE DES 4 ÉTATS ET MISE À JOUR VISUELLE
+     ========================================================================== */
+  function handleSpotClick(stringIdx, rowIdx) {
+    // Permutation circulaire des 4 états : 0 -> 1 -> 2 -> 3 -> 0
+    gridState[stringIdx][rowIdx] = (gridState[stringIdx][rowIdx] + 1) % 4;
+
+    // Le clic ne modifie PLUS fixedRootString : la grille harmonique reste stable !
+    renderState();
+  }
+
+  function renderState() {
+    // Calcul de la hauteur de note de la racine verrouillée par le bouton preset
+    const anchorPitch = getPitchClass(ANCHOR_ROW, fixedRootString);
+
+    const spots = fretboardEl.querySelectorAll('.note-spot');
+    spots.forEach(spot => {
+      const s = parseInt(spot.dataset.string);
+      const r = parseInt(spot.dataset.row);
+      const state = gridState[s][r];
+
+      // Réinitialisation des classes CSS et du style
+      spot.classList.remove('active', 'root', 'muted');
+      spot.innerText = '';
+      spot.style.backgroundColor = '';
+      spot.style.color = '';
+      spot.style.border = '';
+
+      if (state === 1 || state === 2) {
+        // Calcul du texte de l'intervalle TOUJOURS basé sur fixedRootString
+        const spotPitch = getPitchClass(r, s);
+        const interval = (spotPitch - anchorPitch + 12) % 12;
+        spot.innerText = INTERVAL_NAMES[interval];
+
+        if (state === 1) {
+          // État 1 : Note / Intervalle (Bleu)
+          spot.classList.add('active');
+        } else if (state === 2) {
+          // État 2 : Racine / Root visuelle (Orange) - Change la couleur, garde le texte !
+          spot.classList.add('active', 'root');
+        }
+      } 
+      else if (state === 3) {
+        // État 3 : Ne pas jouer / Mute (X gris)
+        spot.classList.add('muted');
+        spot.innerText = '✕';
+        spot.style.backgroundColor = 'rgba(147, 143, 153, 0.2)';
+        spot.style.color = 'var(--md-sys-color-outline)';
+        spot.style.border = '1px solid var(--md-sys-color-outline)';
+      }
+    });
+  }
+
+  /* ==========================================================================
+     4. GESTION DES PRESETS (VERROUILLAGE DE LA RACINE DE RÉFÉRENCE)
+     ========================================================================== */
+  function applyPreset(rootStringIdx) {
+    // 1. Réinitialiser la grille complète (toutes les cases à 0)
+    gridState = Array.from({ length: 4 }, () => Array(TOTAL_ROWS).fill(0));
+	
+	// --- AJOUT : Réinitialise l'épaisseur de toutes les frettes / sillets ---
+  fretboardEl.querySelectorAll('.fret-row.nut-active').forEach(el => el.classList.remove('nut-active'));
+
+    // 2. Fixer DEFINITIVEMENT la racine de référence globale pour le calcul des textes
+    fixedRootString = rootStringIdx;
+
+    // 3. Allumer la ligne du milieu (ANCHOR_ROW = 12) pour les 4 cordes
+    for (let s = 0; s < 4; s++) {
+      if (s === rootStringIdx) {
+        gridState[s][ANCHOR_ROW] = 2; // Racine orange
+      } else {
+        gridState[s][ANCHOR_ROW] = 1; // Intervalle bleu
+      }
+    }
+
+    const stringNames = ['G (4)', 'C (3)', 'E (2)', 'A (1)'];
+    instructionEl.innerText = `Racine Corde ${stringNames[rootStringIdx]}`;
+    feedbackEl.innerText = `Intervalles fixés sur la Corde ${stringNames[rootStringIdx]}.`;
+
+    renderState();
+    centerViewportOnAnchor();
+  }
+
+  function centerViewportOnAnchor() {
+    const rowEl = fretboardEl.querySelector(`.fret-row[data-row="${ANCHOR_ROW}"]`);
+    if (rowEl) {
+      const scrollPos = rowEl.offsetTop - (viewportEl.clientHeight / 2) + 38;
+      viewportEl.scrollTo({ top: Math.max(0, scrollPos), behavior: 'smooth' });
+    }
+  }
+
+  /* ==========================================================================
+     5. ÉVÉNEMENTS DIVERS (THEME & DRAWER)
+     ========================================================================== */
+  themeBtn.addEventListener('click', () => {
+    const html = document.documentElement;
+    const current = html.getAttribute('data-theme');
+    const next = current === 'dark' ? 'light' : 'dark';
+    html.setAttribute('data-theme', next);
+    themeBtn.innerText = next === 'dark' ? '🌙' : '☀️';
+  });
+
+  document.getElementById('btn-menu').addEventListener('click', () => {
+    drawerOverlay.classList.add('open');
+  });
+
+  drawerOverlay.addEventListener('click', (e) => {
+    if (e.target === drawerOverlay) {
+      drawerOverlay.classList.remove('open');
+    }
+  });
+
+  // Initialisation au chargement de la page : Preset par défaut sur la Corde C (index 1)
+  buildMatrix();
+  applyPreset(1);
+  </script>
+</body>
+</html>
