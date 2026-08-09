@@ -177,6 +177,38 @@
       margin-bottom: 8px;
       color: var(--md-sys-color-on-surface);
     }
+	
+	.drawer-section {
+  padding: 15px;
+}
+.config-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+.tuning-inputs {
+  display: flex;
+  gap: 8px;
+}
+.tuning-inputs input {
+  width: 100%;
+  padding: 6px;
+  text-align: center;
+  border: 1px solid var(--md-sys-color-outline);
+  border-radius: 4px;
+  background: var(--md-sys-color-surface);
+  color: var(--md-sys-color-on-surface);
+}
+.drawer-input {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid var(--md-sys-color-outline);
+  border-radius: 4px;
+  background: var(--md-sys-color-surface);
+  color: var(--md-sys-color-on-surface);
+  font-family: inherit;
+}
 
 /* Panneau latéral du Drawer */
 .drawer-content, 
@@ -462,7 +494,7 @@
   <!-- Navigation Drawer -->
   <div class="drawer-overlay" id="drawer-overlay">
     <nav class="drawer">
-      <h2>Rappels théorie</h2>
+      <h2>Paramètre et théorie</h2>
       <!-- <div class="menu-item active"> -->
         <!-- <span>1. Shift de Formes (Actif)</span> -->
       <!-- </div> -->
@@ -475,6 +507,40 @@
       <!-- </div> -->
 	  
 	  <div class="drawer-content">
+	  
+	  <div class="drawer-section">
+		  <h3>Configuration</h3>
+		
+		  <!-- Accordage des cordes -->
+		  <div class="config-group">
+			<label><b>Accordage (Corde 4 à 1) :</b></label>
+			<div class="tuning-inputs">
+			  <input type="number" id="tune-0" value="7" min="0" max="11" title="Corde 4 (G=7)">
+			  <input type="number" id="tune-1" value="0" min="0" max="11" title="Corde 3 (C=0)">
+			  <input type="number" id="tune-2" value="4" min="0" max="11" title="Corde 2 (E=4)">
+			  <input type="number" id="tune-3" value="9" min="0" max="11" title="Corde 1 (A=9)">
+			</div>
+			<small style="opacity: 0.7;">Valeurs en demi-tons : C=0, C#=1, D=2, D#=3, E=4, F=5, F#=6, G=7, G#=8, A=9, A#=10, B=11</small>
+		  </div>
+
+		  <hr style="margin: 15px 0; opacity: 0.2;">
+
+		  <!-- Noms des 12 Intervalles -->
+		  <div class="config-group">
+			<label for="intervals-input"><b>Noms des 12 Intervalles (du demi-ton 0 à 11) :</b></label>
+			<input type="text" id="intervals-input" class="drawer-input" value="R, b9, 9, b3, 3, 4, b5, 5, #5, 6, b7, 7">
+			<small style="opacity: 0.7;">Séparés par des virgules (ex: remplacer b9 par b2 ou #5 par b6)</small>
+		  </div>
+
+		  <button class="btn btn-primary" id="btn-apply-config" style="margin-top: 15px; width: 100%;">
+			Appliquer les paramètres
+		  </button>
+	  </div>
+	  
+	  <hr style="border: 0.5px solid var(--md-sys-color-outline-variant); margin: 8px 0;">
+	  
+	  
+	   <h3>Rappels théorie musicale</h3>
         <p>Les formules d'accords expriment la distance (les intervalles) entre la <strong>Fondamentale (R)</strong> et les autres notes.</p>
 
         <h3>Symbologie classique</h3>
@@ -505,6 +571,7 @@
         <h3>Tensions complexes</h3>
         <p>Les altérations de dominante (7alt) comportent des tensions enrichies : <strong>b9, #9, b5 (#11), #5 (b13)</strong>.</p>
     </div>
+	
 	
     </nav>
   </div>
@@ -547,15 +614,17 @@
      1. CONSTANTES & LOGIQUE MUSICALE
      ========================================================================== */
   // Cordes : [G (4), C (3), E (2), A (1)]
-  const STRING_OFFSETS = [7, 0, 4, 9];
+  let STRING_OFFSETS = [7, 0, 4, 9];
   const TOTAL_ROWS = 36; // 3 cycles complets de 12 demi-tons
   const ANCHOR_ROW = 12; // Ligne de référence du milieu
 
   // Noms d'intervalles relatifs
-  const INTERVAL_NAMES = {
+  let INTERVAL_NAMES = {
     0: 'R', 1: 'b9', 2: '9', 3: 'b3', 4: '3', 5: '4',
     6: 'b5', 7: '5', 8: '#5', 9: '6', 10: 'b7', 11: '7'
   };
+  
+  
 
   /* 
      États possibles pour chaque case [string][row] :
@@ -578,6 +647,36 @@
   const feedbackEl = document.getElementById('feedback');
   const themeBtn = document.getElementById('btn-theme');
   const drawerOverlay = document.getElementById('drawer-overlay');
+  
+  
+  document.getElementById('btn-apply-config').addEventListener('click', () => {
+    // 1. Récupération et parsing des 12 noms d'intervalles (format texte séparé par virgules)
+    const rawIntervals = document.getElementById('intervals-input').value;
+    const parsedArray = rawIntervals.split(',').map(s => s.trim());
+
+    if (parsedArray.length === 12) {
+      parsedArray.forEach((name, index) => {
+        INTERVAL_NAMES[index] = name;
+      });
+    } else {
+      alert("Attention : Vous devez fournir exactement 12 noms séparés par des virgules.");
+      return;
+    }
+
+    // 2. Récupération de l'accordage des 4 cordes
+    STRING_OFFSETS = [
+      parseInt(document.getElementById('tune-0').value) || 0,
+      parseInt(document.getElementById('tune-1').value) || 0,
+      parseInt(document.getElementById('tune-2').value) || 0,
+      parseInt(document.getElementById('tune-3').value) || 0
+    ];
+
+    // 3. Rafraîchissement de l'affichage sur le manche
+    renderState();
+
+    // 4. Fermer le drawer
+    drawerOverlay.classList.remove('open');
+  });
 
   function getPitchClass(row, stringIdx) {
     return (STRING_OFFSETS[stringIdx] + row) % 12;
