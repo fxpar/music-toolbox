@@ -706,7 +706,7 @@ V:2 stem=down
     var qHeader = "Q:" + currentBpm;
 	
 	
-	// Récupération Tempo & Swing
+	// Récupération Tempo
     var metronomeElem = document.getElementById('enableMetronome');
     var useMetronome = (metronomeElem && metronomeElem.checked) ? true : false;
     var metronomeCode = useMetronome ? ("\n" + getMetronomeDirective(params.mHeader)) : "";
