@@ -3,7 +3,66 @@
 Liste de petits outils pour aider à travailler un instrument ou à éditer ses partitions. Certains outils sont basés sur la "notation abc" pour la musique. 
 
 
+---
 
+##  Editeur musical abc simple
+
+* 🚀 Tester l'application : [Ouvrir l'outil (Démo interactive)](https://fxpar.github.io/music-toolbox/abc-editeur-simple.html)
+* 📄 Code source : [abc-editeur-simple.html](https://github.com/fxpar/music-toolbox/blob/main/abc-editeur-simple.html)
+
+
+
+**Version simplifiée d'un éditeur de morceaux écrits en abc-notation. Utile pour saisir rapidement un rif ou entendre un lick rythmique et jouer en boucle.**
+
+Fonctionnalités:
+* Visualisation de la partition
+* Jeu de l'Audio
+* Métronome simplifié
+* Transposition
+* Tempo accéléré / Ralentir par tranche de 5 bpm
+* Enregistrement dans le navigateur
+* Ajout de nouveaux morceaux
+* Mode Jour / Nuit
+
+À faire: 
+* [ ] Ajouter les tablatures avec l'accordement
+* [ ] Faire fonctionner le swing
+
+Librairies utilisées: 
+* Abcjs de Paul Rosen
+* Bootstrap
+
+Code créé par IA (Gemini), et prompté par moi 😉
+
+Licence: CC BY-NC 4.0
+
+---
+
+## Entrainement Sens du temps
+
+* 🚀 Tester l'application : [Ouvrir l'outil (Démo interactive)](https://fxpar.github.io/music-toolbox/timing-trainer.html)
+* 📄 Code source : [timing-trainer.html](https://github.com/fxpar/music-toolbox/blob/main/timing-trainer.html)
+
+**Tape au bon moment et voit si tu es en avance ou en retard. Tu entends une note plus grave ou plus aigue selon.**
+
+
+Paramètres:
+* de 2 à 16 temps (ou demi temps)
+* choix des temps joué par le métronome
+* choix des temps à viser (mesurés)
+* choix du tempo en bpm (défaut 80bpm)
+* possibilité de masquer l'aide visuelle
+* quelques jeux pré-paramétrés (presets)
+
+
+
+Librairies utilisées: 
+* Tone.js
+* bootstrap
+
+Code créé par IA (Gemini), et prompté par moi 😉
+
+Licence: CC BY-NC 4.0
 
 ---
 
