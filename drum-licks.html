@@ -199,8 +199,28 @@ body {
 								<button class="btn btn-outline-secondary btn-sm px-2 py-0" type="button" onclick="adjustTempo(5)">+5</button>
 								<span class="small text-muted ms-1">BPM</span>
 							</div>
-						</div>
+							
+							<div class="vr d-none d-sm-block"></div>
+							
+							
+							<div class="d-flex justify-content-between gap-1">
+								<label for="swingInput" class="form-label small fw-bold text-muted mb-1">Swing</label>
+								<span id="swing-val" class="small text-secondary fw-bold">50</span>
+								<input type="range" id="swingInput" class="form-range" min="50" max="70" value="50" oninput="updateSwingFromInput();document.getElementById('swing-val').innerText = this.value">
+							</div>
+						
 
+							<!-- Contrôle du Swing -->
+							<!-- <div class="d-flex justify-content-between"> -->
+								<!-- <label for="swingInput" class="form-label fw-bold small mb-0 me-1">Swing :</label> -->
+								<!-- <input type="range" class="form-control form-control-sm text-center font-monospace" id="swingInput" value="50" min="50" max="70" step="5" style="width: 65px;" onchange="updateSwingFromInput()"> -->
+								<!-- <span class="small text-muted ms-1">%</span> -->
+							<!-- </div> -->
+							
+						</div>
+						
+						<div id="midi-download" class="mt-2"></div>
+	
                         
 
                     </div>
@@ -662,6 +682,16 @@ V:2 stem=down
 			}
 			return notes.join(" ");
 		}
+		
+		// Validation de la valeur Swing (entre 50 et 70)
+		function updateSwingFromInput() {
+			var swingInput = document.getElementById('swingInput');
+			var val = parseInt(swingInput.value, 10);
+			if (isNaN(val) || val < 50) val = 50;
+			if (val > 70) val = 70;
+			swingInput.value = val;
+			renderCurrentState();
+		}
 
 
         function generateABCString() {
@@ -670,11 +700,13 @@ V:2 stem=down
     var params = parseLickParams(licksList[currentIndex]);
     var fill = document.getElementById('fillPattern').value.trim();
     
-    // Récupération Tempo & Métronome
+    // Récupération Tempo & Swing
     var tempoElem = document.getElementById('tempoInput');
     var currentBpm = (tempoElem && tempoElem.value) ? tempoElem.value : 60;
     var qHeader = "Q:" + currentBpm;
-
+	
+	
+	// Récupération Tempo & Swing
     var metronomeElem = document.getElementById('enableMetronome');
     var useMetronome = (metronomeElem && metronomeElem.checked) ? true : false;
     var metronomeCode = useMetronome ? ("\n" + getMetronomeDirective(params.mHeader)) : "";
@@ -801,65 +833,99 @@ V:2 stem=down
 
         // --- RENDU ABCJS (VISUEL + AUDIO) ---
         function renderABC(abcString) {
-    if (synthControl) {
-        synthControl.pause();
-        synthControl = null;
-    }
+			if (synthControl) {
+				synthControl.pause();
+				synthControl = null;
+			}
 
-    if (!abcString.trim()) {
-        document.getElementById("paper").innerHTML = "";
-        document.getElementById("audio-player").innerHTML = "";
-        return;
-    }
+			var downloadContainer = document.getElementById("midi-download");
 
-    // 1. On récupère la largeur actuelle du conteneur HTML
-    const paperElem = document.getElementById("paper");
-    const containerWidth = paperElem.clientWidth - 20; // marge de sécurité
-    const isMobile = window.innerWidth < 768;
+			if (!abcString.trim()) {
+				document.getElementById("paper").innerHTML = "";
+				document.getElementById("audio-player").innerHTML = "";
+				if (downloadContainer) downloadContainer.innerHTML = "";
+				return;
+			}
 
-    // 2. Options de rendu avec staffwidth obligatoire
-    const renderOptions = {
-        responsive: "resize",
-        add_classes: true,
-        staffwidth: containerWidth // <--- PARAMÈTRE CLÉ OBLIGATOIRE
-    };
+			var paperElem = document.getElementById("paper");
+			var containerWidth = paperElem.clientWidth - 20;
+			var isMobile = window.innerWidth < 768;
 
-    // 3. On ajoute le wrap uniquement sur mobile
-    if (isMobile) {
-        renderOptions.wrap = {
-            preferredMeasuresPerLine: 2,
-            minSpacing: 1.5,
-            maxSpacing: 3
-        };
-    }
+			var renderOptions = {
+				responsive: "resize",
+				add_classes: true,
+				staffwidth: containerWidth
+			};
 
-    // 4. Rendu visuel
-    const visualObj = ABCJS.renderAbc("paper", abcString, renderOptions)[0];
+			if (isMobile) {
+				renderOptions.wrap = {
+					preferredMeasuresPerLine: 2,
+					minSpacing: 1.5,
+					maxSpacing: 3
+				};
+			}
 
-            if (ABCJS.synth.supportsAudio()) {
-                const audioOptions = {
-                    displayLoop: true,
-                    displayRestart: true,
-                    displayPlay: true,
-                    displayProgress: true,
-                    displayWarp: false
-                };
-                
-                synthControl = new ABCJS.synth.SynthController();
-                synthControl.load("#audio-player", cursorControl, audioOptions);
+			// 1. Rendu visuel
+			var visualObj = ABCJS.renderAbc("paper", abcString, renderOptions)[0];
 
-                const createSynth = new ABCJS.synth.CreateSynth();
-                createSynth.init({ visualObj: visualObj }).then(function () {
-                    synthControl.setTune(visualObj, false).catch(function (error) {
-                        console.warn("Erreur d'initialisation du morceau :", error);
-                    });
-                }).catch(function (error) {
-                    console.warn("Erreur de création de la synthèse audio :", error);
-                });
-            } else {
-                document.getElementById("audio-player").innerHTML = "<div class='alert alert-warning p-2 small'>L'audio n'est pas supporté par ce navigateur.</div>";
-            }
-        }
+			// 2. Génération du lien de téléchargement MIDI (Moderne ABCJS)
+			if (downloadContainer && visualObj) {
+				// Option 1 : ABCJS génère directement la balise HTML <a>
+				var midiHtml = ABCJS.synth.getMidiFile(visualObj, {
+					midiOutputType: "link",
+					downloadLabel: "Télécharger le fichier MIDI (%T)"
+				});
+				downloadContainer.innerHTML = midiHtml;
+
+				// Mise en forme Bootstrap du lien généré
+				var linkElem = downloadContainer.querySelector("a");
+				if (linkElem) {
+					linkElem.className = "btn btn-sm btn-outline-secondary";
+					linkElem.innerHTML = '<i class="bi bi-download me-1"></i> ' + linkElem.innerHTML;
+				}
+			}
+
+			// 3. Rendu Audio synthétisé
+			if (ABCJS.synth.supportsAudio()) {
+				var audioOptions = {
+					displayLoop: true,
+					displayRestart: true,
+					displayPlay: true,
+					displayProgress: true,
+					displayWarp: false
+				};
+				
+				synthControl = new ABCJS.synth.SynthController();
+				synthControl.load("#audio-player", cursorControl, audioOptions);
+
+
+			// Récupération de la valeur Swing
+				var swingElem = document.getElementById('swingInput');
+				var swingVal = (swingElem && swingElem.value) ? parseFloat(swingElem.value) : 0;
+
+				// Normalisation : si la valeur du champ est 50 (binaire), on met 0 pour désactiver le swing
+				if (swingVal <= 50) {
+					swingVal = 0;
+				}
+
+				// Paramètres audio/synthé injectés directement
+				var synthParams = {
+					swing: swingVal
+				};
+
+
+				var createSynth = new ABCJS.synth.CreateSynth();
+				createSynth.init({ visualObj: visualObj, options: synthParams }).then(function () {
+					synthControl.setTune(visualObj, false, synthParams).catch(function (error) {
+						console.warn("Erreur d'initialisation du morceau :", error);
+					});
+				}).catch(function (error) {
+					console.warn("Erreur de création de la synthèse audio :", error);
+				});
+			} else {
+				document.getElementById("audio-player").innerHTML = "<div class='alert alert-warning p-2 small'>L'audio n'est pas supporté par ce navigateur.</div>";
+			}
+		}
 
         window.onload = function() {
             loadBatch();
