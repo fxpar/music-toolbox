@@ -7,7 +7,7 @@
 	
     <!-- <link href="./css/bootstrap.min.css" rel="stylesheet"> -->
     <!-- <link rel="stylesheet" href="./css/bootstrap-icons.min.css"> -->
-    <!-- <script src="./js/14.8.49/Tone.js"></script> -->
+    <!-- <script src="./js/Tone.js"></script> -->
 	
 	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
@@ -76,11 +76,11 @@
             <div class="accordion mb-4" id="beatsAccordion">
 			  <div class="accordion-item bg-dark border-secondary">
 				<h2 class="accordion-header">
-				  <button class="accordion-button bg-dark text-light border-secondary collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseBeats">
+				  <button class="accordion-button bg-dark text-light border-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseBeats">
 					<i class="bi bi-sliders me-2"></i> Configuration des temps (🔊 Écouter / 🎯 Mesurer)
 				  </button>
 				</h2>
-				<div id="collapseBeats" class="accordion-collapse collapse" data-bs-parent="#beatsAccordion">
+				<div id="collapseBeats" class="accordion-collapse collapse show" data-bs-parent="#beatsAccordion">
 				  <div class="accordion-body">
 					<div id="beatsContainer" class="row g-2 justify-content-center"></div>
 				  </div>
@@ -172,16 +172,20 @@ function renderBeatsGrid(count) {
         col.className = `${colClass} text-center mb-2`;
         col.innerHTML = `
             <div class="card bg-dark border-secondary beat-card p-2" id="beat-card-${i}">
-                <div class="fw-bold fs-6 mb-1 text-primary">${i}</div>
-                <div class="form-check form-switch d-flex flex-column align-items-center mb-1" title="Entendre ce temps">
-                    <input class="form-check-input listen-checkbox ms-0" type="checkbox" id="listen-${i}" ${i === 1 ? 'checked' : ''}>
-                    <label class="form-check-label text-muted align-self-center" style="font-size: 0.65rem;">🔊 Écouter</label>
-                </div>
-                <div class="form-check form-switch d-flex flex-column align-items-center" title="Évaluer la frappe sur ce temps">
-                    <input class="form-check-input measure-checkbox ms-0" type="checkbox" id="measure-${i}" ${i === 4 || (count < 4 && i === count) ? 'checked' : ''}>
-                    <label class="form-check-label text-muted align-self-center" style="font-size: 0.65rem;">🎯 Mesurer</label>
-                </div>
-            </div>
+    <div class="fw-bold fs-6 mb-1 text-primary">${i}</div>
+    
+    <!-- Ajout de ps-0 sur le conteneur du switch -->
+    <div class="form-check form-switch ps-0 d-flex flex-column align-items-center mb-1" title="Entendre ce temps">
+        <input class="form-check-input listen-checkbox ms-0" type="checkbox" id="listen-${i}" ${i === 1 ? 'checked' : ''}>
+        <label class="form-check-label text-muted align-self-center ps-0" style="font-size: 0.65rem;">🔊 <span class="d-none d-md-inline">Écouter</span></label>
+    </div>
+    
+    <!-- Ajout de ps-0 sur le conteneur du switch -->
+    <div class="form-check form-switch ps-0 d-flex flex-column align-items-center" title="Évaluer la frappe sur ce temps">
+        <input class="form-check-input measure-checkbox ms-0" type="checkbox" id="measure-${i}" ${i === 4 || (count < 4 && i === count) ? 'checked' : ''}>
+        <label class="form-check-label text-muted align-self-center ps-0" style="font-size: 0.65rem;">🎯 <span class="d-none d-md-inline">Mesurer</span></label>
+    </div>
+</div>
         `;
         beatsContainer.appendChild(col);
     }
@@ -337,15 +341,15 @@ function displayFeedback(diffMs) {
 
     if (absDiff <= 25) {
         feedbackResult.className = "fs-3 fw-bold mb-2 text-success";
-        feedbackResult.textContent = `OCTAVE PARFAITE ! (${absDiff} ms)`;
+        feedbackResult.textContent = `PARFAIT ! (${absDiff} ms)`;
         hitMarker.style.background = "#198754";
     } else if (diffMs < 0) {
         feedbackResult.className = "fs-3 fw-bold mb-2 text-warning";
-        feedbackResult.textContent = `Trop TÔT (-${absDiff} ms) ➔ Note plus aigüe`;
+        feedbackResult.textContent = `Trop TÔT (-${absDiff} ms)`;
         hitMarker.style.background = "#ffc107";
     } else {
         feedbackResult.className = "fs-3 fw-bold mb-2 text-info";
-        feedbackResult.textContent = `Trop TARD (+${absDiff} ms) ➔ Note plus grave`;
+        feedbackResult.textContent = `Trop TARD (+${absDiff} ms)`;
         hitMarker.style.background = "#0dcaf0";
     }
 }
