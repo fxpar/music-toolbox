@@ -4,27 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Entraînement au Sens du Temps</title>
-    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <!-- Tone.js pour la précision audio -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
     <style>
-        .beat-card {
-            transition: all 0.15s ease-in-out;
-            cursor: pointer;
-        }
-        .beat-card.active-play {
-            transform: scale(1.08);
-            border-color: #0d6efd !important;
-            box-shadow: 0 0 15px rgba(13, 110, 253, 0.5);
-        }
-        .beat-card.active-silent {
-            transform: scale(1.03);
-            border-color: #6c757d !important;
-            box-shadow: 0 0 10px rgba(108, 117, 125, 0.3);
-        }
+        .beat-card { transition: all 0.15s ease-in-out; }
+        .beat-card.active-play { transform: scale(1.08); border-color: #0d6efd !important; box-shadow: 0 0 15px rgba(13, 110, 253, 0.5); }
+        .beat-card.active-silent { transform: scale(1.03); border-color: #6c757d !important; box-shadow: 0 0 10px rgba(108, 117, 125, 0.3); }
+        
+        /* Cible visuelle */
+        .target-bar { height: 12px; background: #333; position: relative; border-radius: 6px; overflow: hidden; }
+        .target-center { position: absolute; left: 50%; top: 0; bottom: 0; width: 4px; background: #0d6efd; transform: translateX(-50%); }
+        .hit-marker { position: absolute; top: 0; bottom: 0; width: 8px; border-radius: 4px; transform: translateX(-50%); transition: left 0.1s ease-out; }
+        
+        #tapArea { user-select: none; touch-action: manipulation; }
+        #tapArea:active { transform: scale(0.98); }
     </style>
 </head>
 <body class="bg-dark text-light min-vh-100 d-flex flex-column justify-content-center py-4">
@@ -33,12 +27,12 @@
     <div class="card bg-secondary bg-opacity-10 border-secondary shadow-lg">
         <div class="card-header border-secondary text-center py-3">
             <h1 class="h3 mb-0"><i class="bi bi-metronome me-2 text-primary"></i>Développement du Sens du Temps</h1>
-            <p class="text-muted small mb-0 mt-1">Travaillez l'anticipation temporelle en masquant certains repères</p>
+            <p class="text-muted small mb-0 mt-1">Tapez sur la barre d'espace ou sur le grand bouton bleu</p>
         </div>
         
         <div class="card-body p-4">
             
-            <!-- Section Presets -->
+            <!-- Presets -->
             <div class="mb-4">
                 <label for="presetSelect" class="form-label fw-bold"><i class="bi bi-bookmarks me-1"></i> Presets d'entraînement</label>
                 <select id="presetSelect" class="form-select bg-dark text-light border-secondary">
@@ -46,19 +40,14 @@
                     <option value="p1">1. Tout joué (Metronome classique)</option>
                     <option value="p2">2. Uniquement le 1er temps (Ancre de mesure)</option>
                     <option value="p3">3. Temps faibles Jazz/Pop (Temps 2 et 4)</option>
-                    <option value="p4">4. Le 4ème temps uniquement (Anticipation de mesure)</option>
+                    <option value="p4" selected>4. Le 4ème temps uniquement (Anticipation de mesure)</option>
                     <option value="p5">5. Le 3ème temps uniquement (Balance centrale)</option>
                     <option value="p6">6. Le "2" uniquement (Rebond)</option>
                     <option value="p7">7. Extrémités (Temps 1 et 4)</option>
-                    <option value="p8">8. Le trou (Temps 1, 2 et 4 - le 3 est tu)</option>
-                    <option value="p9">9. Mesure à 3 temps - Le 1 uniquement (Valse)</option>
-                    <option value="p10">10. Mesure à 3 temps - Le 3 uniquement (Relance)</option>
                 </select>
             </div>
 
-            <hr class="border-secondary my-4">
-
-            <!-- Contrôles Principaux : BPM & Structure -->
+            <!-- Tempo & Mesure -->
             <div class="row g-3 mb-4 align-items-center">
                 <div class="col-md-6">
                     <label for="bpmRange" class="form-label fw-bold d-flex justify-content-between">
@@ -67,47 +56,47 @@
                     </label>
                     <input type="range" class="form-range" id="bpmRange" min="40" max="200" value="80">
                 </div>
-
                 <div class="col-md-6">
                     <label for="beatsPerMeasure" class="form-label fw-bold"><i class="bi bi-grid-3x3-gap me-1"></i> Temps par mesure</label>
                     <select id="beatsPerMeasure" class="form-select bg-dark text-light border-secondary">
                         <option value="2">2 temps</option>
                         <option value="3">3 temps</option>
                         <option value="4" selected>4 temps</option>
-                        <option value="5">5 temps</option>
-                        <option value="6">6 temps</option>
                     </select>
                 </div>
             </div>
 
-            <!-- Grille des temps (Cases à cocher) -->
+            <!-- Grille des temps -->
             <div class="mb-4">
-                <label class="form-label fw-bold d-block text-center mb-3">
-                    <i class="bi bi-music-note-beamed me-1"></i> Temps audible(s) dans la mesure
-                </label>
-                <div id="beatsContainer" class="row g-2 justify-content-center">
-                    <!-- Généré dynamiquement en JS -->
-                </div>
-            </div>
-
-            <!-- Options avancées -->
-            <div class="p-3 bg-dark rounded border border-secondary mb-4">
-                <div class="form-check form-switch">
-                    <input class="form-check-input" type="checkbox" id="humanizeCheck">
-                    <label class="form-check-input-label fw-semibold" for="humanizeCheck">
-                        <i class="bi bi-shuffle me-1"></i> Tempo Flottant (+/- 3 BPM aléatoire)
-                    </label>
-                    <div class="form-text text-muted small">
-                        Modifie légèrement la durée de la mesure à chaque cycle pour éviter que la mémoire purement mécanique prenne le dessus.
-                    </div>
-                </div>
+                <div id="beatsContainer" class="row g-2 justify-content-center"></div>
             </div>
 
             <!-- Bouton Play/Stop -->
-            <div class="d-grid gap-2">
-                <button id="playBtn" class="btn btn-primary btn-lg py-3 fw-bold fs-5">
-                    <i class="bi bi-play-fill me-2"></i> Lancer l'entraînement
+            <div class="d-grid gap-2 mb-4">
+                <button id="playBtn" class="btn btn-outline-light btn-lg py-2 fw-bold">
+                    <i class="bi bi-play-fill me-2"></i> Activer le métronome
                 </button>
+            </div>
+
+            <!-- ZONE DE FRAPPE ET FEEDBACK -->
+            <div class="p-3 bg-dark rounded border border-secondary text-center">
+                <div id="tapArea" class="p-4 rounded bg-primary text-white fw-bold fs-4 mb-3 cursor-pointer shadow" style="display: none;">
+                    <i class="bi bi-hand-index-thumb me-2"></i> TAPEZ ICI (ou ESPACE)
+                </div>
+
+                <!-- Afficheur de Précision -->
+                <div id="feedbackResult" class="fs-3 fw-bold mb-2 text-muted">En attente de frappe...</div>
+                
+                <!-- Cible visuelle (Gauche = En avance / Droite = En retard) -->
+                <div class="target-bar mb-2">
+                    <div class="target-center"></div>
+                    <div id="hitMarker" class="hit-marker" style="left: 50%; display: none;"></div>
+                </div>
+                <div class="d-flex justify-content-between text-muted small">
+                    <span>TROP TÔT (En avance)</span>
+                    <span>PARFAIT</span>
+                    <span>TROP TARD (En retard)</span>
+                </div>
             </div>
 
         </div>
@@ -115,53 +104,41 @@
 </div>
 
 <script>
-    // Synthétiseurs de percussions avec Tone.js
-    const highClick = new Tone.MembraneSynth({
-        pitchDecay: 0.008,
-        octaves: 2,
-        oscillator: { type: "square" },
-        envelope: { attack: 0.001, decay: 0.05, sustain: 0 }
-    }).toDestination();
+    // Audio Synth
+    const highClick = new Tone.MembraneSynth({ pitchDecay: 0.008, octaves: 2, oscillator: { type: "square" }, envelope: { attack: 0.001, decay: 0.05, sustain: 0 } }).toDestination();
+    const lowClick = new Tone.MembraneSynth({ pitchDecay: 0.008, octaves: 2, oscillator: { type: "triangle" }, envelope: { attack: 0.001, decay: 0.03, sustain: 0 } }).toDestination();
+    const userTapSynth = new Tone.MembraneSynth({ pitchDecay: 0.005, octaves: 4, oscillator: { type: "sine" }, envelope: { attack: 0.001, decay: 0.02, sustain: 0 } }).toDestination();
 
-    const lowClick = new Tone.MembraneSynth({
-        pitchDecay: 0.008,
-        octaves: 2,
-        oscillator: { type: "triangle" },
-        envelope: { attack: 0.001, decay: 0.03, sustain: 0 }
-    }).toDestination();
-
-    // Atténuation du volume
     highClick.volume.value = -6;
     lowClick.volume.value = -6;
+    userTapSynth.volume.value = 0;
 
-    // État de l'application
     let isPlaying = false;
     let currentBeat = 0;
     let loopEvent = null;
+    let lastBeatTimes = {}; // Conserve le temps WebAudio exact de chaque temps joué
 
-    // Éléments DOM
     const playBtn = document.getElementById('playBtn');
     const bpmRange = document.getElementById('bpmRange');
     const bpmDisplay = document.getElementById('bpmDisplay');
     const beatsPerMeasureSelect = document.getElementById('beatsPerMeasure');
     const beatsContainer = document.getElementById('beatsContainer');
     const presetSelect = document.getElementById('presetSelect');
-    const humanizeCheck = document.getElementById('humanizeCheck');
+    const tapArea = document.getElementById('tapArea');
+    const feedbackResult = document.getElementById('feedbackResult');
+    const hitMarker = document.getElementById('hitMarker');
 
-    // Mettre à jour la grille de cases à cocher
     function renderBeatsGrid(count) {
         beatsContainer.innerHTML = '';
-        const colClass = count > 4 ? 'col' : `col-${12 / count}`;
-
+        const colClass = `col-${12 / count}`;
         for (let i = 1; i <= count; i++) {
             const col = document.createElement('div');
             col.className = `${colClass} text-center`;
-            
             col.innerHTML = `
                 <div class="card bg-dark border-secondary beat-card p-2" id="beat-card-${i}">
                     <div class="form-check form-check-inline m-0 d-flex flex-column align-items-center">
-                        <label class="form-check-label fw-bold fs-5 mb-1 cursor-pointer" for="beat-${i}">${i}</label>
-                        <input class="form-check-input beat-checkbox cursor-pointer" type="checkbox" id="beat-${i}" value="${i}" ${i === 1 ? 'checked' : ''}>
+                        <label class="form-check-label fw-bold fs-5 mb-1" for="beat-${i}">${i}</label>
+                        <input class="form-check-input beat-checkbox" type="checkbox" id="beat-${i}" value="${i}">
                     </div>
                 </div>
             `;
@@ -169,7 +146,6 @@
         }
     }
 
-    // Presets
     const presets = {
         p1: { beats: 4, checked: [1, 2, 3, 4] },
         p2: { beats: 4, checked: [1] },
@@ -177,10 +153,7 @@
         p4: { beats: 4, checked: [4] },
         p5: { beats: 4, checked: [3] },
         p6: { beats: 4, checked: [2] },
-        p7: { beats: 4, checked: [1, 4] },
-        p8: { beats: 4, checked: [1, 2, 4] },
-        p9: { beats: 3, checked: [1] },
-        p10: { beats: 3, checked: [3] }
+        p7: { beats: 4, checked: [1, 4] }
     };
 
     function applyPreset(key) {
@@ -188,49 +161,38 @@
         const config = presets[key];
         beatsPerMeasureSelect.value = config.beats;
         renderBeatsGrid(config.beats);
-        
         config.checked.forEach(b => {
             const cb = document.getElementById(`beat-${b}`);
             if (cb) cb.checked = true;
         });
     }
 
-    // Gestion du Tempo
     bpmRange.addEventListener('input', (e) => {
-        const bpm = e.target.value;
-        bpmDisplay.textContent = `${bpm} BPM`;
-        Tone.Transport.bpm.value = bpm;
+        bpmDisplay.textContent = `${e.target.value} BPM`;
+        Tone.Transport.bpm.value = e.target.value;
     });
 
     beatsPerMeasureSelect.addEventListener('change', (e) => {
         renderBeatsGrid(parseInt(e.target.value));
-        presetSelect.value = "";
     });
 
-    presetSelect.addEventListener('change', (e) => {
-        applyPreset(e.target.value);
-    });
+    presetSelect.addEventListener('change', (e) => { applyPreset(e.target.value); });
 
-    // Boucle d'exécution principale
     function startAudio() {
         Tone.Transport.bpm.value = bpmRange.value;
+        currentBeat = 0;
         
         loopEvent = new Tone.Loop((time) => {
             const totalBeats = parseInt(beatsPerMeasureSelect.value);
             const activeBeatNumber = currentBeat + 1;
             
-            // Fluctuation de tempo si activée (sur le temps 1)
-            if (currentBeat === 0 && humanizeCheck.checked) {
-                const baseBpm = parseInt(bpmRange.value);
-                const shift = (Math.random() * 6) - 3; // +/- 3 BPM
-                Tone.Transport.bpm.setValueAtTime(baseBpm + shift, time);
-            }
+            // Enregistrer le temps absolu où CE temps doit être joué
+            lastBeatTimes[activeBeatNumber] = time;
 
             const checkbox = document.getElementById(`beat-${activeBeatNumber}`);
             const card = document.getElementById(`beat-card-${activeBeatNumber}`);
             const isAudible = checkbox && checkbox.checked;
 
-            // Déclenchement du son
             if (isAudible) {
                 if (activeBeatNumber === 1) {
                     highClick.triggerAttackRelease("C5", "32n", time);
@@ -239,16 +201,9 @@
                 }
             }
 
-            // Animation visuelle synchronisée
             Tone.Draw.schedule(() => {
-                // Nettoyage des anciennes cartes
-                document.querySelectorAll('.beat-card').forEach(c => {
-                    c.classList.remove('active-play', 'active-silent');
-                });
-
-                if (card) {
-                    card.classList.add(isAudible ? 'active-play' : 'active-silent');
-                }
+                document.querySelectorAll('.beat-card').forEach(c => c.classList.remove('active-play', 'active-silent'));
+                if (card) card.classList.add(isAudible ? 'active-play' : 'active-silent');
             }, time);
 
             currentBeat = (currentBeat + 1) % totalBeats;
@@ -256,38 +211,95 @@
 
         loopEvent.start(0);
         Tone.Transport.start();
+        tapArea.style.display = "block";
     }
 
     function stopAudio() {
         Tone.Transport.stop();
-        if (loopEvent) {
-            loopEvent.dispose();
-            loopEvent = null;
-        }
-        currentBeat = 0;
-        document.querySelectorAll('.beat-card').forEach(c => {
-            c.classList.remove('active-play', 'active-silent');
-        });
+        if (loopEvent) { loopEvent.dispose(); loopEvent = null; }
+        document.querySelectorAll('.beat-card').forEach(c => c.classList.remove('active-play', 'active-silent'));
+        tapArea.style.display = "none";
     }
 
-    // Toggle Play/Stop
+    // Gestion de la frappe utilisateur
+    function handleUserTap() {
+        if (!isPlaying) return;
+
+        const tapTime = Tone.now();
+        userTapSynth.triggerAttackRelease("E6", "64n", tapTime);
+
+        const bpm = parseInt(bpmRange.value);
+        const beatDuration = 60 / bpm; // Durée d'un temps en secondes
+
+        // Trouver le temps le plus proche
+        let minDiff = Infinity;
+
+        Object.keys(lastBeatTimes).forEach(beatNum => {
+            const theoreticalTime = lastBeatTimes[beatNum];
+            let diff = tapTime - theoreticalTime;
+
+            // Corriger la différence si le tap a lieu juste avant ou juste après le changement de cycle
+            if (diff > beatDuration / 2) diff -= beatDuration;
+            if (diff < -beatDuration / 2) diff += beatDuration;
+
+            if (Math.abs(diff) < Math.abs(minDiff)) {
+                minDiff = diff;
+            }
+        });
+
+        displayFeedback(minDiff * 1000); // Convertir en ms
+    }
+
+    function displayFeedback(diffMs) {
+        const absDiff = Math.abs(Math.round(diffMs));
+        hitMarker.style.display = "block";
+
+        // Positionnement visuel sur la cible (-150ms à +150ms)
+        const clampDiff = Math.max(-150, Math.min(150, diffMs));
+        const percentage = 50 + (clampDiff / 150) * 50; 
+        hitMarker.style.left = `${percentage}%`;
+
+        if (absDiff <= 25) {
+            feedbackResult.className = "fs-3 fw-bold mb-2 text-success";
+            feedbackResult.textContent = `PARFAIT ! (${absDiff} ms)`;
+            hitMarker.style.background = "#198754";
+        } else if (diffMs < 0) {
+            feedbackResult.className = "fs-3 fw-bold mb-2 text-warning";
+            feedbackResult.textContent = `Trop TÔT (-${absDiff} ms)`;
+            hitMarker.style.background = "#ffc107";
+        } else {
+            feedbackResult.className = "fs-3 fw-bold mb-2 text-info";
+            feedbackResult.textContent = `Trop TARD (+${absDiff} ms)`;
+            hitMarker.style.background = "#0dcaf0";
+        }
+    }
+
+    // Événements de frappe
+    tapArea.addEventListener('pointerdown', (e) => { e.preventDefault(); handleUserTap(); });
+    document.addEventListener('keydown', (e) => {
+        if (e.code === 'Space' && isPlaying) {
+            e.preventDefault();
+            handleUserTap();
+        }
+    });
+
     playBtn.addEventListener('click', async () => {
         if (!isPlaying) {
-            await Tone.start(); // Requis par les navigateurs pour débloquer l'audio
+            await Tone.start();
             startAudio();
-            playBtn.classList.replace('btn-primary', 'btn-danger');
+            playBtn.classList.replace('btn-outline-light', 'btn-danger');
             playBtn.innerHTML = '<i class="bi bi-stop-fill me-2"></i> Arrêter';
             isPlaying = true;
         } else {
             stopAudio();
-            playBtn.classList.replace('btn-danger', 'btn-primary');
-            playBtn.innerHTML = '<i class="bi bi-play-fill me-2"></i> Lancer l\'entraînement';
+            playBtn.classList.replace('btn-danger', 'btn-outline-light');
+            playBtn.innerHTML = '<i class="bi bi-play-fill me-2"></i> Activer le métronome';
             isPlaying = false;
         }
     });
 
-    // Initialisation au chargement
     renderBeatsGrid(4);
+    applyPreset('p4');
 </script>
 
 </body>
