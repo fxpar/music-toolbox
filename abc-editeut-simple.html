@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="fr" data-bs-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Éditeur ABC & Tablatures</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- ABCJS CSS & JS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/abcjs@6.2.2/abcjs-audio.css">
+    <script src="https://cdn.jsdelivr.net/npm/abcjs@6.2.2/dist/abcjs-basic-min.js"></script>
+    <style>
+        body { transition: background-color 0.3s, color 0.3s; }
+        #paper { background-color: #ffffff; border-radius: 8px; padding: 15px; min-height: 150px; }
+        [data-bs-theme="dark"] #paper { background-color: #2b3035; filter: invert(0.9) hue-rotate(180deg); }
+        .abc-editor { font-family: monospace; font-size: 14px; }
+		 .abcjs-cursor {
+            stroke: rgba(220, 53, 69, 0.75);
+            stroke-width: 2.5px;
+        }
+    </style>
+</head>
+<body class="bg-body-tertiary text-body">
+
+    <div class="container-fluid py-3">
+        <!-- Barre supérieure : Morceaux & Mode Nuit -->
+        <div class="card shadow-sm mb-3">
+            <div class="card-body d-flex flex-wrap align-items-center justify-content-between gap-2 py-2">
+                <div class="d-flex align-items-center gap-2 flex-grow-1" style="max-width: 500px;">
+                    <label for="songSelect" class="form-label fw-bold mb-0 text-nowrap"><i class="bi bi-music-note-list me-1"></i>Morceau :</label>
+                    <select id="songSelect" class="form-select form-select-sm" onchange="loadSelectedSong()">
+                        <!-- Rempli en JS -->
+                    </select>
+                </div>
+
+                <div class="d-flex align-items-center gap-2">
+                    <button class="btn btn-sm btn-success" onclick="createNewSong()"><i class="bi bi-plus-lg me-1"></i><span class="d-none d-md-inline">Nouveau</span></button>
+                    <button class="btn btn-sm btn-outline-primary" onclick="renameCurrentSong()"><i class="bi bi-pencil me-1"></i><span class="d-none d-md-inline">Renommer</span></button>
+                    <button class="btn btn-sm btn-outline-danger" onclick="deleteCurrentSong()"><i class="bi bi-trash me-1"></i><span class="d-none d-md-inline">Supprimer</span></button>
+                    <button id="themeToggleBtn" class="btn btn-sm btn-outline-secondary" onclick="toggleTheme()"><i class="bi bi-moon-stars"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Barre de Réglages : Transposition, Tablature, Tempo, Swing -->
+        <div class="card shadow-sm mb-3">
+            <div class="card-body py-2">
+                <div class="row g-2 align-items-center">
+                    
+                    <!-- Transposition -->
+                    <div class="col-6 col-sm-3 col-md-2">
+                        <label for="transposeInput" class="form-label small fw-bold mb-0">Transposer</label>
+                        <select id="transposeInput" class="form-select form-select-sm" onchange="renderCurrentState()">
+                            <option value="-6">-6 demi-tons</option>
+                            <option value="-5">-5</option>
+                            <option value="-4">-4</option>
+                            <option value="-3">-3</option>
+                            <option value="-2">-2</option>
+                            <option value="-1">-1</option>
+                            <option value="0" selected>Original (0)</option>
+                            <option value="1">+1</option>
+                            <option value="2">+2</option>
+                            <option value="3">+3</option>
+                            <option value="4">+4</option>
+                            <option value="5">+5</option>
+                            <option value="6">+6 demi-tons</option>
+                        </select>
+                    </div>
+
+                    <!-- Tablature -->
+                    <div class="col-6 col-sm-3 col-md-2">
+                        <label for="tabSelect" class="form-label small fw-bold mb-0">Tablature</label>
+                        <select id="tabSelect" class="form-select form-select-sm" onchange="renderCurrentState()">
+                            <option value="none" selected>Aucune</option>
+                            <option value="ukulele">Ukulélé (GCEA)</option>
+                            <option value="violin">Violon (GDAE)</option>
+                            <option value="guitar">Guitare (EADGBE)</option>
+                        </select>
+                    </div>
+
+                    <!-- Tempo -->
+                    <div class="col-6 col-sm-3 col-md-2">
+                        <label for="tempoInput" class="form-label small fw-bold mb-0">Tempo (BPM)</label>
+                        <input type="number" id="tempoInput" class="form-control form-control-sm text-center" value="60" min="30" max="240" onchange="renderCurrentState()">
+                    </div>
+
+                    <!-- Swing -->
+                    <div class="col-6 col-sm-3 col-md-3">
+                        <div class="d-flex justify-content-between gap-1">
+                            <label for="swingInput" class="form-label small fw-bold mb-0">Swing</label>
+                            <span id="swing-val" class="small text-secondary fw-bold">50</span>
+                        </div>
+                        <input type="range" id="swingInput" class="form-range" min="50" max="70" value="50" oninput="updateSwingFromInput; document.getElementById('swing-val').innerText = this.value;">
+                    </div>
+
+                    <!-- Métronome -->
+                    <div class="col-12 col-md-3 d-flex align-items-center justify-content-start justify-content-md-end pt-2 pt-md-0">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="enableMetronome" onchange="renderCurrentState()">
+                            <label class="form-check-label small fw-bold" for="enableMetronome">Métronome</label>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- Zone de Rendu Visuel -->
+        <div class="card shadow-sm mb-3">
+            <div class="card-body p-2">
+                <div id="paper"></div>
+            </div>
+        </div>
+
+        <!-- Lecteur Audio & Téléchargement MIDI -->
+        <div class="card shadow-sm mb-3">
+            <div class="card-body py-2 d-flex flex-wrap align-items-center justify-content-between gap-2">
+                <div id="audio-player" class="flex-grow-1"></div>
+                <div id="midi-download"></div>
+            </div>
+        </div>
+
+        <!-- Zone Éditeur de Code ABC -->
+        <div class="card shadow-sm mb-3">
+            <div class="card-header bg-body-secondary py-1 d-flex justify-content-between align-items-center">
+                <span class="fw-bold small"><i class="bi bi-code-slash me-1"></i>Code ABC</span>
+                <button class="btn btn-sm btn-primary" onclick="saveCurrentSong()"><i class="bi bi-floppy me-1"></i>Enregistrer</button>
+            </div>
+            <div class="card-body p-2">
+                <textarea id="abcCode" class="form-control abc-editor" rows="8" oninput="renderCurrentState()"></textarea>
+            </div>
+        </div>
+		
+		<!-- Bloc de débogage visuel -->
+<div class="mt-3 p-3 bg-dark text-light rounded font-monospace small">
+  <div class="d-flex justify-content-between align-items-center mb-2">
+    <strong><i class="bi bi-bug"></i> Inspecteur Code ABC généré :</strong>
+    <span class="badge bg-secondary" id="debugStatus">En attente</span>
+  </div>
+  <pre id="debugAbcOutput" style="white-space: pre-wrap; margin: 0; max-height: 200px; overflow-y: auto; font-size: 0.8rem;"></pre>
+</div>
+
+
+    </div>
+
+    <!-- Script JavaScript -->
+    <!-- <script src="app.js"> -->
+    <script>
+	// Variable globale pour le contrôleur audio ABCJS
+var synthControl = null;
+// Implémentation du suivi de curseur
+var cursorControl = {
+    onStart: function () {
+        var svg = document.querySelector("#paper svg");
+        if (!svg) return;
+        
+        // Supprimer l'ancien curseur s'il existe
+        var oldCursor = document.getElementById("abcjs-cursor");
+        if (oldCursor) oldCursor.parentNode.removeChild(oldCursor);
+
+        // Créer la ligne SVG du curseur
+        var cursor = document.createElementNS("http://www.w3.org/2000/svg", "line");
+        cursor.setAttribute("id", "abcjs-cursor");
+        cursor.setAttribute("class", "abcjs-cursor");
+        cursor.setAttribute("x1", "0");
+        cursor.setAttribute("y1", "0");
+        cursor.setAttribute("x2", "0");
+        cursor.setAttribute("y2", "0");
+        svg.appendChild(cursor);
+    },
+
+    onEvent: function (ev) {
+        if (!ev || !ev.elements) return;
+
+        var cursor = document.getElementById("abcjs-cursor");
+        if (!cursor) return;
+
+        // Positionner le curseur sur la note en cours
+        if (ev.measureStart && ev.left === null) return;
+
+        var x = ev.left - 2;
+        cursor.setAttribute("x1", x);
+        cursor.setAttribute("x2", x);
+        cursor.setAttribute("y1", ev.top);
+        cursor.setAttribute("y2", ev.top + ev.height);
+    },
+
+    onFinished: function () {
+        var cursor = document.getElementById("abcjs-cursor");
+        if (cursor) {
+            cursor.setAttribute("x1", "0");
+            cursor.setAttribute("x2", "0");
+            cursor.setAttribute("y1", "0");
+            cursor.setAttribute("y2", "0");
+        }
+    }
+};
+
+// Chaine modèle pour un nouveau morceau
+var DEFAULT_TEMPLATE = "X:1\nT:Nouveau morceau\nM:4/4\nL:1/8\nQ:60\nK:C\nC D E F | G A B c |";
+
+// Initialisation au chargement de la page
+window.onload = function () {
+    initTheme();
+    initSongList();
+    loadSelectedSong();
+};
+
+// -----------------------------------------------------------------------------
+// 1. GESTION DU LOCAL STORAGE & LISTE DES MORCEAUX
+// -----------------------------------------------------------------------------
+
+function getStoredSongs() {
+    var rawData = localStorage.getItem("abc_editor_songs");
+    if (!rawData) {
+        // Exemples par défaut si le stockage est vide
+        var defaultSongs = [
+            { id: "song_1", title: "Morceau numéro 1", code: "X:1\nT:Morceau numéro 1\nM:4/4\nL:1/8\nQ:60\nK:C\nC D E F | G A B c | c B A G | F E D C |" },
+            { id: "song_2", title: "Ukulele Tune", code: "X:2\nT:Ukulele Tune\nM:4/4\nL:1/8\nQ:80\nK:G\nG2 B2 d2 g2 | f2 e2 d4 | c2 B2 A2 G2 | F2 A2 G4 |" },
+			{ id: "song_3", title: "swing", code: "X:2\nT:Ukulele Tune\nM:4/4\nL:1/8\nQ:80\nK:G\nCC CC CC CC | CC CC CC CC |" }
+        ];
+        localStorage.setItem("abc_editor_songs", JSON.stringify(defaultSongs));
+        return defaultSongs;
+    }
+    return JSON.parse(rawData);
+}
+
+function saveStoredSongs(songs) {
+    localStorage.setItem("abc_editor_songs", JSON.stringify(songs));
+}
+
+function initSongList() {
+    var songs = getStoredSongs();
+    var select = document.getElementById("songSelect");
+    select.innerHTML = "";
+
+    for (var i = 0; i < songs.length; i++) {
+        var opt = document.createElement("option");
+        opt.value = songs[i].id;
+        opt.innerText = songs[i].title;
+        select.appendChild(opt);
+    }
+}
+
+function loadSelectedSong() {
+    var select = document.getElementById("songSelect");
+    var currentId = select.value;
+    var songs = getStoredSongs();
+
+    for (var i = 0; i < songs.length; i++) {
+        if (songs[i].id === currentId) {
+            document.getElementById("abcCode").value = songs[i].code;
+            
+            // Extraire le tempo si présent dans le morceau (Q:...)
+            var qMatch = songs[i].code.match(/^Q:\s*(\d+)/m);
+            if (qMatch) {
+                document.getElementById("tempoInput").value = qMatch[1];
+            }
+            break;
+        }
+    }
+    renderCurrentState();
+}
+
+function saveCurrentSong() {
+    var select = document.getElementById("songSelect");
+    var currentId = select.value;
+    var code = document.getElementById("abcCode").value;
+    var songs = getStoredSongs();
+
+    // Extraire le titre du code ABC (T:...)
+    var tMatch = code.match(/^T:\s*(.+)$/m);
+    var newTitle = tMatch ? tMatch[1].trim() : "Morceau sans titre";
+
+    for (var i = 0; i < songs.length; i++) {
+        if (songs[i].id === currentId) {
+            songs[i].title = newTitle;
+            songs[i].code = code;
+            break;
+        }
+    }
+
+    saveStoredSongs(songs);
+    initSongList();
+    select.value = currentId;
+}
+
+function createNewSong() {
+    var songs = getStoredSongs();
+    var newId = "song_" + new Date().getTime();
+    var newNum = songs.length + 1;
+    var newTitle = "Morceau numéro " + newNum;
+
+    var newCode = DEFAULT_TEMPLATE.replace("Nouveau morceau", newTitle);
+
+    songs.push({ id: newId, title: newTitle, code: newCode });
+    saveStoredSongs(songs);
+    
+    initSongList();
+    document.getElementById("songSelect").value = newId;
+    loadSelectedSong();
+}
+
+function renameCurrentSong() {
+    var select = document.getElementById("songSelect");
+    var currentId = select.value;
+    var code = document.getElementById("abcCode").value;
+
+    var tMatch = code.match(/^T:\s*(.+)$/m);
+    var currentTitle = tMatch ? tMatch[1].trim() : "";
+
+    var newTitle = prompt("Nouveau titre du morceau :", currentTitle);
+    if (newTitle && newTitle.trim() !== "") {
+        // Remplacer ou ajouter l'en-tête T:
+        if (/^T:/m.test(code)) {
+            code = code.replace(/^T:.*$/m, "T:" + newTitle);
+        } else {
+            code = "T:" + newTitle + "\n" + code;
+        }
+        document.getElementById("abcCode").value = code;
+        saveCurrentSong();
+    }
+}
+
+function deleteCurrentSong() {
+    var songs = getStoredSongs();
+    if (songs.length <= 1) {
+        alert("Vous devez conserver au moins un morceau !");
+        return;
+    }
+
+    if (confirm("Voulez-vous vraiment supprimer ce morceau ?")) {
+        var select = document.getElementById("songSelect");
+        var currentId = select.value;
+
+        var updatedSongs = [];
+        for (var i = 0; i < songs.length; i++) {
+            if (songs[i].id !== currentId) {
+                updatedSongs.push(songs[i]);
+            }
+        }
+
+        saveStoredSongs(updatedSongs);
+        initSongList();
+        loadSelectedSong();
+    }
+}
+
+
+
+
+// -----------------------------------------------------------------------------
+// 2. INJECTION DES DIRECTIVES (Tablatures, Transposition, Métronome, Tempo)
+// -----------------------------------------------------------------------------
+
+// Variable globale pour le contrôleur audio ABCJS
+var synthControl = null;
+
+// -----------------------------------------------------------------------------
+// 1. SUIVI DU CURSEUR
+// -----------------------------------------------------------------------------
+var cursorControl = {
+    onStart: function () {
+        var svg = document.querySelector("#paper svg");
+        if (!svg) return;
+        var oldCursor = document.getElementById("abcjs-cursor");
+        if (oldCursor) oldCursor.parentNode.removeChild(oldCursor);
+
+        var cursor = document.createElementNS("http://www.w3.org/2000/svg", "line");
+        cursor.setAttribute("id", "abcjs-cursor");
+        cursor.setAttribute("class", "abcjs-cursor");
+        cursor.setAttribute("x1", "0");
+        cursor.setAttribute("y1", "0");
+        cursor.setAttribute("x2", "0");
+        cursor.setAttribute("y2", "0");
+        svg.appendChild(cursor);
+    },
+    onEvent: function (ev) {
+        if (!ev || !ev.elements) return;
+        var cursor = document.getElementById("abcjs-cursor");
+        if (!cursor) return;
+        if (ev.measureStart && ev.left === null) return;
+
+        var x = ev.left - 2;
+        cursor.setAttribute("x1", x);
+        cursor.setAttribute("x2", x);
+        cursor.setAttribute("y1", ev.top);
+        cursor.setAttribute("y2", ev.top + ev.height);
+    },
+    onFinished: function () {
+        var cursor = document.getElementById("abcjs-cursor");
+        if (cursor) {
+            cursor.setAttribute("x1", "0");
+            cursor.setAttribute("x2", "0");
+            cursor.setAttribute("y1", "0");
+            cursor.setAttribute("y2", "0");
+        }
+    }
+};
+
+// -----------------------------------------------------------------------------
+// 2. CONSTRUCTEUR DIRECTIVES MÉTRONOME & ABC
+// -----------------------------------------------------------------------------
+// Variable globale
+var synthControl = null;
+
+// -----------------------------------------------------------------------------
+// 1. CONSTRUCTEUR DU CODE ABC + DEBUG
+// -----------------------------------------------------------------------------
+
+// Validation de la valeur Swing (entre 50 et 70)
+		function updateSwingFromInput() {
+			var swingInput = document.getElementById('swingInput');
+			var val = parseInt(swingInput.value, 10);
+			if (isNaN(val) || val < 50) val = 50;
+			if (val > 70) val = 70;
+			swingInput.value = val;
+			renderCurrentState();
+		}
+
+function getMetronomeDirective(mHeader) {
+    var meter = "4/4";
+    if (mHeader) {
+        var match = mHeader.match(/M:\s*(\S+)/);
+        if (match) meter = match[1];
+    }
+
+    var parts = meter.split('/');
+    var beatsPerMeasure = parseInt(parts[0], 10) || 4;
+
+    var beatsStr = "100";
+    for (var i = 1; i < beatsPerMeasure; i++) {
+        beatsStr += " 70";
+    }
+
+    // Directives MIDI avec canal 10 explicite
+    <!-- return "%%MIDI channel 10\n%%MIDI drummap d2 35 60 60\n%%MIDI beat " + beatsStr + " 4\n%%MIDI drum d2"; -->
+    return "%%MIDI drum dddd 76 77 77 77 76 77 77 77\n%%MIDI drumon";
+}
+
+function buildFinalABCString() {
+    console.group("🔧 [DEBUG] Construction et assemblage ABC");
+
+    var rawCode = document.getElementById("abcCode").value;
+    if (!rawCode.trim()) {
+        console.groupEnd();
+        return "";
+    }
+
+    // 1. Préparation des directives à injecter
+    var currentBpm = document.getElementById('tempoInput').value || "60";
+    var enableMetro = document.getElementById("enableMetronome").checked;
+    var tabType = document.getElementById("tabSelect").value;
+
+    // Directives Tablature
+    var tabDirective = "";
+    if (tabType && tabType !== "none") {
+        tabDirective = "%%abc-tablature " + tabType + "\n";
+    }
+
+    // Directives Métronome
+    var metroDirective = "";
+    if (enableMetro) {
+        var mMatch = rawCode.match(/^M:\s*(\S+)/m);
+        var mHeader = mMatch ? mMatch[0] : "M:4/4";
+        metroDirective = getMetronomeDirective(mHeader) + "\n";
+    }
+
+    // Regroupement de toutes les directives d'en-tête
+    var injectedHeaderDirectives = "";
+    if (tabDirective) injectedHeaderDirectives += tabDirective;
+    if (metroDirective) injectedHeaderDirectives += metroDirective;
+
+    // 2. Remplacement du Tempo Q:
+    if (/^Q:/m.test(rawCode)) {
+        rawCode = rawCode.replace(/^Q:.*$/m, "Q:" + currentBpm);
+    } else {
+        // Si Q: n'existe pas, on l'insérera dans l'en-tête
+        injectedHeaderDirectives = "Q:" + currentBpm + "\n" + injectedHeaderDirectives;
+    }
+
+    // 3. INJECTION AU BON ENDROIT (Avant K: ou au début du corps)
+    var finalString = "";
+    var kMatch = rawCode.match(/^K:.*$/m);
+
+    if (kMatch) {
+        // On trouve la position de "K:"
+        var kIndex = rawCode.indexOf(kMatch[0]);
+        var headerPart = rawCode.substring(0, kIndex);
+        var bodyPart = rawCode.substring(kIndex);
+
+        // On insère nos directives dans l'en-tête juste AVANT K:
+        finalString = headerPart + injectedHeaderDirectives + bodyPart;
+        console.log("🎯 Directives injectées dans l'en-tête (avant K:)");
+    } else {
+        // Si pas de K: trouvé, on colle au début
+        finalString = injectedHeaderDirectives + rawCode;
+        console.warn("⚠️ Pas de ligne K: trouvée, injection au tout début.");
+    }
+
+    console.log("📄 Code ABC réassemblé final :\n" + finalString);
+    console.groupEnd();
+
+    // Mise à jour de la boîte d'inspection visuelle
+    var debugElem = document.getElementById("debugAbcOutput");
+    if (debugElem) debugElem.textContent = finalString;
+
+    return finalString;
+}
+
+// -----------------------------------------------------------------------------
+// 2. RENDU ET SYNTHÈSE AUDIO + DEBUG
+// -----------------------------------------------------------------------------
+function renderCurrentState() {
+    console.group("🎨 [DEBUG] Exécution de renderCurrentState()");
+
+    if (synthControl) {
+        console.log("🛑 Arrêt de l'ancien synthétiseur...");
+        synthControl.pause();
+        synthControl = null;
+    }
+
+    var abcString = buildFinalABCString();
+    var statusElem = document.getElementById("debugStatus");
+
+    if (!abcString.trim()) {
+        document.getElementById("paper").innerHTML = "";
+        document.getElementById("audio-player").innerHTML = "";
+        if (statusElem) {
+            statusElem.textContent = "Code vide";
+            statusElem.className = "badge bg-warning";
+        }
+        console.groupEnd();
+        return;
+    }
+
+    // Transposition
+    var vTrans = parseInt(document.getElementById("transposeInput").value, 10) || 0;
+    console.log("🎼 Transposition :", vTrans, "demi-tons");
+
+    var paperElem = document.getElementById("paper");
+    var containerWidth = paperElem.clientWidth - 20;
+
+    var renderOptions = {
+        responsive: "resize",
+        add_classes: true,
+        visualTranspose: vTrans,
+        staffwidth: containerWidth
+    };
+
+    // Rendu Visuel
+    try {
+        var visualObj = ABCJS.renderAbc("paper", abcString, renderOptions)[0];
+        console.log("✅ Rendu visuel ABCJS réussi :", visualObj);
+        if (statusElem) {
+            statusElem.textContent = "Visuel OK";
+            statusElem.className = "badge bg-success";
+        }
+    } catch (e) {
+        console.error("❌ Erreur de rendu visuel ABCJS :", e);
+        if (statusElem) {
+            statusElem.textContent = "Erreur Rendu";
+            statusElem.className = "badge bg-danger";
+        }
+        console.groupEnd();
+        return;
+    }
+
+    // Rendu Audio Synthétisé
+    if (ABCJS.synth.supportsAudio()) {
+        var audioOptions = {
+            displayLoop: true,
+            displayRestart: true,
+            displayPlay: true,
+            displayProgress: true,
+            displayWarp: false
+        };
+
+        synthControl = new ABCJS.synth.SynthController();
+        synthControl.load("#audio-player", cursorControl, audioOptions);
+
+        // Récupération du Swing
+        var swingElem = document.getElementById('swingInput');
+		var swingVal = (swingElem && swingElem.value) ? parseFloat(swingElem.value) : 0;
+        
+        // Normalisation : si la valeur du champ est 50 (binaire), on met 0 pour désactiver le swing
+		if (swingVal <= 50) {
+			swingVal = 0;
+		}
+
+        var synthParams = {
+            midiTranspose: vTrans,
+            //swing: swingVal
+            swing: 70
+        };
+
+        console.log("🎛️ Paramètres synthétiseur audio :", synthParams);
+
+        var createSynth = new ABCJS.synth.CreateSynth();
+				createSynth.init({ visualObj: visualObj, options: synthParams }).then(function () {
+					synthControl.setTune(visualObj, false, synthParams).catch(function (error) {
+						console.warn("Erreur d'initialisation du morceau :", error);
+					});
+				}).catch(function (error) {
+            console.error("❌ Erreur init createSynth :", error);
+        });
+    } else {
+        console.warn("⚠️ Audio non supporté par ce navigateur.");
+    }
+
+    console.groupEnd();
+}
+
+
+
+
+
+
+// Redimensionnement automatique de la partition
+window.onresize = function () {
+    renderCurrentState();
+};
+
+// -----------------------------------------------------------------------------
+// 4. GESTION DU MODE JOUR / NUIT
+// -----------------------------------------------------------------------------
+
+function initTheme() {
+    var savedTheme = localStorage.getItem("abc_editor_theme") || "light";
+    document.documentElement.setAttribute("data-bs-theme", savedTheme);
+    updateThemeIcon(savedTheme);
+}
+
+function toggleTheme() {
+    var currentTheme = document.documentElement.getAttribute("data-bs-theme");
+    var newTheme = (currentTheme === "dark") ? "light" : "dark";
+    document.documentElement.setAttribute("data-bs-theme", newTheme);
+    localStorage.setItem("abc_editor_theme", newTheme);
+    updateThemeIcon(newTheme);
+}
+
+function updateThemeIcon(theme) {
+    var btn = document.getElementById("themeToggleBtn");
+    if (btn) {
+        btn.innerHTML = (theme === "dark") ? '<i class="bi bi-sun"></i>' : '<i class="bi bi-moon-stars"></i>';
+    }
+}
+	
+	</script>
+</body>
+</html>
