@@ -9,7 +9,7 @@ Liste de petits outils pour aider à travailler un instrument ou à éditer ses 
 
 * 🚀 Tester l'application : [Ouvrir l'outil (Démo interactive)](https://fxpar.github.io/music-toolbox/songbookfx.html)
 * 📄 Code source : [songbookfx.html](https://github.com/fxpar/music-toolbox/blob/main/songbookfx.html)
-
+* 📺 [Tuto Vidéo youtube](https://www.youtube.com/watch?v=jdLsK0XOejE)
 
 
 **Un simple songbook avec parole, accord ukulélé et guitare, et transposition. Possibilité d'ajouter une chanson par copier-coller. Variantes pour les accords.**
