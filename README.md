@@ -361,7 +361,6 @@ Licence: CC BY-NC 4.0
 * 📄 Code source : [metronome-graduel.html](https://github.com/fxpar/music-toolbox/blob/main/metronome-graduel.html)
 
 
-https://github.com/fxpar/music-toolbox/blob/main/metronome-graduel.html
 
 **Un métronome "geek" pour s'entrainer en accélérant (ou en décélérant), soit de manière simple, soit en utilisant des formules complexes: rester 3 mesures au même tempo, accélerer de 5bpm les 4 suivantes, revenir à un rythme intermédiaire...**
 
@@ -387,6 +386,61 @@ Code créé par IA (Deepseek), et prompté par moi 😉
 Licence: CC BY-NC 4.0
 
 ---
+
+
+## Reconnaissance d'accords
+
+* 🚀 Tester l'application : [Ouvrir l'outil (Démo interactive)](https://fxpar.github.io/music-toolbox/chord-recognition.html)
+* 📄 Code source : [chord-recognition.html](https://github.com/fxpar/music-toolbox/blob/main/chord-recognition.html)
+
+
+**Appli qui te dit si tu as bien joué TOUTES les notes en d'un accords. Premiers essais d'appli avec micro directement dans le navigateur pour tester test progrès.**
+
+Librairies utilisées: 
+* boostrap-icons
+
+Code créé par IA, et prompté par moi 😉
+Licence: CC BY-NC 4.0
+
+---
+
+
+## Constance du volume
+
+* 🚀 Tester l'application : [Ouvrir l'outil (Démo interactive)](https://fxpar.github.io/music-toolbox/volume-tester.html)
+* 📄 Code source : [volume-tester.html](https://github.com/fxpar/music-toolbox/blob/main/volume-tester.html)
+
+
+**Appli qui te dit le volume de ton jeu. Utile pour être régulier dans le strumming des accords et pour voir si les accents sont tous de même niveau. Premiers essais d'appli avec micro directement dans le navigateur pour tester test progrès.**
+
+Librairies utilisées: 
+* boostrap-icons
+* chart.js
+
+Code créé par IA, et prompté par moi 😉
+Licence: CC BY-NC 4.0
+
+---
+
+
+## Uke Hero
+
+* 🚀 Tester l'application : [Ouvrir l'outil (Démo interactive)](https://fxpar.github.io/music-toolbox/uku-hero.html)
+* 📄 Code source : [uku-hero.html](https://github.com/fxpar/music-toolbox/blob/main/uku-hero.html)
+
+
+**Joue les accords au rythme où ils défilent à l'écran, ça te dit si tu es en avance ou en retard. Premiers essais d'appli avec micro directement dans le navigateur pour tester test progrès.**
+
+Librairies utilisées: 
+* boostrap-icons
+
+
+Code créé par IA, et prompté par moi 😉
+Licence: CC BY-NC 4.0
+
+---
+
+
 
 
 # Code source
