@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChordFlow - Lecteur de Chansons</title>
+    <link rel="stylesheet" href="./css/songbookfx.css">
+</head>
+<body>
+
+    <header class="top-bar">
+        <div class="header-left">
+            <button id="menu-toggle" title="Menu">☰</button>
+            <div class="logo">ChordFlow</div>
+        </div>
+
+        <div class="transpose-controls">
+            <button id="transpose-down" title="Baisser d'un demi-ton">➖</button>
+            <span id="transpose-val">Ton : 0</span>
+            <button id="transpose-up" title="Monter d'un demi-ton">➕</button>
+        </div>
+
+        <div class="header-actions">
+            
+            <button id="options-toggle" title="Paramètres">⚙️</button>
+        </div>
+    </header>
+
+    <main class="main-container">
+        <aside class="sidebar">
+            <div class="search-section">
+                <input type="text" id="search-bar" placeholder="🔍 Rechercher...">
+                <button id="clear-search">✕</button>
+            </div>
+			
+
+				<!-- NOUVEAU BOUTON -->
+				<button id="import-btn" class="btn-primary-add">➕ Ajouter une chanson</button>
+
+
+
+
+            <ul id="song-list"></ul>
+        </aside>
+
+        <section class="song-view">
+            <div id="song-metadata">
+                <h1 id="display-title">Titre de la chanson</h1>
+                <h2 id="display-author">Artiste</h2>
+            </div>
+            <div id="song-content"></div>
+        </section>
+
+        <div id="chord-resizer" class="resizer-v"></div>
+
+        <aside class="chord-panel">
+            <div class="instrument-box">
+                <select id="instrument-select">
+                    <option value="guitare">🎸 Guitare</option>
+                    <option value="ukulele" selected>🏝️ Ukulélé</option>
+                    <option value="piano">🎹 Piano</option>
+                </select>
+                <div class="zoom-controls">
+                    <button id="diagram-zoom-down" title="Rétrécir">🔍-</button>
+                    <button id="diagram-zoom-up" title="Agrandir">🔍+</button>
+                </div>
+            </div>
+            <div id="chord-diagrams-container"></div>
+        </aside>
+    </main>
+
+    <div id="options-panel" class="side-panel">
+        <div class="panel-header">
+            <h3>Paramètres</h3>
+            <button id="close-options">✕</button>
+        </div>
+        <div class="panel-body">
+            <div class="setting-row">
+                <label>Thème</label>
+                <button id="theme-toggle" class="btn-full">🌙 Mode Nuit</button>
+            </div>
+            <div class="setting-row">
+                <label>Taille paroles</label>
+                <div class="btn-group">
+                    <button id="lyrics-size-down">A-</button>
+                    <span id="lyrics-size-val">1.1rem</span>
+                    <button id="lyrics-size-up">A+</button>
+                </div>
+            </div>
+            <div class="setting-row">
+                <label>Taille accords</label>
+                <div class="btn-group">
+                    <button id="chord-size-down">a-</button>
+                    <span id="chord-size-val">0.9rem</span>
+                    <button id="chord-size-up">a+</button>
+                </div>
+            </div>
+			<!-- <div class="setting-row"> -->
+                <!-- <label>Importer</label> -->
+                <!-- <button id="import-btn" class="btn-full">📥 Importer</button> -->
+            <!-- </div> -->
+        </div>
+    </div>
+
+    <div id="import-modal" class="modal">
+        <div class="modal-content">
+            <h3>Ajouter une chanson</h3>
+            <textarea id="import-text" placeholder="Collez votre texte ici (Format ChordPro : [Am]Titre...)"></textarea>
+            <div class="modal-actions">
+                <button id="save-song">Enregistrer</button>
+                <button id="close-modal">Annuler</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="./js/songbookfx-chords.js"></script>
+    <script src="./js/songbookfx-songs_data.js"></script>
+    <script src="./js/songbookfx-parser.js"></script>
+    <script src="./js/songbookfx-transposer.js"></script>
+    <script src="./js/uke-chord3fx.js"></script>
+    <script src="./js/songbookfx.js"></script>
+
+</body>
+</html>
