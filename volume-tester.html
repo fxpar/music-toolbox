@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Suivi du Volume - Ukulélé</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.min.css">
+    <style>
+        body { font-family: sans-serif; text-align: center; margin-top: 30px; background: #f4f4f9; color: #333; }
+        .container { max-width: 800px; margin: 0 auto; padding: 20px; }
+        button { padding: 12px 24px; font-size: 16px; cursor: pointer; border-radius: 5px; border: none; background: #28a745; color: white; font-weight: bold; margin-bottom: 20px; }
+        button:disabled { background: #6c757d; }
+        .chart-container { position: relative; margin: auto; height: 40vh; width: 80vw; max-width: 800px; background: white; padding: 15px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        #volumeValue { font-size: 24px; font-weight: bold; color: #007bff; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Suivi de la dynamique au Ukulélé</h1>
+        <p>Jouez pour observer la régularité de votre volume sur les 10 dernières secondes.</p>
+        
+        <button id="startBtn">Démarrer l'analyse</button>
+        <p>Volume actuel : <span id="volumeValue">0</span>%</p>
+
+        <div class="chart-container">
+            <canvas id="volumeChart"></canvas>
+        </div>
+    </div>
+	
+	<footer class="mt-auto py-3 bg-body-tertiary border-top text-body-secondary transition-colors">
+	  <div class="container">
+		<div class="row align-items-center gy-2">
+		  <!-- Colonne 1 : Copyright & Titre -->
+		  <div class="col-12 col-md-6 text-center text-md-start">
+			<span class="small">
+			  CC BY-NC-SA 4.0 <span id="currentYear"></span> <strong>François Parlant</strong> &mdash; Créé avec passion pour le rythme et la mélodie.
+			</span>
+		  </div>
+
+		  <!-- Colonne 2 : Liens Réseaux Sociaux -->
+		  <div class="col-12 col-md-6 text-center text-md-end">
+			<div class="d-inline-flex gap-3 align-items-center">
+			  <a href="https://github.com/fxpar/abc-notation-artifacts" target="_blank" rel="noopener noreferrer" class="text-body-secondary text-decoration-none fs-5 hover-accent" title="Code source GitHub"> 
+				<i class="bi bi-github"></i> 
+			  </a> 
+			  <a href="https://www.linkedin.com/in/francois-parlant" target="_blank" rel="noopener noreferrer" class="text-body-secondary text-decoration-none fs-5 hover-accent" title="LinkedIn: François Parlant">
+				<i class="bi bi-linkedin"></i> 
+			  </a> 
+			  <a href="https://www.youtube.com/c/enparlantdebureautiqueformezvous" target="_blank" rel="noopener noreferrer" class="text-body-secondary text-decoration-none fs-5 hover-accent" title="Tutos YouTube: En parlant de bureautique">
+				<i class="bi bi-youtube"></i> 
+			  </a>
+			</div>
+		  </div>
+		</div>
+	  </div>
+	</footer>
+
+
+    <script>
+        const startBtn = document.getElementById('startBtn');
+        const volumeValue = document.getElementById('volumeValue');
+        
+        // Configuration du graphique Chart.js
+        const ctx = document.getElementById('volumeChart').getContext('2d');
+        
+        // On crée un tableau de 100 entrées initialisées à 0 (10 secondes à intervalles de 100ms)
+        const maxPoints = 100;
+        const labels = Array(maxPoints).fill('');
+        const dataData = Array(maxPoints).fill(0);
+
+        const volumeChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Intensité sonore (%)',
+                    data: dataData,
+                    borderColor: '#007bff',
+                    backgroundColor: 'rgba(0, 123, 255, 0.1)',
+                    borderWidth: 2,
+                    pointRadius: 0, // Cache les points pour n'avoir que la ligne
+                    tension: 0.3 // Adoucit la courbe
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                animation: false, // Désactive l'animation pour économiser les performances en temps réel
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 100, // Le volume va de 0 à 100%
+                        title: { display: true, text: 'Volume (%)' }
+                    },
+                    x: {
+                        title: { display: true, text: 'Temps (10 dernières secondes)' },
+                        ticks: { display: false } // Cache les textes de l'axe X pour que ce soit plus propre
+                    }
+                }
+            }
+        });
+
+        startBtn.addEventListener('click', async () => {
+            try {
+                // Configuration audio brute (sans filtres)
+                const stream = await navigator.mediaDevices.getUserMedia({ 
+                    audio: {
+                        echoCancellation: false,
+                        noiseSuppression: false,
+                        autoGainControl: false
+                    }, 
+                    video: false 
+                });
+                
+                startBtn.disabled = true;
+                startBtn.textContent = "Analyse en cours...";
+
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                const source = audioContext.createMediaStreamSource(stream);
+                const analyser = audioContext.createAnalyser();
+                
+                analyser.fftSize = 512;
+                const bufferLength = analyser.frequencyBinCount;
+                const dataArray = new Uint8Array(bufferLength);
+
+                source.connect(analyser);
+
+                let currentVolume = 0;
+
+                // 1. Boucle rapide pour capter le volume instantané (fluide pour le chiffre)
+                function captureAudio() {
+                    analyser.getByteTimeDomainData(dataArray);
+                    let sumSquares = 0;
+                    for (let i = 0; i < bufferLength; i++) {
+                        let norm = (dataArray[i] - 128) / 128;
+                        sumSquares += norm * norm;
+                    }
+                    let rms = Math.sqrt(sumSquares / bufferLength);
+                    
+                    // Ajustez le multiplicateur (* 4 ici) selon la sensibilité de votre micro
+                    currentVolume = Math.min(Math.round(rms * 100 * 4), 100); 
+                    volumeValue.textContent = currentVolume;
+
+                    requestAnimationFrame(captureAudio);
+                }
+                captureAudio();
+
+                // 2. Intervalle fixe toutes les 100ms pour alimenter le graphique des 10s
+                setInterval(() => {
+                    // Ajouter la nouvelle valeur à la fin
+                    volumeChart.data.datasets[0].data.push(currentVolume);
+                    // Retirer la plus ancienne valeur au début pour garder 100 points (10 secondes)
+                    if (volumeChart.data.datasets[0].data.length > maxPoints) {
+                        volumeChart.data.datasets[0].data.shift();
+                    }
+                    // Mettre à jour le rendu du graphique
+                    volumeChart.update();
+                }, 100);
+
+            } catch (err) {
+                alert("Erreur d'accès au micro : " + err);
+            }
+        });
+    </script>
+</body>
+</html>
