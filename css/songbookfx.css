@@ -21,6 +21,8 @@
     --border-color: #444444;
 }
 
+
+
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
@@ -424,6 +426,11 @@ body.is-resizing .main-container {
 }
 
 uke-chord { display: block; width: 100%; max-width: 160px; margin: 0 auto; }
+
+/* Mode nuit par défaut : on inverse les couleurs du diagramme */
+			[data-theme="dark"] uke-chord {
+				filter: invert(0.9) hue-rotate(180deg);
+			}
 
 @container (max-width: 150px) {
     .chord-title-header h4 { font-size: 0.8rem; }
