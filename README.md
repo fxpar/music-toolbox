@@ -16,7 +16,8 @@ Liste de petits outils pour aider à travailler un instrument ou à éditer ses 
 
 Fonctionnalités:
 * Recherche de chansons par interpréte, titre, ou tags
-* Format: accord sur une ligne au dessus ou accord entre crochet
+* Format accepté: accord sur une ligne au dessus des paroles 
+* Format accepté: accord entre crochet dans les paroles
 * 4 extraits de chansons fournis en exemple (voir le fichier js avec la base des morceaux)
 * Ajout simplifié par copier-coller
 * Transposition par demi-tons
