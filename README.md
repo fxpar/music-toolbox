@@ -7,8 +7,8 @@ Liste de petits outils pour aider à travailler un instrument ou à éditer ses 
 
 ##  SongbookFx 
 
-* 🚀 Tester l'application : [Ouvrir l'outil (Démo interactive)](https://fxpar.github.io/music-toolbox/abc-editeur-simple.html)
-* 📄 Code source : [abc-editeur-simple.html](https://github.com/fxpar/music-toolbox/blob/main/abc-editeur-simple.html)
+* 🚀 Tester l'application : [Ouvrir l'outil (Démo interactive)](https://fxpar.github.io/music-toolbox/songbookfx.html)
+* 📄 Code source : [songbookfx.html](https://github.com/fxpar/music-toolbox/blob/main/songbookfx.html)
 
 
 
