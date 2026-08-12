@@ -5,6 +5,38 @@ Liste de petits outils pour aider à travailler un instrument ou à éditer ses 
 
 ---
 
+##  SongbookFx 
+
+* 🚀 Tester l'application : [Ouvrir l'outil (Démo interactive)](https://fxpar.github.io/music-toolbox/abc-editeur-simple.html)
+* 📄 Code source : [abc-editeur-simple.html](https://github.com/fxpar/music-toolbox/blob/main/abc-editeur-simple.html)
+
+
+
+**Un simple songbook avec parole, accord ukulélé et guitare, et transposition. Possibilité d'ajouter une chanson par copier-coller. Variantes pour les accords.**
+
+Fonctionnalités:
+* Recherche de chansons par interpréte, titre, ou tags
+* Format: accord sur une ligne au dessus ou accord entre crochet
+* 4 extraits de chansons fournis en exemple (voir le fichier js avec la base des morceaux)
+* Ajout simplifié par copier-coller
+* Transposition par demi-tons
+* Choix de l'instrument pour les diagrammes d'accord: ukulélé ou guitare
+* Variante des différentes formes d'accord
+* Sauvegarde des morceaux dans le navigateur
+* Zoom sur le paroles (augmenter ou diminuer la police)
+* Zoom sur les noms des accords (augmenter ou diminuer la police)
+* Zoom sur les diagrammes d'accord
+* Mode jour / nuit
+
+
+
+À faire: 
+* [ ] Étoffer la liste de diagrammes à partir de la base de données complète
+* [ ] Exporter et importer une liste complète
+
+
+---
+
 ##  Editeur musical abc simple
 
 * 🚀 Tester l'application : [Ouvrir l'outil (Démo interactive)](https://fxpar.github.io/music-toolbox/abc-editeur-simple.html)
