@@ -21,8 +21,6 @@
     --border-color: #444444;
 }
 
-
-
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
@@ -122,6 +120,8 @@ body.is-resizing {
     /* Sidebar L | Song View | Resizer | Chord Panel */
     grid-template-columns: var(--sidebar-left-width) 1fr 6px var(--chord-panel-width);
     flex-grow: 1;
+	height: calc(100vh - 60px); /* Ajuste selon la hauteur de ta top-bar */
+    min-height: 0;
     overflow: hidden;
     transition: grid-template-columns 0.3s ease;
 }
@@ -142,6 +142,8 @@ body.is-resizing .main-container {
 
 .sidebar, .chord-panel, .song-view {
     min-width: 0;
+	-webkit-overflow-scrolling: touch; /* Essentiel pour Android / iOS anciens */
+    overflow-y: auto;
 }
 
 .sidebar {
@@ -500,41 +502,3 @@ textarea {
 .btn-primary-add:active {
     transform: scale(0.98);
 }
-
-/* 1. Force le moteur WebKit mobile à utiliser le scroll tactile fluide */
-.sidebar, 
-.song-view, 
-.chord-panel {
-    -webkit-overflow-scrolling: touch; /* Essentiel pour Android / iOS anciens */
-    overflow-y: auto;
-}
-
-/* 2. Fix Flexbox pour Android Nougat */
-/* Sur les versions anciennes, Flexbox ne calcule pas bien 'height: 100%' sans min-height: 0 */
-.main-container {
-    display: flex;
-    height: calc(100vh - 60px); /* Ajuste selon la hauteur de ta top-bar */
-    min-height: 0;
-    overflow: hidden;
-}
-
-/* 3. Assure une hauteur maximale sur chaque colonne scrollable */
-.sidebar {
-    height: 100%;
-    max-height: 100%;
-    overflow-y: auto;
-}
-
-.song-view {
-    flex: 1;
-    height: 100%;
-    max-height: 100%;
-    overflow-y: auto;
-}
-
-.chord-panel {
-    height: 100%;
-    max-height: 100%;
-    overflow-y: auto;
-}
-
