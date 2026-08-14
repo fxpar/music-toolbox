@@ -136,47 +136,20 @@
       background-color: rgba(255, 255, 255, 0.1);
     }
 
-    /* Navigation Drawer */
-    .drawer-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.5);
-      z-index: 100;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.3s ease;
-    }
 
-    .drawer-overlay.open {
-      opacity: 1;
-      pointer-events: auto;
-    }
 
-    .drawer {
-      position: fixed;
-      top: 0;
-      bottom: 0;
-      left: -300px;
-      width: 280px;
-      background-color: var(--md-sys-color-surface-container-high);
-      z-index: 101;
-      padding: 24px 16px;
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-      transition: transform 0.3s ease;
-      border-radius: 0 16px 16px 0;
-    }
-
-    .drawer-overlay.open .drawer {
-      transform: translateX(300px);
-    }
-
-    .drawer h2 {
-      font-size: 1.2rem;
-      margin-bottom: 8px;
-      color: var(--md-sys-color-on-surface);
-    }
+/* Panneau latéral du Drawer */
+.drawer-content, 
+.nav-drawer {
+  max-height: 100vh;                 /* S'assure qu'il ne dépasse pas de l'écran */
+  overflow-y: auto;                  /* Active le scroll vertical si le contenu déborde */
+  -webkit-overflow-scrolling: touch; /* Garantit le scroll fluide sur mobiles (Android/iOS) */
+  display: flex;
+  flex-direction: column;
+}
+.drawer-content {
+  padding-bottom: 32px; /* Marge interne en bas du texte */
+}
 
     .menu-item {
       padding: 12px 16px;
@@ -194,6 +167,32 @@
       background-color: var(--md-sys-color-primary-container);
       color: var(--md-sys-color-on-primary-container);
     }
+
+.drawer-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 9999; /* S'assurer qu'il est au-dessus de tout */
+  display: none;
+  pointer-events: auto; /* Force Android 7 à capter les clics */
+}
+
+.drawer-overlay.open {
+  display: flex !important;
+}
+
+
+
+    .drawer h2 {
+      font-size: 1.2rem;
+      margin-bottom: 8px;
+      color: var(--md-sys-color-on-surface);
+    }
+
+
 
     /* ==========================================================================
        3. INTERVAL MATRIX FRETBOARD (SCROLLABLE & INFINITE LOOP)
@@ -412,7 +411,11 @@
   <!-- Navigation Drawer -->
   <div class="drawer-overlay" id="drawer-overlay">
     <nav class="drawer">
+	<button id="btn-close-drawer" class="btn btn-secondary" style="width: 100%; height:2em; margin-top: 15px;padding:5px"onclick="closeDrawer()">
+      ✕ Fermer
+    </button>
       <h2>Modes de Jeu</h2>
+	  
       <div class="menu-item active">
         <span>1. Shift de Formes (Actif)</span>
       </div>
@@ -787,6 +790,10 @@ btnHint.addEventListener('click', () => {
     /* ==========================================================================
        8. THEME & DRAWER CONTROLS
        ========================================================================== */
+	   function closeDrawer() {
+  drawerOverlay.classList.remove('open');
+}
+
     const themeBtn = document.getElementById('btn-theme');
     themeBtn.addEventListener('click', () => {
       const html = document.documentElement;
@@ -801,7 +808,7 @@ btnHint.addEventListener('click', () => {
       drawerOverlay.classList.add('open');
     });
 
-    drawerOverlay.addEventListener('click', (e) => {
+  drawerOverlay.addEventListener('click', (e) => {
       if (e.target === drawerOverlay) {
         drawerOverlay.classList.remove('open');
       }

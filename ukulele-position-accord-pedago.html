@@ -240,6 +240,23 @@
       color: var(--md-sys-color-on-primary-container);
     }
 
+.drawer-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 9999; /* S'assurer qu'il est au-dessus de tout */
+  display: none;
+  pointer-events: auto; /* Force Android 7 à capter les clics */
+}
+
+.drawer-overlay.open {
+  display: flex !important;
+}
+
+
     /* ==========================================================================
        3. INTERVAL MATRIX FRETBOARD (SCROLLABLE & INFINITE LOOP)
        ========================================================================== */
@@ -493,7 +510,11 @@
 
   <!-- Navigation Drawer -->
   <div class="drawer-overlay" id="drawer-overlay">
+	
     <nav class="drawer">
+	<button id="btn-close-drawer" class="btn btn-secondary" style="width: 100%; margin-top: 15px;">
+      ✕ Fermer
+    </button>
       <h2>Paramètre et théorie</h2>
       <!-- <div class="menu-item active"> -->
         <!-- <span>1. Shift de Formes (Actif)</span> -->
@@ -887,10 +908,45 @@ presetButtons.forEach((btn, idx) => {
       viewportEl.scrollTo({ top: Math.max(0, scrollPos), behavior: 'smooth' });
     }
   }
+  
 
   /* ==========================================================================
      5. ÉVÉNEMENTS DIVERS (THEME & DRAWER)
      ========================================================================== */
+	 
+// Fonction universelle de fermeture
+// Fonction de fermeture explicite
+function closeDrawer() {
+  drawerOverlay.classList.remove('open');
+}
+
+// 1. Clic / Toucher DIRECT sur le fond sombre
+drawerOverlay.addEventListener('click', (e) => {
+  // Sur Android 7, on vérifie si le clic a eu lieu DEHORS du conteneur drawer-content
+  const drawerContent = document.getElementById('drawer-content');
+  if (drawerContent && !drawerContent.contains(e.target)) {
+    closeDrawer();
+  }
+});
+
+// 2. Empêche le clic à l'intérieur du tiroir de remonter au fond sombre
+const drawerContentEl = document.getElementById('drawer-content');
+if (drawerContentEl) {
+  drawerContentEl.addEventListener('click', (e) => {
+    e.stopPropagation(); // Indispensable pour WebView Android 7 !
+  });
+}
+
+// 3. Bouton de fermeture explicite (indispensable si le tactile de l'overlay rame)
+const btnClose = document.getElementById('btn-close-drawer');
+if (btnClose) {
+  btnClose.addEventListener('click', (e) => {
+    e.preventDefault();
+    closeDrawer();
+  });
+}
+	 
+	 
   themeBtn.addEventListener('click', () => {
     const html = document.documentElement;
     const current = html.getAttribute('data-theme');
