@@ -400,10 +400,34 @@ function loadAsset(type, paths) {
                         <div class="flex-grow-1 border rounded p-2 bg-card d-flex align-items-center justify-content-center">
                             <div id="paper" class="w-100 abc-paper"></div>
                         </div>
+						
+						
+						
+						<div class="container my-4">
+					<div class="accordion accordion-flush" id="accordionAbcOutput">
+						<div class="accordion-item bg-transparent border-top">
+							<h2 class="accordion-header" id="headingAbcOutput">
+								<button class="accordion-button collapsed bg-transparent py-2 px-0 text-muted small" type="button" data-bs-toggle="collapse" data-bs-target="#collapseAbcOutput" aria-expanded="false" aria-controls="collapseAbcOutput">
+									⚙️ Code ABC transposé (source)
+								</button>
+							</h2>
+							<div id="collapseAbcOutput" class="accordion-collapse collapse" aria-labelledby="headingAbcOutput">
+								<div class="accordion-body p-2">
+									<textarea id="abcSourceOutput" class="form-control form-control-sm font-monospace bg-secondary text-white py-3" rows="6" readonly ></textarea>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				
+						
+						
                     </div>
                 </div>
-            </div>
-
+            
+			
+				
+			</div>
         </div>
     </div>
 	
@@ -704,7 +728,21 @@ function loadAsset(type, paths) {
 			return scale[newIndex] + extension;
 		}
 
+function transposeAbcText(abcText, semitones) {
+    if (!semitones || semitones === 0) return abcText;
 
+    // Transpose les accords entre guillemets "C", "Am", "G7"
+    var result = abcText.replace(/"([A-G][#b]?[^"]*)"/g, function(match, chordName) {
+        return '"' + transposeChordName(chordName, semitones) + '"';
+    });
+
+    // Transpose l'entête de tonalité K: (ex: K: C -> K: D)
+    result = result.replace(/^K:\s*([A-G][#b]?[m]?)/gm, function(match, key) {
+        return 'K: ' + transposeChordName(key, semitones);
+    });
+
+    return result;
+}
 		
 		
 
@@ -1044,6 +1082,18 @@ function loadAsset(type, paths) {
             } else {
                 document.getElementById("audio-player").innerHTML = "<div class='alert alert-warning p-2 small'>L'audio n'est pas supporté.</div>";
             }
+			
+			// Remplace 'abcString' par le nom de ta variable contenant le code ABC final
+			var originalAbc = document.getElementById('abcSource').value;
+			//var transposeValue = parseInt(document.getElementById('abc-sel-transpose').value, 10) || 0;
+
+			// Génère le code ABC transposé
+			var finalTransposedAbc = transposeAbcText(originalAbc, transposeValue);
+
+			// Affiche le résultat dans l'accordéon bas de page
+			document.getElementById('abcSourceOutput').value = finalTransposedAbc;
+
+
         }
 
         window.onload = function() {
