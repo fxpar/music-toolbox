@@ -350,6 +350,11 @@ function loadAsset(type, paths) {
                             <label class="form-label small fw-bold">Code ABC :</label>
                             <textarea class="form-control font-monospace bg-body-secondary small" id="abcSource" rows="4" readonly></textarea>
                         </div>
+						
+						<!-- Section d'affichage des diagrammes -->
+                        <div class="border rounded p-3 mb-3 bg-card">
+                            <div id="chord-diagrams" class="chord-diagrams-container"></div>
+                        </div>
 
                         <div class="mb-3">
                             <div class="d-flex align-items-stretch gap-1">
@@ -390,10 +395,7 @@ function loadAsset(type, paths) {
                             </div>
                         </div>
 
-                        <!-- Section d'affichage des diagrammes -->
-                        <div class="border rounded p-3 mb-3 bg-card">
-                            <div id="chord-diagrams" class="chord-diagrams-container"></div>
-                        </div>
+                        
 
                         <div class="flex-grow-1 border rounded p-2 bg-card d-flex align-items-center justify-content-center">
                             <div id="paper" class="w-100 abc-paper"></div>
@@ -443,7 +445,7 @@ function loadAsset(type, paths) {
 	loadAsset('js', {
 	  android: './js/abcjs-basicfx.js',
 	  cdn:     'https://cdn.jsdelivr.net/npm/abcjs@6.4.0/dist/abcjs-basic-min.js',
-	  local:   './js/abcjs-basic-min.js'
+	  local:   './js/abcjs-basicfx.js'
 	});
 	</script>
 
