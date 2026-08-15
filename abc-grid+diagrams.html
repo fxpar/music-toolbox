@@ -204,8 +204,14 @@
                             <div class="col-sm-6">
                                 <label for="timeSignature" class="form-label fw-bold">Mesure :</label>
                                 <select class="form-select" id="timeSignature">
-                                    <option value="4/4" selected>4/4</option>
-                                    <option value="3/4">3/4</option>
+                                    <option value="2/4">2/4</option>
+									<option value="3/4">3/4</option>
+									<option value="4/4" selected>4/4</option>
+									<option value="5/4">5/4</option>
+									<option value="6/8">6/8</option>
+									<option value="7/8">7/8</option>
+									<option value="9/8">9/8</option>
+									<option value="12/8">12/8</option>
                                 </select>
                             </div>
                         </div>
@@ -508,7 +514,7 @@
             
             let abcMeasures = [];
             let lastChordName = "C"; 
-            const beatsPerMeasure = timeSig === "3/4" ? 3 : 4;
+            const beatsPerMeasure = parseInt(timeSig.split('/')[0], 10);
             //const rests = " z".repeat(beatsPerMeasure).trim();
 			// Remplace les z par des c en attendant un vrai custom rhythm
 			// Récupération de l'état de la case à cocher
