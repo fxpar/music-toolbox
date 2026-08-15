@@ -1019,7 +1019,7 @@ function transposeAbcText(abcText, semitones) {
                         chordEl.setAttribute('sub', data.sub || '');
                         section.appendChild(chordEl);
                     } else {
-                        section.innerHTML += '<div class="text-muted fst-italic small">Introuvable BDD</div>';
+                        section.innerHTML += '<div class="text-muted fst-italic small"> <strong>' + displayChordName + '</strong><br/> non trouvé</div>';
                     }
 					
 					header.appendChild(btnPrev);
