@@ -623,38 +623,61 @@ function loadAsset(type, paths) {
             const timeSig = document.getElementById('timeSignature').value;
             const transposeValue = parseInt(document.getElementById('abc-sel-transpose').value, 10) || 0;
             
-            const tokens = gridText.replace(/\|/g, ' ').split(/\s+/).filter(t => t.length > 0);
-            
-            let abcMeasures = [];
-            let lastChordName = "C"; 
-            const beatsPerMeasure = parseInt(timeSig.split('/')[0], 10);
-            //const rests = " z".repeat(beatsPerMeasure).trim();
-			// Remplace les z par des c en attendant un vrai custom rhythm
-			// Récupération de l'état de la case à cocher
-const useChordRests = document.getElementById('chordRestsToggle').checked;
-			const restSymbol = useChordRests ? " c" : " z";
-			const rests = restSymbol.repeat(beatsPerMeasure).trim();
+            // --- GESTION CHORD RESTS ---
+            const useChordRests = document.getElementById('chordRestsToggle').checked;
+            const restSymbol = useChordRests ? "c" : "z";
 
+            const beatsPerMeasure = parseInt(timeSig.split('/')[0], 10);
             const knownChords = {};
             const uniqueChordsList = [];
+            let abcMeasures = [];
 
-            tokens.forEach(token => {
-                if (token === "/" || token === "///" || token === "//") {
-                    const count = token.length;
-                    for (let i = 0; i < count; i++) {
-                        abcMeasures.push(`"${lastChordName}" ${rests}`);
-                    }
+            // Conserve la mesure précédente pour gérer la répétition %
+            let lastMeasureChords = ["C"];
+
+            // 1. Découpage en mesures selon la présence de "|"
+            let rawMeasures = [];
+            if (gridText.includes("|")) {
+                rawMeasures = gridText.split("|").map(m => m.trim()).filter(m => m.length > 0);
+            } else {
+                rawMeasures = gridText.split(/\s+/).filter(m => m.length > 0);
+            }
+
+            // 2. Traitement des mesures
+            rawMeasures.forEach(measureStr => {
+                const tokens = measureStr.split(/\s+/).filter(t => t.length > 0);
+                if (tokens.length === 0) return;
+
+                let currentMeasureChords = [];
+
+                // Gestion du % (répétition de mesure)
+                if (tokens.length === 1 && tokens[0] === "%") {
+                    currentMeasureChords = [...lastMeasureChords];
                 } else {
-                    const parsedChord = parseChordToken(token, knownChords);
-                    if (parsedChord) {
-                        lastChordName = parsedChord.name;
-                        uniqueChordsList.push(parsedChord);
-                    } else {
-                        // Traitement par défaut en cas de chaîne libre sans nom standard
-                        lastChordName = token;
-                    }
-                    abcMeasures.push(`"${lastChordName}" ${rests}`);
+                    tokens.forEach(token => {
+                        const parsedChord = parseChordToken(token, knownChords);
+                        if (parsedChord) {
+                            uniqueChordsList.push(parsedChord);
+                            currentMeasureChords.push(parsedChord.name);
+                        } else {
+                            currentMeasureChords.push(token);
+                        }
+                    });
+                    lastMeasureChords = [...currentMeasureChords];
                 }
+
+                // 3. Répartition des temps et répétition du caractère de symbole
+                const chordCount = currentMeasureChords.length;
+                const beatsPerChord = Math.max(1, Math.floor(beatsPerMeasure / chordCount));
+
+                let abcMeasureContent = "";
+                currentMeasureChords.forEach(chordName => {
+                    // Génère la chaîne répétée : ex. "c c c c " pour 4 temps
+                    const repeatedRests = Array(beatsPerChord).fill(restSymbol).join(" ");
+                    abcMeasureContent += `"${chordName}" ${repeatedRests} `;
+                });
+
+                abcMeasures.push(abcMeasureContent.trim());
             });
 
             // 1. Rendu des Diagrammes Ukulélé & Génération du code HTML
