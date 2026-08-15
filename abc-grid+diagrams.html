@@ -8,12 +8,101 @@
     <!-- <link rel="stylesheet" href="./css/bootstrap-icons.min.css"> -->
     <!-- <link rel="stylesheet" href="./css/abcjs-audio.min.css"> -->
 	
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/abcjs@6.6.3/abcjs-audio.min.css">
+		<script>
+// Polyfill pour replaceChildren (Android 7 / ES5)
+if (!Element.prototype.replaceChildren) {
+    Element.prototype.replaceChildren = function() {
+        while (this.firstChild) {
+            this.removeChild(this.firstChild);
+        }
+        this.append.apply(this, arguments);
+    };
+}
+</script>
+
+	<script>
+	//alert(window.location.href);
+	// --- CONFIGURATION ---
+// Valeurs : 'auto', 'local', 'cdn', 'android'
+var MODE = 'auto'; 
+
+// --- DÉTECTION ---
+function detectEnvironment() {
+  if (MODE !== 'auto') return MODE;
+
+  var href = window.location.href;
+
+  // Utilisation de indexOf() à la place de includes() pour compatibilité ES5
+  if (href.indexOf('appassets.androidplatform.net') !== -1) {
+    return 'android';
+  }
+  
+  if (href.indexOf('.github.io') !== -1) {
+    return 'cdn';
+  }
+
+  return 'local';
+}
+
+// --- CHARGEMENT ---
+function loadAsset(type, paths) {
+  var env = detectEnvironment();
+  var src = paths[env] || paths['local'] || paths['cdn'];
+
+  if (!src) return;
+
+  if (type === 'js') {
+    var script = document.createElement('script');
+    script.type = 'text/javascript';
+    script.src = src;
+    document.head.appendChild(script);
+  } else if (type === 'css') {
+    var link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.type = 'text/css';
+    link.href = src;
+    document.head.appendChild(link);
+  }
+}
+	</script>
+	
+
+	
+	<script>
+	loadAsset('css', {
+	  android: './css/bootstrap.min.css',
+	  cdn:     'https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css',
+	  local:   './css/bootstrap.min.css'
+	});
+	loadAsset('css', {
+	  android: './css/bootstrap-icons.min.css',
+	  cdn:     'https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.min.css',
+	  local:   './css/bootstrap-icons.min.css'
+	});
+	loadAsset('css', {
+	  android: './css/abcjs-audio.min.css',
+	  cdn:     'https://cdn.jsdelivr.net/npm/abcjs@6.6.3/abcjs-audio.min.css',
+	  local:   './css/abcjs-audio.min.css'
+	});
+	
+	loadAsset('js', {
+	  android: './js/uke-chord3fx.js',
+	  cdn:     'https://pianosnake.github.io/uke-chord/uke-chord.js',
+	  local:   './js/uke-chord3fx.js'
+	});
+	</script>
+	
+	
+	
+	
+    <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"> -->
+    <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.min.css"> -->
+    <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/abcjs@6.6.3/abcjs-audio.min.css"> -->
     <!-- Ukulele Chords Web Component -->
     <!-- <script src="https://pianosnake.github.io/uke-chord/uke-chord.js"></script> -->
-    <script src="./js/uke-chord3fx.js"></script>
+    <!-- <script src="./js/uke-chord3fx.js"></script> -->
+	
+	
     <style>
         .abc-paper {
             background: transparent;
@@ -343,11 +432,25 @@
 		</div>
 	  </div>
 	</footer>
+	
+	
+	<script>
+	loadAsset('js', {
+	  android: './js/bootstrap.min.js',
+	  cdn:     'https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js',
+	  local:   './js/bootstrap.min.js'
+	});
+	loadAsset('js', {
+	  android: './js/abcjs-basicfx.js',
+	  cdn:     'https://cdn.jsdelivr.net/npm/abcjs@6.4.0/dist/abcjs-basic-min.js',
+	  local:   './js/abcjs-basic-min.js'
+	});
+	</script>
 
     <!-- <script src="./js/bootstrap.bundle.min.js"></script> -->
     <!-- <script src="./js/abcjs-basic-min.js"></script> -->
-	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/abcjs@6.4.0/dist/abcjs-basic-min.js"></script>
+	<!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script> -->
+    <!-- <script src="https://cdn.jsdelivr.net/npm/abcjs@6.4.0/dist/abcjs-basic-min.js"></script> -->
 
     <script>
         document.getElementById('chordGrid').value = "C(0003) C7(0001) C7(1211b1111p3s7b,3,5,Rf5R36) F7(2313) C7(3433) F7 C7";
@@ -451,7 +554,15 @@
         if (optPart) {
             // Découpage propre de chaque option selon les drapeaux p, l, b, f, s, c
             const options = {};
-            const matches = optPart.matchAll(/([plbfsc])([^plbfsc]*)/g);
+            //const matches = optPart.matchAll(/([plbfsc])([^plbfsc]*)/g);
+			
+			// version pour tablette
+			const regex = /([plbfsc])([^plbfsc]*)/g;
+			const matches = [];
+			let match;
+			while ((match = regex.exec(optPart)) !== null) {
+				matches.push(match);
+			}
             
             for (const m of matches) {
                 const key = m[1];
