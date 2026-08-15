@@ -460,7 +460,7 @@ function loadAsset(type, paths) {
     <!-- <script src="https://cdn.jsdelivr.net/npm/abcjs@6.4.0/dist/abcjs-basic-min.js"></script> -->
 
     <script>
-        document.getElementById('chordGrid').value = "C(0003) C7(0001) C7(1211b1111p3s7b,3,5,Rf5R36) F7(2313) C7(3433) F7 C7";
+        document.getElementById('chordGrid').value = "C(0003) C7(0001) C7(1211b1111p3s7b,3,5,Rf5R36) F7(2313) C7(3433) F7 C7\nF6 | Em7b5 A7 | Dm | Cm7 F7 | ";
 
         let synthControl = null;
 
@@ -571,7 +571,8 @@ function loadAsset(type, paths) {
 
 		// Recherche un accord dans la BDD (avec gestion de l'enharmonie si nécessaire)
 		function getChordVariants(chordName) {
-			const instrument = document.getElementById('instrumentSelect')?.value || 'ukulele';
+			var instrumentSelect = document.getElementById('instrumentSelect');
+			var instrument = (instrumentSelect && instrumentSelect.value) ? instrumentSelect.value : 'ukulele';
 			const db = chordLibrary[instrument] || {};
 
 			// Helper pour récupérer toutes les clés correspondant à un nom d'accord (ex: A, A_v2, A_v3)
@@ -899,13 +900,39 @@ function loadAsset(type, paths) {
 				section.setAttribute('data-chord', displayChordName); // <-- AJOUTER CETTE LIGNE
 
                 // CAS A : Doigté manuel fourni entre parenthèses
-                if (chord.frets && chord.frets.length > 0) {
-                    // Pour un doigté sur-mesure fixe, on adapte juste l'étiquette du nom
-                    const chordTag = `<uke-chord name="${displayChordName}" frets="${chord.frets}" barre="${chord.barre}" position="${chord.position}" length="${chord.length}" fingers="${chord.fingers}" sub="${chord.sub}"></uke-chord>`;
-                    chordsHtmlOutput += chordTag + "\n";
-                    // section.innerHTML = `<h5>${displayChordName}</h5>` + chordTag;
-                    section.innerHTML =  chordTag;
-                } 
+                // CAS A : Doigté manuel fixe fourni entre parenthèses
+				if (chord.frets && chord.frets.length > 0) {
+					// Si une transposition est active, on affiche "NomTransposé (NomOrigine)"
+					// Exemple : si C(0003) est transposé de +2 demi-tons -> "D (C)"
+					var titleText = chord.name;
+					if (transposeValue !== 0 && chord.name !== displayChordName) {
+						titleText = displayChordName + ' (' + chord.name + ')';
+					}
+
+					var chordTag = '<uke-chord name="' + titleText + '" frets="' + chord.frets + '" barre="' + chord.barre + '" position="' + chord.position + '" length="' + chord.length + '" fingers="' + chord.fingers + '" sub="' + chord.sub + '"></uke-chord>';
+					
+					chordsHtmlOutput += chordTag + "\n";
+
+					// En-tête clair expliquant le changement
+					var header = document.createElement('div');
+					header.className = 'mb-1';
+					//header.innerHTML = '<h5 class="m-0">' + titleText + '</h5>' +
+					header.innerHTML = '' +
+									   (transposeValue !== 0 ? '<span class="badge bg-secondary style="font-size: 0.7em;">Doigté fixe</span>' : '');
+					
+					section.appendChild(header);
+
+					var chordEl = document.createElement('uke-chord');
+					chordEl.setAttribute('name', titleText);
+					chordEl.setAttribute('frets', chord.frets);
+					chordEl.setAttribute('barre', chord.barre || '');
+					chordEl.setAttribute('position', chord.position || '0');
+					chordEl.setAttribute('length', chord.length || '5');
+					chordEl.setAttribute('fingers', chord.fingers || '');
+					chordEl.setAttribute('sub', chord.sub || '');
+					
+					section.appendChild(chordEl);
+				}
                 // CAS B : Pas de parenthèses -> Recherche de l'accord transposé dans la BDD
                 else {
                     const { name: dbChordName, variants } = getChordVariants(displayChordName);
@@ -937,10 +964,7 @@ function loadAsset(type, paths) {
                     btnNext.style.visibility = variants.length > 1 ? 'visible' : 'hidden';
                     btnNext.onclick = () => changeVariant(displayChordName, 1);
 
-                    header.appendChild(btnPrev);
-                    header.appendChild(title);
-                    header.appendChild(btnNext);
-                    section.appendChild(header);
+                    
 
                     if (variants.length > 0) {
                         const data = variants[currentIndex];
@@ -960,7 +984,10 @@ function loadAsset(type, paths) {
                         section.innerHTML += '<div class="text-muted fst-italic small">Introuvable BDD</div>';
                     }
 					
-					
+					header.appendChild(btnPrev);
+                    header.appendChild(title);
+                    header.appendChild(btnNext);
+                    section.appendChild(header);
 					
                 }
 
