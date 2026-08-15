@@ -283,12 +283,12 @@ function loadAsset(type, paths) {
                             <div class="col-sm-6">
                                 <label for="gchordStyle" class="form-label fw-bold">Style :</label>
                                 <select class="form-select" id="gchordStyle">
-                                    <option value="zczczczc">Boom Chick (Standard)</option>
-                                    <option value="bzzcbzcz">Tango</option>
-                                    <option value="GIGIGJHJ">Arpège</option>
-                                    <option value="zzzz">Silencieux</option>
-                                    <option value="cccccccc">Percussion Accords</option>
-                                </select>
+									<option value="boom-chick">Boom Chick (Standard)</option>
+									<option value="strum">Percussion Accords</option>
+									<option value="arpeggio">Arpège</option>
+									<option value="offbeat">Contretemps (Ska/Reggae)</option>
+									<option value="silent">Silencieux</option>
+								</select>
                             </div>
                             <div class="col-sm-6">
                                 <label for="timeSignature" class="form-label fw-bold">Mesure :</label>
@@ -520,6 +520,42 @@ function loadAsset(type, paths) {
             }
         }
 
+
+		// --- construction du rythme gchord ---
+		
+		function getGchordPattern(style, timeSig) {
+			const beats = parseInt(timeSig.split('/')[0], 10);
+			const isCompound = timeSig.endsWith('/8'); // Mesures en /8 (ex: 6/8, 9/8...)
+
+			// Nombre de sous-unités (croches) dans la mesure
+			const steps = isCompound ? beats : beats * 2; 
+
+			switch (style) {
+				case 'boom-chick':
+					// Alternance basse / accord (ex: z c z c...)
+					return Array.from({ length: steps }, (_, i) => (i % 2 === 0 ? 'z' : 'c')).join('');
+
+				case 'strum':
+					// Plaquement d'accord répétitif sur chaque subdivision
+					return 'c'.repeat(steps);
+
+				case 'arpeggio': {
+					// Motif d'arpège adaptatif sur la séquence G-I-G-I-J-H...
+					const pattern = ['G', 'I', 'G', 'I', 'J', 'H', 'J', 'I'];
+					return Array.from({ length: steps }, (_, i) => pattern[i % pattern.length]).join('');
+				}
+
+				case 'offbeat':
+					// Style Ska / Reggae : silence sur le temps, accord sur le contretemps
+					return Array.from({ length: steps }, (_, i) => (i % 2 === 1 ? 'c' : 'z')).join('');
+
+				case 'silent':
+				default:
+					return 'z'.repeat(steps);
+			}
+		}
+
+
         // --- PARSER D'ACCORDS ET GENERATEUR DUKE-CHORD ---
         function parseChordToken(token, knownChords) {
     const regex = /^([A-G\?\/][a-zA-Z0-9#b\/°\?]*)(?:\(([^)]+)\))?$/;
@@ -619,8 +655,12 @@ function loadAsset(type, paths) {
             }
 
             const gridText = document.getElementById('chordGrid').value.trim();
-            const gchord = document.getElementById('gchordStyle').value;
-            const timeSig = document.getElementById('timeSignature').value;
+						// 1. On récupère d'abord timeSig
+			const timeSig = document.getElementById('timeSignature').value;
+
+			// 2. Ensuite on peut l'utiliser pour générer le gchord
+			const selectedStyle = document.getElementById('gchordStyle').value;
+			const gchord = getGchordPattern(selectedStyle, timeSig);
             const transposeValue = parseInt(document.getElementById('abc-sel-transpose').value, 10) || 0;
             
             // --- GESTION CHORD RESTS ---
@@ -644,6 +684,7 @@ function loadAsset(type, paths) {
             }
 
             // 2. Traitement des mesures
+            // 2. Traitement des mesures
             rawMeasures.forEach(measureStr => {
                 const tokens = measureStr.split(/\s+/).filter(t => t.length > 0);
                 if (tokens.length === 0) return;
@@ -666,14 +707,23 @@ function loadAsset(type, paths) {
                     lastMeasureChords = [...currentMeasureChords];
                 }
 
-                // 3. Répartition des temps et répétition du caractère de symbole
+                // 3. Répartition des temps (avec gestion des divisions impaires)
                 const chordCount = currentMeasureChords.length;
-                const beatsPerChord = Math.max(1, Math.floor(beatsPerMeasure / chordCount));
+                
+                // Nombre de temps de base par accord + surplus à distribuer
+                const baseBeatsPerChord = Math.floor(beatsPerMeasure / chordCount);
+                let extraBeats = beatsPerMeasure % chordCount;
 
                 let abcMeasureContent = "";
                 currentMeasureChords.forEach(chordName => {
-                    // Génère la chaîne répétée : ex. "c c c c " pour 4 temps
-                    const repeatedRests = Array(beatsPerChord).fill(restSymbol).join(" ");
+                    // Les premiers accords récupèrent 1 temps supplémentaire en cas d'impair
+                    const beatsForThisChord = baseBeatsPerChord + (extraBeats > 0 ? 1 : 0);
+                    if (extraBeats > 0) extraBeats--;
+
+                    const finalBeats = Math.max(1, beatsForThisChord);
+
+                    // Génère la chaîne répétée selon le restSymbol (ex. "c c c" ou "z z")
+                    const repeatedRests = Array(finalBeats).fill(restSymbol).join(" ");
                     abcMeasureContent += `"${chordName}" ${repeatedRests} `;
                 });
 
