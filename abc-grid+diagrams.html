@@ -169,7 +169,7 @@ function loadAsset(type, paths) {
                         <div class="mb-3">
                             <label for="chordGrid" class="form-label fw-bold">Votre grille d'accords :</label>
                             <textarea class="form-control font-monospace" id="chordGrid" rows="3" placeholder="Ex: C(0003) C7(0001) | % | C F7(5556) C(3433) | F7 C"></textarea>
-                            <div class="form-text">Séparez par des espaces. Utilisez <code>/</code> pour répéter la mesure.</div>
+                            <div class="form-text">Séparez par des espaces. Utilisez <code>%</code> pour répéter la mesure.</div>
                         </div
 						
 						<!-- Bouton / Panneau d'aide sur la syntaxe des accords -->
@@ -761,7 +761,6 @@ function loadAsset(type, paths) {
 		
 
         // --- PARSER D'ACCORDS ET GENERATEUR DUKE-CHORD ---
-        // --- PARSER D'ACCORDS ET GENERATEUR DUKE-CHORD ---
 function parseChordToken(token, knownChords) {
     const regex = /^([A-G\?\/][a-zA-Z0-9#b\/°\?]*)(?:\(([^)]+)\))?$/;
     const match = token.match(regex);
@@ -785,10 +784,13 @@ function parseChordToken(token, knownChords) {
         let fretsPart = fingeringSpec;
         let optPart = "";
 
-        // Un drapeau est valide s'il est suivi d'un chiffre, de 'x', de '-' ou s'il s'agit de 'c'
-        const optIndex = fingeringSpec.search(/[plbfs][0-9xX-]|c/);
+        // Un drapeau d'option commence si une lettre (p,l,b,f,s,c) est suivie d'un chiffre/x/-
+        // OU s'il s'agit de 'c' isolé en fin de mot/chaîne
+        const optMatch = fingeringSpec.match(/(?:[0-9xX,-]|^)([plbfs][0-9xX-]|c(?:[0-9xX,-]|$))/);
 
-        if (optIndex !== -1) {
+        if (optMatch) {
+            // L'index réel de l'option commence au premier drapeau trouvé
+            const optIndex = fingeringSpec.indexOf(optMatch[1]);
             fretsPart = fingeringSpec.substring(0, optIndex);
             optPart = fingeringSpec.substring(optIndex);
         }
@@ -798,8 +800,8 @@ function parseChordToken(token, knownChords) {
         if (optPart) {
             const options = {};
             
-            // Capture un drapeau suivi d'une valeur, jusqu'au prochain drapeau valide ou la fin
-            const flagsRegex = /([plbfsc])(.*?)(?=(?:[plbfs][0-9xX-]|c|$))/g;
+            // Capture chaque drapeau jusqu'au prochain drapeau valide ou la fin de chaîne
+            const flagsRegex = /([plbfsc])(.*?)(?=(?:[plbfs][0-9xX-]|c(?:[0-9xX,-]|$)|$))/g;
             let m;
             
             while ((m = flagsRegex.exec(optPart)) !== null) {
@@ -846,6 +848,10 @@ function parseChordToken(token, knownChords) {
 
     return chordObj;
 }
+
+
+
+
 
         function generateABC() {
             if (synthControl) {
