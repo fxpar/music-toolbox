@@ -168,7 +168,7 @@ function loadAsset(type, paths) {
                     <div class="card-body">
                         <div class="mb-3">
                             <label for="chordGrid" class="form-label fw-bold">Votre grille d'accords :</label>
-                            <textarea class="form-control font-monospace" id="chordGrid" rows="3" placeholder="Ex: C(0003) C7(0001) C F7(5556) C(3433) F7 C"></textarea>
+                            <textarea class="form-control font-monospace" id="chordGrid" rows="3" placeholder="Ex: C(0003) C7(0001) | % | C F7(5556) C(3433) | F7 C"></textarea>
                             <div class="form-text">Séparez par des espaces. Utilisez <code>/</code> pour répéter la mesure.</div>
                         </div
 						
@@ -186,15 +186,26 @@ function loadAsset(type, paths) {
         <div class="card card-body bg-body-tertiary small p-2">
             <p class="mb-2"><strong>Syntaxe de base :</strong> <code>NomAccord(DoigtéOptions)</code></p>
             <ul class="mb-2 ps-3">
-                <li><code>C /// G // Am</code> : Utilise <code>/</code> pour répéter la mesure.</li>
-                <li><code>C(0003)</code> : Les 4 chiffres représentent les cases des 4 cordes (ex: <code>0003</code>).</li>
-                <li><code>G7(10,11,12,10)</code> : Utilisez des virgules pour les numéros de case > 9.</li>
-                <li><code>C°</code>, <code>G7/D</code>, <code>Am?</code>, <code>??</code> : Les symboles <code>°</code>, <code>/</code> et <code>?</code> sont acceptés dans les noms.</li>
+                <li><code>C G Am</code> : Séparer les accords avec des espaces: une mesure par accord.</li>
+                <li><code>C | G Am | C</code> : Utilise <code>|</code> pour séparer TOUTES les mesures s'il y a plusieurs accords par mesure</li>
+                <li><code>C | % | G Am | %</code> : Utilise <code>%</code> pour répéter la mesure précédente.</li>
+				<li><code>G7/D</code> : les renversements n'étant pas dans la base de donnée, le diagramme correspond à la partie avant le <code>/</code> même si le nom complet est affiché.</li>
+                <li><code>C°</code>, <code>G7/D</code>, <code>Am?</code>, <code>??</code> : Les symboles <code>°</code>, <code>/</code> et <code>?</code> sont acceptés dans les noms (voir en dessous pour les doigtés fixes).</li>
+				<li>La transposition s'applique aux diagrammes cherché dans la bibliothèque d'accord. (cliquez sur le bouton à la fin du player pour transposer).</li>
             </ul>
 
-            <div class="fw-bold mb-1 border-top pt-2">Options avancées (à la suite des cases) :</div>
+            <div class="fw-bold mb-1 border-top pt-2">Options doigtés fixes :</div>
             <table class="table table-sm table-borderless mb-0 align-middle">
+			
                 <tbody>
+					<tr>
+                        <td><code>()</code></td>
+                        <td><code>C(0003)</code> : Les 4 chiffres représentent les cases des 4 cordes (ex: <code>0003</code>).
+                    </tr>
+					<tr>
+                        <td><code>,</code></td>
+                        <td><code>G7(10,11,12,10)</code> : Utilisez des virgules pour les numéros de case > 9.
+                    </tr>
                     <tr>
                         <td><code>p</code></td>
                         <td><strong>Position :</strong> Numéro de la case de départ (défaut : <code>0</code>). Ex: <code>p3</code></td>
@@ -484,7 +495,7 @@ function loadAsset(type, paths) {
     <!-- <script src="https://cdn.jsdelivr.net/npm/abcjs@6.4.0/dist/abcjs-basic-min.js"></script> -->
 
     <script>
-        document.getElementById('chordGrid').value = "C(0003) C7(0001) C7(1211b1111p3s7b,3,5,Rf5R36) F7(2313) C7(3433) F7 C7\nF6 | Em7b5 A7 | Dm | Cm7 F7 | ";
+        document.getElementById('chordGrid').value = "F7 | C7 | % F6  Em7b5  A7 | Dm | Cm7 F7 |C(0003) C7(0001) | % C7(1211b1111p3s7b,3,5,Rf5R36) F7(2313) | C7(3433)  ";
 
         let synthControl = null;
 
