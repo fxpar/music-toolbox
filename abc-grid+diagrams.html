@@ -651,31 +651,34 @@ function loadAsset(type, paths) {
 				window.chordVariantIndices = {};
 			}
 
+			// Extraction du nom de base si l'accord contient un slash (ex: "G7/F" -> "G7")
+			const searchChordName = chordName.includes('/') ? chordName.split('/')[0] : chordName;
+
 			// 1. Récupère les variantes BDD pour cet accord
-			const { variants } = getChordVariants(chordName);
+			const { variants } = getChordVariants(searchChordName);
 			if (!variants || variants.length === 0) return;
 
 			// 2. Calcule le nouvel index
-			let currentIndex = window.chordVariantIndices[chordName] || 0;
+			let currentIndex = window.chordVariantIndices[searchChordName] || 0;
 			let newIndex = currentIndex + direction;
 
 			if (newIndex < 0) newIndex = variants.length - 1;
 			if (newIndex >= variants.length) newIndex = 0;
 
-			window.chordVariantIndices[chordName] = newIndex;
+			window.chordVariantIndices[searchChordName] = newIndex;
 
-			// 3. Mise à jour CIBLÉE du composant HTML dans le DOM (sans appeler generateABC)
+			// 3. Mise à jour CIBLÉE du composant HTML dans le DOM
 			const container = document.getElementById('chord-diagrams');
 			if (!container) return;
 
-			// On cherche la section correspondant à cet accord grâce à un attribut data-chord
+			// On cherche la section grâce au nom complet (qui contient le slash)
 			const section = container.querySelector(`[data-chord="${chordName}"]`);
 			if (section) {
 				const data = variants[newIndex];
 				const oldChordEl = section.querySelector('uke-chord');
 				
 				if (oldChordEl && data) {
-					// Création du nouvel élément mis à jour
+					// Création du nouvel élément en conservant le vrai nom (ex: G7/F)
 					const newChordEl = document.createElement('uke-chord');
 					newChordEl.setAttribute('name', chordName);
 					newChordEl.setAttribute('frets', data.frets || '');
@@ -690,7 +693,7 @@ function loadAsset(type, paths) {
 				}
 			}
 
-			// 4. (Optionnel) Recalcule et met à jour uniquement le champ texte d'export des accords
+			// 4. Met à jour le champ texte d'export des accords
 			updateChordsSourceOutput();
 		}
 		
@@ -728,115 +731,115 @@ function loadAsset(type, paths) {
 			return scale[newIndex] + extension;
 		}
 
-function transposeAbcText(abcText, semitones) {
-    if (!semitones || semitones === 0) return abcText;
+		function transposeAbcText(abcText, semitones) {
+			if (!semitones || semitones === 0) return abcText;
 
-    // Transpose les accords entre guillemets "C", "Am", "G7"
-    var result = abcText.replace(/"([A-G][#b]?[^"]*)"/g, function(match, chordName) {
-        return '"' + transposeChordName(chordName, semitones) + '"';
-    });
+			// Transpose les accords entre guillemets "C", "Am", "G7"
+			var result = abcText.replace(/"([A-G][#b]?[^"]*)"/g, function(match, chordName) {
+				return '"' + transposeChordName(chordName, semitones) + '"';
+			});
 
-    // Transpose l'entête de tonalité K: (ex: K: C -> K: D)
-    result = result.replace(/^K:\s*([A-G][#b]?[m]?)/gm, function(match, key) {
-        return 'K: ' + transposeChordName(key, semitones);
-    });
+			// Transpose l'entête de tonalité K: (ex: K: C -> K: D)
+			result = result.replace(/^K:\s*([A-G][#b]?[m]?)/gm, function(match, key) {
+				return 'K: ' + transposeChordName(key, semitones);
+			});
 
-    return result;
-}
+			return result;
+		}
 		
 		
 
         // --- PARSER D'ACCORDS ET GENERATEUR DUKE-CHORD ---
         function parseChordToken(token, knownChords) {
-    const regex = /^([A-G\?\/][a-zA-Z0-9#b\/°\?]*)(?:\(([^)]+)\))?$/;
-    const match = token.match(regex);
+			const regex = /^([A-G\?\/][a-zA-Z0-9#b\/°\?]*)(?:\(([^)]+)\))?$/;
+			const match = token.match(regex);
 
-    if (!match) return null;
+			if (!match) return null;
 
-    const chordName = match[1];
-    const fingeringSpec = match[2];
+			const chordName = match[1];
+			const fingeringSpec = match[2];
 
-    let chordObj = {
-        name: chordName,
-        frets: "",
-        barre: "",
-        position: "0",
-        length: "5",
-        fingers: "",
-        sub: ""
-    };
+			let chordObj = {
+				name: chordName,
+				frets: "",
+				barre: "",
+				position: "0",
+				length: "5",
+				fingers: "",
+				sub: ""
+			};
 
-    if (fingeringSpec) {
-        let fretsPart = fingeringSpec;
-        let optPart = "";
+			if (fingeringSpec) {
+				let fretsPart = fingeringSpec;
+				let optPart = "";
 
-        // Trouver le premier drapeau d'option
-        const optIndex = fingeringSpec.search(/[plbfsc]/);
-        if (optIndex !== -1) {
-            fretsPart = fingeringSpec.substring(0, optIndex);
-            optPart = fingeringSpec.substring(optIndex);
-        }
+				// Trouver le premier drapeau d'option
+				const optIndex = fingeringSpec.search(/[plbfsc]/);
+				if (optIndex !== -1) {
+					fretsPart = fingeringSpec.substring(0, optIndex);
+					optPart = fingeringSpec.substring(optIndex);
+				}
 
-        chordObj.frets = fretsPart;
+				chordObj.frets = fretsPart;
 
-        if (optPart) {
-            // Découpage propre de chaque option selon les drapeaux p, l, b, f, s, c
-            const options = {};
-            //const matches = optPart.matchAll(/([plbfsc])([^plbfsc]*)/g);
-			
-			// version pour tablette
-			const regex = /([plbfsc])([^plbfsc]*)/g;
-			const matches = [];
-			let match;
-			while ((match = regex.exec(optPart)) !== null) {
-				matches.push(match);
+				if (optPart) {
+					// Découpage propre de chaque option selon les drapeaux p, l, b, f, s, c
+					const options = {};
+					//const matches = optPart.matchAll(/([plbfsc])([^plbfsc]*)/g);
+					
+					// version pour tablette
+					const regex = /([plbfsc])([^plbfsc]*)/g;
+					const matches = [];
+					let match;
+					while ((match = regex.exec(optPart)) !== null) {
+						matches.push(match);
+					}
+					
+					for (const m of matches) {
+						const key = m[1];
+						const val = m[2];
+						options[key] = val;
+					}
+
+					if (options.p !== undefined) chordObj.position = options.p;
+					if (options.l !== undefined) chordObj.length = options.l;
+					if (options.b !== undefined) chordObj.barre = options.b;
+					if (options.f !== undefined) chordObj.fingers = options.f;
+					if (options.s !== undefined) chordObj.sub = options.s;
+
+					// --- LOGIQUE POUR L'OPTION "c" (CALCULATE) ---
+					if (options.c !== undefined) {
+						const pos = parseInt(chordObj.position, 10) || 1;
+						
+						const items = chordObj.frets.includes(',') 
+							? chordObj.frets.split(',') 
+							: chordObj.frets.split('');
+
+						const calculatedFrets = items.map(item => {
+							const cleanItem = item.trim();
+							if (cleanItem === '0' || cleanItem.toLowerCase() === 'x' || cleanItem === '') {
+								return cleanItem;
+							}
+							const fretNum = parseInt(cleanItem, 10);
+							if (!isNaN(fretNum)) {
+								return fretNum - pos + 1;
+							}
+							return cleanItem;
+						});
+
+						chordObj.frets = chordObj.frets.includes(',') 
+							? calculatedFrets.join(',') 
+							: calculatedFrets.join('');
+					}
+				}
+
+				knownChords[chordName] = { ...chordObj };
+			} else if (knownChords[chordName]) {
+				chordObj = { ...knownChords[chordName] };
 			}
-            
-            for (const m of matches) {
-                const key = m[1];
-                const val = m[2];
-                options[key] = val;
-            }
 
-            if (options.p !== undefined) chordObj.position = options.p;
-            if (options.l !== undefined) chordObj.length = options.l;
-            if (options.b !== undefined) chordObj.barre = options.b;
-            if (options.f !== undefined) chordObj.fingers = options.f;
-            if (options.s !== undefined) chordObj.sub = options.s;
-
-            // --- LOGIQUE POUR L'OPTION "c" (CALCULATE) ---
-            if (options.c !== undefined) {
-                const pos = parseInt(chordObj.position, 10) || 1;
-                
-                const items = chordObj.frets.includes(',') 
-                    ? chordObj.frets.split(',') 
-                    : chordObj.frets.split('');
-
-                const calculatedFrets = items.map(item => {
-                    const cleanItem = item.trim();
-                    if (cleanItem === '0' || cleanItem.toLowerCase() === 'x' || cleanItem === '') {
-                        return cleanItem;
-                    }
-                    const fretNum = parseInt(cleanItem, 10);
-                    if (!isNaN(fretNum)) {
-                        return fretNum - pos + 1;
-                    }
-                    return cleanItem;
-                });
-
-                chordObj.frets = chordObj.frets.includes(',') 
-                    ? calculatedFrets.join(',') 
-                    : calculatedFrets.join('');
-            }
-        }
-
-        knownChords[chordName] = { ...chordObj };
-    } else if (knownChords[chordName]) {
-        chordObj = { ...knownChords[chordName] };
-    }
-
-    return chordObj;
-}
+			return chordObj;
+		}
 
         function generateABC() {
             if (synthControl) {
@@ -972,13 +975,19 @@ function transposeAbcText(abcText, semitones) {
 					section.appendChild(chordEl);
 				}
                 // CAS B : Pas de parenthèses -> Recherche de l'accord transposé dans la BDD
+                // CAS B : Pas de parenthèses -> Recherche dans la BDD
                 else {
-                    const { name: dbChordName, variants } = getChordVariants(displayChordName);
+                    // Si l'accord contient un slash (ex: G7/F), on ne cherche que la partie principale (ex: G7)
+                    const searchChordName = displayChordName.includes('/') 
+                        ? displayChordName.split('/')[0] 
+                        : displayChordName;
+
+                    const { name: dbChordName, variants } = getChordVariants(searchChordName);
                     
-                    if (chordVariantIndices[displayChordName] === undefined) {
-                        chordVariantIndices[displayChordName] = 0;
+                    if (chordVariantIndices[searchChordName] === undefined) {
+                        chordVariantIndices[searchChordName] = 0;
                     }
-                    let currentIndex = chordVariantIndices[displayChordName];
+                    let currentIndex = chordVariantIndices[searchChordName];
                     if (currentIndex >= variants.length) currentIndex = 0;
 
                     // Header avec boutons de navigation
@@ -993,7 +1002,6 @@ function transposeAbcText(abcText, semitones) {
 
                     const title = document.createElement('h5');
                     title.className = 'm-0';
-                    //title.textContent = displayChordName;
                     title.textContent = "";
 
                     const btnNext = document.createElement('button');
@@ -1002,10 +1010,9 @@ function transposeAbcText(abcText, semitones) {
                     btnNext.style.visibility = variants.length > 1 ? 'visible' : 'hidden';
                     btnNext.onclick = () => changeVariant(displayChordName, 1);
 
-                    
-
                     if (variants.length > 0) {
                         const data = variants[currentIndex];
+                        // L'attribut 'name' conserve le nom complet recherché (ex: G7/F)
                         const chordTag = `<uke-chord name="${displayChordName}" frets="${data.frets}" barre="${data.barre || ''}" position="${data.position || '0'}" length="${data.length || '5'}" fingers="${data.fingers || ''}" sub="${data.sub || ''}"></uke-chord>`;
                         chordsHtmlOutput += chordTag + "\n";
                         
