@@ -259,8 +259,7 @@ function loadAsset(type, paths) {
                         <div class="mb-3">
                             <label for="chordGrid" class="form-label fw-bold">Votre grille d'accords :</label>
                             <textarea class="form-control font-monospace" id="chordGrid" rows="3" placeholder="Ex: C(0003) C7(0001) | % | C F7(5556) C(3433) | F7 C"></textarea>
-                            <div class="form-text">Séparez par des espaces. Utilisez <code>%</code> pour répéter la mesure.</div>
-                        </div
+                        </div>
 						
 						<!-- Bouton / Panneau d'aide sur la syntaxe des accords -->
 <div class="mt-2">
@@ -274,7 +273,7 @@ function loadAsset(type, paths) {
     
     <div class="collapse mt-2" id="chordSyntaxHelp">
         <div class="card card-body bg-body-tertiary small p-2">
-            <p class="mb-2"><strong>Syntaxe de base :</strong> <code>NomAccord(DoigtéOptions)</code></p>
+            <p class="mb-2"><strong>Syntaxe de base :</strong> </p>
             <ul class="mb-2 ps-3">
                 <li><code>C G Am</code> : Séparer les accords avec des espaces: une mesure par accord.</li>
                 <li><code>C | G Am | C</code> : Utilise <code>|</code> pour séparer TOUTES les mesures s'il y a plusieurs accords par mesure</li>
@@ -339,17 +338,27 @@ function loadAsset(type, paths) {
     
     <div class="collapse mt-2" id="chordSyntaxHelpEN">
         <div class="card card-body bg-body-tertiary small p-2">
-            <p class="mb-2"><strong>Basic Syntax:</strong> <code>ChordName(FingeringOptions)</code></p>
+            <p class="mb-2"><strong>Basic Syntax:</strong> </p>
             <ul class="mb-2 ps-3">
-                <li><code>C /// G // Am</code>: Use <code>/</code> to repeat the measure.</li>
-                <li><code>C(0003)</code>: The 4 digits represent frets for the 4 strings (e.g., <code>0003</code>).</li>
-                <li><code>G7(10,11,12,10)</code>: Use commas for fret numbers > 9.</li>
+                <li><code>C  G Am</code>: Separate chord names by space. One measure will be applied for each chord in the staff.</li>
+                <li><code>C | G  Am | F</code>: Use <code>|</code> to separate ALL measure if multiple chords are in one measures.</li>
+                <li><code>C | % | G Am | %</code>: Use <code>%</code> to repeat previous mesure.</li>
+                <li><code>G7/D</code>: the chord inversions are not in the db. Only the part before the <code>/</code> is applied, even if the full name is displayed.</li>
                 <li><code>C°</code>, <code>G7/D</code>, <code>Am?</code>, <code>??</code>: Symbols like <code>°</code>, <code>/</code> and <code>?</code> are accepted in chord names.</li>
+				<li>Transposition only applies to diagrams searched in the library (use the ⁝ at the end of the player to transpose).</li>
             </ul>
 
-            <div class="fw-bold mb-1 border-top pt-2">Advanced Options (following the frets):</div>
+            <div class="fw-bold mb-1 border-top pt-2">Fixed fingering Options :</div>
             <table class="table table-sm table-borderless mb-0 align-middle">
                 <tbody>
+					<tr>
+                        <td><code>()</code></td>
+                        <td><code>C(0003)</code>: The 4 digits represent frets for the 4 strings (e.g., <code>0003</code>).</td>
+                    </tr>
+					<tr>
+                        <td><code>,</code></td>
+                        <td><code>G7(10,11,12,10)</code>: Use commas for fret numbers > 9.</td>
+                    </tr>
                     <tr>
                         <td><code>p</code></td>
                         <td><strong>Position:</strong> Starting fret position (default: <code>0</code>). Ex: <code>p3</code></td>
