@@ -30,6 +30,7 @@
       --chord-interval: #a8c7ff;
       --chord-interval-text: #003062;
       --chord-error: #ffb4ab;
+	 
       
       --fretboard-wood: #231f20;
       --fret-wire: #49454f;
@@ -481,6 +482,44 @@
 }
 
 
+
+	/* ==========================================================================
+       5. BARRÉ
+       ========================================================================== */
+	   
+.fret-row {
+  position: relative; /* Indispensable pour le positionnement du barré */
+}
+
+.barre-indicator {
+  --width-percent: 0%; /* Valeur par défaut */
+  
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 38px; 
+  margin-left: -19px; 
+  
+  /* Utilise la variable modifiée par le JS */
+  width: calc(var(--width-percent) + 38px) !important; 
+
+  background-color: rgba(103, 80, 164, 0.35);
+  border: 2px solid var(--md-sys-color-primary, #6750a4);
+  border-radius: 19px;
+  
+  pointer-events: none;
+  z-index: 1;
+  transition: left 0.05s ease, width 0.05s ease;
+}
+
+.note-spot {
+  z-index: 2; /* S'assure que le texte de la note reste lisible au-dessus du barré */
+  touch-action: none; /* Empêche le scroll de la page pendant le glisser sur mobile */
+}
+
+
+
+
 /* Utilitaires Responsive (style Bootstrap) */
 
 /* Masqué sur tous les écrans par défaut */
@@ -679,7 +718,14 @@
 
   <script>
   
-  
+	  // Stocke l'état d'affichage des barrés : objet { [rowIndex]: { startString, endString } }
+	let barreStates = {}; 
+
+	// Variables temporaires pour gérer le glisser (drag)
+	let isDraggingBarre = false;
+	let dragStartSpot = null;
+
+
    /* ==========================================================================
      1. CONSTANTES & LOGIQUE MUSICALE
      ========================================================================== */
@@ -818,23 +864,27 @@ document.getElementById('btn-apply-config').addEventListener('click', () => {
   }
 
   // Construction dynamique des 36 lignes de la matrice
-  function buildMatrix() {
-    const stringsContainer = fretboardEl.querySelector('.strings-container');
-    const stringHeader = fretboardEl.querySelector('.string-header');
-    fretboardEl.innerHTML = '';
-    if (stringHeader) fretboardEl.appendChild(stringHeader);
-    if (stringsContainer) fretboardEl.appendChild(stringsContainer);
+	function buildMatrix() {
+	  const stringsContainer = fretboardEl.querySelector('.strings-container');
+	  const stringHeader = fretboardEl.querySelector('.string-header');
+	  fretboardEl.innerHTML = '';
+	  if (stringHeader) fretboardEl.appendChild(stringHeader);
+	  if (stringsContainer) fretboardEl.appendChild(stringsContainer);
 
-    // À mettre à jour dans buildMatrix() :
 	  for (let r = 0; r < TOTAL_ROWS; r++) {
 		const rowEl = document.createElement('div');
 		rowEl.className = 'fret-row';
 		rowEl.dataset.row = r;
 
-		// --- AJOUT : Clic sur la ligne pour activer/désactiver le sillet ---
+		// Element visuel pour le barré sur cette ligne
+		const barreEl = document.createElement('div');
+		barreEl.className = 'barre-indicator';
+		rowEl.appendChild(barreEl);
+
+		// Clic simple sur la frette pour le sillet
 		rowEl.addEventListener('click', (e) => {
-		  // On vérifie que le clic visait bien la ligne et pas un spot de note
-		  if (e.target === rowEl) {
+		  // S'exécute uniquement si on n'a pas fait de glisser et si le clic vise la ligne
+		  if (!isDraggingBarre && e.target === rowEl) {
 			rowEl.classList.toggle('nut-active');
 		  }
 		});
@@ -845,15 +895,93 @@ document.getElementById('btn-apply-config').addEventListener('click', () => {
 		  spot.dataset.string = s;
 		  spot.dataset.row = r;
 
-		  spot.addEventListener('click', (e) => {
-			e.stopPropagation(); // Empêche le clic sur la note d'activer le sillet
-			handleSpotClick(s, r);
+		  // --- DEBUT DU GLISSER (POINTER DOWN) ---
+		  spot.addEventListener('pointerdown', (e) => {
+			e.stopPropagation();
+			dragStartSpot = { string: s, row: r };
+			isDraggingBarre = false;
+			// Capture du pointeur pour suivre le mouvement même si le doigt/souris sort du spot
+			spot.setPointerCapture(e.pointerId);
 		  });
+
+		  // --- MOUVEMENT (POINTER MOVE) ---
+		  spot.addEventListener('pointermove', (e) => {
+			if (!dragStartSpot) return;
+
+			// On identifie sur quelle case se trouve actuellement le pointeur
+			const targetEl = document.elementFromPoint(e.clientX, e.clientY);
+			const currentSpot = targetEl?.closest('.note-spot');
+
+			if (currentSpot) {
+			  const targetRow = parseInt(currentSpot.dataset.row);
+			  const targetString = parseInt(currentSpot.dataset.string);
+
+			  // Si on reste sur la MÊME ligne mais qu'on a changé de corde -> Début du barré
+			  if (targetRow === dragStartSpot.row && targetString !== dragStartSpot.string) {
+				isDraggingBarre = true;
+
+				const startStr = Math.min(dragStartSpot.string, targetString);
+				const endStr = Math.max(dragStartSpot.string, targetString);
+
+				barreStates[r] = { startString: startStr, endString: endStr };
+				renderState(); // Rafraîchit le barré en direct
+			  }
+			}
+		  });
+
+		  // --- FIN DU GLISSER OU CLIC SIMPLE (POINTER UP) ---
+		  // --- DANS buildMatrix() ---
+
+// Event Pointer UP mis à jour :
+spot.addEventListener('pointerup', (e) => {
+  e.stopPropagation();
+  
+  if (spot.hasPointerCapture(e.pointerId)) {
+    spot.releasePointerCapture(e.pointerId);
+  }
+
+  if (dragStartSpot) {
+    // Si on a effectué un glisser qui modifie le barré
+    if (isDraggingBarre) {
+      const targetEl = document.elementFromPoint(e.clientX, e.clientY);
+      const currentSpot = targetEl?.closest('.note-spot');
+      
+      if (currentSpot) {
+        const targetString = parseInt(currentSpot.dataset.string);
+        const targetRow = parseInt(currentSpot.dataset.row);
+
+        if (targetRow === dragStartSpot.row) {
+          const startStr = Math.min(dragStartSpot.string, targetString);
+          const endStr = Math.max(dragStartSpot.string, targetString);
+
+          if (startStr === endStr) {
+            // Si le glisser revient sur la même case -> EFFACER le barré
+            delete barreStates[r];
+          } else {
+            // Sinon enregistrer le nouveau barré
+            barreStates[r] = { startString: startStr, endString: endStr };
+          }
+        }
+      }
+    } else {
+      // Si c'est un clic simple sur une case qui possédait un barré -> EFFACER le barré
+      if (barreStates[r]) {
+        delete barreStates[r];
+      }
+      handleSpotClick(s, r);
+    }
+  }
+
+  dragStartSpot = null;
+  renderState();
+  setTimeout(() => { isDraggingBarre = false; }, 50);
+});
+
 		  rowEl.appendChild(spot);
 		}
 		fretboardEl.appendChild(rowEl);
 	  }
-  }
+	}
 
   /* ==========================================================================
      3. CYCLE DES 4 ÉTATS ET MISE À JOUR VISUELLE
@@ -925,6 +1053,30 @@ document.getElementById('btn-apply-config').addEventListener('click', () => {
       spot.style.border = '1px solid var(--md-sys-color-outline)';
     }
   });
+  // Dans renderState(), après avoir mis à jour les notes :
+// --- DANS renderState() ---
+
+	// Section d'affichage des barrés dans renderState() :
+	for (let r = 0; r < TOTAL_ROWS; r++) {
+	  const rowEl = fretboardEl.querySelector(`.fret-row[data-row="${r}"]`);
+	  if (!rowEl) continue;
+
+	  const barreEl = rowEl.querySelector('.barre-indicator');
+	  const barreData = barreStates[r];
+
+	  if (barreData && barreEl) {
+		  const leftPercent = (barreData.startString * 25) + 12.5;
+		  const widthPercent = ((barreData.endString - barreData.startString) * 25);
+
+		  barreEl.style.display = 'block';
+		  barreEl.style.left = `${leftPercent}%`;
+		  
+		  // Injecte la valeur calculée dans la variable CSS du composant
+		  barreEl.style.setProperty('--width-percent', `${widthPercent}%`);
+		} else if (barreEl) {
+		  barreEl.style.display = 'none';
+		}
+	}
 }
 
   /* ==========================================================================
@@ -936,6 +1088,9 @@ document.getElementById('btn-apply-config').addEventListener('click', () => {
 
   // Réinitialiser l'épaisseur de toutes les frettes / sillets
   fretboardEl.querySelectorAll('.fret-row.nut-active').forEach(el => el.classList.remove('nut-active'));
+  
+  // Réinitialiser tous les barrés
+  barreStates = {};
 
   // 2. Fixer DEFINITIVEMENT la racine de référence globale pour le calcul des textes
   fixedRootString = rootStringIdx;
