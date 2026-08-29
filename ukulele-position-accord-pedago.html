@@ -559,7 +559,7 @@
 		  <!-- Noms des 12 Intervalles -->
 		  <div class="config-group">
 			<label for="intervals-input"><b>Noms des 12 Intervalles (du demi-ton 0 à 11) :</b></label>
-			<input type="text" id="intervals-input" class="drawer-input" value="R, b2, 2, b3, 3, 4, b5, 5, #5, 6, b7, 7">
+			<input type="text" id="intervals-input" class="drawer-input" value="R, b2, [2, 9], b3, 3, [4, 11], b5, 5, #5, [6,bb7], b7, 7">
 			<small style="opacity: 0.7;">Séparés par des virgules (ex: remplacer b9 par b2 ou #5 par b6)</small>
 		  </div>
 
@@ -678,6 +678,8 @@
   </footer>
 
   <script>
+  
+  
    /* ==========================================================================
      1. CONSTANTES & LOGIQUE MUSICALE
      ========================================================================== */
@@ -690,9 +692,19 @@
 
   // Noms d'intervalles relatifs
   let INTERVAL_NAMES = {
-    0: 'R', 1: 'b2', 2: '2', 3: 'b3', 4: '3', 5: '4',
-    6: 'b5', 7: '5', 8: '#5', 9: '6', 10: 'b7', 11: '7'
-  };
+	  0: ['R'],
+	  1: ['b2'],
+	  2: ['2', '9'],
+	  3: ['b3'],
+	  4: ['3'],
+	  5: ['4', '11'],
+	  6: ['b5'],
+	  7: ['5'],
+	  8: ['#5'],
+	  9: ['6', 'bb7', '13'],
+	  10: ['b7'],
+	  11: ['7']
+	};
   
   
 
@@ -719,61 +731,87 @@
   const drawerOverlay = document.getElementById('drawer-overlay');
   
   
-  document.getElementById('btn-apply-config').addEventListener('click', () => {
-    // 1. Récupération et parsing des 12 noms d'intervalles (format texte séparé par virgules)
-    const rawIntervals = document.getElementById('intervals-input').value;
-    const parsedArray = rawIntervals.split(',').map(s => s.trim());
+  // Gestion de la saisie utilisateur
+document.getElementById('btn-apply-config').addEventListener('click', () => {
+  const rawInput = document.getElementById('intervals-input').value.trim();
 
+  // 1. Découpage robuste ignorant les virgules entre crochets
+  const items = [];
+  let current = '';
+  let insideBrackets = false;
 
-    if (parsedArray.length === 12) {
-      parsedArray.forEach((name, index) => {
-        INTERVAL_NAMES[index] = name;
-      });
+  for (let i = 0; i < rawInput.length; i++) {
+    const char = rawInput[i];
+    if (char === '[') {
+      insideBrackets = true;
+      current += char;
+    } else if (char === ']') {
+      insideBrackets = false;
+      current += char;
+    } else if (char === ',' && !insideBrackets) {
+      items.push(current.trim());
+      current = '';
     } else {
-      alert("Attention : Vous devez fournir exactement 12 noms séparés par des virgules.");
-      return;
+      current += char;
     }
-	
-	// 2. Récupération du nom des 4 cordes
-	
-	const rawStringNames = document.getElementById('string-name-input').value;
-    const parsedStringNameArray = rawStringNames.split(',').map(s => s.trim());
-	
-	if (parsedStringNameArray.length === 4) {
-      parsedStringNameArray.forEach((name, index) => {
-        STRING_NAMES[index] = name;
-      });
-    } else {
-      alert("Attention : Vous devez fournir exactement 4 noms séparés par des virgules.");
-      return;
+  }
+  if (current.trim()) {
+    items.push(current.trim());
+  }
+
+  // Transformation en tableau de tableaux
+  const parsed = items.map(item => {
+    if (item.startsWith('[') && item.endsWith(']')) {
+      return item.slice(1, -1).split(',').map(s => s.trim()).filter(Boolean);
     }
-	
-	
+    return [item];
+  }).filter(Boolean);
 
-    // 2. Récupération de l'accordage des 4 cordes
-    STRING_OFFSETS = [
-      parseInt(document.getElementById('tune-0').value) || 0,
-      parseInt(document.getElementById('tune-1').value) || 0,
-      parseInt(document.getElementById('tune-2').value) || 0,
-      parseInt(document.getElementById('tune-3').value) || 0
-    ];
-	
-	
-    
+  // Vérification exacte des 12 degrés
+  if (parsed.length === 12) {
+    parsed.forEach((namesArray, index) => {
+      INTERVAL_NAMES[index] = namesArray;
+    });
+  } else {
+    alert(`Attention : Vous devez fournir exactement 12 degrés (actuellement détectés : ${parsed.length}).`);
+    return;
+  }
 
-    // 3. Rafraîchissement de l'affichage sur le manche
-    renderState();
-	
-	const presetButtons = document.querySelectorAll('.bottom-sheet .actions-row .btn');
-presetButtons.forEach((btn, idx) => {
-  const stringNumber = 4 - idx;
-  const stringName = STRING_NAMES[idx];
-  btn.innerHTML = `<span class="d-none d-md-inline">Corde ${stringNumber}</span> (${stringName})`;
-});
+  // 2. Récupération des noms des 4 cordes
+  const rawStringNames = document.getElementById('string-name-input').value;
+  const parsedStringNameArray = rawStringNames.split(',').map(s => s.trim());
 
-    // 4. Fermer le drawer
-    drawerOverlay.classList.remove('open');
+  if (parsedStringNameArray.length === 4) {
+    parsedStringNameArray.forEach((name, index) => {
+      STRING_NAMES[index] = name;
+    });
+  } else {
+    alert("Attention : Vous devez fournir exactement 4 noms séparés par des virgules.");
+    return;
+  }
+
+  // 3. Accordage des 4 cordes
+  STRING_OFFSETS = [
+    parseInt(document.getElementById('tune-0').value) || 0,
+    parseInt(document.getElementById('tune-1').value) || 0,
+    parseInt(document.getElementById('tune-2').value) || 0,
+    parseInt(document.getElementById('tune-3').value) || 0
+  ];
+
+  // 4. Rafraîchissement de l'affichage sur le manche
+  renderState();
+
+  // 5. Mise à jour des boutons de preset
+  const presetButtons = document.querySelectorAll('.bottom-sheet .actions-row .btn');
+  presetButtons.forEach((btn, idx) => {
+    const stringNumber = 4 - idx;
+    const stringName = STRING_NAMES[idx];
+    btn.innerHTML = `<span class="d-none d-md-inline">Corde ${stringNumber}</span> (${stringName})`;
   });
+
+  // 6. Fermeture du drawer
+  drawerOverlay.classList.remove('open');
+});
 
   function getPitchClass(row, stringIdx) {
     return (STRING_OFFSETS[stringIdx] + row) % 12;
@@ -788,120 +826,137 @@ presetButtons.forEach((btn, idx) => {
     if (stringsContainer) fretboardEl.appendChild(stringsContainer);
 
     // À mettre à jour dans buildMatrix() :
-  for (let r = 0; r < TOTAL_ROWS; r++) {
-    const rowEl = document.createElement('div');
-    rowEl.className = 'fret-row';
-    rowEl.dataset.row = r;
+	  for (let r = 0; r < TOTAL_ROWS; r++) {
+		const rowEl = document.createElement('div');
+		rowEl.className = 'fret-row';
+		rowEl.dataset.row = r;
 
-    // --- AJOUT : Clic sur la ligne pour activer/désactiver le sillet ---
-    rowEl.addEventListener('click', (e) => {
-      // On vérifie que le clic visait bien la ligne et pas un spot de note
-      if (e.target === rowEl) {
-        rowEl.classList.toggle('nut-active');
-      }
-    });
+		// --- AJOUT : Clic sur la ligne pour activer/désactiver le sillet ---
+		rowEl.addEventListener('click', (e) => {
+		  // On vérifie que le clic visait bien la ligne et pas un spot de note
+		  if (e.target === rowEl) {
+			rowEl.classList.toggle('nut-active');
+		  }
+		});
 
-    for (let s = 0; s < 4; s++) {
-      const spot = document.createElement('div');
-      spot.className = 'note-spot';
-      spot.dataset.string = s;
-      spot.dataset.row = r;
+		for (let s = 0; s < 4; s++) {
+		  const spot = document.createElement('div');
+		  spot.className = 'note-spot';
+		  spot.dataset.string = s;
+		  spot.dataset.row = r;
 
-      spot.addEventListener('click', (e) => {
-        e.stopPropagation(); // Empêche le clic sur la note d'activer le sillet
-        handleSpotClick(s, r);
-      });
-      rowEl.appendChild(spot);
-    }
-    fretboardEl.appendChild(rowEl);
-  }
+		  spot.addEventListener('click', (e) => {
+			e.stopPropagation(); // Empêche le clic sur la note d'activer le sillet
+			handleSpotClick(s, r);
+		  });
+		  rowEl.appendChild(spot);
+		}
+		fretboardEl.appendChild(rowEl);
+	  }
   }
 
   /* ==========================================================================
      3. CYCLE DES 4 ÉTATS ET MISE À JOUR VISUELLE
      ========================================================================== */
-  function handleSpotClick(stringIdx, rowIdx) {
-    // Permutation circulaire des 4 états : 0 -> 1 -> 2 -> 3 -> 0
-    gridState[stringIdx][rowIdx] = (gridState[stringIdx][rowIdx] + 1) % 4;
+  // Exemple de gestionnaire d'événement sur un spot (case du manche)
+	function handleSpotClick(stringIndex, rowIndex) {
+	  const anchorPitch = getPitchClass(ANCHOR_ROW, fixedRootString);
+	  const spotPitch = getPitchClass(rowIndex, stringIndex);
+	  const interval = (spotPitch - anchorPitch + 12) % 12;
 
-    // Le clic ne modifie PLUS fixedRootString : la grille harmonique reste stable !
-    renderState();
-  }
+	  const availableNames = INTERVAL_NAMES[interval] || ['?'];
+	  const maxStates = availableNames.length; // Nombre de variantes de nom pour ce degré
+
+	  // Cycle des états : 0 -> 1 ... -> maxStates -> Muted (maxStates + 1) -> 0
+	  let currentState = gridState[stringIndex][rowIndex];
+	  
+	  if (currentState === 0) {
+		gridState[stringIndex][rowIndex] = 1; // Premier nom par défaut
+	  } else if (currentState <= maxStates) {
+		gridState[stringIndex][rowIndex] = currentState + 1; // Passe au nom suivant ou à Muted
+	  } else {
+		gridState[stringIndex][rowIndex] = 0; // Retour à invisible
+	  }
+
+	  renderState();
+	}
 
   function renderState() {
-    // Calcul de la hauteur de note de la racine verrouillée par le bouton preset
-    const anchorPitch = getPitchClass(ANCHOR_ROW, fixedRootString);
+  const anchorPitch = getPitchClass(ANCHOR_ROW, fixedRootString);
+  const spots = fretboardEl.querySelectorAll('.note-spot');
 
-    const spots = fretboardEl.querySelectorAll('.note-spot');
-    spots.forEach(spot => {
-      const s = parseInt(spot.dataset.string);
-      const r = parseInt(spot.dataset.row);
-      const state = gridState[s][r];
+  spots.forEach(spot => {
+    const s = parseInt(spot.dataset.string);
+    const r = parseInt(spot.dataset.row);
+    const state = gridState[s][r];
 
-      // Réinitialisation des classes CSS et du style
-      spot.classList.remove('active', 'root', 'muted');
-      spot.innerText = '';
-      spot.style.backgroundColor = '';
-      spot.style.color = '';
-      spot.style.border = '';
+    // Réinitialisation globale de la case
+    spot.classList.remove('active', 'root', 'muted');
+    spot.innerText = '';
+    spot.style.backgroundColor = '';
+    spot.style.color = '';
+    spot.style.border = '';
 
-      if (state === 1 || state === 2) {
-        // Calcul du texte de l'intervalle TOUJOURS basé sur fixedRootString
-        const spotPitch = getPitchClass(r, s);
-        const interval = (spotPitch - anchorPitch + 12) % 12;
-        spot.innerText = INTERVAL_NAMES[interval];
+    if (state === 0) return; // État 0 : Invisible
 
-        if (state === 1) {
-          // État 1 : Note / Intervalle (Bleu)
-          spot.classList.add('active');
-        } else if (state === 2) {
-          // État 2 : Racine / Root visuelle (Orange) - Change la couleur, garde le texte !
-          spot.classList.add('active', 'root');
-        }
-      } 
-      else if (state === 3) {
-        // État 3 : Ne pas jouer / Mute (X gris)
-        spot.classList.add('muted');
-        spot.innerText = '✕';
-        spot.style.backgroundColor = 'rgba(147, 143, 153, 0.2)';
-        spot.style.color = 'var(--md-sys-color-outline)';
-        spot.style.border = '1px solid var(--md-sys-color-outline)';
+    const spotPitch = getPitchClass(r, s);
+    const interval = (spotPitch - anchorPitch + 12) % 12;
+    const availableNames = INTERVAL_NAMES[interval] || ['?'];
+    const maxStates = availableNames.length;
+
+    if (state >= 1 && state <= maxStates) {
+      // 1. Affichage du texte correspondant à l'index actuel
+      const nameIndex = state - 1;
+      spot.innerText = availableNames[nameIndex];
+
+      // 2. Attribution de la couleur selon le DEGRÉ (0 = Racine/Tonique)
+      if (interval === 0) {
+        spot.classList.add('active', 'root'); // Rouge (Tonique)
+      } else {
+        spot.classList.add('active'); // Bleu (Autres degrés)
       }
-    });
-  }
+    } 
+    else if (state === maxStates + 1) {
+      // État Mute (X gris)
+      spot.classList.add('muted');
+      spot.innerText = '✕';
+      spot.style.backgroundColor = 'rgba(147, 143, 153, 0.2)';
+      spot.style.color = 'var(--md-sys-color-outline)';
+      spot.style.border = '1px solid var(--md-sys-color-outline)';
+    }
+  });
+}
 
   /* ==========================================================================
      4. GESTION DES PRESETS (VERROUILLAGE DE LA RACINE DE RÉFÉRENCE)
      ========================================================================== */
   function applyPreset(rootStringIdx) {
-    // 1. Réinitialiser la grille complète (toutes les cases à 0)
-    gridState = Array.from({ length: 4 }, () => Array(TOTAL_ROWS).fill(0));
-	
-	// --- AJOUT : Réinitialise l'épaisseur de toutes les frettes / sillets ---
+  // 1. Réinitialiser la grille complète (toutes les cases à 0)
+  gridState = Array.from({ length: 4 }, () => Array(TOTAL_ROWS).fill(0));
+
+  // Réinitialiser l'épaisseur de toutes les frettes / sillets
   fretboardEl.querySelectorAll('.fret-row.nut-active').forEach(el => el.classList.remove('nut-active'));
 
-    // 2. Fixer DEFINITIVEMENT la racine de référence globale pour le calcul des textes
-    fixedRootString = rootStringIdx;
+  // 2. Fixer DEFINITIVEMENT la racine de référence globale pour le calcul des textes
+  fixedRootString = rootStringIdx;
 
-    // 3. Allumer la ligne du milieu (ANCHOR_ROW = 12) pour les 4 cordes
-    for (let s = 0; s < 4; s++) {
-      if (s === rootStringIdx) {
-        gridState[s][ANCHOR_ROW] = 2; // Racine orange
-      } else {
-        gridState[s][ANCHOR_ROW] = 1; // Intervalle bleu
-      }
-    }
+  // 3. Allumer la ligne du milieu (ANCHOR_ROW) pour les 4 cordes
+  // Toutes passent à state = 1 (premier nom d'intervalle par défaut)
+  for (let s = 0; s < 4; s++) {
+    gridState[s][ANCHOR_ROW] = 1;
+  }
 
-    // Numéro de la corde en notation traditionnelle ukulélé (Corde 4 à Corde 1)
+  // 4. Mise à jour des textes d'instruction
   const stringNumber = 4 - rootStringIdx; 
   const stringName = STRING_NAMES[rootStringIdx];
 
   instructionEl.innerText = `Référence fixée : Corde ${stringNumber} (${stringName})`;
   feedbackEl.innerText = `Intervalles fixés sur la Corde ${stringNumber} (${stringName}).`;
 
-    renderState();
-    centerViewportOnAnchor();
-  }
+  // 5. Rendu et Recentrage
+  renderState();
+  centerViewportOnAnchor();
+}
 
   function centerViewportOnAnchor() {
     const rowEl = fretboardEl.querySelector(`.fret-row[data-row="${ANCHOR_ROW}"]`);
