@@ -306,26 +306,28 @@
     }
 
     .string-line {
-	display:none;
+	
+	display: flex;
+      flex-direction: column;
       width: 2px;
       background-color: var(--string-color);
-      height: 100%;
+	  height:400vh;
       box-shadow: 1px 0 3px rgba(0,0,0,0.5);
     }
     .string-line:nth-child(2) { width: 3.2px; } /* C string */
     .string-line:nth-child(3) { width: 2.5px; } /* E string */
 
     .fret-row {
-  height: 75px;
-  min-height: 75px; /*  AJOUTER : Empêche la compression sur vieux WebViews */
-  flex-shrink: 0;   /*  AJOUTER : Force le conteneur à déborder et à scroller */
-  border-bottom: 3px solid var(--fret-wire);
-  position: relative;
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  z-index: 3;
-}
+	  height: 75px;
+	  min-height: 75px; /*  AJOUTER : Empêche la compression sur vieux WebViews */
+	  flex-shrink: 0;   /*  AJOUTER : Force le conteneur à déborder et à scroller */
+	  border-bottom: 3px solid var(--fret-wire);
+	  position: relative;
+	  display: flex;
+	  justify-content: space-around;
+	  align-items: center;
+	  z-index: 3;
+	}
 
     .note-spot {
       width: 46px;
