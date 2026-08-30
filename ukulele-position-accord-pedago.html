@@ -732,17 +732,31 @@
 
   <!-- Bottom Sheet Controls -->
   <!-- Bottom Sheet Controls (Mode Outil Pédagogique) -->
-  <footer class="bottom-sheet">
-    <div class="sheet-handle"></div>
-    <div class="feedback-text" id="feedback">Sélectionnez l'emplacement de la racine (Root) :</div>
+<footer class="bottom-sheet">
+  <div class="sheet-handle"></div>
+  <div class="feedback-text" id="feedback">Changer la corde de référence (garder la forme) ou réinitialiser :</div>
 
-    <div class="actions-row">
-      <button class="btn btn-secondary" onclick="applyPreset(0)"><span class="d-none d-md-inline">String 4</span> (G)</button>
-      <button class="btn btn-secondary" onclick="applyPreset(1)"><span class="d-none d-md-inline">String 3</span> (C)</button>
-      <button class="btn btn-secondary" onclick="applyPreset(2)"><span class="d-none d-md-inline">String 2</span> (E)</button>
-      <button class="btn btn-secondary" onclick="applyPreset(3)"><span class="d-none d-md-inline">String 1</span> (A)</button>
-    </div>
-  </footer>
+  <div class="actions-row">
+    <!-- Bouton Reset : remet la racine sur la corde 3 (index 1) et aligne la ligne centrale -->
+    <button class="btn btn-primary" onclick="resetPreset()">
+      Réinitialiser
+    </button>
+    
+    <!-- Boutons de corde : déplacent uniquement la référence racine sans modifier les cases actives -->
+    <button class="btn btn-secondary" onclick="changeRootReference(0)">
+      <span class="d-none d-md-inline">Corde 4</span> (G)
+    </button>
+    <button class="btn btn-secondary" onclick="changeRootReference(1)">
+      <span class="d-none d-md-inline">Corde 3</span> (C)
+    </button>
+    <button class="btn btn-secondary" onclick="changeRootReference(2)">
+      <span class="d-none d-md-inline">Corde 2</span> (E)
+    </button>
+    <button class="btn btn-secondary" onclick="changeRootReference(3)">
+      <span class="d-none d-md-inline">Corde 1</span> (A)
+    </button>
+  </div>
+</footer>
 
   <script>
   
@@ -887,6 +901,57 @@ document.getElementById('btn-apply-config').addEventListener('click', () => {
   // 6. Fermeture du drawer
   drawerOverlay.classList.remove('open');
 });
+
+
+
+// 1. Bouton Réinitialiser (Reset) : remet la racine sur la Corde 3 (index 1 / C) sur la ligne ANCHOR_ROW
+function resetPreset() {
+  const DEFAULT_ROOT_STRING = 1; // Corde 3 (C)
+
+  // Réinitialiser la grille complète (toutes les cases à 0)
+  gridState = Array.from({ length: 4 }, () => Array(TOTAL_ROWS).fill(0));
+
+  // Réinitialiser les sillets / frettes actives et les barrés
+  fretboardEl.querySelectorAll('.fret-row.nut-active').forEach(el => el.classList.remove('nut-active'));
+  barreStates = {};
+
+  // Fixer la racine de référence globale
+  fixedRootString = DEFAULT_ROOT_STRING;
+
+  // Allumer la ligne du milieu (ANCHOR_ROW) pour les 4 cordes
+  for (let s = 0; s < 4; s++) {
+    gridState[s][ANCHOR_ROW] = 1;
+  }
+
+  // Mettre à jour les textes d'information
+  const stringNumber = 4 - DEFAULT_ROOT_STRING;
+  const stringName = STRING_NAMES[DEFAULT_ROOT_STRING];
+
+  if (instructionEl) instructionEl.innerText = `Référence fixée : Corde ${stringNumber} (${stringName})`;
+  if (feedbackEl) feedbackEl.innerText = `Grille réinitialisée sur la Corde ${stringNumber} (${stringName}).`;
+
+  renderState();
+  centerViewportOnAnchor();
+}
+
+// 2. Boutons de cordes : change la référence racine SANS modifier gridState ni les barrés
+function changeRootReference(rootStringIdx) {
+  // On met simplement à jour l'index de la corde de référence
+  fixedRootString = rootStringIdx;
+
+  const stringNumber = 4 - rootStringIdx;
+  const stringName = STRING_NAMES[rootStringIdx];
+
+  if (instructionEl) instructionEl.innerText = `Référence fixée : Corde ${stringNumber} (${stringName})`;
+  if (feedbackEl) feedbackEl.innerText = `Référence déplacée sur la Corde ${stringNumber} (${stringName}). La forme est conservée.`;
+
+  // renderState() recalculera automatiquement les nouveaux intervalles et les couleurs (rouge/bleu)
+  // pour toutes les cases actuellement actives dans gridState
+  renderState();
+}
+
+
+
 
   function getPitchClass(row, stringIdx) {
     return (STRING_OFFSETS[stringIdx] + row) % 12;
