@@ -243,10 +243,11 @@
     }
 
     .string-line {
-	display:none;
+		display: flex;
+      flex-direction: column;
       width: 2px;
       background-color: var(--string-color);
-      height: 100%;
+	  height:400vh;
       box-shadow: 1px 0 3px rgba(0,0,0,0.5);
     }
     .string-line:nth-child(2) { width: 3.2px; } /* C string */
