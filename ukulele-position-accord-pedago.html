@@ -546,6 +546,7 @@
       <h1>Ukulele Harmony</h1>
       <div class="instruction" id="instruction-text">Majeur ➔ Mineur</div>
     </div>
+	<button class="icon-btn" id="btn-lang" aria-label="Change Language">🇫🇷 FR</button>
     <button class="icon-btn" id="btn-theme" aria-label="Toggle Theme">🌙</button>
   </header>
 
@@ -553,162 +554,133 @@
   <div class="drawer-overlay" id="drawer-overlay">
 	
     <nav class="drawer">
-	<button id="btn-close-drawer" class="btn btn-secondary" style="width: 100%; margin-top: 15px;">
-      ✕ Fermer
-    </button>
-      <h2>Paramètre et théorie</h2>
-      <!-- <div class="menu-item active"> -->
-        <!-- <span>1. Shift de Formes (Actif)</span> -->
-      <!-- </div> -->
-      <!-- <div class="menu-item"> -->
-        <!-- <span>2. Prochainement...</span> -->
-      <!-- </div> -->
-      <hr style="border: 0.5px solid var(--md-sys-color-outline-variant); margin: 8px 0;">
-      <!-- <div style="font-size: 0.9rem; color: var(--md-sys-color-on-surface-variant)"> -->
-        <!-- Score : <span class="score-badge" id="total-score">0 pts</span> -->
-      <!-- </div> -->
-	  
-	  <div class="drawer-content">
-	  
-	  <div class="drawer-section">
-		  <h3>Configuration</h3>
-		
-		  <!-- Accordage des cordes -->
-		  <div class="config-group">
-			<label><b>Accordage (Corde 4 à 1) :</b></label>
-			<div class="tuning-inputs">
-			  <input type="number" id="tune-0" value="7" min="0" max="11" title="Corde 4 (G=7)">
-			  <input type="number" id="tune-1" value="0" min="0" max="11" title="Corde 3 (C=0)">
-			  <input type="number" id="tune-2" value="4" min="0" max="11" title="Corde 2 (E=4)">
-			  <input type="number" id="tune-3" value="9" min="0" max="11" title="Corde 1 (A=9)">
-			</div>
-			<small style="opacity: 0.7;">Valeurs en demi-tons : C=0, C#=1, D=2, D#=3, E=4, F=5, F#=6, G=7, G#=8, A=9, A#=10, B=11</small>
-		  </div>
+  <button id="btn-close-drawer" class="btn btn-secondary" style="width: 100%; margin-top: 15px;" data-i18n="closeBtn">
+    ✕ Fermer
+  </button>
+  <h2 data-i18n="drawerTitle">Paramètres et théorie</h2>
 
-		  <hr style="margin: 15px 0; opacity: 0.2;">
-			
-			<div class="config-group">
-				<label for="string-name-input"><b>Noms des cordes :</b></label>
-				<input type="text" id="string-name-input" class="drawer-input" value="G, C, E, A">
-				<small style="opacity: 0.7;">Séparés par des virgules (ex: Sol, Do, Mi, La)</small>
-			  </div>
-		  
-		  <hr style="margin: 15px 0; opacity: 0.2;">
+  <div class="drawer-content">
+    <div class="drawer-section">
+      <h3 data-i18n="configTitle">Configuration</h3>
 
-		  <!-- Noms des 12 Intervalles -->
-		  <div class="config-group">
-			<label for="intervals-input"><b>Noms des 12 Intervalles (du demi-ton 0 à 11) :</b></label>
-			<input type="text" id="intervals-input" class="drawer-input" value="[R, 8], b2, [2, 9], b3, 3, [4, 11], b5, 5, #5, [6,bb7,13], b7, 7">
-			<small style="opacity: 0.7;">Séparés par des virgules (ex: remplacer b9 par b2 ou #5 par b6)</small>
-		  </div>
+      <!-- Accordage -->
+      <div class="config-group">
+        <label><b data-i18n="tuningLabel">Accordage (Corde 4 à 1) :</b></label>
+        <div class="tuning-inputs">
+          <input type="number" id="tune-0" value="7" min="0" max="11" title="Corde 4 (G=7)">
+          <input type="number" id="tune-1" value="0" min="0" max="11" title="Corde 3 (C=0)">
+          <input type="number" id="tune-2" value="4" min="0" max="11" title="Corde 2 (E=4)">
+          <input type="number" id="tune-3" value="9" min="0" max="11" title="Corde 1 (A=9)">
+        </div>
+        <small style="opacity: 0.7;" data-i18n="semitoneHelp">Valeurs en demi-tons : C=0, C#=1, D=2, D#=3, E=4, F=5, F#=6, G=7, G#=8, A=9, A#=10, B=11</small>
+      </div>
 
-		  <button class="btn btn-primary" id="btn-apply-config" style="margin-top: 15px; width: 100%;">
-			Appliquer les paramètres
-		  </button>
-	  </div>
-	  
-	  <hr style="border: 0.5px solid var(--md-sys-color-outline-variant); margin: 8px 0;">
-	  
-	  
-	   <h3>Rappels théorie musicale</h3>
-	   <small style="opacity: 0.7;">
-        <p>Les formules d'accords expriment la distance (les intervalles) entre la <strong>Fondamentale (R)</strong> et les autres notes.</p>
-	</small>
-        <h3>Symboles classiques</h3>
-		<small style="opacity: 0.7;">
-        <ul>
-            <li><strong>R</strong> : Root (Fondamentale)</li>
-            <li><strong>b3 / 3</strong> : Tierce mineure / majeure</li>
-            <li><strong>b5 / 5 / #5</strong> : Quinte dim / juste / aug</li>
-            <li><strong>b7 / 7 / bb7</strong> : Septième min / maj / diminuée</li>
-        </ul>
-		</small>
-        <h3>Les Familles d'Accords</h3>
-		<small style="opacity: 0.7;">
-        <table class="chord-table">
-            <thead>
-                <tr>
-                    <th>Type</th>
-                    <th>Formule</th>
-                </tr>
-            </thead>
-            <tbody>
-                <!-- Triades -->
-<tr><td><strong>Majeur (triade)</strong></td><td>R - 3 - 5</td></tr>
-<tr><td><strong>Mineur (triade)</strong> (m)</td><td>R - b3 - 5</td></tr>
-<tr><td><strong>Diminué (triade)</strong> (dim)</td><td>R - b3 - b5</td></tr>
-<tr><td><strong>Augmenté (triade)</strong> (aug)</td><td>R - 3 - #5</td></tr>
-<tr><td><strong>Suspendu 4</strong> (sus4)</td><td>R - 4 - 5</td></tr>
-<tr><td><strong>Suspendu 2</strong> (sus2)</td><td>R - 2 - 5</td></tr>
+      <hr style="margin: 15px 0; opacity: 0.2;">
 
-<!-- Power Chords -->
-<tr><td><strong>Power Chord</strong> (5)</td><td>R - 5</td></tr>
+      <div class="config-group">
+        <label for="string-name-input"><b data-i18n="stringNamesLabel">Noms des cordes :</b></label>
+        <input type="text" id="string-name-input" class="drawer-input" value="G, C, E, A">
+        <small style="opacity: 0.7;" data-i18n="stringNamesHelp">Séparés par des virgules (ex: Sol, Do, Mi, La)</small>
+      </div>
 
-<!-- Accords à 4 notes standards (fournis précédemment) -->
-<tr><td><strong>Majeur 7</strong> (maj7)</td><td>R - 3 - 5 - 7</td></tr>
-<tr><td><strong>Dominante</strong> (7)</td><td>R - 3 - 5 - b7</td></tr>
-<tr><td><strong>Mineur 7</strong> (m7)</td><td>R - b3 - 5 - b7</td></tr>
-<tr><td><strong>Demi-diminué</strong> (m7b5)</td><td>R - b3 - b5 - b7</td></tr>
-<tr><td><strong>Diminué 7</strong> (dim7)</td><td>R - b3 - b5 - bb7</td></tr>
+      <hr style="margin: 15px 0; opacity: 0.2;">
 
-<!-- Accords Jazz & Extensions -->
-<tr><td><strong>Mineur-Majeur 7</strong> (mMaj7)</td><td>R - b3 - 5 - 7</td></tr>
-<tr><td><strong>Majeur 6</strong> (6)</td><td>R - 3 - 5 - 6</td></tr>
-<tr><td><strong>Mineur 6</strong> (m6)</td><td>R - b3 - 5 - 6</td></tr>
-<tr><td><strong>Dominante 9</strong> (9)</td><td>R - 3 - 5 - b7 - 9</td></tr>
-<tr><td><strong>Majeur 9</strong> (maj9)</td><td>R - 3 - 5 - 7 - 9</td></tr>
-<tr><td><strong>Mineur 9</strong> (m9)</td><td>R - b3 - 5 - b7 - 9</td></tr>
-<tr><td><strong>7 Altéré</strong> (7alt)</td><td>R - 3 - b5 (ou #5) - b7 - b9 (ou #9)</td></tr>
-<tr><td><strong>7 Altered (b9 / #9)</strong> (7b9 / 7#9)</td><td>R - 3 - 5 - b7 - b9 (ou #9)</td></tr>
-<tr><td><strong>Dominante 11</strong> (11)</td><td>R - (3) - 5 - b7 - (9) - 11</td></tr>
-<tr><td><strong>Dominante 13</strong> (13)</td><td>R - 3 - 5 - b7 - (9) - 13</td></tr>
-            </tbody>
-        </table>
-	</small>
-        <h3>Tensions complexes</h3>
-		<small style="opacity: 0.7;">
-        <p>Les altérations de dominante (7alt) comportent des tensions enrichies : <strong>b9, #9, b5 (#11), #5 (b13)</strong>.</p>
-		</small>
-		
-		<hr style="border: 0.5px solid var(--md-sys-color-outline-variant); margin: 8px 0;">
-		
-		<!-- Footer -->
-		<div class="drawer-section">
-			<footer class="mt-auto py-3 bg-body-tertiary border-top text-body-secondary transition-colors">
-	  <div class="container">
-		<div class="row align-items-center gy-2">
-		  <!-- Colonne 1 : Copyright & Titre -->
-		  <div class="col-12 col-md-6 text-center text-md-start">
-			<span class="small">
-			  CC BY-NC-SA 4.0 <span id="currentYear"></span> <strong>François Parlant</strong> &mdash; Créé avec passion pour le ukulélé.
-			</span>
-		  </div>
+      <!-- Intervalles -->
+      <div class="config-group">
+        <label for="intervals-input"><b data-i18n="intervalsLabel">Noms des 12 Intervalles (du demi-ton 0 à 11) :</b></label>
+        <input type="text" id="intervals-input" class="drawer-input" value="[R, 8], b2, [2, 9], b3, 3, [4, 11], b5, 5, #5, [6,bb7,13], b7, 7">
+        <small style="opacity: 0.7;" data-i18n="intervalsHelp">Séparés par des virgules (ex: remplacer b9 par b2 ou #5 par b6)</small>
+      </div>
 
-		  <!-- Colonne 2 : Liens Réseaux Sociaux -->
-		  <div class="col-12 col-md-6 text-center text-md-end">
-			<div class="d-inline-flex gap-3 align-items-center">
-			  <a href="https://github.com/fxpar/abc-notation-artifacts" target="_blank" rel="noopener noreferrer" class="text-body-secondary text-decoration-none fs-5 hover-accent" title="Code source GitHub">
-				<i class="bi bi-github"></i> Github
-			  </a> &mdash; 
-			  <a href="https://www.linkedin.com/in/francois-parlant" target="_blank" rel="noopener noreferrer" class="text-body-secondary text-decoration-none fs-5 hover-accent" title="LinkedIn: François Parlant">
-				<i class="bi bi-linkedin"></i>LinkedIn
-			  </a> &mdash; 
-			  <a href="https://www.youtube.com/c/enparlantdebureautiqueformezvous" target="_blank" rel="noopener noreferrer" class="text-body-secondary text-decoration-none fs-5 hover-accent" title="Tutos YouTube: En parlant de bureautique">
-				<i class="bi bi-youtube"></i>Youtube
-			  </a> &mdash; 
-			</div>
-		  </div>
-		</div>
-	  </div>
-	</footer>
-	
-	</div> <!-- Fin drawer section -->
-		
-		
-    </div> <!-- Fin drawer content -->
-	
-	
-    </nav>
+      <button class="btn btn-primary" id="btn-apply-config" style="margin-top: 15px; width: 100%;" data-i18n="applyBtn">
+        Appliquer les paramètres
+      </button>
+    </div>
+
+    <hr style="border: 0.5px solid var(--md-sys-color-outline-variant); margin: 8px 0;">
+
+    <h3 data-i18n="theoryTitle">Rappels théorie musicale</h3>
+    <small style="opacity: 0.7;">
+      <p data-i18n="theoryIntro">Les formules d'accords expriment la distance (les intervalles) entre la <strong>Fondamentale (R)</strong> et les autres notes.</p>
+    </small>
+
+    <h3 data-i18n="symbolsTitle">Symboles classiques</h3>
+    <small style="opacity: 0.7;">
+      <ul>
+        <li><strong data-i18n="symR">R</strong> : <span data-i18n="symRDesc">Root (Fondamentale)</span></li>
+        <li><strong>b3 / 3</strong> : <span data-i18n="sym3Desc">Tierce mineure / majeure</span></li>
+        <li><strong>b5 / 5 / #5</strong> : <span data-i18n="sym5Desc">Quinte dim / juste / aug</span></li>
+        <li><strong>b7 / 7 / bb7</strong> : <span data-i18n="sym7Desc">Septième min / maj / diminuée</span></li>
+      </ul>
+    </small>
+
+    <h3 data-i18n="familiesTitle">Les Familles d'Accords</h3>
+    <small style="opacity: 0.7;">
+      <table class="chord-table">
+        <thead>
+          <tr>
+            <th data-i18n="thType">Type</th>
+            <th data-i18n="thFormula">Formule</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Noms des types d'accords -->
+          <tr><td><strong data-i18n="cMajor">Majeur (triade)</strong></td><td>R - 3 - 5</td></tr>
+          <tr><td><strong data-i18n="cMinor">Mineur (triade)</strong> (m)</td><td>R - b3 - 5</td></tr>
+          <tr><td><strong data-i18n="cDim">Diminué (triade)</strong> (dim)</td><td>R - b3 - b5</td></tr>
+          <tr><td><strong data-i18n="cAug">Augmenté (triade)</strong> (aug)</td><td>R - 3 - #5</td></tr>
+          <tr><td><strong data-i18n="cSus4">Suspendu 4</strong> (sus4)</td><td>R - 4 - 5</td></tr>
+          <tr><td><strong data-i18n="cSus2">Suspendu 2</strong> (sus2)</td><td>R - 2 - 5</td></tr>
+          <tr><td><strong data-i18n="cPower">Power Chord</strong> (5)</td><td>R - 5</td></tr>
+          <tr><td><strong>Majeur 7</strong> (maj7)</td><td>R - 3 - 5 - 7</td></tr>
+          <tr><td><strong data-i18n="cDom7">Dominante</strong> (7)</td><td>R - 3 - 5 - b7</td></tr>
+          <tr><td><strong>Mineur 7</strong> (m7)</td><td>R - b3 - 5 - b7</td></tr>
+          <tr><td><strong data-i18n="cHalfDim">Demi-diminué</strong> (m7b5)</td><td>R - b3 - b5 - b7</td></tr>
+          <tr><td><strong>Diminué 7</strong> (dim7)</td><td>R - b3 - b5 - bb7</td></tr>
+          <tr><td><strong>Mineur-Majeur 7</strong> (mMaj7)</td><td>R - b3 - 5 - 7</td></tr>
+          <tr><td><strong>Majeur 6</strong> (6)</td><td>R - 3 - 5 - 6</td></tr>
+          <tr><td><strong>Mineur 6</strong> (m6)</td><td>R - b3 - 5 - 6</td></tr>
+          <tr><td><strong data-i18n="cDom9">Dominante 9</strong> (9)</td><td>R - 3 - 5 - b7 - 9</td></tr>
+          <tr><td><strong>Majeur 9</strong> (maj9)</td><td>R - 3 - 5 - 7 - 9</td></tr>
+          <tr><td><strong>Mineur 9</strong> (m9)</td><td>R - b3 - 5 - b7 - 9</td></tr>
+          <tr><td><strong data-i18n="c7Alt">7 Altéré</strong> (7alt)</td><td>R - 3 - b5 (ou #5) - b7 - b9 (ou #9)</td></tr>
+          <tr><td><strong>7 Altered (b9 / #9)</strong> (7b9 / 7#9)</td><td>R - 3 - 5 - b7 - b9 (ou #9)</td></tr>
+          <tr><td><strong data-i18n="cDom11">Dominante 11</strong> (11)</td><td>R - (3) - 5 - b7 - (9) - 11</td></tr>
+          <tr><td><strong data-i18n="cDom13">Dominante 13</strong> (13)</td><td>R - 3 - 5 - b7 - (9) - 13</td></tr>
+        </tbody>
+      </table>
+    </small>
+
+    <h3 data-i18n="complexTensionsTitle">Tensions complexes</h3>
+    <small style="opacity: 0.7;">
+      <p data-i18n="complexTensionsDesc">Les altérations de dominante (7alt) comportent des tensions enrichies : <strong>b9, #9, b5 (#11), #5 (b13)</strong>.</p>
+    </small>
+
+    <hr style="border: 0.5px solid var(--md-sys-color-outline-variant); margin: 8px 0;">
+
+    <div class="drawer-section">
+      <footer class="mt-auto py-3 bg-body-tertiary border-top text-body-secondary transition-colors">
+        <div class="container">
+          <div class="row align-items-center gy-2">
+            <div class="col-12 col-md-6 text-center text-md-start">
+              <span class="small">
+                CC BY-NC-SA 4.0 <span id="currentYear"></span> <strong>François Parlant</strong> &mdash; <span data-i18n="footerTagline">Créé avec passion pour le ukulélé.</span>
+              </span>
+            </div>
+            <!-- Liens de réseaux sociaux -->
+            <div class="col-12 col-md-6 text-center text-md-end">
+              <div class="d-inline-flex gap-3 align-items-center">
+                <a href="https://github.com/fxpar/abc-notation-artifacts" target="_blank" rel="noopener noreferrer" class="text-body-secondary text-decoration-none fs-5 hover-accent" title="Code source GitHub"><i class="bi bi-github"></i> Github</a> &mdash; 
+                <a href="https://www.linkedin.com/in/francois-parlant" target="_blank" rel="noopener noreferrer" class="text-body-secondary text-decoration-none fs-5 hover-accent" title="LinkedIn: François Parlant"><i class="bi bi-linkedin"></i> LinkedIn</a> &mdash; 
+                <a href="https://www.youtube.com/c/enparlantdebureautiqueformezvous" target="_blank" rel="noopener noreferrer" class="text-body-secondary text-decoration-none fs-5 hover-accent" title="Tutos YouTube: En parlant de bureautique"><i class="bi bi-youtube"></i> Youtube</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </footer>
+    </div>
+  </div>
+</nav>
   </div>
 
   <!-- Scrollable Matrix Viewport -->
@@ -760,7 +732,160 @@
 
   <script>
   
+const TRANSLATIONS = {
+  fr: {
+    btnLang: "🇫🇷 FR",
+    string: "Corde",
+    reset: "Réinitialiser",
+    refFixed: "Référence fixée : Corde {stringNumber} ({stringName})",
+    intervalsFixed: "Intervalles fixés sur la Corde {stringNumber} ({stringName}).",
+    refMoved: "Référence déplacée sur la Corde {stringNumber} ({stringName}). La forme est conservée.",
+    resetDone: "Grille réinitialisée sur la Corde {stringNumber} ({stringName}).",
 
+    // Nav Drawer
+    closeBtn: "✕ Fermer",
+    drawerTitle: "Paramètres et théorie",
+    configTitle: "Configuration",
+    tuningLabel: "Accordage (Corde 4 à 1) :",
+    semitoneHelp: "Valeurs en demi-tons : C=0, C#=1, D=2, D#=3, E=4, F=5, F#=6, G=7, G#=8, A=9, A#=10, B=11",
+    stringNamesLabel: "Noms des cordes :",
+    stringNamesHelp: "Séparés par des virgules (ex: Sol, Do, Mi, La)",
+    intervalsLabel: "Noms des 12 Intervalles (du demi-ton 0 à 11) :",
+    intervalsHelp: "Séparés par des virgules (ex: remplacer b9 par b2 ou #5 par b6)",
+    applyBtn: "Appliquer les paramètres",
+
+    theoryTitle: "Rappels théorie musicale",
+    theoryIntro: "Les formules d'accords expriment la distance (les intervalles) entre la <strong>Fondamentale (R)</strong> et les autres notes.",
+    symbolsTitle: "Symboles classiques",
+    symRDesc: "Root (Fondamentale)",
+    sym3Desc: "Tierce mineure / majeure",
+    sym5Desc: "Quinte dim / juste / aug",
+    sym7Desc: "Septième min / maj / diminuée",
+
+    familiesTitle: "Les Familles d'Accords",
+    thType: "Type",
+    thFormula: "Formule",
+    cMajor: "Majeur (triade)",
+    cMinor: "Mineur (triade)",
+    cDim: "Diminué (triade)",
+    cAug: "Augmenté (triade)",
+    cSus4: "Suspendu 4",
+    cSus2: "Suspendu 2",
+    cPower: "Power Chord",
+    cDom7: "Dominante",
+    cHalfDim: "Demi-diminué",
+    cDom9: "Dominante 9",
+    c7Alt: "7 Altéré",
+    cDom11: "Dominante 11",
+    cDom13: "Dominante 13",
+
+    complexTensionsTitle: "Tensions complexes",
+    complexTensionsDesc: "Les altérations de dominante (7alt) comportent des tensions enrichies : <strong>b9, #9, b5 (#11), #5 (b13)</strong>.",
+    footerTagline: "Créé avec passion pour le ukulélé."
+  },
+
+  en: {
+    btnLang: "🇬🇧 EN",
+    string: "String",
+    reset: "Reset",
+    refFixed: "Reference fixed: String {stringNumber} ({stringName})",
+    intervalsFixed: "Intervals fixed on String {stringNumber} ({stringName}).",
+    refMoved: "Reference moved to String {stringNumber} ({stringName}). Shape kept.",
+    resetDone: "Grid reset on String {stringNumber} ({stringName}).",
+
+    // Nav Drawer
+    closeBtn: "✕ Close",
+    drawerTitle: "Settings & Theory",
+    configTitle: "Settings",
+    tuningLabel: "Tuning (String 4 to 1):",
+    semitoneHelp: "Semitone values: C=0, C#=1, D=2, D#=3, E=4, F=5, F#=6, G=7, G#=8, A=9, A#=10, B=11",
+    stringNamesLabel: "String Names:",
+    stringNamesHelp: "Comma separated (e.g. G, C, E, A)",
+    intervalsLabel: "Names of the 12 Intervals (semitones 0 to 11):",
+    intervalsHelp: "Comma separated (e.g. replace b9 with b2 or #5 with b6)",
+    applyBtn: "Apply Settings",
+
+    theoryTitle: "Music Theory Basics",
+    theoryIntro: "Chord formulas express the distance (intervals) between the <strong>Root (R)</strong> and the other notes.",
+    symbolsTitle: "Common Symbols",
+    symRDesc: "Root note",
+    sym3Desc: "Minor / Major third",
+    sym5Desc: "Diminished / Perfect / Augmented fifth",
+    sym7Desc: "Minor / Major / Diminished seventh",
+
+    familiesTitle: "Chord Families",
+    thType: "Type",
+    thFormula: "Formula",
+    cMajor: "Major (triad)",
+    cMinor: "Minor (triad)",
+    cDim: "Diminished (triad)",
+    cAug: "Augmented (triad)",
+    cSus4: "Suspended 4",
+    cSus2: "Suspended 2",
+    cPower: "Power Chord",
+    cDom7: "Dominant",
+    cHalfDim: "Half-diminished",
+    cDom9: "Dominant 9",
+    c7Alt: "7 Altered",
+    cDom11: "Dominant 11",
+    cDom13: "Dominant 13",
+
+    complexTensionsTitle: "Complex Tensions",
+    complexTensionsDesc: "Dominant alterations (7alt) feature extended tensions: <strong>b9, #9, b5 (#11), #5 (b13)</strong>.",
+    footerTagline: "Created with passion for the ukulele."
+  },
+
+  de: {
+    btnLang: "🇩🇪 DE",
+    string: "Saite",
+    reset: "Zurücksetzen",
+    refFixed: "Referenz fixiert: Saite {stringNumber} ({stringName})",
+    intervalsFixed: "Intervalle fixiert auf Saite {stringNumber} ({stringName}).",
+    refMoved: "Referenz auf Saite {stringNumber} ({stringName}) verschoben. Form beibehalten.",
+    resetDone: "Raster zurückgesetzt auf Saite {stringNumber} ({stringName}).",
+
+    // Nav Drawer
+    closeBtn: "✕ Schließen",
+    drawerTitle: "Einstellungen & Theorie",
+    configTitle: "Einstellungen",
+    tuningLabel: "Stimmung (Saite 4 bis 1):",
+    semitoneHelp: "Halbtonwerte: C=0, C#=1, D=2, D#=3, E=4, F=5, F#=6, G=7, G#=8, A=9, A#=10, B=11",
+    stringNamesLabel: "Saitennamen:",
+    stringNamesHelp: "Kommagetrennt (z. B. G, C, E, A)",
+    intervalsLabel: "Namen der 12 Intervalle (Halbtöne 0 bis 11):",
+    intervalsHelp: "Kommagetrennt (z. B. b9 durch b2 ersetzen)",
+    applyBtn: "Einstellungen anwenden",
+
+    theoryTitle: "Musiktheorie-Grundlagen",
+    theoryIntro: "Akkordformeln beschreiben den Abstand (die Intervalle) zwischen dem <strong>Grundton (R)</strong> und den anderen Noten.",
+    symbolsTitle: "Klassische Symbole",
+    symRDesc: "Grundton (Root)",
+    sym3Desc: "Kleine / Große Terz",
+    sym5Desc: "Verminderte / Reine / Übermäßige Quinte",
+    sym7Desc: "Kleine / Große / Verminderte Septime",
+
+    familiesTitle: "Akkordfamilien",
+    thType: "Typ",
+    thFormula: "Formel",
+    cMajor: "Dur (Dreiklang)",
+    cMinor: "Moll (Dreiklang)",
+    cDim: "Vermindert (Dreiklang)",
+    cAug: "Übermäßig (Dreiklang)",
+    cSus4: "Vorhalt 4",
+    cSus2: "Vorhalt 2",
+    cPower: "Powerchord",
+    cDom7: "Dominante",
+    cHalfDim: "Halbvermindert",
+    cDom9: "Dominante 9",
+    c7Alt: "7 Alteriert",
+    cDom11: "Dominante 11",
+    cDom13: "Dominante 13",
+
+    complexTensionsTitle: "Komplexe Tensionen",
+    complexTensionsDesc: "Dominant-Alterationen (7alt) enthalten erweiterte Tensionen: <strong>b9, #9, b5 (#11), #5 (b13)</strong>.",
+    footerTagline: "Mit Leidenschaft für die Ukulele erstellt."
+  }
+};
 
 
    /* ==========================================================================
@@ -902,7 +1027,58 @@ document.getElementById('btn-apply-config').addEventListener('click', () => {
   drawerOverlay.classList.remove('open');
 });
 
+let currentLang = 'fr'; // Langue par défaut
 
+// Fonction utilitaire pour récupérer les traductions et injecter les variables
+function t(key, params = {}) {
+  let text = TRANSLATIONS[currentLang][key] || key;
+  Object.keys(params).forEach(param => {
+    text = text.replace(`{${param}}`, params[param]);
+  });
+  return text;
+}
+
+// Mettre à jour les textes statiques de l'interface
+function updateUI() {
+  const langData = TRANSLATIONS[currentLang];
+  
+  // Bouton de langue
+  document.getElementById('btn-lang').innerText = langData.btnLang;
+  
+  // 1. Traduction automatique de tous les éléments possédant data-i18n
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    if (langData[key]) {
+      el.innerHTML = langData[key];
+    }
+  });
+
+  // 2. Mise à jour dynamique des boutons de la bottom-sheet
+  const stringBtns = document.querySelectorAll('.bottom-sheet .btn-secondary');
+  stringBtns.forEach((btn, idx) => {
+    const stringNumber = 4 - idx;
+    const stringName = STRING_NAMES[idx];
+    btn.innerHTML = `<span class="d-none d-md-inline">${langData.string} ${stringNumber}</span> (${stringName})`;
+  });
+
+  // 3. Rafraîchissement des textes dynamiques actuels
+  if (typeof fixedRootString !== 'undefined') {
+    const stringNumber = 4 - fixedRootString;
+    const stringName = STRING_NAMES[fixedRootString];
+    if (instructionEl) {
+      instructionEl.innerText = t('refFixed', { stringNumber, stringName });
+	  feedbackEl.innerText = t('resetDone', { stringNumber, stringName });
+    }
+  }
+}
+
+// Écouteur sur le bouton pour faire défiler les langues (FR -> EN -> DE -> FR)
+document.getElementById('btn-lang').addEventListener('click', () => {
+  const langs = ['fr', 'en', 'de'];
+  const nextIdx = (langs.indexOf(currentLang) + 1) % langs.length;
+  currentLang = langs[nextIdx];
+  updateUI();
+});
 
 // 1. Bouton Réinitialiser (Reset) : remet la racine sur la Corde 3 (index 1 / C) sur la ligne ANCHOR_ROW
 function resetPreset() {
@@ -927,8 +1103,11 @@ function resetPreset() {
   const stringNumber = 4 - DEFAULT_ROOT_STRING;
   const stringName = STRING_NAMES[DEFAULT_ROOT_STRING];
 
-  if (instructionEl) instructionEl.innerText = `Référence fixée : Corde ${stringNumber} (${stringName})`;
-  if (feedbackEl) feedbackEl.innerText = `Grille réinitialisée sur la Corde ${stringNumber} (${stringName}).`;
+  <!-- if (instructionEl) instructionEl.innerText = `Référence fixée : Corde ${stringNumber} (${stringName})`; -->
+  <!-- if (feedbackEl) feedbackEl.innerText = `Grille réinitialisée sur la Corde ${stringNumber} (${stringName}).`; -->
+  
+  if (instructionEl) instructionEl.innerText = t('refFixed', { stringNumber, stringName });
+  if (feedbackEl) feedbackEl.innerText = t('resetDone', { stringNumber, stringName });
 
   renderState();
   centerViewportOnAnchor();
@@ -942,8 +1121,11 @@ function changeRootReference(rootStringIdx) {
   const stringNumber = 4 - rootStringIdx;
   const stringName = STRING_NAMES[rootStringIdx];
 
-  if (instructionEl) instructionEl.innerText = `Référence fixée : Corde ${stringNumber} (${stringName})`;
-  if (feedbackEl) feedbackEl.innerText = `Référence déplacée sur la Corde ${stringNumber} (${stringName}). La forme est conservée.`;
+  <!-- if (instructionEl) instructionEl.innerText = `Référence fixée : Corde ${stringNumber} (${stringName})`; -->
+  <!-- if (feedbackEl) feedbackEl.innerText = `Référence déplacée sur la Corde ${stringNumber} (${stringName}). La forme est conservée.`; -->
+  
+  if (instructionEl) instructionEl.innerText = t('refFixed', { stringNumber, stringName });
+  if (feedbackEl) feedbackEl.innerText = t('refMoved', { stringNumber, stringName });
 
   // renderState() recalculera automatiquement les nouveaux intervalles et les couleurs (rouge/bleu)
   // pour toutes les cases actuellement actives dans gridState
@@ -1231,8 +1413,8 @@ function updateBarreVisual(rowIndex, startStr, endStr) {
 
   <!-- instructionEl.innerText = `Référence fixée : Corde ${stringNumber} (${stringName})`; -->
   <!-- feedbackEl.innerText = `Intervalles fixés sur la Corde ${stringNumber} (${stringName}).`;-->
-  instructionEl.innerText = `Reference fixed : String ${stringNumber} (${stringName})`; 
-  feedbackEl.innerText = `Interval fixed on string ${stringNumber} (${stringName}).`;
+  if (instructionEl) instructionEl.innerText = t('refFixed', { stringNumber, stringName });
+  if (feedbackEl) feedbackEl.innerText = t('resetDone', { stringNumber, stringName });
 
   // 5. Rendu et Recentrage
   renderState();
