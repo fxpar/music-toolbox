@@ -711,7 +711,7 @@
 
   <div class="actions-row">
     <!-- Bouton Reset : remet la racine sur la corde 3 (index 1) et aligne la ligne centrale -->
-    <button class="btn btn-primary" data-i18n="resetBtn">
+    <button id="btn-reset" class="btn btn-primary" data-i18n="resetBtn">
   <span class="d-none d-md-inline">Réinitialiser</span><span class="d-inline d-md-none">▶️</span>
 </button>
     
@@ -956,7 +956,7 @@ let dragStartSpot = null;
   const themeBtn = document.getElementById('btn-theme');
   const drawerOverlay = document.getElementById('drawer-overlay');
   
-  
+  document.getElementById('btn-reset').addEventListener('click', resetPreset);
   
   // Gestion de la saisie utilisateur
 document.getElementById('btn-apply-config').addEventListener('click', () => {
@@ -1060,7 +1060,11 @@ function t(key, params = {}) {
 function updateUI() {
   const langData = TRANSLATIONS[currentLang];
   
-   
+  // 1. Mettre à jour le tableau global des noms de cordes
+	// STRING_NAMES = [...langData.stringNames];
+
+
+  
   // Bouton de langue
   document.getElementById('btn-lang').innerText = langData.btnLang;
   
@@ -1102,6 +1106,14 @@ document.getElementById('btn-lang').addEventListener('click', () => {
   const langs = ['fr', 'en', 'de'];
   const nextIdx = (langs.indexOf(currentLang) + 1) % langs.length;
   currentLang = langs[nextIdx];
+  // Recharge les noms de cordes par défaut pour la nouvelle langue
+  STRING_NAMES = [...TRANSLATIONS[currentLang].stringNames];
+
+  // Met à jour la valeur affichée dans l'input du drawer
+  const stringNameInput = document.getElementById('string-name-input');
+  if (stringNameInput) {
+    stringNameInput.value = STRING_NAMES.join(', ');
+  }
   updateUI();
 });
 
