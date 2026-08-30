@@ -611,17 +611,20 @@
 	  
 	  
 	   <h3>Rappels théorie musicale</h3>
+	   <small style="opacity: 0.7;">
         <p>Les formules d'accords expriment la distance (les intervalles) entre la <strong>Fondamentale (R)</strong> et les autres notes.</p>
-
-        <h3>Symbologie classique</h3>
+	</small>
+        <h3>Symboles classiques</h3>
+		<small style="opacity: 0.7;">
         <ul>
             <li><strong>R</strong> : Root (Fondamentale)</li>
             <li><strong>b3 / 3</strong> : Tierce mineure / majeure</li>
             <li><strong>b5 / 5 / #5</strong> : Quinte dim / juste / aug</li>
             <li><strong>b7 / 7 / bb7</strong> : Septième min / maj / diminuée</li>
         </ul>
-
-        <h3>Les 4 Familles d'Accords (7e)</h3>
+		</small>
+        <h3>Les Familles d'Accords</h3>
+		<small style="opacity: 0.7;">
         <table class="chord-table">
             <thead>
                 <tr>
@@ -630,17 +633,42 @@
                 </tr>
             </thead>
             <tbody>
-                <tr><td><strong>Majeur 7</strong> (maj7)</td><td>R - 3 - 5 - 7</td></tr>
-                <tr><td><strong>Dominante</strong> (7)</td><td>R - 3 - 5 - b7</td></tr>
-                <tr><td><strong>Mineur 7</strong> (m7)</td><td>R - b3 - 5 - b7</td></tr>
-                <tr><td><strong>Demi-diminué</strong> (m7b5)</td><td>R - b3 - b5 - b7</td></tr>
-                <tr><td><strong>Diminué 7</strong> (dim7)</td><td>R - b3 - b5 - bb7</td></tr>
+                <!-- Triades -->
+<tr><td><strong>Majeur (triade)</strong></td><td>R - 3 - 5</td></tr>
+<tr><td><strong>Mineur (triade)</strong> (m)</td><td>R - b3 - 5</td></tr>
+<tr><td><strong>Diminué (triade)</strong> (dim)</td><td>R - b3 - b5</td></tr>
+<tr><td><strong>Augmenté (triade)</strong> (aug)</td><td>R - 3 - #5</td></tr>
+<tr><td><strong>Suspendu 4</strong> (sus4)</td><td>R - 4 - 5</td></tr>
+<tr><td><strong>Suspendu 2</strong> (sus2)</td><td>R - 2 - 5</td></tr>
+
+<!-- Power Chords -->
+<tr><td><strong>Power Chord</strong> (5)</td><td>R - 5</td></tr>
+
+<!-- Accords à 4 notes standards (fournis précédemment) -->
+<tr><td><strong>Majeur 7</strong> (maj7)</td><td>R - 3 - 5 - 7</td></tr>
+<tr><td><strong>Dominante</strong> (7)</td><td>R - 3 - 5 - b7</td></tr>
+<tr><td><strong>Mineur 7</strong> (m7)</td><td>R - b3 - 5 - b7</td></tr>
+<tr><td><strong>Demi-diminué</strong> (m7b5)</td><td>R - b3 - b5 - b7</td></tr>
+<tr><td><strong>Diminué 7</strong> (dim7)</td><td>R - b3 - b5 - bb7</td></tr>
+
+<!-- Accords Jazz & Extensions -->
+<tr><td><strong>Mineur-Majeur 7</strong> (mMaj7)</td><td>R - b3 - 5 - 7</td></tr>
+<tr><td><strong>Majeur 6</strong> (6)</td><td>R - 3 - 5 - 6</td></tr>
+<tr><td><strong>Mineur 6</strong> (m6)</td><td>R - b3 - 5 - 6</td></tr>
+<tr><td><strong>Dominante 9</strong> (9)</td><td>R - 3 - 5 - b7 - 9</td></tr>
+<tr><td><strong>Majeur 9</strong> (maj9)</td><td>R - 3 - 5 - 7 - 9</td></tr>
+<tr><td><strong>Mineur 9</strong> (m9)</td><td>R - b3 - 5 - b7 - 9</td></tr>
+<tr><td><strong>7 Altéré</strong> (7alt)</td><td>R - 3 - b5 (ou #5) - b7 - b9 (ou #9)</td></tr>
+<tr><td><strong>7 Altered (b9 / #9)</strong> (7b9 / 7#9)</td><td>R - 3 - 5 - b7 - b9 (ou #9)</td></tr>
+<tr><td><strong>Dominante 11</strong> (11)</td><td>R - (3) - 5 - b7 - (9) - 11</td></tr>
+<tr><td><strong>Dominante 13</strong> (13)</td><td>R - 3 - 5 - b7 - (9) - 13</td></tr>
             </tbody>
         </table>
-
+	</small>
         <h3>Tensions complexes</h3>
+		<small style="opacity: 0.7;">
         <p>Les altérations de dominante (7alt) comportent des tensions enrichies : <strong>b9, #9, b5 (#11), #5 (b13)</strong>.</p>
-		
+		</small>
 		
 		<hr style="border: 0.5px solid var(--md-sys-color-outline-variant); margin: 8px 0;">
 		
@@ -709,10 +737,10 @@
     <div class="feedback-text" id="feedback">Sélectionnez l'emplacement de la racine (Root) :</div>
 
     <div class="actions-row">
-      <button class="btn btn-secondary" onclick="applyPreset(0)"><span class="d-none d-md-inline">Corde 4</span> (G)</button>
-      <button class="btn btn-secondary" onclick="applyPreset(1)"><span class="d-none d-md-inline">Corde 3</span> (C)</button>
-      <button class="btn btn-secondary" onclick="applyPreset(2)"><span class="d-none d-md-inline">Corde 2</span> (E)</button>
-      <button class="btn btn-secondary" onclick="applyPreset(3)"><span class="d-none d-md-inline">Corde 1</span> (A)</button>
+      <button class="btn btn-secondary" onclick="applyPreset(0)"><span class="d-none d-md-inline">String 4</span> (G)</button>
+      <button class="btn btn-secondary" onclick="applyPreset(1)"><span class="d-none d-md-inline">String 3</span> (C)</button>
+      <button class="btn btn-secondary" onclick="applyPreset(2)"><span class="d-none d-md-inline">String 2</span> (E)</button>
+      <button class="btn btn-secondary" onclick="applyPreset(3)"><span class="d-none d-md-inline">String 1</span> (A)</button>
     </div>
   </footer>
 
@@ -1136,8 +1164,10 @@ function updateBarreVisual(rowIndex, startStr, endStr) {
   const stringNumber = 4 - rootStringIdx; 
   const stringName = STRING_NAMES[rootStringIdx];
 
-  instructionEl.innerText = `Référence fixée : Corde ${stringNumber} (${stringName})`;
-  feedbackEl.innerText = `Intervalles fixés sur la Corde ${stringNumber} (${stringName}).`;
+  <!-- instructionEl.innerText = `Référence fixée : Corde ${stringNumber} (${stringName})`; -->
+  <!-- feedbackEl.innerText = `Intervalles fixés sur la Corde ${stringNumber} (${stringName}).`;-->
+  instructionEl.innerText = `Référence fixed : String ${stringNumber} (${stringName})`; 
+  feedbackEl.innerText = `Interval fixed on string ${stringNumber} (${stringName}).`;
 
   // 5. Rendu et Recentrage
   renderState();
