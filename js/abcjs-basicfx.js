@@ -14599,7 +14599,10 @@ ChordTrack.prototype.chordIntervals = {
   // MAE Power chords added 10 April 2024
   '5': [0, 7],
   '5(8)': [0, 7, 12],
-  '5add8': [0, 7, 12]
+  '5add8': [0, 7, 12],
+  // Added FXP 25 august 2026
+  'm(add2)': [0, 2, 3, 7],
+  '(add2)': [0, 2, 4, 7]
 };
 ChordTrack.prototype.rhythmPatterns = {
   "2/2": ['boom', '', '', '', 'chick', '', '', ''],
