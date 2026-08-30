@@ -598,7 +598,7 @@
 		  <!-- Noms des 12 Intervalles -->
 		  <div class="config-group">
 			<label for="intervals-input"><b>Noms des 12 Intervalles (du demi-ton 0 à 11) :</b></label>
-			<input type="text" id="intervals-input" class="drawer-input" value="R, b2, [2, 9], b3, 3, [4, 11], b5, 5, #5, [6,bb7], b7, 7">
+			<input type="text" id="intervals-input" class="drawer-input" value="[R, 8], b2, [2, 9], b3, 3, [4, 11], b5, 5, #5, [6,bb7,13], b7, 7">
 			<small style="opacity: 0.7;">Séparés par des virgules (ex: remplacer b9 par b2 ou #5 par b6)</small>
 		  </div>
 
@@ -718,12 +718,7 @@
 
   <script>
   
-	  // Stocke l'état d'affichage des barrés : objet { [rowIndex]: { startString, endString } }
-	let barreStates = {}; 
 
-	// Variables temporaires pour gérer le glisser (drag)
-	let isDraggingBarre = false;
-	let dragStartSpot = null;
 
 
    /* ==========================================================================
@@ -738,7 +733,7 @@
 
   // Noms d'intervalles relatifs
   let INTERVAL_NAMES = {
-	  0: ['R'],
+	  0: ['R', '8'],
 	  1: ['b2'],
 	  2: ['2', '9'],
 	  3: ['b3'],
@@ -754,14 +749,20 @@
   
   
 
-  /* 
+	  /* 
      États possibles pour chaque case [string][row] :
      0 = Inactif / Invisible
      1 = Note / Intervalle (Bleu)
      2 = Racine / Root (Orange)
      3 = Ne pas jouer / Mute (X Gris)
   */
-  let gridState = Array.from({ length: 4 }, () => Array(TOTAL_ROWS).fill(0));
+let gridState = Array.from({ length: 4 }, () => Array(TOTAL_ROWS).fill(0));
+let barreStates = {}; // { rowIdx: { startString, endString } }
+
+// Variables temporaires pour le drag & toggle
+let isDraggingBarre = false;
+let dragStartSpot = null;
+
   
   // Racine de référence FIXE définissant la grille harmonique active
   let fixedRootString = 1; // Corde de C par défaut
@@ -865,123 +866,153 @@ document.getElementById('btn-apply-config').addEventListener('click', () => {
 
   // Construction dynamique des 36 lignes de la matrice
 	function buildMatrix() {
-	  const stringsContainer = fretboardEl.querySelector('.strings-container');
-	  const stringHeader = fretboardEl.querySelector('.string-header');
-	  fretboardEl.innerHTML = '';
-	  if (stringHeader) fretboardEl.appendChild(stringHeader);
-	  if (stringsContainer) fretboardEl.appendChild(stringsContainer);
+  const stringsContainer = fretboardEl.querySelector('.strings-container');
+  const stringHeader = fretboardEl.querySelector('.string-header');
+  fretboardEl.innerHTML = '';
+  if (stringHeader) fretboardEl.appendChild(stringHeader);
+  if (stringsContainer) fretboardEl.appendChild(stringsContainer);
 
-	  for (let r = 0; r < TOTAL_ROWS; r++) {
-		const rowEl = document.createElement('div');
-		rowEl.className = 'fret-row';
-		rowEl.dataset.row = r;
+  for (let r = 0; r < TOTAL_ROWS; r++) {
+    const rowEl = document.createElement('div');
+    rowEl.className = 'fret-row';
+    rowEl.dataset.row = r;
 
-		// Element visuel pour le barré sur cette ligne
-		const barreEl = document.createElement('div');
-		barreEl.className = 'barre-indicator';
-		rowEl.appendChild(barreEl);
+    // Indicateur visuel du barré
+    const barreEl = document.createElement('div');
+    barreEl.className = 'barre-indicator';
+    rowEl.appendChild(barreEl);
 
-		// Clic simple sur la frette pour le sillet
-		rowEl.addEventListener('click', (e) => {
-		  // S'exécute uniquement si on n'a pas fait de glisser et si le clic vise la ligne
-		  if (!isDraggingBarre && e.target === rowEl) {
-			rowEl.classList.toggle('nut-active');
-		  }
-		});
+    // Clic simple sur la frette (sillet)
+    rowEl.addEventListener('click', (e) => {
+      if (e.target === rowEl) {
+        rowEl.classList.toggle('nut-active');
+      }
+    });
 
-		for (let s = 0; s < 4; s++) {
-		  const spot = document.createElement('div');
-		  spot.className = 'note-spot';
-		  spot.dataset.string = s;
-		  spot.dataset.row = r;
+    for (let s = 0; s < 4; s++) {
+      const spot = document.createElement('div');
+      spot.className = 'note-spot';
+      spot.dataset.string = s;
+      spot.dataset.row = r;
 
-		  // --- DEBUT DU GLISSER (POINTER DOWN) ---
-		  spot.addEventListener('pointerdown', (e) => {
-			e.stopPropagation();
-			dragStartSpot = { string: s, row: r };
-			isDraggingBarre = false;
-			// Capture du pointeur pour suivre le mouvement même si le doigt/souris sort du spot
-			spot.setPointerCapture(e.pointerId);
-		  });
+      // --- 1. GESTION DU CLIC PARASITE ---
+      spot.addEventListener('click', (e) => {
+        // Bloque le clic standard si on vient de finir un drag
+        if (isDraggingBarre) {
+          e.preventDefault();
+          e.stopPropagation();
+          // On ne fait rien d'autre, pointerup a déjà géré la logique
+          return;
+        }
+        
+        // Si ce n'était pas un drag, c'est un clic simple : gérer la note
+        // Note: Cette partie est optionnelle si pointerup gère déjà le clic simple,
+        // mais cela sécurise le comportement si pointerup échoue à détecter l'absence de drag.
+        if (!dragStartSpot) { 
+           handleSpotClick(s, r);
+        }
+      });
 
-		  // --- MOUVEMENT (POINTER MOVE) ---
-		  spot.addEventListener('pointermove', (e) => {
-			if (!dragStartSpot) return;
+      // --- 2. DEBUT DU DRAG (POINTER DOWN) ---
+      spot.addEventListener('pointerdown', (e) => {
+        e.stopPropagation();
+        dragStartSpot = { string: s, row: r };
+        isDraggingBarre = false; // Reset au début
+        spot.setPointerCapture(e.pointerId);
+      });
 
-			// On identifie sur quelle case se trouve actuellement le pointeur
-			const targetEl = document.elementFromPoint(e.clientX, e.clientY);
-			const currentSpot = targetEl?.closest('.note-spot');
+      // --- 3. MOUVEMENT (POINTER MOVE) ---
+      spot.addEventListener('pointermove', (e) => {
+        if (!dragStartSpot) return;
 
-			if (currentSpot) {
-			  const targetRow = parseInt(currentSpot.dataset.row);
-			  const targetString = parseInt(currentSpot.dataset.string);
+        const targetEl = document.elementFromPoint(e.clientX, e.clientY);
+        const currentSpot = targetEl?.closest('.note-spot');
 
-			  // Si on reste sur la MÊME ligne mais qu'on a changé de corde -> Début du barré
-			  if (targetRow === dragStartSpot.row && targetString !== dragStartSpot.string) {
-				isDraggingBarre = true;
+        if (currentSpot) {
+          const targetRow = parseInt(currentSpot.dataset.row);
+          const targetString = parseInt(currentSpot.dataset.string);
 
-				const startStr = Math.min(dragStartSpot.string, targetString);
-				const endStr = Math.max(dragStartSpot.string, targetString);
+          // Si on bouge sur la même ligne vers une autre corde
+          if (targetRow === dragStartSpot.row && targetString !== dragStartSpot.string) {
+            isDraggingBarre = true; // Activer le mode drag
 
-				barreStates[r] = { startString: startStr, endString: endStr };
-				renderState(); // Rafraîchit le barré en direct
-			  }
-			}
-		  });
-
-		  // --- FIN DU GLISSER OU CLIC SIMPLE (POINTER UP) ---
-		  // --- DANS buildMatrix() ---
-
-// Event Pointer UP mis à jour :
-spot.addEventListener('pointerup', (e) => {
-  e.stopPropagation();
-  
-  if (spot.hasPointerCapture(e.pointerId)) {
-    spot.releasePointerCapture(e.pointerId);
-  }
-
-  if (dragStartSpot) {
-    // Si on a effectué un glisser qui modifie le barré
-    if (isDraggingBarre) {
-      const targetEl = document.elementFromPoint(e.clientX, e.clientY);
-      const currentSpot = targetEl?.closest('.note-spot');
-      
-      if (currentSpot) {
-        const targetString = parseInt(currentSpot.dataset.string);
-        const targetRow = parseInt(currentSpot.dataset.row);
-
-        if (targetRow === dragStartSpot.row) {
-          const startStr = Math.min(dragStartSpot.string, targetString);
-          const endStr = Math.max(dragStartSpot.string, targetString);
-
-          if (startStr === endStr) {
-            // Si le glisser revient sur la même case -> EFFACER le barré
-            delete barreStates[r];
-          } else {
-            // Sinon enregistrer le nouveau barré
-            barreStates[r] = { startString: startStr, endString: endStr };
+            // Affichage temporaire pendant le glisser (optionnel, pour feedback visuel)
+            const startStr = Math.min(dragStartSpot.string, targetString);
+            const endStr = Math.max(dragStartSpot.string, targetString);
+            
+            // Mise à jour visuelle immédiate du barré pendant le mouvement
+            updateBarreVisual(r, startStr, endStr);
           }
         }
-      }
-    } else {
-      // Si c'est un clic simple sur une case qui possédait un barré -> EFFACER le barré
-      if (barreStates[r]) {
-        delete barreStates[r];
-      }
-      handleSpotClick(s, r);
+      });
+
+      // --- 4. FIN DU DRAG & LOGIQUE TOGGLE (POINTER UP) ---
+      spot.addEventListener('pointerup', (e) => {
+        e.stopPropagation();
+        
+        if (spot.hasPointerCapture(e.pointerId)) {
+          spot.releasePointerCapture(e.pointerId);
+        }
+
+        if (dragStartSpot) {
+          if (isDraggingBarre) {
+            // C'était un drag : valider la sélection finale
+            const targetEl = document.elementFromPoint(e.clientX, e.clientY);
+            const currentSpot = targetEl?.closest('.note-spot');
+            
+            if (currentSpot) {
+              const targetString = parseInt(currentSpot.dataset.string);
+              const targetRow = parseInt(currentSpot.dataset.row);
+
+              if (targetRow === dragStartSpot.row && targetString !== dragStartSpot.string) {
+                const startStr = Math.min(dragStartSpot.string, targetString);
+                const endStr = Math.max(dragStartSpot.string, targetString);
+
+                const existing = barreStates[r];
+
+                // TOGGLE : Même chemin -> Effacer, Sinon -> Appliquer
+                if (existing && existing.startString === startStr && existing.endString === endStr) {
+                  delete barreStates[r];
+                } else {
+                  barreStates[r] = { startString: startStr, endString: endStr };
+                }
+              }
+            }
+          } else {
+            // C'était un clic simple : Gérer la note normalement
+            // handleSpotClick(s, r); // Décommenter ici si vous enlevez la logique du handler 'click'
+          }
+        }
+
+        // Nettoyage
+        dragStartSpot = null;
+        renderState(); // Rendu final
+        
+        // ATTENTION : On garde isDraggingBarre = true pendant un court instant
+        // pour que le gestionnaire de 'click' puisse le détecter et bloquer le clic parasite.
+        setTimeout(() => { isDraggingBarre = false; }, 100); 
+      });
+
+      rowEl.appendChild(spot);
     }
+    fretboardEl.appendChild(rowEl);
   }
+}
 
-  dragStartSpot = null;
-  renderState();
-  setTimeout(() => { isDraggingBarre = false; }, 50);
-});
+// Fonction utilitaire pour la mise à jour visuelle immédiate pendant le mouvement
+function updateBarreVisual(rowIndex, startStr, endStr) {
+  const rowEl = fretboardEl.querySelector(`.fret-row[data-row="${rowIndex}"]`);
+  if (!rowEl) return;
+  const barreEl = rowEl.querySelector('.barre-indicator');
+  if (!barreEl) return;
 
-		  rowEl.appendChild(spot);
-		}
-		fretboardEl.appendChild(rowEl);
-	  }
-	}
+  const leftPercent = (startStr * 25) + 12.5;
+  const widthPercent = ((endStr - startStr) * 25);
+
+  barreEl.style.display = 'block';
+  barreEl.style.left = `${leftPercent}%`;
+  barreEl.style.setProperty('--width-percent', `${widthPercent}%`);
+}
 
   /* ==========================================================================
      3. CYCLE DES 4 ÉTATS ET MISE À JOUR VISUELLE
