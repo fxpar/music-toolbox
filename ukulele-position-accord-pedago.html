@@ -580,7 +580,7 @@
 
       <div class="config-group">
         <label for="string-name-input"><b data-i18n="stringNamesLabel">Noms des cordes :</b></label>
-        <input type="text" id="string-name-input" class="drawer-input" value="G, C, E, A">
+        <input type="text" id="string-name-input" class="drawer-input" data-i18n-val="stringNamesInput" value="Sol, Do, Mi, La">
         <small style="opacity: 0.7;" data-i18n="stringNamesHelp">Séparés par des virgules (ex: Sol, Do, Mi, La)</small>
       </div>
 
@@ -717,16 +717,16 @@
     
     <!-- Boutons de corde : déplacent uniquement la référence racine sans modifier les cases actives -->
     <button class="btn btn-secondary" onclick="changeRootReference(0)">
-      <span class="d-none d-md-inline">Corde 4</span> (G)
+      <span class="d-none d-md-inline">Corde 4</span> (Sol)
     </button>
     <button class="btn btn-secondary" onclick="changeRootReference(1)">
-      <span class="d-none d-md-inline">Corde 3</span> (C)
+      <span class="d-none d-md-inline">Corde 3</span> (Do)
     </button>
     <button class="btn btn-secondary" onclick="changeRootReference(2)">
-      <span class="d-none d-md-inline">Corde 2</span> (E)
+      <span class="d-none d-md-inline">Corde 2</span> (Mi)
     </button>
     <button class="btn btn-secondary" onclick="changeRootReference(3)">
-      <span class="d-none d-md-inline">Corde 1</span> (A)
+      <span class="d-none d-md-inline">Corde 1</span> (La)
     </button>
   </div>
 </footer>
@@ -737,6 +737,8 @@ const TRANSLATIONS = {
   fr: {
     <!-- btnLang: "🇫🇷 FR", -->
     btnLang: "FR",
+	stringNames: ["Sol", "Do", "Mi", "La"], // Version française
+	stringNamesInput: "Sol, Do, Mi, La", // Version française
     string: "Corde",
     resetBtn: '<span class="d-none d-md-inline">Réinitialiser</span><span class="d-inline d-md-none">▶️</span>',
     refFixed: "Référence fixée : Corde {stringNumber} ({stringName})",
@@ -789,6 +791,8 @@ const TRANSLATIONS = {
   en: {
     <!-- btnLang: "🇬🇧 EN", -->
     btnLang: "EN",
+	stringNames: ["G", "C", "E", "A"], // Notation anglo-saxonne
+	stringNamesInput: "G, C, E, A", // Notation anglo-saxonne
     string: "String",
     resetBtn: '<span class="d-none d-md-inline">Reset</span><span class="d-inline d-md-none">▶️</span>',
     refFixed: "Reference fixed: String {stringNumber} ({stringName})",
@@ -841,8 +845,10 @@ const TRANSLATIONS = {
   de: {
     <!-- btnLang: "🇩🇪 DE", -->
     btnLang: "DE",
+	stringNames: ["G", "C", "E", "A"], // Notation allemande/internationale
+	stringNamesInput: "G, C, E, A", // Notation allemande/internationale
     string: "Saite",
-    resetBtn: '<span class="d-none d-md-inline">Zurücksetzen</span><span class="d-inline d-md-none">Reset</span>',
+    resetBtn: '<span class="d-none d-md-inline">Zurücksetzen</span><span class="d-inline d-md-none">▶️</span>',
     refFixed: "Referenz fixiert: Saite {stringNumber} ({stringName})",
     intervalsFixed: "Intervalle fixiert auf Saite {stringNumber} ({stringName}).",
     refMoved: "Referenz auf Saite {stringNumber} ({stringName}) verschoben. Form beibehalten.",
@@ -899,8 +905,10 @@ const TRANSLATIONS = {
   let STRING_OFFSETS = [7, 0, 4, 9];
   const TOTAL_ROWS = 36; // 3 cycles complets de 12 demi-tons
   const ANCHOR_ROW = 12; // Ligne de référence du milieu
-  let STRING_NAMES = ["G", "C", "E", "A"];
-  //let STRING_NAMES = ["Sol", "Do", "Mi", "La"];
+  //let STRING_NAMES = ["G", "C", "E", "A"];
+  let STRING_NAMES = ["Sol", "Do", "Mi", "La"];
+  
+  let currentLang = 'fr'; // Langue par défaut
 
   // Noms d'intervalles relatifs
   let INTERVAL_NAMES = {
@@ -947,6 +955,7 @@ let dragStartSpot = null;
   const feedbackEl = document.getElementById('feedback');
   const themeBtn = document.getElementById('btn-theme');
   const drawerOverlay = document.getElementById('drawer-overlay');
+  
   
   
   // Gestion de la saisie utilisateur
@@ -1004,7 +1013,7 @@ document.getElementById('btn-apply-config').addEventListener('click', () => {
       STRING_NAMES[index] = name;
     });
   } else {
-    alert("Attention : Vous devez fournir exactement 4 noms séparés par des virgules.");
+    alert(t('alert4Strings') || "Attention : Vous devez fournir exactement 4 noms séparés par des virgules.");
     return;
   }
 
@@ -1015,6 +1024,11 @@ document.getElementById('btn-apply-config').addEventListener('click', () => {
     parseInt(document.getElementById('tune-2').value) || 0,
     parseInt(document.getElementById('tune-3').value) || 0
   ];
+
+// 2. MISE À JOUR IMMÉDIATE DE L'INTERFACE
+  // Appelle updateUI() pour rafraîchir les boutons de cordes, le feedback et les textes
+  updateUI();
+
 
   // 4. Rafraîchissement de l'affichage sur le manche
   renderState();
@@ -1031,7 +1045,7 @@ document.getElementById('btn-apply-config').addEventListener('click', () => {
   drawerOverlay.classList.remove('open');
 });
 
-let currentLang = 'fr'; // Langue par défaut
+
 
 // Fonction utilitaire pour récupérer les traductions et injecter les variables
 function t(key, params = {}) {
@@ -1046,6 +1060,7 @@ function t(key, params = {}) {
 function updateUI() {
   const langData = TRANSLATIONS[currentLang];
   
+   
   // Bouton de langue
   document.getElementById('btn-lang').innerText = langData.btnLang;
   
@@ -1055,6 +1070,12 @@ function updateUI() {
     if (langData[key]) {
       el.innerHTML = langData[key];
     }
+  });
+  
+  // 2. Mise à jour automatique des VALEURS d'inputs
+  document.querySelectorAll('[data-i18n-val]').forEach(el => {
+    const key = el.getAttribute('data-i18n-val');
+    if (langData[key]) el.value = langData[key];
   });
 
   // 2. Mise à jour dynamique des boutons de la bottom-sheet
