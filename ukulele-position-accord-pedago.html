@@ -265,7 +265,7 @@
       flex: 1;
       overflow-y: auto;
       position: relative;
-      background-color: var(--fretboard-wood);
+      background-color: var(--md-sys-color-surface-container-high);
       display: flex;
       justify-content: center;
       padding-bottom: 180px; /* Leave space for bottom sheet */
@@ -633,19 +633,19 @@
           <tr><td><strong data-i18n="cSus4">Suspendu 4</strong> (sus4)</td><td>R - 4 - 5</td></tr>
           <tr><td><strong data-i18n="cSus2">Suspendu 2</strong> (sus2)</td><td>R - 2 - 5</td></tr>
           <tr><td><strong data-i18n="cPower">Power Chord</strong> (5)</td><td>R - 5</td></tr>
-          <tr><td><strong>Majeur 7</strong> (maj7)</td><td>R - 3 - 5 - 7</td></tr>
+          <tr><td><strong data-i18n="cMaj7">Majeur 7</strong> (maj7)</td><td>R - 3 - 5 - 7</td></tr>
           <tr><td><strong data-i18n="cDom7">Dominante</strong> (7)</td><td>R - 3 - 5 - b7</td></tr>
-          <tr><td><strong>Mineur 7</strong> (m7)</td><td>R - b3 - 5 - b7</td></tr>
+          <tr><td><strong data-i18n="cMin7">Mineur 7</strong> (m7)</td><td>R - b3 - 5 - b7</td></tr>
           <tr><td><strong data-i18n="cHalfDim">Demi-diminué</strong> (m7b5)</td><td>R - b3 - b5 - b7</td></tr>
-          <tr><td><strong>Diminué 7</strong> (dim7)</td><td>R - b3 - b5 - bb7</td></tr>
-          <tr><td><strong>Mineur-Majeur 7</strong> (mMaj7)</td><td>R - b3 - 5 - 7</td></tr>
-          <tr><td><strong>Majeur 6</strong> (6)</td><td>R - 3 - 5 - 6</td></tr>
-          <tr><td><strong>Mineur 6</strong> (m6)</td><td>R - b3 - 5 - 6</td></tr>
+          <tr><td><strong data-i18n="cDim7">Diminué 7</strong> (dim7)</td><td>R - b3 - b5 - bb7</td></tr>
+          <tr><td><strong data-i18n="cMinMaj7">Mineur-Majeur 7</strong> (mMaj7)</td><td>R - b3 - 5 - 7</td></tr>
+          <tr><td><strong data-i18n="cMaj6">Majeur 6</strong> (6)</td><td>R - 3 - 5 - 6</td></tr>
+          <tr><td><strong data-i18n="cMin6">Mineur 6</strong> (m6)</td><td>R - b3 - 5 - 6</td></tr>
           <tr><td><strong data-i18n="cDom9">Dominante 9</strong> (9)</td><td>R - 3 - 5 - b7 - 9</td></tr>
-          <tr><td><strong>Majeur 9</strong> (maj9)</td><td>R - 3 - 5 - 7 - 9</td></tr>
-          <tr><td><strong>Mineur 9</strong> (m9)</td><td>R - b3 - 5 - b7 - 9</td></tr>
+          <tr><td><strong data-i18n="cMaj9">Majeur 9</strong> (maj9)</td><td>R - 3 - 5 - 7 - 9</td></tr>
+          <tr><td><strong data-i18n="cMin9">Mineur 9</strong> (m9)</td><td>R - b3 - 5 - b7 - 9</td></tr>
           <tr><td><strong data-i18n="c7Alt">7 Altéré</strong> (7alt)</td><td>R - 3 - b5 (ou #5) - b7 - b9 (ou #9)</td></tr>
-          <tr><td><strong>7 Altered (b9 / #9)</strong> (7b9 / 7#9)</td><td>R - 3 - 5 - b7 - b9 (ou #9)</td></tr>
+          <tr><td><strong data-i18n="c7Altb9">7 Alteré (b9 / #9)</strong> (7b9 / 7#9)</td><td>R - 3 - 5 - b7 - b9 (ou #9)</td></tr>
           <tr><td><strong data-i18n="cDom11">Dominante 11</strong> (11)</td><td>R - (3) - 5 - b7 - (9) - 11</td></tr>
           <tr><td><strong data-i18n="cDom13">Dominante 13</strong> (13)</td><td>R - 3 - 5 - b7 - (9) - 13</td></tr>
         </tbody>
@@ -777,6 +777,14 @@ const TRANSLATIONS = {
     cSus2: "Suspendu 2",
     cPower: "Power Chord",
     cDom7: "Dominante",
+    cDim7: "7 Diminué",
+	cMaj7: "Majeur 7",
+	cMin7: "Mineur 7",
+	cMaj6: "Majeur 6",
+	cMin6: "Mineur 6",
+	cMaj9: "Majeur 9",
+	cMin9: "Mineur 9",
+	c7Altb9: "7 Alteré (b9 / #9)",
     cHalfDim: "Demi-diminué",
     cDom9: "Dominante 9",
     c7Alt: "7 Altéré",
@@ -831,6 +839,14 @@ const TRANSLATIONS = {
     cSus2: "Suspended 2",
     cPower: "Power Chord",
     cDom7: "Dominant",
+	cDim7: "7 Diminished",
+	cMaj7: "Major 7",
+	cMin7: "Minor 7",
+	cMaj6: "Major 6",
+	cMin6: "Minor 6",
+	cMaj9: "Major 9",
+	cMin9: "Minor 9",
+	c7Altb9: "7 Altered (b9 / #9)",
     cHalfDim: "Half-diminished",
     cDom9: "Dominant 9",
     c7Alt: "7 Altered",
@@ -885,6 +901,14 @@ const TRANSLATIONS = {
     cSus2: "Vorhalt 2",
     cPower: "Powerchord",
     cDom7: "Dominante",
+	cDim7: "7 Vermindert",
+	cMaj7: "Dur 7",
+	cMin7: "Moll 7",
+	cMaj6: "Dur 6",
+	cMin6: "Moll 6",
+	cMaj9: "Dur 9",
+	cMin9: "Moll 9",
+	c7Altb9: "7 Alteriert (b9 / #9)",
     cHalfDim: "Halbvermindert",
     cDom9: "Dominante 9",
     c7Alt: "7 Alteriert",
