@@ -546,7 +546,8 @@
       <h1>Ukulele Harmony</h1>
       <div class="instruction" id="instruction-text">Majeur ➔ Mineur</div>
     </div>
-	<button class="icon-btn" id="btn-lang" aria-label="Change Language">🇫🇷 FR</button>
+	<!-- <button class="icon-btn" id="btn-lang" aria-label="Change Language">🇫🇷 FR</button> -->
+	<button class="icon-btn" id="btn-lang" aria-label="Change Language">FR</button>
     <button class="icon-btn" id="btn-theme" aria-label="Toggle Theme">🌙</button>
   </header>
 
@@ -710,9 +711,9 @@
 
   <div class="actions-row">
     <!-- Bouton Reset : remet la racine sur la corde 3 (index 1) et aligne la ligne centrale -->
-    <button class="btn btn-primary" onclick="resetPreset()">
-      Réinitialiser
-    </button>
+    <button class="btn btn-primary" data-i18n="resetBtn">
+  <span class="d-none d-md-inline">Réinitialiser</span><span class="d-inline d-md-none">▶️</span>
+</button>
     
     <!-- Boutons de corde : déplacent uniquement la référence racine sans modifier les cases actives -->
     <button class="btn btn-secondary" onclick="changeRootReference(0)">
@@ -734,9 +735,10 @@
   
 const TRANSLATIONS = {
   fr: {
-    btnLang: "🇫🇷 FR",
+    <!-- btnLang: "🇫🇷 FR", -->
+    btnLang: "FR",
     string: "Corde",
-    reset: "Réinitialiser",
+    resetBtn: '<span class="d-none d-md-inline">Réinitialiser</span><span class="d-inline d-md-none">▶️</span>',
     refFixed: "Référence fixée : Corde {stringNumber} ({stringName})",
     intervalsFixed: "Intervalles fixés sur la Corde {stringNumber} ({stringName}).",
     refMoved: "Référence déplacée sur la Corde {stringNumber} ({stringName}). La forme est conservée.",
@@ -785,9 +787,10 @@ const TRANSLATIONS = {
   },
 
   en: {
-    btnLang: "🇬🇧 EN",
+    <!-- btnLang: "🇬🇧 EN", -->
+    btnLang: "EN",
     string: "String",
-    reset: "Reset",
+    resetBtn: '<span class="d-none d-md-inline">Reset</span><span class="d-inline d-md-none">▶️</span>',
     refFixed: "Reference fixed: String {stringNumber} ({stringName})",
     intervalsFixed: "Intervals fixed on String {stringNumber} ({stringName}).",
     refMoved: "Reference moved to String {stringNumber} ({stringName}). Shape kept.",
@@ -836,9 +839,10 @@ const TRANSLATIONS = {
   },
 
   de: {
-    btnLang: "🇩🇪 DE",
+    <!-- btnLang: "🇩🇪 DE", -->
+    btnLang: "DE",
     string: "Saite",
-    reset: "Zurücksetzen",
+    resetBtn: '<span class="d-none d-md-inline">Zurücksetzen</span><span class="d-inline d-md-none">Reset</span>',
     refFixed: "Referenz fixiert: Saite {stringNumber} ({stringName})",
     intervalsFixed: "Intervalle fixiert auf Saite {stringNumber} ({stringName}).",
     refMoved: "Referenz auf Saite {stringNumber} ({stringName}) verschoben. Form beibehalten.",
@@ -1016,12 +1020,12 @@ document.getElementById('btn-apply-config').addEventListener('click', () => {
   renderState();
 
   // 5. Mise à jour des boutons de preset
-  const presetButtons = document.querySelectorAll('.bottom-sheet .actions-row .btn');
-  presetButtons.forEach((btn, idx) => {
-    const stringNumber = 4 - idx;
-    const stringName = STRING_NAMES[idx];
-    btn.innerHTML = `<span class="d-none d-md-inline">Corde ${stringNumber}</span> (${stringName})`;
-  });
+  <!-- const presetButtons = document.querySelectorAll('.bottom-sheet .actions-row .btn'); -->
+  <!-- presetButtons.forEach((btn, idx) => { -->
+    <!-- const stringNumber = 4 - idx; -->
+    <!-- const stringName = STRING_NAMES[idx]; -->
+    <!-- btn.innerHTML = `<span class="d-none d-md-inline">Corde ${stringNumber}</span> (${stringName})`; -->
+  <!-- }); -->
 
   // 6. Fermeture du drawer
   drawerOverlay.classList.remove('open');
