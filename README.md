@@ -7,6 +7,9 @@ Liste de petits outils pour aider à travailler un instrument ou à éditer ses 
 
 ##  Icônes des clés et armures 
 
+![KeySignatures](./images/key-signatures-svg.png)
+
+
 * 🚀 Tester l'application : [Ouvrir l'outil (Démo interactive)](https://fxpar.github.io/music-toolbox/key-signatures-svg.html)
 * 📄 Code source : [key-signatures-svg.html](https://github.com/fxpar/music-toolbox/blob/main/key-signatures-svg.html)
 
@@ -32,6 +35,10 @@ Licence des icônes crées: CC 4.0 (totalement libre pour toute utilisation pers
 ---
 
 ##  SongbookFx 
+
+![songbookfx](./images/songbookfx.png)
+
+
 
 * 🚀 Tester l'application : [Ouvrir l'outil (Démo interactive)](https://fxpar.github.io/music-toolbox/songbookfx.html)
 * 📄 Code source : [songbookfx.html](https://github.com/fxpar/music-toolbox/blob/main/songbookfx.html)
@@ -66,6 +73,9 @@ Fonctionnalités:
 
 ##  Editeur musical abc simple
 
+![abc-editeur-simple](./images/abc-editeur-simple.png)
+
+
 * 🚀 Tester l'application : [Ouvrir l'outil (Démo interactive)](https://fxpar.github.io/music-toolbox/abc-editeur-simple.html)
 * 📄 Code source : [abc-editeur-simple.html](https://github.com/fxpar/music-toolbox/blob/main/abc-editeur-simple.html)
 
@@ -99,6 +109,8 @@ Licence: CC BY-NC 4.0
 
 ## Entrainement Sens du temps
 
+![timing-trainer](./images/timing-trainer.png)
+
 * 🚀 Tester l'application : [Ouvrir l'outil (Démo interactive)](https://fxpar.github.io/music-toolbox/timing-trainer.html)
 * 📄 Code source : [timing-trainer.html](https://github.com/fxpar/music-toolbox/blob/main/timing-trainer.html)
 
@@ -127,6 +139,8 @@ Licence: CC BY-NC 4.0
 
 ## Entrainement rythme batterie
 
+![drum-licks](./images/drum-licks.png)
+
 * 🚀 Tester l'application : [Ouvrir l'outil (Démo interactive)](https://fxpar.github.io/music-toolbox/drum-licks.html)
 * 📄 Code source : [drum-licks.html](https://github.com/fxpar/music-toolbox/blob/main/drum-licks.html)
 
@@ -153,6 +167,8 @@ Licence: CC BY-NC 4.0
 ---
 
 ## Grille d'accords avec diagrammes
+
+![abc-grid+diagrams](./images/abc-grid+diagrams.png)
 
 * 🚀 Tester l'application : [Ouvrir l'outil (Démo interactive)](https://fxpar.github.io/music-toolbox/abc-grid+diagrams.html)
 * 📄 Code source : [abc-grid+diagrams.html](https://github.com/fxpar/music-toolbox/blob/main/abc-grid+diagrams.html)
@@ -185,6 +201,10 @@ Licence: CC BY-NC 4.0
 
 ## Quiz position des accords ukulélé
 
+![ukulele-position-accord-quiz](./images/ukulele-position-accord-quiz.png)
+
+
+
 * 🚀 Tester l'application : [Ouvrir l'outil (Démo interactive)](https://fxpar.github.io/music-toolbox/ukulele-position-accord-quiz.html)
 * 📄 Code source : [ukulele-position-accord-quiz.html](https://github.com/fxpar/music-toolbox/blob/main/ukulele-position-accord-quiz.html)
 
@@ -198,6 +218,9 @@ Librairies utilisées:
 ---
 
 ## Position des accords ukulélé (outil pédagogique)
+
+![ukulele-position-accord-pedago](./images/ukulele-position-accord-pedago.png)
+
 
 * 🚀 Tester l'application : [Ouvrir l'outil (Démo interactive)](https://fxpar.github.io/music-toolbox/ukulele-position-accord-pedago.html)
 * 📄 Code source : [ukulele-position-accord-pedago.html](https://github.com/fxpar/music-toolbox/blob/main/ukulele-position-accord-pedago.html)
@@ -222,6 +245,8 @@ Librairies utilisées:
 
 ## Quiz formules d'accord
 
+![quiz-formule-accords](./images/quiz-formule-accords.png)
+
 * 🚀 Tester l'application : [Ouvrir l'outil (Démo interactive)](https://fxpar.github.io/music-toolbox/quiz-formule-accords.html)
 * 📄 Code source : [quiz-formule-accords.html](https://github.com/fxpar/music-toolbox/blob/main/quiz-formule-accords.html)
 
@@ -235,6 +260,9 @@ Librairies utilisées:
 
 
 ## Moteur de recherche d'accord de ukulele
+
+![ukulele-chords-search](./images/ukulele-chords-search2.png)
+
 
 * 🚀 Tester l'application : [Ouvrir l'outil (Démo interactive)](https://fxpar.github.io/music-toolbox/ukulele-chords-search.html)
 * 📄 Code source : [ukulele-chords-search.html](https://github.com/fxpar/music-toolbox/blob/main/ukulele-chords-search.html)
@@ -260,6 +288,9 @@ Licence: CC BY-NC 4.0
 ---
 
 ## Grille de blues trainer
+
+![blues-grids](./images/blues-grids.png)
+
 
 * 🚀 Tester l'application : [Ouvrir l'outil (Démo interactive)](https://fxpar.github.io/music-toolbox/blues-grids.html)
 * 📄 Code source : [blues-grids.html](https://github.com/fxpar/music-toolbox/blob/main/blues-grids.html)
@@ -287,6 +318,9 @@ Licence: CC BY-NC 4.0
 
 
 ## Chord change trainer
+
+![chord-change](./images/chord-change.png)
+
 
 * 🚀 Tester l'application : [Ouvrir l'outil (Démo interactive)](https://fxpar.github.io/music-toolbox/chord-change.html)
 * 📄 Code source : [chord-change.html](https://github.com/fxpar/music-toolbox/blob/main/chord-change.html)
@@ -316,6 +350,9 @@ Licence: CC BY-NC 4.0
 
 ## Ear chord trainer
 
+![chord-ear-trainer](./images/chord-ear-trainer.png)
+
+
 * 🚀 Tester l'application : [Ouvrir l'outil (Démo interactive)](https://fxpar.github.io/music-toolbox/chord-ear-trainer.html)
 * 📄 Code source : [chord-ear-trainer.html](https://github.com/fxpar/music-toolbox/blob/main/chord-ear-trainer.html)
 
@@ -344,6 +381,9 @@ Licence: CC BY-NC 4.0
 
 
 ## Création de grilles de Blues / Jazz
+
+![abc-grid](./images/abc-grid.png)
+
 
 * 🚀 Tester l'application : [Ouvrir l'outil (Démo interactive)](https://fxpar.github.io/music-toolbox/abc-grid.html)
 * 📄 Code source : [abc-grid.html](https://github.com/fxpar/music-toolbox/blob/main/abc-grid.html)
@@ -378,6 +418,9 @@ Licence: CC BY-NC 4.0
 ---
 
 ##  Abc editor player
+
+![abc-editor-player](./images/abc-editor-player.png)
+
 
 * 🚀 Tester l'application : [Ouvrir l'outil (Démo interactive)](https://fxpar.github.io/music-toolbox/abc-editor-player.html)
 * 📄 Code source : [abc-editor-player.html](https://github.com/fxpar/music-toolbox/blob/main/abc-editor-player.html)
@@ -416,6 +459,9 @@ Licence: CC BY-NC 4.0
 
 ## Metronome graduel
 
+![metronome-graduel](./images/metronome-graduel.png)
+
+
 * 🚀 Tester l'application : [Ouvrir l'outil (Démo interactive)](https://fxpar.github.io/music-toolbox/metronome-graduel.html)
 * 📄 Code source : [metronome-graduel.html](https://github.com/fxpar/music-toolbox/blob/main/metronome-graduel.html)
 
@@ -449,6 +495,9 @@ Licence: CC BY-NC 4.0
 
 ## Reconnaissance d'accords
 
+![chord-recognition](./images/chord-recognition.png)
+
+
 * 🚀 Tester l'application : [Ouvrir l'outil (Démo interactive)](https://fxpar.github.io/music-toolbox/chord-recognition.html)
 * 📄 Code source : [chord-recognition.html](https://github.com/fxpar/music-toolbox/blob/main/chord-recognition.html)
 
@@ -465,6 +514,9 @@ Licence: CC BY-NC 4.0
 
 
 ## Constance du volume
+
+![volume-tester](./images/volume-tester.png)
+
 
 * 🚀 Tester l'application : [Ouvrir l'outil (Démo interactive)](https://fxpar.github.io/music-toolbox/volume-tester.html)
 * 📄 Code source : [volume-tester.html](https://github.com/fxpar/music-toolbox/blob/main/volume-tester.html)
@@ -483,6 +535,9 @@ Licence: CC BY-NC 4.0
 
 
 ## Uke Hero
+
+![uku-hero](./images/uku-hero.png)
+
 
 * 🚀 Tester l'application : [Ouvrir l'outil (Démo interactive)](https://fxpar.github.io/music-toolbox/uku-hero.html)
 * 📄 Code source : [uku-hero.html](https://github.com/fxpar/music-toolbox/blob/main/uku-hero.html)

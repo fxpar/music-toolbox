@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="fr" data-bs-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Outils Musicaux — Boîte à outils interactive</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <style>
+    :root { --card-bg: #1e2229; }
+    body { background-color: #121418; color: #e1e6ed; font-family: system-ui, -apple-system, sans-serif; }
+    .hero-header { background: linear-gradient(135deg, #1d263b 0%, #111827 100%); border-bottom: 1px solid #2d3748; }
+    .tool-card { background: var(--card-bg); border: 1px solid #2d3748; transition: transform 0.2s, box-shadow 0.2s; height: 100%; display: flex; flex-direction: column; }
+    .tool-card:hover { transform: translateY(-4px); box-shadow: 0 10px 20px rgba(0,0,0,0.4); border-color: #4a5568; }
+    .tool-img { height: 180px; object-fit: cover; width: 100%; border-bottom: 1px solid #2d3748; }
+    .badge-tag { font-size: 0.75rem; background-color: #2d3748; color: #a0aec0; }
+    .badge-ai { font-size: 0.75rem; background-color: #2b4c7e; color: #90cdf4; }
+    .badge-lic { font-size: 0.75rem; background-color: #324a38; color: #9ae6b4; }
+  </style>
+</head>
+<body>
+
+  <!-- En-tête / Hero -->
+  <header class="hero-header py-5 text-center mb-5">
+    <div class="container">
+      <h1 id="hero-title" class="display-4 fw-bold text-white mb-3"><i class="bi bi-music-note-list me-2"></i>Outils Musicaux</h1>
+      <p id="hero-desc" class="lead text-muted mx-auto" style="max-width: 700px;">
+        Chargement de la bibliothèque d'outils...
+      </p>
+    </div>
+  </header>
+
+  <!-- Grille des outils -->
+  <main class="container mb-5">
+    <div class="row g-4" id="tools-grid">
+      <!-- Les cartes seront injectées ici par JS -->
+    </div>
+  </main>
+
+  <!-- Footer avec licences / liens -->
+  <footer class="border-top border-secondary py-4 text-center text-muted fs-7">
+    <div class="container" id="footer-content">
+      <p>Projet Music Toolbox</p>
+    </div>
+  </footer>
+
+  <script>
+    async function buildDashboard() {
+      try {
+        // 1. Charger le fichier README.md
+        const response = await fetch('README.md');
+        if (!response.ok) throw new Error('Impossible de lire le fichier README.md');
+        const markdown = await response.text();
+
+        // 2. Découper le markdown par section (séparateur "---")
+        const sections = markdown.split(/\r?\n---\r?\n/);
+        const toolsGrid = document.getElementById('tools-grid');
+        toolsGrid.innerHTML = '';
+
+        // Header extraction (Première section)
+        const headerTokens = marked.lexer(sections[0]);
+        const titleToken = headerTokens.find(t => t.type === 'heading' && t.depth === 1);
+        if (titleToken) document.getElementById('hero-title').innerHTML = `<i class="bi bi-music-note-list me-2"></i>${titleToken.text}`;
+        
+        const descToken = headerTokens.find(t => t.type === 'paragraph');
+        if (descToken) document.getElementById('hero-desc').innerText = descToken.text;
+
+        // 3. Parcourir les autres sections (les outils)
+        sections.slice(1).forEach(section => {
+          const tokens = marked.lexer(section);
+
+          // Extraction du titre H2
+          const h2 = tokens.find(t => t.type === 'heading' && t.depth === 2);
+          if (!h2) {
+            // S'il n'y a pas de H2, c'est probablement le footer (Licences, Code Source)
+            document.getElementById('footer-content').innerHTML = marked.parse(section);
+            return;
+          }
+
+          // Extraction des liens (Démo & Code source)
+          let demoUrl = '#', sourceUrl = '#';
+          tokens.forEach(t => {
+            if (t.type === 'list') {
+              t.items.forEach(item => {
+                if (item.text.includes("Tester l'application")) {
+                  const match = item.text.match(/\((https?:\/\/[^\)]+)\)/);
+                  if (match) demoUrl = match[1];
+                }
+                if (item.text.includes("Code source")) {
+                  const match = item.text.match(/\((https?:\/\/[^\)]+)\)/);
+                  if (match) sourceUrl = match[1];
+                }
+              });
+            }
+          });
+
+          // Extraction des images
+          let imageUrl = null;
+          tokens.forEach(t => {
+            if (t.type === 'paragraph') {
+              const imgMatch = t.text.match(/!\[.*?\]\((.*?)\)/);
+              if (imgMatch) imageUrl = imgMatch[1];
+            }
+          });
+
+          // Extraction du texte descriptif (gras principal)
+          const descMatch = section.match(/\*\*([^*]+)\*\*/);
+          const description = descMatch ? descMatch[1] : '';
+
+          // Extraction des fonctionnalités
+          let featuresHtml = '';
+          const featureList = tokens.find(t => t.type === 'list' && t.raw.includes('Fonctionnalités'));
+          if (featureList) {
+            featuresHtml = `<ul class="small ps-3 text-secondary my-2">` + 
+              featureList.items.map(i => `<li>${marked.parseInline(i.text)}</li>`).join('') + 
+              `</ul>`;
+          }
+
+          // Extraction des métadonnées (IA & Licence)
+          const hasAI = section.toLowerCase().includes('gemini') || section.toLowerCase().includes('deepseek') || section.toLowerCase().includes('code créé par ia');
+          const hasLic = section.toLowerCase().includes('cc by-nc');
+
+          // 4. Génération de la Carte HTML
+          const col = document.createElement('div');
+          col.className = 'col-12 col-md-6 col-lg-4';
+          col.innerHTML = `
+            <div class="card tool-card rounded-3 overflow-hidden">
+              ${imageUrl ? `<img src="${imageUrl}" class="tool-img" alt="${h2.text}">` : ''}
+              <div class="card-body d-flex flex-column p-4">
+                <div class="d-flex align-items-center justify-content-between mb-2">
+                  <h3 class="h5 card-title text-white fw-bold m-0">${h2.text}</h3>
+                  <div class="d-flex gap-1">
+                    ${hasAI ? `<span class="badge badge-ai" title="Généré par IA">IA</span>` : ''}
+                    ${hasLic ? `<span class="badge badge-lic">CC BY-NC</span>` : ''}
+                  </div>
+                </div>
+                
+                <p class="card-text text-light-50 small flex-grow-0 mb-3">${description}</p>
+                
+                ${featuresHtml ? `
+                  <details class="mb-3">
+                    <summary class="small text-primary style="cursor:pointer;">Voir les fonctionnalités</summary>
+                    ${featuresHtml}
+                  </details>
+                ` : ''}
+
+                <div class="mt-auto pt-3 border-top border-secondary d-flex justify-content-between align-items-center">
+                  <a href="${demoUrl}" target="_blank" class="btn btn-sm btn-primary px-3 fw-semibold">
+                    <i class="bi bi-play-fill me-1"></i> Tester
+                  </a>
+                  <a href="${sourceUrl}" target="_blank" class="btn btn-sm btn-outline-secondary px-2" title="Code Source">
+                    <i class="bi bi-code-slash me-1"></i> Code
+                  </a>
+                </div>
+              </div>
+            </div>
+          `;
+
+          toolsGrid.appendChild(col);
+        });
+
+      } catch (err) {
+        console.error(err);
+        document.getElementById('hero-desc').innerHTML = `<span class="text-danger">Erreur de chargement du README.md. Assurez-vous d'héberger la page via un serveur (ex: GitHub Pages).</span>`;
+      }
+    }
+
+    // Exécution au chargement
+    document.addEventListener('DOMContentLoaded', buildDashboard);
+  </script>
+</body>
+</html>
