@@ -263,8 +263,7 @@
         // Construction du nom des clés (ex: treble+bass)
         const clefsName = clefsToDraw.join('+');
         const keyName = keyInfo.code.replace('#', 'sharp');
-		const chosenColor = colorPicker.value;
-        const fileName = `key-${keyName}-${clefsName}-Color${chosenColor}.svg`;
+        const fileName = `key-${keyName}-${clefsName}`;
 
         btn.onclick = () => downloadSVG(`paper-${index}`, fileName);
         card.appendChild(btn);
@@ -315,10 +314,14 @@
     }
 
     // --- Export SVG avec couleur personnalisée inscrite ---
-    function downloadSVG(containerId, filename) {
+    function downloadSVG(containerId, filePrefix) {
       const container = document.getElementById(containerId);
       const svgElement = container.querySelector('svg').cloneNode(true);
       const chosenColor = colorPicker.value;
+	  
+	  // On nettoie le '#' de la couleur pour éviter des soucis dans le nom de fichier
+      const colorCode = chosenColor.replace('#', '');
+      const filename = `${filePrefix}-color-${colorCode}.svg`;
 
       // Appliquer la couleur choisie directement dans les attributs des éléments SVG pour l'export
       const elements = svgElement.querySelectorAll('path, rect');
