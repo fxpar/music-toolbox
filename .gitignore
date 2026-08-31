@@ -80,6 +80,7 @@ build/
 
 # Dossiers d'archives
 _archives/
+**/_archives/**
 
 # ============================================
 # EXEMPLES DE CE QUI SERA IGNORÉ VS GARDÉ
