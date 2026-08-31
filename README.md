@@ -7,8 +7,8 @@ Liste de petits outils pour aider à travailler un instrument ou à éditer ses 
 
 ##  Icônes des clés et armures 
 
-* 🚀 Tester l'application : [Ouvrir l'outil (Démo interactive)](https://fxpar.github.io/key-signatures-svg.html)
-* 📄 Code source : [songbookfx.html](https://github.com/fxpar/music-toolbox/blob/main/key-signatures-svg.html)
+* 🚀 Tester l'application : [Ouvrir l'outil (Démo interactive)](https://fxpar.github.io/music-toolbox/key-signatures-svg.html)
+* 📄 Code source : [key-signatures-svg.html](https://github.com/fxpar/music-toolbox/blob/main/key-signatures-svg.html)
 
 **Un outil pour fabriquer les icônes des différentes armures de musique à télécharger.**
 
