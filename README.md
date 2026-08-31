@@ -20,6 +20,14 @@ Fonctionnalités:
 * bouton de téléchargement
 * nom du fichier incluant la ou les clés et le code couleur
 
+Librairies utilisées: 
+* Vexflow
+
+Code créé par IA (Gemini), et prompté par moi 😉
+
+Licence: CC BY-NC 4.0
+
+Licence des icônes crées: CC 4.0 (totalement libre pour toute utilisation personnelle, éducative, commerciale ou autre... 😉)
 
 ---
 
@@ -335,7 +343,7 @@ Licence: CC BY-NC 4.0
 ---
 
 
-## Grid creation
+## Création de grilles de Blues / Jazz
 
 * 🚀 Tester l'application : [Ouvrir l'outil (Démo interactive)](https://fxpar.github.io/music-toolbox/abc-grid.html)
 * 📄 Code source : [abc-grid.html](https://github.com/fxpar/music-toolbox/blob/main/abc-grid.html)
