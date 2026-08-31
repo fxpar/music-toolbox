@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Générateur SVG - Key Signatures VexFlow</title>
+  <script src="https://cdn.jsdelivr.net/npm/vexflow@4.2.2/build/cjs/vexflow.js"></script>
+  <style>
+    :root {
+      --bg-color: #f4f4f9;
+      --card-bg: #ffffff;
+      --text-color: #333333;
+      --border-color: #dddddd;
+      --btn-bg: #0066cc;
+      --btn-hover: #0052a3;
+      /* Initialiser la couleur par défaut ici */
+      --score-color: #000000; 
+    }
+
+    [data-theme="dark"] {
+      --bg-color: #1a1a1a;
+      --card-bg: #2d2d2d;
+      --text-color: #f0f0f0;
+      --border-color: #444444;
+      --btn-bg: #3a86ff;
+      --btn-hover: #1d65d8;
+      /* IMPORTANT : Ne pas forcer --score-color en blanc ici, 
+         sinon elle écrase la valeur du ColorPicker. 
+         Le script JS s'occupe de l'ajuster si nécessaire. */
+    }
+
+    body {
+      font-family: system-ui, sans-serif;
+      background: var(--bg-color);
+      color: var(--text-color);
+      padding: 20px;
+      margin: 0;
+      transition: background 0.3s, color 0.3s;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      max-width: 1200px;
+      margin: 0 auto 20px auto;
+    }
+
+    h1 { margin: 0; font-size: 1.8rem; }
+
+    .theme-toggle {
+      background: none;
+      border: 1px solid var(--border-color);
+      color: var(--text-color);
+      padding: 8px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 1.2rem;
+    }
+
+    .controls-panel {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 15px 20px;
+      max-width: 1200px;
+      margin: 0 auto 25px auto;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      align-items: center;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    }
+
+    .control-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .control-group label {
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+
+    .checkbox-group {
+      display: flex;
+      gap: 12px;
+      font-weight: normal;
+    }
+
+    .checkbox-group label {
+      font-weight: normal;
+      cursor: pointer;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 20px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border-radius: 8px;
+      padding: 15px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      transition: background 0.3s;
+    }
+
+    .card h3 {
+      margin: 0 0 10px 0;
+      font-size: 0.95rem;
+      text-align: center;
+    }
+
+    .btn-download {
+      margin-top: 10px;
+      padding: 8px 12px;
+      background: var(--btn-bg);
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.85rem;
+    }
+
+    .btn-download:hover { background: var(--btn-hover); }
+
+    /* Forcer la couleur du SVG via la variable CSS pour l'affichage écran */
+    .paper svg path, .paper svg rect {
+      fill: var(--score-color) !important;
+      stroke: var(--score-color) !important;
+    }
+	.paper svg [class*="vf-stave"] {
+      opacity: 0.45;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Armatures VexFlow (SVG)</h1>
+    <button id="themeToggle" class="theme-toggle" title="Changer le mode">🌙</button>
+  </header>
+
+  <!-- Panneau de configuration -->
+  <div class="controls-panel">
+    <div class="control-group">
+      <label>Clés :</label>
+      <div class="checkbox-group">
+        <label><input type="checkbox" class="clef-cb" value="treble" checked> Sol (Treble)</label>
+        <label><input type="checkbox" class="clef-cb" value="bass"> Fa (Bass)</label>
+        <label><input type="checkbox" class="clef-cb" value="alto"> Ut (Alto)</label>
+        <label><input type="checkbox" class="clef-cb" value="tenor"> Ut (Ténor)</label>
+        <label><input type="checkbox" class="clef-cb" value="percussion"> Percussion</label>
+      </div>
+    </div>
+
+    <div class="control-group">
+      <label for="showEndBar">
+        <input type="checkbox" id="showEndBar"> Mesure de fin fermée
+      </label>
+    </div>
+
+    <div class="control-group">
+      <label for="colorPicker">Couleur SVG :</label>
+      <input type="color" id="colorPicker" value="#000000">
+    </div>
+  </div>
+
+  <div id="grid" class="grid"></div>
+
+  <script>
+    const { Renderer, Stave, StaveConnector, Barline } = Vex.Flow;
+
+    const keySignatures = [
+      { code: 'C', name: 'Do Maj / La min (0)' },
+      { code: 'G', name: 'Sol Maj / Mi min (1♯)' },
+      { code: 'D', name: 'Ré Maj / Si min (2♯)' },
+      { code: 'A', name: 'La Maj / Fa♯ min (3♯)' },
+      { code: 'E', name: 'Mi Maj / Do♯ min (4♯)' },
+      { code: 'B', name: 'Si Maj / Sol♯ min (5♯)' },
+      { code: 'F#', name: 'Fa♯ Maj / Ré♯ min (6♯)' },
+      { code: 'C#', name: 'Do♯ Maj / La♯ min (7♯)' },
+      { code: 'F', name: 'Fa Maj / Ré min (1♭)' },
+      { code: 'Bb', name: 'Si♭ Maj / Sol min (2♭)' },
+      { code: 'Eb', name: 'Mi♭ Maj / Do min (3♭)' },
+      { code: 'Ab', name: 'La♭ Maj / Fa min (4♭)' },
+      { code: 'Db', name: 'Ré♭ Maj / Si♭ min (5♭)' },
+      { code: 'Gb', name: 'Sol♭ Maj / Mi♭ min (6♭)' },
+      { code: 'Cb', name: 'Do♭ Maj / La♭ min (7♭)' }
+    ];
+
+    const grid = document.getElementById('grid');
+    const themeToggle = document.getElementById('themeToggle');
+    const colorPicker = document.getElementById('colorPicker');
+    const showEndBarCb = document.getElementById('showEndBar');
+    const clefCbs = document.querySelectorAll('.clef-cb');
+
+    // --- Mode Jour / Nuit ---
+    let isDark = false;
+    themeToggle.addEventListener('click', () => {
+      isDark = !isDark;
+      document.body.setAttribute('data-theme', isDark ? 'dark' : 'light');
+      themeToggle.innerText = isDark ? '☀️' : '🌙';
+      
+      // Ajuster la couleur par défaut si l'utilisateur n'a pas touché au sélecteur de couleur
+      const currentColor = colorPicker.value;
+      if (isDark && (currentColor === '#000000' || currentColor === '#000')) {
+        colorPicker.value = '#ffffff';
+        updateScoreColor('#ffffff');
+      } else if (!isDark && (currentColor === '#ffffff' || currentColor === '#fff')) {
+        colorPicker.value = '#000000';
+        updateScoreColor('#000000');
+      }
+    });
+
+    colorPicker.addEventListener('input', (e) => updateScoreColor(e.target.value));
+
+    function updateScoreColor(color) {
+      document.documentElement.style.setProperty('--score-color', color);
+    }
+
+    // --- Écouteurs d'options ---
+    clefCbs.forEach(cb => cb.addEventListener('change', renderAll));
+    showEndBarCb.addEventListener('change', renderAll);
+
+    // --- Génération des portées ---
+    function renderAll() {
+      grid.innerHTML = '';
+      
+      // Récupérer les clés sélectionnées
+      const selectedClefs = Array.from(clefCbs)
+        .filter(cb => cb.checked)
+        .map(cb => cb.value);
+
+      // Si aucune clé n'est cochée, forcer au moins 'treble'
+      const clefsToDraw = selectedClefs.length > 0 ? selectedClefs : ['treble'];
+      const showEndBar = showEndBarCb.checked;
+
+      keySignatures.forEach((keyInfo, index) => {
+        const card = document.createElement('div');
+        card.className = 'card';
+
+        const title = document.createElement('h3');
+        title.innerText = keyInfo.name;
+        card.appendChild(title);
+
+        const paperDiv = document.createElement('div');
+        paperDiv.id = `paper-${index}`;
+        paperDiv.className = 'paper';
+        card.appendChild(paperDiv);
+
+        const btn = document.createElement('button');
+        btn.className = 'btn-download';
+        btn.innerText = 'Télécharger SVG';
+        
+        // Construction du nom des clés (ex: treble+bass)
+        const clefsName = clefsToDraw.join('+');
+        const keyName = keyInfo.code.replace('#', 'sharp');
+		const chosenColor = colorPicker.value;
+        const fileName = `key-${keyName}-${clefsName}-Color${chosenColor}.svg`;
+
+        btn.onclick = () => downloadSVG(`paper-${index}`, fileName);
+        card.appendChild(btn);
+
+        grid.appendChild(card);
+
+        // Calcul dynamique de la hauteur en fonction du nombre de portées
+        const staveHeight = 70;
+        const totalHeight = Math.max(120, clefsToDraw.length * staveHeight + 40);
+
+        const renderer = new Renderer(paperDiv, Renderer.Backends.SVG);
+        renderer.resize(180, totalHeight);
+        const context = renderer.getContext();
+
+        const staves = [];
+
+        clefsToDraw.forEach((clef, cIndex) => {
+          const yPos = 10 + (cIndex * staveHeight);
+          const stave = new Stave(20, yPos, 140);
+
+          if (!showEndBar) {
+            stave.setBegBarType(Barline.type.NONE);
+            stave.setEndBarType(Barline.type.NONE);
+          }
+
+          stave.addClef(clef);
+          stave.addKeySignature(keyInfo.code);
+          stave.setContext(context).draw();
+          staves.push(stave);
+        });
+
+        // Dessiner le système (Accolade + Barre) uniquement s'il y a plusieurs portées
+        if (staves.length > 1) {
+          const firstStave = staves[0];
+          const lastStave = staves[staves.length - 1];
+
+          const brace = new StaveConnector(firstStave, lastStave);
+          brace.setType(StaveConnector.type.BRACE);
+          brace.setContext(context).draw();
+
+          const line = new StaveConnector(firstStave, lastStave);
+          line.setType(StaveConnector.type.SINGLE_LEFT);
+          line.setContext(context).draw();
+        }
+      });
+
+      updateScoreColor(colorPicker.value);
+    }
+
+    // --- Export SVG avec couleur personnalisée inscrite ---
+    function downloadSVG(containerId, filename) {
+      const container = document.getElementById(containerId);
+      const svgElement = container.querySelector('svg').cloneNode(true);
+      const chosenColor = colorPicker.value;
+
+      // Appliquer la couleur choisie directement dans les attributs des éléments SVG pour l'export
+      const elements = svgElement.querySelectorAll('path, rect');
+      elements.forEach(el => {
+        el.setAttribute('fill', chosenColor);
+        el.setAttribute('stroke', chosenColor);
+      });
+	  
+	  // Conservation de l'opacité sur la portée pour le fichier téléchargé
+      const staves = svgElement.querySelectorAll('[class*="vf-stave"]');
+      staves.forEach(stave => {
+        stave.setAttribute('opacity', '0.45');
+      });
+
+      const serializer = new XMLSerializer();
+      let svgString = serializer.serializeToString(svgElement);
+
+      if (!svgString.match(/^<svg[^>]+xmlns="http\:\/\/www\.w3\.org\/2000\/svg"/)) {
+        svgString = svgString.replace(/^<svg/, '<svg xmlns="http://www.w3.org/2000/svg"');
+      }
+
+      const blob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    }
+
+    // Premier rendu au chargement
+    renderAll();
+  </script>
+</body>
+</html>
