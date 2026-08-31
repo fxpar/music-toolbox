@@ -16,6 +16,7 @@ Fonctionnalités:
 * clés disponibles : sol (treble), fa (bass), ut (tenor),  ut(alto), percussion
 * choix d'une ou plusieurs clés (en système)
 * choix de la couleur (les lignes sont un peu plus claires)
+* choix d'avoir une mesure ouverte (défaut) ou fermée
 * bouton de téléchargement
 * nom du fichier incluant la ou les clés et le code couleur
 
