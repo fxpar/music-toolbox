@@ -5,6 +5,38 @@ Liste de petits outils pour aider à travailler un instrument ou à éditer ses 
 
 ---
 
+##  Convertisseur tablature Bass → Ukulélé
+
+![convertisseur-tab-bass-ukulele](./images/convertisseur-tab-bass-ukulele.png)
+
+
+* 🚀 Tester l'application : [Ouvrir l'outil (Démo interactive)](https://fxpar.github.io/music-toolbox/convertisseur-tab-bass-ukulele.html)
+* 📄 Code source : [key-signatures-svg.html](https://github.com/fxpar/music-toolbox/blob/main/convertisseur-tab-bass-ukulele.html)
+
+**Un outil convertir les tablatures de bass en partition / tablature Ukulélé. On saisie les notes au format alphatab (12.2 veut dire douzième frette sur la deuxième corde).**
+
+Fonctionnalités:
+* Tuning bass
+* Tuning ukulele
+* choix des armures (source et destination)
+* choix du nombre d'octave de transposition
+* joue les notes de départ (version midi allégée dans alphatab)
+* joue la partition (version midi plus sophistiquée dans abcjs)
+* copier chaque code
+
+
+Librairies utilisées: 
+* Alphatab
+* Abcjs (de Paul Rosen)
+* bootstrap 5
+
+Code créé par IA (Gemini), et prompté par moi 😉
+
+Licence: CC BY-NC 4.0
+
+
+---
+
 ##  Icônes des clés et armures 
 
 ![KeySignatures](./images/key-signatures-svg.png)
