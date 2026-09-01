@@ -33,13 +33,26 @@
 
           <label class="form-label">Armature :</label>
           <select id="bassKeySignature" class="form-select">
-            <option value="C" selected>Do Maj / La min (C)</option>
-            <option value="G">Sol Maj (1#)</option>
-            <option value="D">Ré Maj (2#)</option>
-            <option value="F">Fa Maj (1b)</option>
-            <option value="Bb">Si bémol Maj (2b)</option>
-            <option value="Eb">Mi bémol Maj (3b)</option>
-          </select>
+		  <option value="C" selected>Do Maj / La min (C / Am - 0)</option>
+		  
+		  <!-- Dièses -->
+		  <option value="G">Sol Maj / Mi min (G / Em - 1#)</option>
+		  <option value="D">Ré Maj / Si min (D / Bm - 2#)</option>
+		  <option value="A">La Maj / Fa# min (A / F#m - 3#)</option>
+		  <option value="E">Mi Maj / Do# min (E / C#m - 4#)</option>
+		  <option value="B">Si Maj / Sol# min (B / G#m - 5#)</option>
+		  <option value="F#">Fa# Maj / Ré# min (F# / D#m - 6#)</option>
+		  <option value="C#">Do# Maj / La# min (C# / A#m - 7#)</option>
+
+		  <!-- Bémols -->
+		  <option value="F">Fa Maj / Ré min (F / Dm - 1b)</option>
+		  <option value="Bb">Si bémol Maj / Sol min (Bb / Gm - 2b)</option>
+		  <option value="Eb">Mi bémol Maj / Do min (Eb / Cm - 3b)</option>
+		  <option value="Ab">La bémol Maj / Fa min (Ab / Fm - 4b)</option>
+		  <option value="Db">Ré bémol Maj / Si bémol min (Db / Bbm - 5b)</option>
+		  <option value="Gb">Sol bémol Maj / Mi bémol min (Gb / Ebm - 6b)</option>
+		  <option value="Cb">Do bémol Maj / La bémol min (Cb / Abm - 7b)</option>
+		</select>
         </div>
       </div>
     </div>
@@ -82,13 +95,27 @@
           <div>
             <label class="form-label">Armature ABC (Key) :</label>
             <select id="keySignature" class="form-select mb-3">
-              <option value="C" selected>Do Maj / La min (C)</option>
-              <option value="G">Sol Maj (1#)</option>
-              <option value="D">Ré Maj (2#)</option>
-              <option value="F">Fa Maj (1b)</option>
-              <option value="Bb">Si bémol Maj (2b)</option>
-              <option value="Eb">Mi bémol Maj (3b)</option>
-            </select>
+  <!-- Armature neutre -->
+  <option value="C" selected>Do Majeur / La mineur (C / Am - Pas d'altération)</option>
+  
+  <!-- Armatures avec dièses (#) -->
+  <option value="G">Sol Majeur / Mi mineur (G / Em - 1#)</option>
+  <option value="D">Ré Majeur / Si mineur (D / Bm - 2#)</option>
+  <option value="A">La Majeur / Fa# mineur (A / F#m - 3#)</option>
+  <option value="E">Mi Majeur / Do# mineur (E / C#m - 4#)</option>
+  <option value="B">Si Majeur / Sol# mineur (B / G#m - 5#)</option>
+  <option value="F#">Fa# Majeur / Ré# mineur (F# / D#m - 6#)</option>
+  <option value="C#">Do# Majeur / La# mineur (C# / A#m - 7#)</option>
+
+  <!-- Armatures avec bémols (b) -->
+  <option value="F">Fa Majeur / Ré mineur (F / Dm - 1b)</option>
+  <option value="Bb">Si bémol Majeur / Sol mineur (Bb / Gm - 2b)</option>
+  <option value="Eb">Mi bémol Majeur / Do mineur (Eb / Cm - 3b)</option>
+  <option value="Ab">La bémol Majeur / Fa mineur (Ab / Fm - 4b)</option>
+  <option value="Db">Ré bémol Majeur / Si bémol mineur (Db / Bbm - 5b)</option>
+  <option value="Gb">Sol bémol Majeur / Mi bémol mineur (Gb / Ebm - 6b)</option>
+  <option value="Cb">Do bémol Majeur / La bémol mineur (Cb / Abm - 7b)</option>
+</select>
           </div>
           <button id="btnConvert" class="btn btn-primary w-100">Actualiser & Rendre</button>
         </div>
