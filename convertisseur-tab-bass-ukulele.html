@@ -20,7 +20,7 @@
   <div class="row g-3 mb-4">
     <div class="col-md-3">
       <div class="card h-100 shadow-sm">
-        <div class="card-header bg-primary text-white">Source : Basse</div>
+        <div class="card-header bg-secondary text-white">Source : Basse</div>
         <div class="card-body">
           <label class="form-label">Accordage (Corde 4 à 1) :</label>
           <input type="text" id="bassTuning" class="form-control mb-2" value="E1,A1,D2,G2">
@@ -46,7 +46,7 @@
 
     <div class="col-md-3">
       <div class="card h-100 shadow-sm">
-        <div class="card-header bg-success text-white">Destination : Ukulélé</div>
+        <div class="card-header bg-secondary text-white">Destination : Ukulélé</div>
         <div class="card-body">
           <label class="form-label">Accordage (Corde 4 à 1) :</label>
           <input type="text" id="ukuTuning" class="form-control mb-2" value="G3,C3,E3,A3">
@@ -62,7 +62,7 @@
 
     <div class="col-md-3">
       <div class="card h-100 shadow-sm">
-        <div class="card-header bg-warning text-dark">Transposition Ukulélé</div>
+        <div class="card-header bg-secondary text-dark">Transposition Ukulélé</div>
         <div class="card-body">
           <label class="form-label">Décalage d'octave :</label>
           <select id="octaveShift" class="form-select">
@@ -96,13 +96,10 @@
     </div>
   </div>
 
-    <div class="mb-4">
-    <label class="form-label fw-bold">Entrée Riff Basse (Format: 12.3 0.4 2.2 ...)</label>
-    <textarea id="inputBassTab" class="form-control" rows="2">12.1 10.2 12.1 10.2 13.1 12</textarea>
-  </div>
+
 
   <div class="card shadow-sm mb-4">
-    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+    <div class="card-header bg-secondary text-white d-flex justify-content-between align-items-center">
       <span>Rendu Basse (Source)</span>
       <button class="btn btn-sm btn-light" onclick="copyToClipboard('outBassAlphaTex')">Copier AlphaTex Basse</button>
     </div>
@@ -117,11 +114,30 @@
   </div>
   
 
+<!-- Bloc Saisie Riff Basse -->
+<div class="card shadow-sm mb-4 border  border-primary border-2">
+  <div class="card-header bg-primary text-white  d-flex justify-content-between align-items-center py-2">
+    <span class="fw-bold">
+      <i class="bi bi-pencil-square me-2"></i>Entrée Riff Basse
+    </span>
+    <small class="text-white-50">Format : <strong>frette.corde</strong> (ex: 12.3 0.4 2.2)</small>
+  </div>
+  <div class="card-body bg-body-tertiary">
+    <textarea 
+      id="inputBassTab" 
+      class="form-control font-monospace fs-5 border-2" 
+      rows="2" 
+      placeholder="Entrez vos notes ici..."
+      style="letter-spacing: 1px;"
+    >12.1 10.2 12.1 10.2 13.1 12</textarea>
+  </div>
+</div>
+
 
   <div class="row g-4">
     <div class="col-md-6">
       <div class="card shadow-sm">
-        <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+        <div class="card-header bg-secondary text-white d-flex justify-content-between align-items-center">
           <span>Sortie AlphaTex (Ukulélé)</span>
           <button class="btn btn-sm btn-light" onclick="copyToClipboard('outAlphaTex')">Copier</button>
         </div>
@@ -138,7 +154,7 @@
 
     <div class="col-md-6">
       <div class="card shadow-sm">
-        <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+        <div class="card-header bg-secondary text-white d-flex justify-content-between align-items-center">
           <span>Sortie Notation ABC</span>
           <button class="btn btn-sm btn-light" onclick="copyToClipboard('outAbc')">Copier</button>
         </div>
