@@ -245,7 +245,7 @@ Licence: CC BY-NC 4.0
 * 📄 Code source : [ukulele-position-accord-quiz.html](https://github.com/fxpar/music-toolbox/blob/main/ukulele-position-accord-quiz.html)
 
 
-**Tester vos connaissances pour passer d'une forme d'accord à une autre. **
+**Tester vos connaissances pour passer d'une forme d'accord à une autre.**
 
 Librairies utilisées: 
 * aucune
@@ -265,7 +265,7 @@ Licence: CC BY-NC 4.0
 * 📄 Code source : [ukulele-position-accord-pedago.html](https://github.com/fxpar/music-toolbox/blob/main/ukulele-position-accord-pedago.html)
 
 
-**Permet aux enseignants de montrer les positions relatives de notes en prenant la fondamentale sur l'une ou l'autre de cordes. **
+**Permet aux enseignants de montrer les positions relatives de notes en prenant la fondamentale sur l'une ou l'autre de cordes.**
 
 Paramètres:
 * Changer le nom des intervalles (b2 ou b9, 6 ou #5)
