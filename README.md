@@ -45,7 +45,7 @@ Licence: CC BY-NC 4.0
 * 🚀 Tester l'application : [Ouvrir l'outil (Démo interactive)](https://fxpar.github.io/music-toolbox/key-signatures-svg.html)
 * 📄 Code source : [key-signatures-svg.html](https://github.com/fxpar/music-toolbox/blob/main/key-signatures-svg.html)
 
-**Un outil pour fabriquer les icônes des différentes armures de musique à télécharger.**
+**Un outil pour fabriquer les icônes SVG des différentes armures de musique à télécharger.**
 
 Fonctionnalités:
 * clés disponibles : sol (treble), fa (bass), ut (tenor),  ut(alto), percussion
