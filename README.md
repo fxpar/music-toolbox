@@ -101,6 +101,10 @@ Fonctionnalités:
 * [ ] Exporter et importer une liste complète
 
 
+Code créé par IA (Gemini), et prompté par moi 😉
+
+Licence: CC BY-NC 4.0
+
 ---
 
 ##  Editeur musical abc simple
@@ -246,6 +250,9 @@ Licence: CC BY-NC 4.0
 Librairies utilisées: 
 * aucune
 
+Code créé par IA (Gemini), et prompté par moi 😉
+
+Licence: CC BY-NC 4.0
 
 ---
 
@@ -272,6 +279,9 @@ Paramètres:
 Librairies utilisées: 
 * aucune
 
+Code créé par IA (Gemini), et prompté par moi 😉
+
+Licence: CC BY-NC 4.0
 
 ---
 
@@ -287,6 +297,10 @@ Librairies utilisées:
 
 Librairies utilisées: 
 * aucune
+
+Code créé par IA (Gemini), et prompté par moi 😉
+
+Licence: CC BY-NC 4.0
 
 ---
 
