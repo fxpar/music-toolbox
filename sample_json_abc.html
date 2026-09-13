@@ -1,0 +1,1103 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JSON → ABC Notation avec Lecteur</title>
+    
+    <!-- CSS de abcjs pour les contrôles audio -->
+    <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/abcjs@6.2.2/abcjs-audio.css"> -->
+    <link rel="stylesheet" href="./css/abcjs-audio.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/abcjs@6.2.2/dist/abcjs-basic-min.js"></script>
+    
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        body {
+            background: #1e1e2f;
+            color: #eee;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        h1 {
+            text-align: center;
+            color: #ffcc66;
+            border-bottom: 2px solid #ffcc66;
+            padding-bottom: 10px;
+        }
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .panel {
+            flex: 1;
+            min-width: 300px;
+            background: #2a2a3e;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.5);
+        }
+        .panel h2 {
+            margin-top: 0;
+            color: #88ccff;
+            font-size: 1.1em;
+            border-bottom: 1px solid #444;
+            padding-bottom: 5px;
+        }
+        textarea {
+            width: 100%;
+            height: 350px;
+            background: #1a1a2a;
+            color: #ddd;
+            border: 1px solid #444;
+            border-radius: 5px;
+            padding: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            resize: vertical;
+            tab-size: 2;
+        }
+        .button-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 10px 0;
+        }
+        button {
+            background: #4a4a6a;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+            flex: 1;
+            min-width: 100px;
+        }
+        button:hover {
+            background: #6a6a9a;
+            transform: scale(1.02);
+        }
+        button.primary {
+            background: #2a7a4a;
+        }
+        button.primary:hover {
+            background: #3a9a6a;
+        }
+        button.danger {
+            background: #8a3a3a;
+        }
+        button.danger:hover {
+            background: #aa4a4a;
+        }
+        .output-area {
+            background: #0d0d1a;
+            border-radius: 5px;
+            padding: 10px;
+            margin-top: 10px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            max-height: 300px;
+            overflow: auto;
+            border: 1px solid #333;
+            color: #bbffaa;
+        }
+        .file-input-wrapper {
+            margin: 5px 0 10px 0;
+        }
+        .file-input-wrapper input {
+            color: #ccc;
+        }
+        .stats {
+            font-size: 13px;
+            color: #aaa;
+            margin-top: 8px;
+            padding: 5px;
+            background: #1a1a2a;
+            border-radius: 4px;
+        }
+        .copy-btn {
+            background: #3a5a8a;
+            margin-top: 5px;
+        }
+        .copy-btn:hover {
+            background: #5a7aaa;
+        }
+        .instrument-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            margin: 5px 0;
+        }
+        .instrument-tag {
+            background: #2a2a4a;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 11px;
+            color: #aac;
+        }
+        .error {
+            color: #ff6666;
+            background: #3a1a1a;
+            padding: 8px;
+            border-radius: 5px;
+            margin: 5px 0;
+        }
+        .success {
+            color: #66ff88;
+            background: #1a3a1a;
+            padding: 8px;
+            border-radius: 5px;
+            margin: 5px 0;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            color: #666;
+            font-size: 13px;
+            border-top: 1px solid #333;
+            padding-top: 15px;
+        }
+        .abc-preview {
+            background: #1a1a2a;
+            border-radius: 5px;
+            padding: 10px;
+            margin-top: 10px;
+        }
+        .abc-preview h3 {
+            margin: 0 0 8px 0;
+            color: #88ccff;
+            font-size: 1em;
+        }
+        
+        /* Style pour la partition */
+        #paper {
+            background: #0d0d1a;
+            border-radius: 5px;
+            padding: 15px;
+            margin-top: 10px;
+            border: 1px solid #333;
+            min-height: 150px;
+            overflow-x: auto;
+        }
+        #paper svg {
+            max-width: 100%;
+            height: auto;
+        }
+        
+        /* Curseur rouge pendant la lecture */
+        .abcjs-highlight {
+            fill: #ff4444 !important;
+            stroke: #ff4444 !important;
+        }
+        
+		/* ===== STYLES SPÉCIFIQUES POUR ABCJS ===== */
+/* On laisse abcjs gérer ses propres styles, on ne fait que de légères corrections */
+
+#audio-controls {
+    margin-top: 10px;
+    padding: 10px;
+    background: #1a1a2a;
+    border-radius: 5px;
+    min-height: 40px;
+}
+
+/* Style des boutons générés par abcjs - on les laisse s'afficher normalement */
+#audio-controls .abcjs-btn {
+    background: #3a5a7a !important;
+    color: #fff !important;
+    border: none !important;
+    padding: 4px 10px !important;
+    border-radius: 4px !important;
+    cursor: pointer !important;
+    margin: 2px !important;
+    font-size: 14px !important;
+    line-height: 1.5 !important;
+    width: auto !important;
+    min-width: 30px !important;
+    height: auto !important;
+    display: inline-block !important;
+}
+
+#audio-controls .abcjs-btn:hover {
+    background: #5a7a9a !important;
+}
+
+#audio-controls .abcjs-btn.abcjs-btn-active {
+    background: #2a7a4a !important;
+}
+
+/* Barre de progression */
+#audio-controls .abcjs-progress {
+    background: #333 !important;
+    height: 4px !important;
+    border-radius: 2px !important;
+    margin: 5px 0 !important;
+    width: 100% !important;
+    position: relative !important;
+}
+
+#audio-controls .abcjs-progress .abcjs-progress-bar {
+    background: #88ccff !important;
+    height: 100% !important;
+    border-radius: 2px !important;
+    width: 0% !important;
+    transition: width 0.1s ease !important;
+}
+
+/* Conteneur des contrôles - on laisse abcjs gérer */
+#audio-controls .abcjs-controls {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    align-items: center !important;
+    gap: 4px !important;
+    padding: 4px 0 !important;
+}
+
+/* Texte du tempo et infos */
+#audio-controls .abcjs-tempo {
+    color: #aaa !important;
+    font-size: 12px !important;
+    margin-left: 8px !important;
+}
+
+#audio-controls .abcjs-time {
+    color: #aaa !important;
+    font-size: 12px !important;
+    font-family: monospace !important;
+    min-width: 60px !important;
+}
+
+/* Supprimer les styles qui pourraient interférer avec les boutons abcjs */
+button.abcjs-btn {
+    flex: 0 0 auto !important;
+    min-width: 30px !important;
+}
+
+        
+        .abc-player-container {
+            display: none;
+        }
+        .abc-player-container.active {
+            display: block;
+        }
+        
+        #abc-output-code {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>🥁 JSON → ABC Notation avec Lecteur</h1>
+    <p style="text-align:center;color:#aaa;font-size:14px;">
+        Convertit les séquences de rythme d'un fichier JSON en notation ABC avec <code>%%percmap</code>.
+        Tous les instruments sont rassemblés sur une seule portée.
+    </p>
+
+    <div class="container">
+
+        <!-- Panneau gauche : entrée JSON -->
+        <div class="panel">
+            <h2>📥 Entrée JSON</h2>
+            <p style="font-size:13px;color:#aaa;margin:0 0 10px 0;">
+                Collez le contenu JSON ci-dessous ou chargez un fichier.
+            </p>
+            <div class="file-input-wrapper">
+                <input type="file" id="fileInput" accept=".json,application/json">
+            </div>
+            <textarea id="jsonInput" placeholder="Collez votre JSON ici...">
+			{
+  "global": { "bpm": 115, "swing": 0, "loops": 4, "masterVolume": 0, "masterTone": 20000, "masterDrive": 1, "delayWet": 0, "reverbWet": 0, "humanize": 0, "eqActive": true, "eqLow": 0, "eqLowMid": 0, "eqHighMid": 0, "eqHigh": 0, "vinyl": 0, "tapeHiss": 0, "polymetricModeEnabled": false },
+  "soloActive": false,
+  "acoustic": {
+    "kitId": 3
+  },
+  "instrumentSettings": {
+    "kick": {
+      "volume": 0,
+      "pan": 0,
+      "muted": 0,
+      "soloed": 0,
+      "p1": { "label": "PITCH", "min": -12, "max": 12, "val": 0, "unit": "st", "param": "pitch" },
+      "p2": { "label": "DECAY", "min": 0.01, "max": 5, "val": 5, "unit": "s", "param": "decay" },
+      "p3": { "label": "TONE", "min": 20, "max": 20000, "val": 20000, "unit": "Hz", "param": "tone" },
+      "sequence": [1, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0]
+    },
+    "kick2": {
+      "volume": 0,
+      "pan": 0,
+      "muted": 0,
+      "soloed": 0,
+      "p1": { "label": "PITCH", "min": -12, "max": 12, "val": 0, "unit": "st", "param": "pitch" },
+      "p2": { "label": "DECAY", "min": 0.01, "max": 5, "val": 5, "unit": "s", "param": "decay" },
+      "p3": { "label": "TONE", "min": 20, "max": 20000, "val": 20000, "unit": "Hz", "param": "tone" },
+      "sequence": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    },
+    "snare": {
+      "volume": 0,
+      "pan": 0,
+      "muted": 0,
+      "soloed": 0,
+      "p1": { "label": "PITCH", "min": -12, "max": 12, "val": 0, "unit": "st", "param": "pitch" },
+      "p2": { "label": "DECAY", "min": 0.01, "max": 5, "val": 5, "unit": "s", "param": "decay" },
+      "p3": { "label": "TONE", "min": 20, "max": 20000, "val": 20000, "unit": "Hz", "param": "tone" },
+      "sequence": [0, 0, 1, 0, 1, 1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 1]
+    },
+    "ltom": {
+      "volume": 0,
+      "pan": 0,
+      "muted": 0,
+      "soloed": 0,
+      "p1": { "label": "PITCH", "min": -12, "max": 12, "val": 0, "unit": "st", "param": "pitch" },
+      "p2": { "label": "DECAY", "min": 0.01, "max": 5, "val": 5, "unit": "s", "param": "decay" },
+      "p3": { "label": "TONE", "min": 20, "max": 20000, "val": 20000, "unit": "Hz", "param": "tone" },
+      "sequence": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    },
+    "mtom": {
+      "volume": 0,
+      "pan": 0,
+      "muted": 0,
+      "soloed": 0,
+      "p1": { "label": "PITCH", "min": -12, "max": 12, "val": 0, "unit": "st", "param": "pitch" },
+      "p2": { "label": "DECAY", "min": 0.01, "max": 5, "val": 5, "unit": "s", "param": "decay" },
+      "p3": { "label": "TONE", "min": 20, "max": 20000, "val": 20000, "unit": "Hz", "param": "tone" },
+      "sequence": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    },
+    "htom": {
+      "volume": 0,
+      "pan": 0,
+      "muted": 0,
+      "soloed": 0,
+      "p1": { "label": "PITCH", "min": -12, "max": 12, "val": 0, "unit": "st", "param": "pitch" },
+      "p2": { "label": "DECAY", "min": 0.01, "max": 5, "val": 5, "unit": "s", "param": "decay" },
+      "p3": { "label": "TONE", "min": 20, "max": 20000, "val": 20000, "unit": "Hz", "param": "tone" },
+      "sequence": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    },
+    "conga": {
+      "volume": 0,
+      "pan": 0,
+      "muted": 0,
+      "soloed": 0,
+      "p1": { "label": "PITCH", "min": -12, "max": 12, "val": 2, "unit": "st", "param": "pitch" },
+      "p2": { "label": "DECAY", "min": 0.01, "max": 5, "val": 5, "unit": "s", "param": "decay" },
+      "p3": { "label": "TONE", "min": 20, "max": 20000, "val": 20000, "unit": "Hz", "param": "tone" },
+      "sequence": [0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0]
+    },
+    "rim": {
+      "volume": 0,
+      "pan": 0,
+      "muted": 0,
+      "soloed": 0,
+      "p1": { "label": "PITCH", "min": -12, "max": 12, "val": -2, "unit": "st", "param": "pitch" },
+      "p2": { "label": "DECAY", "min": 0.01, "max": 5, "val": 5, "unit": "s", "param": "decay" },
+      "p3": { "label": "TONE", "min": 20, "max": 20000, "val": 20000, "unit": "Hz", "param": "tone" },
+      "sequence": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    },
+    "ch": {
+      "volume": -3,
+      "pan": 0,
+      "muted": 0,
+      "soloed": 0,
+      "p1": { "label": "PITCH", "min": -12, "max": 12, "val": 0, "unit": "st", "param": "pitch" },
+      "p2": { "label": "DECAY", "min": 0.01, "max": 5, "val": 5, "unit": "s", "param": "decay" },
+      "p3": { "label": "TONE", "min": 20, "max": 20000, "val": 20000, "unit": "Hz", "param": "tone" },
+      "sequence": [1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0]
+    },
+    "oh": {
+      "volume": -8,
+      "pan": 0,
+      "muted": 0,
+      "soloed": 0,
+      "p1": { "label": "PITCH", "min": -12, "max": 12, "val": 0, "unit": "st", "param": "pitch" },
+      "p2": { "label": "DECAY", "min": 0.01, "max": 5, "val": 5, "unit": "s", "param": "decay" },
+      "p3": { "label": "TONE", "min": 20, "max": 20000, "val": 20000, "unit": "Hz", "param": "tone" },
+      "sequence": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    },
+    "crash": {
+      "volume": -8,
+      "pan": 0,
+      "muted": 0,
+      "soloed": 0,
+      "p1": { "label": "PITCH", "min": -12, "max": 12, "val": 0, "unit": "st", "param": "pitch" },
+      "p2": { "label": "DECAY", "min": 0.01, "max": 5, "val": 5, "unit": "s", "param": "decay" },
+      "p3": { "label": "TONE", "min": 20, "max": 20000, "val": 20000, "unit": "Hz", "param": "tone" },
+      "sequence": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    },
+    "ride": {
+      "volume": -8,
+      "pan": 0,
+      "muted": 0,
+      "soloed": 0,
+      "p1": { "label": "PITCH", "min": -12, "max": 12, "val": 2, "unit": "st", "param": "pitch" },
+      "p2": { "label": "DECAY", "min": 0.01, "max": 5, "val": 5, "unit": "s", "param": "decay" },
+      "p3": { "label": "TONE", "min": 20, "max": 20000, "val": 20000, "unit": "Hz", "param": "tone" },
+      "sequence": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    },
+    "cowbell": {
+      "volume": 0,
+      "pan": 0,
+      "muted": 0,
+      "soloed": 0,
+      "p1": { "label": "PITCH", "min": -12, "max": 12, "val": -2, "unit": "st", "param": "pitch" },
+      "p2": { "label": "DECAY", "min": 0.01, "max": 5, "val": 5, "unit": "s", "param": "decay" },
+      "p3": { "label": "TONE", "min": 20, "max": 20000, "val": 20000, "unit": "Hz", "param": "tone" },
+      "sequence": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    },
+    "claves": {
+      "volume": 0,
+      "pan": 0,
+      "muted": 0,
+      "soloed": 0,
+      "p1": { "label": "PITCH", "min": -12, "max": 12, "val": -2, "unit": "st", "param": "pitch" },
+      "p2": { "label": "DECAY", "min": 0.01, "max": 5, "val": 5, "unit": "s", "param": "decay" },
+      "p3": { "label": "TONE", "min": 20, "max": 20000, "val": 20000, "unit": "Hz", "param": "tone" },
+      "sequence": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    },
+    "masterSample": {
+      "volume": -6,
+      "pan": 0,
+      "muted": 0,
+      "soloed": 0,
+      "p1": null,
+      "p2": { "label": "DECAY", "min": 0.05, "max": 2, "val": 2, "unit": "s", "param": "decay" },
+      "p3": { "label": "TONE", "min": 20, "max": 20000, "val": 20000, "unit": "Hz", "param": "tone" },
+      "sequence": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    }
+  },
+  "patterns": {
+    "A": {
+      "tracks": {
+        "kick": [1, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0],
+        "kick2": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        "snare": [0, 0, 1, 0, 1, 1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 1],
+        "ltom": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        "mtom": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        "htom": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        "conga": [0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0],
+        "rim": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        "ch": [1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0],
+        "oh": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        "crash": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        "ride": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        "cowbell": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        "claves": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        "masterSample": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        "masterSampleA": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        "masterSampleB": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+      },
+      "trackLengths": {
+        "kick": 16,
+        "kick2": 16,
+        "snare": 16,
+        "ltom": 16,
+        "mtom": 16,
+        "htom": 16,
+        "conga": 16,
+        "rim": 16,
+        "ch": 16,
+        "oh": 16,
+        "crash": 16,
+        "ride": 16,
+        "cowbell": 16,
+        "claves": 16,
+        "masterSample": 16
+      }
+    }
+  },
+  "chain": ["A"],
+  "currentEditingPattern": "A",
+  "sampler": {
+    "current": "A",
+    "decks": {
+      "A": {
+        "url": null,
+        "sampleOffset": 0,
+        "sourceLabel": "",
+        "crateLabel": "",
+        "volume": -6,
+        "pan": 0,
+        "p3": { "label": "TONE", "min": 20, "max": 20000, "val": 20000, "unit": "Hz", "param": "tone" },
+        "sequence": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        "reverse": false,
+        "isHalfSpeed": false,
+        "stutterOn": false,
+        "stutterSpeed": 1,
+        "stutterDecay": 0.5,
+        "stutterCutoff": 0.01,
+        "gateOn": false,
+        "gatePercent": 25,
+        "loop": false,
+        "trimStart": 0,
+        "trimEnd": 1
+      },
+      "B": {
+        "url": null,
+        "sampleOffset": 0,
+        "sourceLabel": "",
+        "crateLabel": "",
+        "volume": -12,
+        "pan": 0,
+        "p3": { "label": "TONE", "min": 20, "max": 20000, "val": 20000, "unit": "Hz", "param": "tone" },
+        "sequence": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        "reverse": false,
+        "isHalfSpeed": false,
+        "stutterOn": false,
+        "stutterSpeed": 1,
+        "stutterDecay": 0.5,
+        "stutterCutoff": 0.01,
+        "gateOn": false,
+        "gatePercent": 25,
+        "loop": false,
+        "trimStart": 0,
+        "trimEnd": 1
+      }
+    }
+  },
+  "masterSample": {
+    "url": null,
+    "sampleOffset": 0,
+    "sourceLabel": "",
+    "crateLabel": "",
+    "volume": -6,
+    "pan": 0,
+    "p3": { "label": "TONE", "min": 20, "max": 20000, "val": 20000, "unit": "Hz", "param": "tone" },
+    "sequence": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    "reverse": false,
+    "isHalfSpeed": false,
+    "stutterOn": false,
+    "stutterSpeed": 1,
+    "stutterDecay": 0.5,
+    "stutterCutoff": 0.01,
+    "gateOn": false,
+    "gatePercent": 25,
+    "loop": false,
+    "trimStart": 0,
+    "trimEnd": 1
+  },
+  "customSamples": {
+    "kick": {
+      "url": "/api/audio-proxy?url=https%3A%2F%2Farchive.org%2Fdownload%2Fdrum-machines-collection%2FKorg%2520DDM110.zip%2FKorg%2520DDM110%252FBassDrum.wav",
+      "fileName": "Roland TR606/Kick_OD.wav"
+    },
+    "kick2": {
+      "url": "/api/audio-proxy?url=https%3A%2F%2Farchive.org%2Fdownload%2Fdrum-machines-collection%2FKorg%2520DDM110.zip%2FKorg%2520DDM110%252FHt.wav",
+      "fileName": "Korg DDM110/Ht.wav"
+    },
+    "snare": {
+      "url": "/api/audio-proxy?url=https%3A%2F%2Farchive.org%2Fdownload%2Fdrum-machines-collection%2FKorg%2520DDM110.zip%2FKorg%2520DDM110%252FSd.wav",
+      "fileName": "Korg DDM110/Sd.wav"
+    },
+    "ltom": {
+      "url": "/api/audio-proxy?url=https%3A%2F%2Farchive.org%2Fdownload%2Fdrum-machines-collection%2FKorg%2520DDM110.zip%2FKorg%2520DDM110%252FLt.wav",
+      "fileName": "Korg DDM110/Lt.wav"
+    },
+    "mtom": {
+      "url": "/api/audio-proxy?url=https%3A%2F%2Farchive.org%2Fdownload%2Fdrum-machines-collection%2FKorg%2520DDM110.zip%2FKorg%2520DDM110%252FRs.wav",
+      "fileName": "Korg DDM110/Rs.wav"
+    },
+    "htom": {
+      "url": "/api/audio-proxy?url=https%3A%2F%2Farchive.org%2Fdownload%2Fdrum-machines-collection%2FKorg%2520DDM110.zip%2FKorg%2520DDM110%252FCp.wav",
+      "fileName": "Korg DDM110/Cp.wav"
+    },
+    "conga": {
+      "url": "/api/audio-proxy?url=https%3A%2F%2Farchive.org%2Fdownload%2Fdrum-machines-collection%2FKorg%2520DDM110.zip%2FKorg%2520DDM110%252FRs.wav",
+      "fileName": "Korg DDM110/Rs.wav"
+    },
+    "rim": {
+      "url": "/api/audio-proxy?url=https%3A%2F%2Farchive.org%2Fdownload%2Fdrum-machines-collection%2FKorg%2520DDM110.zip%2FKorg%2520DDM110%252FRs.wav",
+      "fileName": "Korg DDM110/Rs.wav"
+    },
+    "ch": {
+      "url": "/api/audio-proxy?url=https%3A%2F%2Farchive.org%2Fdownload%2Fdrum-machines-collection%2FKorg%2520DDM110.zip%2FKorg%2520DDM110%252FCh.wav",
+      "fileName": "Korg DDM110/Ch.wav"
+    },
+    "oh": {
+      "url": "/api/audio-proxy?url=https%3A%2F%2Farchive.org%2Fdownload%2Fdrum-machines-collection%2FKorg%2520DDM110.zip%2FKorg%2520DDM110%252FOh.wav",
+      "fileName": "Korg DDM110/Oh.wav"
+    },
+    "crash": {
+      "url": "/api/audio-proxy?url=https%3A%2F%2Farchive.org%2Fdownload%2Fdrum-machines-collection%2FKorg%2520DDM110.zip%2FKorg%2520DDM110%252FCy.wav",
+      "fileName": "Korg DDM110/Cy.wav"
+    },
+    "ride": {
+      "url": "/api/audio-proxy?url=https%3A%2F%2Farchive.org%2Fdownload%2Fdrum-machines-collection%2FKorg%2520DDM110.zip%2FKorg%2520DDM110%252FCy.wav",
+      "fileName": "Korg DDM110/Cy.wav"
+    },
+    "cowbell": {
+      "url": "/api/audio-proxy?url=https%3A%2F%2Farchive.org%2Fdownload%2Fdrum-machines-collection%2FKorg%2520DDM110.zip%2FKorg%2520DDM110%252FRs.wav",
+      "fileName": "Korg DDM110/Rs.wav"
+    },
+    "claves": {
+      "url": "/api/audio-proxy?url=https%3A%2F%2Farchive.org%2Fdownload%2Fdrum-machines-collection%2FKorg%2520DDM110.zip%2FKorg%2520DDM110%252FRs.wav",
+      "fileName": "Korg DDM110/Rs.wav"
+    }
+  }
+}
+			</textarea>
+            <div class="button-group">
+                <button class="primary" onclick="convertJSONtoABC()">🔄 Convertir en ABC</button>
+                <button onclick="clearAll()">🗑️ Effacer</button>
+                <button onclick="loadExample()">📝 Exemple</button>
+            </div>
+            <div id="statusMessage"></div>
+            <div id="stats" class="stats">⏳ En attente d'un JSON valide...</div>
+        </div>
+
+        <!-- Panneau droit : sortie ABC -->
+        <div class="panel">
+            <h2>🎵 Résultat ABC</h2>
+            <p style="font-size:13px;color:#aaa;margin:0 0 10px 0;">
+                Notation ABC avec <code>%%percmap</code>.
+            </p>
+            <div class="button-group">
+                <button class="copy-btn" onclick="copyABC()">📋 Copier</button>
+                <button onclick="downloadABC()">💾 Télécharger .abc</button>
+            </div>
+            <div id="abcOutput" class="output-area">
+                ⚡ Le résultat ABC apparaîtra ici après la conversion.
+            </div>
+            <div id="abcPreview" class="abc-preview" style="display:none;">
+                <h3>🔊 Aperçu des instruments</h3>
+                <div id="instrumentPreview" class="instrument-list"></div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Panneau du lecteur ABC -->
+    <div id="abcPlayerContainer" class="abc-player-container" style="margin-top:20px;">
+        <div class="panel" style="width:100%;">
+            <h2 style="margin-top:0;color:#88ccff;border-bottom:1px solid #444;padding-bottom:5px;">🎹 Partition et lecteur ABC</h2>
+            
+            <!-- Zone d'affichage de la partition SVG -->
+            <div id="paper"></div>
+
+            <!-- Zone d'affichage des contrôles audio -->
+            <div id="audio-controls"></div>
+        </div>
+    </div>
+
+    <div class="footer">
+        ⚡ Convertit les séquences 16 temps en ABC percussion — Tous les instruments sur une seule portée.
+        <br>Basé sur abcjs v6.2.2 - Utilisez les boutons de contrôle sous la partition pour jouer/arrêter.
+    </div>
+
+    <script>
+        // ====================== VARIABLES GLOBALES ======================
+        let currentABC = '';
+        let synthController = null;
+        let currentVisualObj = null;
+        let isPlaying = false;
+
+        // ====================== CLASSE CURSEUR ======================
+        class CursorControl {
+            onStart() {
+                isPlaying = true;
+                console.log('▶️ Lecture démarrée');
+            }
+            onEvent(ev) {
+                // Retire l'ancienne mise en valeur
+                const lastHighlighted = document.querySelectorAll("#paper .abcjs-highlight");
+                lastHighlighted.forEach(el => el.classList.remove("abcjs-highlight"));
+
+                // Ajoute la classe de surbrillance aux éléments de la note actuelle
+                if (ev && ev.elements) {
+                    ev.elements.forEach(noteGroup => {
+                        noteGroup.forEach(elem => elem.classList.add("abcjs-highlight"));
+                    });
+                }
+            }
+            onFinished() {
+                isPlaying = false;
+                // Nettoie à la fin de la lecture
+                const lastHighlighted = document.querySelectorAll("#paper .abcjs-highlight");
+                lastHighlighted.forEach(el => el.classList.remove("abcjs-highlight"));
+                console.log('⏹️ Lecture terminée');
+            }
+            onPause() {
+                console.log('⏸️ Lecture en pause');
+            }
+        }
+
+        const cursorControl = new CursorControl();
+
+        // ====================== FONCTIONS PRINCIPALES ======================
+
+        /**
+         * Convertit le JSON en notation ABC
+         */
+        function convertJSONtoABC() {
+            const input = document.getElementById('jsonInput').value.trim();
+            const statusDiv = document.getElementById('statusMessage');
+            const statsDiv = document.getElementById('stats');
+            const outputDiv = document.getElementById('abcOutput');
+
+            // Réinitialiser
+            outputDiv.textContent = '';
+            statusDiv.innerHTML = '';
+            document.getElementById('abcPreview').style.display = 'none';
+            document.getElementById('abcPlayerContainer').classList.remove('active');
+
+            if (!input) {
+                statusDiv.innerHTML = '<div class="error">❌ Veuillez coller un JSON ou charger un fichier.</div>';
+                return;
+            }
+
+            let data;
+            try {
+                data = JSON.parse(input);
+            } catch (e) {
+                statusDiv.innerHTML = `<div class="error">❌ Erreur de parsing JSON : ${e.message}</div>`;
+                return;
+            }
+
+            if (!data.instrumentSettings && !data.patterns) {
+                statusDiv.innerHTML = '<div class="error">❌ Structure JSON invalide : "instrumentSettings" ou "patterns" manquant.</div>';
+                return;
+            }
+
+            const sequences = extractSequences(data);
+            if (Object.keys(sequences).length === 0) {
+                statusDiv.innerHTML = '<div class="error">❌ Aucune séquence trouvée dans le JSON.</div>';
+                return;
+            }
+
+            const abc = generateABC(sequences, data);
+            currentABC = abc;
+            outputDiv.textContent = abc;
+
+            const instrumentCount = Object.keys(sequences).length;
+            statsDiv.innerHTML = `✅ ${instrumentCount} instruments convertis`;
+
+            showInstrumentPreview(sequences);
+            statusDiv.innerHTML = `<div class="success">✅ Conversion réussie ! ${instrumentCount} instruments.</div>`;
+
+            // Afficher le lecteur ABC
+            renderAndSetupAudio(abc);
+        }
+
+        /**
+         * Extrait les séquences du JSON
+         */
+        function extractSequences(data) {
+            const sequences = {};
+
+            if (data.patterns) {
+                const patternKeys = Object.keys(data.patterns);
+                if (patternKeys.length > 0) {
+                    const firstPattern = patternKeys[0];
+                    const patternData = data.patterns[firstPattern];
+                    if (patternData.tracks) {
+                        for (const [instrument, track] of Object.entries(patternData.tracks)) {
+                            if (Array.isArray(track) && track.length > 0) {
+                                sequences[instrument] = track;
+                            }
+                        }
+                        if (Object.keys(sequences).length > 0) {
+                            return sequences;
+                        }
+                    }
+                }
+            }
+
+            if (data.instrumentSettings) {
+                for (const [instrument, settings] of Object.entries(data.instrumentSettings)) {
+                    if (settings.sequence && Array.isArray(settings.sequence) && settings.sequence.length > 0) {
+                        if (settings.sequence.some(v => v === 1)) {
+                            sequences[instrument] = settings.sequence;
+                        }
+                    }
+                }
+            }
+
+            return sequences;
+        }
+
+        /**
+         * Génère la notation ABC
+         */
+        function generateABC(sequences, originalData) {
+            const bpm = originalData.global?.bpm || 120;
+            const title = originalData.global?.title || 'Drum Machine Pattern';
+            
+            let sequenceLength = 16;
+            for (const seq of Object.values(sequences)) {
+                if (Array.isArray(seq) && seq.length > sequenceLength) {
+                    sequenceLength = seq.length;
+                }
+            }
+
+            const instrumentMap = {
+                'kick': 'C', 'kick2': 'C#', 'snare': 'D', 'ltom': 'D#', 'mtom': 'E',
+                'htom': 'F', 'conga': 'F#', 'rim': 'G', 'ch': 'G#', 'oh': 'A',
+                'crash': 'A#', 'ride': 'B', 'cowbell': 'c', 'claves': 'c#', 'masterSample': 'd'
+            };
+
+            let nextNoteIndex = 15;
+            const noteNames = ['e', 'f', 'f#', 'g', 'g#', 'a', 'a#', 'b', 'c\'', 'c#\'', 'd\'', 'd#\'', 'e\'', 'f\'', 'f#\'', 'g\'', 'g#\'', 'a\'', 'a#\'', 'b\''];
+
+            const noteToInstrument = {};
+            const instrumentNotes = {};
+
+            for (const [inst, seq] of Object.entries(sequences)) {
+                let note = instrumentMap[inst];
+                if (!note) {
+                    note = noteNames[nextNoteIndex % noteNames.length];
+                    nextNoteIndex++;
+                }
+                noteToInstrument[note] = inst;
+                instrumentNotes[inst] = note;
+            }
+
+            let abcNotes = '';
+
+            for (let step = 0; step < sequenceLength; step++) {
+                let notesAtStep = [];
+                for (const [inst, seq] of Object.entries(sequences)) {
+                    if (Array.isArray(seq) && step < seq.length && seq[step] === 1) {
+                        const note = instrumentNotes[inst];
+                        if (note) {
+                            notesAtStep.push(note);
+                        }
+                    }
+                }
+                if (notesAtStep.length > 1) {
+                    abcNotes += '[' + notesAtStep.join('') + ']';
+                } else if (notesAtStep.length === 1) {
+                    abcNotes += notesAtStep[0];
+                } else {
+                    abcNotes += 'z';
+                }
+                if (sequenceLength === 16 && (step + 1) % 4 === 0 && step + 1 < sequenceLength) {
+                    abcNotes += '|';
+                }
+            }
+
+            let percMap = '%%percmap ';
+            const sortedNotes = Object.keys(noteToInstrument).sort();
+            for (const note of sortedNotes) {
+                const inst = noteToInstrument[note];
+                const cleanName = inst.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+                percMap += `${note} ${cleanName}  `;
+            }
+
+            return `X:1
+T:${title}
+M:4/4
+L:1/16
+Q:1/4=${bpm}
+K:C perc
+${percMap}
+%
+${abcNotes}`;
+        }
+
+        /**
+         * Affiche l'aperçu des instruments
+         */
+        function showInstrumentPreview(sequences) {
+            const container = document.getElementById('instrumentPreview');
+            container.innerHTML = '';
+            const previewDiv = document.getElementById('abcPreview');
+            
+            const instrumentNames = Object.keys(sequences).sort();
+            for (const name of instrumentNames) {
+                const span = document.createElement('span');
+                span.className = 'instrument-tag';
+                span.textContent = name;
+                container.appendChild(span);
+            }
+            
+            previewDiv.style.display = 'block';
+        }
+
+        // ====================== FONCTIONS ABCJS ======================
+
+        /**
+         * Rend la partition et prépare l'audio avec abcjs
+         */
+        async function renderAndSetupAudio(abcString) {
+            const paperDiv = document.getElementById('paper');
+            const audioDiv = document.getElementById('audio-controls');
+            const container = document.getElementById('abcPlayerContainer');
+
+            if (!abcString || abcString.trim() === '') {
+                paperDiv.innerHTML = '<p style="color:#666;text-align:center;">Aucune partition à afficher.</p>';
+                container.classList.remove('active');
+                return;
+            }
+
+            try {
+                // 1. Générer la partition SVG
+                const visualObj = ABCJS.renderAbc("paper", abcString, {
+                    responsive: "resize"
+                });
+                
+                if (!visualObj || visualObj.length === 0) {
+                    throw new Error('Erreur de rendu de la partition');
+                }
+                
+                currentVisualObj = visualObj[0];
+                container.classList.add('active');
+
+                // 2. Vérifier la compatibilité Audio
+                if (!ABCJS.synth.supportsAudio()) {
+                    audioDiv.innerHTML = "<p style='color:#ff6666;'>⚠️ L'audio n'est pas supporté par ce navigateur.</p>";
+                    return;
+                }
+
+                // 3. Initialiser le contrôleur Audio
+                synthController = new ABCJS.synth.SynthController();
+                synthController.load("#audio-controls", cursorControl, {
+                    displayLoop: true,
+                    displayRestart: true,
+                    displayPlay: true,
+                    displayProgress: true,
+                    displayWarp: false
+                });
+
+                // 4. Préparer les buffers sonores
+                const createSynth = new ABCJS.synth.CreateSynth();
+                await createSynth.init({ visualObj: currentVisualObj });
+                await synthController.setTune(currentVisualObj, false, {
+                    chordsOff: false
+                });
+
+                console.log('✅ Audio prêt');
+
+            } catch (error) {
+                console.error("❌ Erreur lors de la création de l'audio :", error);
+                paperDiv.innerHTML = `<p style="color:#ff6666;">❌ Erreur: ${error.message}</p>`;
+                container.classList.add('active');
+            }
+        }
+
+        // ====================== FONCTIONS UI ======================
+
+        /**
+         * Charge un fichier JSON
+         */
+        document.getElementById('fileInput').addEventListener('change', function(e) {
+            const file = this.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                document.getElementById('jsonInput').value = event.target.result;
+                document.getElementById('statusMessage').innerHTML = `<div class="success">✅ Fichier "${file.name}" chargé (${file.size} octets).</div>`;
+                convertJSONtoABC();
+            };
+            reader.onerror = function() {
+                document.getElementById('statusMessage').innerHTML = '<div class="error">❌ Erreur lors de la lecture du fichier.</div>';
+            };
+            reader.readAsText(file);
+        });
+
+        /**
+         * Copie le résultat ABC
+         */
+        function copyABC() {
+            const output = document.getElementById('abcOutput').textContent;
+            if (!output || output.includes('résultat ABC')) {
+                alert('⚠️ Rien à copier. Veuillez d\'abord convertir un JSON.');
+                return;
+            }
+            navigator.clipboard.writeText(output).then(() => {
+                alert('✅ ABC copié dans le presse-papiers !');
+            }).catch(() => {
+                const textarea = document.createElement('textarea');
+                textarea.value = output;
+                document.body.appendChild(textarea);
+                textarea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textarea);
+                alert('✅ ABC copié !');
+            });
+        }
+
+        /**
+         * Télécharge le résultat en fichier .abc
+         */
+        function downloadABC() {
+            const output = document.getElementById('abcOutput').textContent;
+            if (!output || output.includes('résultat ABC')) {
+                alert('⚠️ Rien à télécharger. Veuillez d\'abord convertir un JSON.');
+                return;
+            }
+            const blob = new Blob([output], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'pattern.abc';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        /**
+         * Efface tous les champs
+         */
+        function clearAll() {
+            document.getElementById('jsonInput').value = '';
+            document.getElementById('abcOutput').textContent = '⚡ Le résultat ABC apparaîtra ici après la conversion.';
+            document.getElementById('statusMessage').innerHTML = '';
+            document.getElementById('stats').innerHTML = '⏳ En attente d\'un JSON valide...';
+            document.getElementById('abcPreview').style.display = 'none';
+            document.getElementById('abcPlayerContainer').classList.remove('active');
+            document.getElementById('fileInput').value = '';
+            document.getElementById('paper').innerHTML = '';
+            document.getElementById('audio-controls').innerHTML = '';
+        }
+
+        /**
+         * Charge un exemple
+         */
+        function loadExample() {
+            const example = {
+                global: { bpm: 115, title: 'Korg DDM110 Pattern' },
+                instrumentSettings: {
+                    kick: { sequence: [1, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0] },
+                    snare: { sequence: [0, 0, 1, 0, 1, 1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 1] },
+                    conga: { sequence: [0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0] },
+                    ch: { sequence: [1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0] }
+                },
+                patterns: {
+                    A: {
+                        tracks: {
+                            kick: [1, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0],
+                            snare: [0, 0, 1, 0, 1, 1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 1],
+                            ch: [1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0]
+                        }
+                    }
+                }
+            };
+            document.getElementById('jsonInput').value = JSON.stringify(example, null, 2);
+            document.getElementById('statusMessage').innerHTML = '<div class="success">✅ Exemple chargé.</div>';
+            convertJSONtoABC();
+        }
+
+        // ====================== RACCOURCI CLAVIER ======================
+
+        document.addEventListener('keydown', function(e) {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+                e.preventDefault();
+                convertJSONtoABC();
+            }
+        });
+
+        console.log('🥁 Convertisseur JSON → ABC avec lecteur abcjs v6.2.2');
+        console.log('💡 Collez votre JSON et cliquez sur "Convertir" ou appuyez sur Ctrl+Enter.');
+    </script>
+
+</body>
+</html>
