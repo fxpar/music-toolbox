@@ -392,8 +392,29 @@ Code créé par IA (Gemini), et prompté par moi 😉
 Licence: CC BY-NC 4.0
 
 
+
 ---
 
+## Convertisseur drum machine (Json → Abc)
+
+![sample_json_abc](./images/sample_json_abc.png)
+
+
+
+* 🚀 Tester l'application : [Ouvrir l'outil (Démo interactive)](https://fxpar.github.io/music-toolbox/sample_json_abc.html)
+* 📄 Code source : [sample_json_abc.html](https://github.com/fxpar/music-toolbox/blob/main/sample_json_abc)
+
+
+**Permet de convertir en abc les exports de drum machine en json.**
+
+Librairies utilisées: 
+* abcjs de Paul Rosen
+
+Code créé par IA (Gemini), et prompté par moi 😉
+
+Licence: CC BY-NC 4.0
+
+---
 
 ## Chord change trainer
 
