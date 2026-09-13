@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html lang="fr" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Harmonie Modale Pédagogique</title>
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Orbitron:wght@600;800&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Plus Jakarta Sans', 'sans-serif'],
+            tech: ['Orbitron', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    .theme-transition { transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease; }
+
+    .theme-obsidian {
+      --bg-color: #0d1117;
+      --card-bg: rgba(22, 27, 34, 0.85);
+      --card-border: rgba(255, 255, 255, 0.1);
+      --accent: #f59e0b;
+      --text-main: #f3f4f6;
+      --circle-note-bg: #0f172a;
+      --circle-note-text: #ffffff;
+      --circle-note-border: rgba(255, 255, 255, 0.2);
+    }
+
+    .theme-day {
+      --bg-color: #f8fafc;
+      --card-bg: rgba(255, 255, 255, 0.9);
+      --card-border: rgba(0, 0, 0, 0.08);
+      --accent: #2563eb;
+      --text-main: #0f172a;
+      --circle-note-bg: #ffffff;
+      --circle-note-text: #0f172a;
+      --circle-note-border: rgba(0, 0, 0, 0.15);
+    }
+
+    .theme-neon {
+      --bg-color: #030712;
+      --card-bg: rgba(15, 23, 42, 0.9);
+      --card-border: rgba(0, 240, 255, 0.3);
+      --accent: #00f0ff;
+      --text-main: #ffffff;
+      --circle-note-bg: #090d16;
+      --circle-note-text: #00f0ff;
+      --circle-note-border: rgba(0, 240, 255, 0.4);
+    }
+
+    body { background-color: var(--bg-color); color: var(--text-main); }
+    .ui-card { background-color: var(--card-bg); border-color: var(--card-border); backdrop-filter: blur(12px); }
+    .accent-color { color: var(--accent); }
+    .accent-bg { background-color: var(--accent); }
+    
+    .outer-note-circle {
+      fill: var(--circle-note-bg);
+      stroke: var(--circle-note-border);
+    }
+    .outer-note-text {
+      fill: var(--circle-note-text);
+    }
+  </style>
+</head>
+<body class="theme-obsidian theme-transition min-h-screen font-sans flex flex-col justify-between p-4 md:p-6">
+
+  <div class="max-w-6xl mx-auto w-full flex-grow flex flex-col gap-6">
+    
+    <!-- EN-TÊTE -->
+    <header class="flex flex-wrap justify-between items-center gap-4 pb-4 border-b border-white/10">
+      <div>
+        <h1 class="text-2xl md:text-3xl font-extrabold tracking-tight flex items-center gap-3">
+          <i class="fa-solid fa-compact-disc accent-color"></i>
+          <span>Harmonie Modale Interactive</span>
+        </h1>
+        <p class="text-xs md:text-sm text-gray-400 mt-0.5">Cliquez directement sur un mode pour le choisir, puis tournez le disque.</p>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <div class="ui-card p-1 rounded-xl border flex items-center">
+          <button id="btn-fr" onclick="setLanguage('FR')" class="px-3 py-1.5 rounded-lg text-xs font-bold transition accent-bg text-black shadow">FR</button>
+          <button id="btn-int" onclick="setLanguage('INT')" class="px-3 py-1.5 rounded-lg text-xs font-bold transition text-gray-400 hover:text-white">INT</button>
+        </div>
+
+        <div class="ui-card p-1 rounded-xl border flex items-center gap-1">
+          <button onclick="setTheme('day')" title="Mode Jour" class="p-2 rounded-lg text-xs text-amber-400 hover:bg-white/10"><i class="fa-solid fa-sun"></i></button>
+          <button onclick="setTheme('obsidian')" title="Nuit Obsidienne" class="p-2 rounded-lg text-xs text-blue-300 hover:bg-white/10"><i class="fa-solid fa-moon"></i></button>
+          <button onclick="setTheme('neon')" title="Néon Cyberpunk" class="p-2 rounded-lg text-xs text-cyan-400 hover:bg-white/10"><i class="fa-solid fa-bolt"></i></button>
+        </div>
+
+        <button id="btn-audio" onclick="toggleAudio()" class="ui-card p-2.5 rounded-xl border text-xs font-bold flex items-center gap-2 hover:bg-white/10 transition">
+          <i class="fa-solid fa-volume-high accent-color"></i>
+          <span class="hidden sm:inline">Audio</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- DISPOSITION PRINCIPALE -->
+    <main class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start my-auto">
+      
+      <!-- COLONNE ROUES (6 COLS) -->
+      <section class="lg:col-span-8 flex flex-col items-center justify-center relative">
+        
+        <div class="relative w-full max-w-[480px] aspect-square flex items-center justify-center p-2">
+          <svg id="wheel-svg" viewBox="0 0 600 600" class="w-full h-full select-none touch-none cursor-grab">
+            
+            <!-- CERCLE EXTÉRIEUR FIXE (NOTES) -->
+            <g id="outer-notes-group">
+              <circle cx="300" cy="300" r="250" fill="none" stroke="currentColor" stroke-opacity="0.1" stroke-width="50" />
+            </g>
+
+            <!-- CERCLE INTÉRIEUR MOBILE -->
+            <g id="inner-modes-group" transform-origin="300 300">
+              <circle cx="300" cy="300" r="175" fill="none" stroke="currentColor" stroke-opacity="0.08" stroke-width="90" />
+            </g>
+
+            <!-- MOYEU CENTRAL -->
+            <g id="center-hub" class="pointer-events-none">
+              <circle cx="300" cy="300" r="110" class="ui-card shadow-2xl" stroke="currentColor" stroke-opacity="0.15" stroke-width="3" />
+              <text x="300" y="270" text-anchor="middle" class="fill-current text-[10px] font-bold font-tech opacity-50">MODE SÉLECTIONNÉ</text>
+              <text id="hub-mode-title" x="300" y="300" text-anchor="middle" class="fill-current font-extrabold text-2xl accent-color">IONIEN</text>
+              <text id="hub-root-note" x="300" y="330" text-anchor="middle" class="fill-current font-bold text-sm opacity-90">sur Do (C)</text>
+            </g>
+          </svg>
+        </div>
+
+        <!-- CONTRÔLES DE ROTATION -->
+        <div class="w-full max-w-[480px] flex items-center justify-between gap-3 mt-2">
+          <button onclick="rotateSteps(-1)" class="flex-1 py-2.5 px-3 rounded-xl ui-card border hover:bg-white/10 transition text-xs font-bold flex items-center justify-center gap-2">
+            <i class="fa-solid fa-rotate-left accent-color"></i> Rotation - (♭)
+          </button>
+          <button onclick="resetRotation()" class="px-4 py-2.5 rounded-xl ui-card border hover:bg-white/10 transition text-xs font-bold" title="Réinitialiser">
+            <i class="fa-solid fa-arrows-rotate"></i>
+          </button>
+          <button onclick="rotateSteps(1)" class="flex-1 py-2.5 px-3 rounded-xl ui-card border hover:bg-white/10 transition text-xs font-bold flex items-center justify-center gap-2">
+            Rotation + (♯) <i class="fa-solid fa-rotate-right accent-color"></i>
+          </button>
+        </div>
+
+      </section>
+
+      <!-- COLONNE INFOS (6 COLS) -->
+      <section class="lg:col-span-4 flex flex-col gap-5">
+        
+        <!-- COMPTEUR D'ALTÉRATIONS -->
+        <div class="ui-card p-5 rounded-2xl border shadow-lg relative overflow-hidden">
+          <div class="flex justify-between items-center mb-1">
+            <span class="text-xs font-bold uppercase font-tech accent-color">Compteur d'Altérations</span>
+            <span id="shift-badge" class="px-2.5 py-1 rounded-md text-[11px] bg-white/10 font-mono">0 Cran</span>
+          </div>
+
+          <div class="flex items-center justify-center my-2">
+            <div id="accidental-count" class="text-5xl font-extrabold font-tech tracking-tight accent-color">
+              0
+            </div>
+          </div>
+
+          <div id="accidental-desc" class="text-xs text-center font-semibold py-2 px-3 rounded-xl bg-white/5 border border-white/5 text-gray-300">
+            Ordre Naturel (Aucune altération)
+          </div>
+
+          <div id="accidentals-badges" class="flex flex-wrap justify-center gap-1.5 mt-3 min-h-[28px]"></div>
+        </div>
+
+        <!-- FICHE MODALE & GAMME PARENTE -->
+        <!-- <div class="grid grid-cols-4 sm:grid-cols-2 gap-4"> -->
+          <div class="ui-card p-4 rounded-2xl border shadow-lg flex flex-col justify-between">
+            <div class="flex justify-between items-center mb-2">
+              <h3 class="text-xs font-bold uppercase font-tech accent-color">Degrés & Notes</h3>
+              <button onclick="playScaleAudio()" class="text-xs accent-color hover:underline font-bold flex items-center gap-1">
+                <i class="fa-solid fa-play"></i> Écouter
+              </button>
+            </div>
+            <div id="scale-notes-grid" class="grid grid-cols-7 gap-1 text-center mt-1"></div>
+          </div>
+		<!-- </div> -->
+		<!-- <div class="grid grid-cols-4 sm:grid-cols-2 gap-4"> -->
+          <div class="ui-card p-4 rounded-2xl border shadow-lg flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center accent-color font-bold text-lg shrink-0">
+              <i class="fa-solid fa-music"></i>
+            </div>
+            <div>
+              <div id="parent-scale-text" class="font-bold text-sm">Do Majeur</div>
+              <p class="text-[10px] text-gray-400">Gamme majeure parente</p>
+            </div>
+          </div>
+        <!-- </div> -->
+
+      </section>
+
+    </main>
+
+    <footer class="pt-4 border-t border-white/10 text-center text-xs opacity-50">
+      Harmonie Modale Pédagogique — Cercle des Quintes
+    </footer>
+
+  </div>
+
+  <script>
+    // CERCLE DES QUINTES RECOLORÉ ET ALIGNÉ SUR DO À 12H (Index 1 = Do = 12h)
+   // Index 0 = Do à 12h (0 altération)
+    const CIRCLE_OF_FIFTHS = [
+      { fr: 'Do',  int: 'C',  shift: 0  }, // 12h
+      { fr: 'Sol', int: 'G',  shift: 1  }, // 1h
+      { fr: 'Ré',  int: 'D',  shift: 2  }, // 2h
+      { fr: 'La',  int: 'A',  shift: 3  }, // 3h
+      { fr: 'Mi',  int: 'E',  shift: 4  }, // 4h
+      { fr: 'Si',  int: 'B',  shift: 5  }, // 5h
+      { fr: 'Fa♯', int: 'F♯', shift: 6  }, // 6h
+      { fr: 'Do♯', int: 'C♯', shift: 7  }, // 7h
+      { fr: 'La♭', int: 'A♭', shift: -4 }, // 8h
+      { fr: 'Mi♭', int: 'E♭', shift: -3 }, // 9h
+      { fr: 'Si♭', int: 'B♭', shift: -2 }, // 10h
+      { fr: 'Fa',  int: 'F',  shift: -1 }  // 11h
+    ];
+
+    const DIATONIC_BASE_FR = ['Do', 'Ré', 'Mi', 'Fa', 'Sol', 'La', 'Si'];
+    const DIATONIC_BASE_INT = ['C', 'D', 'E', 'F', 'G', 'A', 'B'];
+
+    const MODES = [
+      { id: 'lydian',     fr: 'Lydien',     int: 'Lydian',     parentDegree: 3, intervals: [0, 2, 4, 6, 7, 9, 11] },
+      { id: 'ionian',     fr: 'Ionien',     int: 'Ionian',     parentDegree: 0, intervals: [0, 2, 4, 5, 7, 9, 11] },
+      { id: 'mixolydian', fr: 'Mixolydien', int: 'Mixolydian', parentDegree: 4, intervals: [0, 2, 4, 5, 7, 9, 10] },
+      { id: 'dorian',     fr: 'Dorien',     int: 'Dorian',     parentDegree: 1, intervals: [0, 2, 3, 5, 7, 9, 10] },
+      { id: 'aeolian',    fr: 'Éolien',     int: 'Aeolian',    parentDegree: 5, intervals: [0, 2, 3, 5, 7, 8, 10] },
+      { id: 'phrygian',   fr: 'Phrygien',   int: 'Phrygian',   parentDegree: 2, intervals: [0, 1, 3, 5, 7, 8, 10] },
+      { id: 'locrian',    fr: 'Locrien',    int: 'Locrian',    parentDegree: 6, intervals: [0, 1, 3, 5, 6, 8, 10] }
+    ];
+
+    const SHARPS_FR = ['Fa', 'Do', 'Sol', 'Ré', 'La', 'Mi', 'Si'];
+    const SHARPS_INT = ['F', 'C', 'G', 'D', 'A', 'E', 'B'];
+    const FLATS_FR = ['Si', 'Mi', 'La', 'Ré', 'Sol', 'Do', 'Fa'];
+    const FLATS_INT = ['B', 'E', 'A', 'D', 'G', 'C', 'F'];
+
+    let currentLang = 'FR';
+    let selectedModeIdx = 1;
+    let currentRotationDeg = 0;
+    let currentShift = 0;
+    let audioOn = true;
+    let audioContext = null;
+
+    window.addEventListener('DOMContentLoaded', () => {
+      renderOuterNotes();
+      renderInnerModes();
+      updateUI();
+      initDrag();
+    });
+
+
+const i18n = {
+      FR: {
+        appTitle: 'Harmonie Modale Interactive',
+        appSubtitle: 'Cliquez directement sur un mode pour le choisir, puis tournez le disque.',
+        centerHubLabel: 'MODE SÉLECTIONNÉ',
+        rotateLeft: 'Rotation - (♭)',
+        rotateRight: 'Rotation + (♯)',
+        counterTitle: "Compteur d'Altérations",
+        badgeShift: 'Cran',
+        badgeShifts: 'Crans',
+        naturalDesc: 'Ordre Naturel (Aucune altération)',
+        sharpsDesc: 'Dièse',
+        sharpsDescPlural: 'Dièses',
+        flatsDesc: 'Bémol',
+        flatsDescPlural: 'Bémols',
+        clockwise: '(Sens Horaire)',
+        counterClockwise: '(Sens Anti-Horaire)',
+        degreesTitle: 'Degrés & Notes',
+        playBtn: 'Écouter',
+        parentScaleSub: 'Gamme majeure parente',
+        majorSuffix: 'Majeur',
+        footerText: 'Harmonie Modale Pédagogique — Cercle des Quintes'
+      },
+      INT: {
+        appTitle: 'Interactive Modal Harmony',
+        appSubtitle: 'Click directly on a mode to select it, then rotate the disc.',
+        centerHubLabel: 'SELECTED MODE',
+        rotateLeft: 'Rotate - (♭)',
+        rotateRight: 'Rotate + (♯)',
+        counterTitle: 'Accidental Counter',
+        badgeShift: 'Step',
+        badgeShifts: 'Steps',
+        naturalDesc: 'Natural Order (No accidentals)',
+        sharpsDesc: 'Sharp',
+        sharpsDescPlural: 'Sharps',
+        flatsDesc: 'Flat',
+        flatsDescPlural: 'Flats',
+        clockwise: '(Clockwise)',
+        counterClockwise: '(Counter-Clockwise)',
+        degreesTitle: 'Degrees & Notes',
+        playBtn: 'Listen',
+        parentScaleSub: 'Parent major scale',
+        majorSuffix: 'Major',
+        footerText: 'Pedagogical Modal Harmony — Circle of Fifths'
+      }
+    };
+
+
+
+    // Nettoyage pour éviter les doublons lors des re-rendus
+    function clearGroup(group) {
+      const circleTrack = group.querySelector('circle');
+      group.innerHTML = '';
+      if (circleTrack) group.appendChild(circleTrack);
+    }
+
+    function renderOuterNotes() {
+      const group = document.getElementById('outer-notes-group');
+      clearGroup(group);
+
+      const radius = 250;
+      const center = 300;
+
+      CIRCLE_OF_FIFTHS.forEach((note, idx) => {
+        // Index 0 (Do) = -90° (exactement à 12h)
+        const angleDeg = -90 + idx * 30;
+        const rad = (angleDeg * Math.PI) / 180;
+        const x = center + radius * Math.cos(rad);
+        const y = center + radius * Math.sin(rad);
+
+        const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+        g.setAttribute('class', 'cursor-pointer');
+        g.onclick = (e) => {
+          e.stopPropagation();
+          alignModeToNote(idx);
+        };
+
+        const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        circle.setAttribute('cx', x);
+        circle.setAttribute('cy', y);
+        circle.setAttribute('r', '20');
+        circle.setAttribute('class', 'outer-note-circle transition');
+        circle.setAttribute('stroke-width', '2');
+
+        const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        text.setAttribute('x', x);
+        text.setAttribute('y', y + 4);
+        text.setAttribute('text-anchor', 'middle');
+        text.setAttribute('class', 'outer-note-text font-extrabold text-sm font-sans pointer-events-none');
+        text.textContent = currentLang === 'FR' ? note.fr : note.int;
+
+        g.appendChild(circle);
+        g.appendChild(text);
+        group.appendChild(g);
+      });
+    }
+
+    function renderInnerModes() {
+      const group = document.getElementById('inner-modes-group');
+      clearGroup(group);
+
+      const modeRadius = 175;
+      const noteRadius = 250;
+      const center = 300;
+
+      MODES.forEach((mode, idx) => {
+        // Aligné avec Ionien (index 1) à 12h
+        const angleDeg = -90 + (idx - 1) * 30;
+        const rad = (angleDeg * Math.PI) / 180;
+        
+        const mx = center + modeRadius * Math.cos(rad);
+        const my = center + modeRadius * Math.sin(rad);
+        const nx = center + noteRadius * Math.cos(rad);
+        const ny = center + noteRadius * Math.sin(rad);
+
+        const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+        g.setAttribute('id', `mode-item-group-${idx}`);
+        g.setAttribute('class', 'cursor-pointer');
+        
+        const hitArea = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        hitArea.setAttribute('cx', mx);
+        hitArea.setAttribute('cy', my);
+        hitArea.setAttribute('r', '35');
+        hitArea.setAttribute('fill', 'transparent');
+
+        const selectHandler = (e) => {
+          e.stopPropagation();
+          e.preventDefault();
+          selectMode(idx);
+        };
+
+        g.addEventListener('click', selectHandler);
+        g.addEventListener('touchend', selectHandler);
+
+        const targetGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+        targetGroup.setAttribute('id', `mode-target-${idx}`);
+        targetGroup.setAttribute('class', idx === selectedModeIdx ? 'block' : 'hidden');
+
+        const targetCircle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        targetCircle.setAttribute('cx', nx);
+        targetCircle.setAttribute('cy', ny);
+        targetCircle.setAttribute('r', '24');
+        targetCircle.setAttribute('class', 'fill-red-500/15 stroke-red-500 stroke-[2.5] stroke-dasharray-[4_2] pointer-events-none');
+
+        const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        line.setAttribute('x1', mx);
+        line.setAttribute('y1', my);
+        line.setAttribute('x2', nx);
+        line.setAttribute('y2', ny);
+        line.setAttribute('class', 'stroke-red-500/60 stroke-2 pointer-events-none');
+
+        targetGroup.appendChild(line);
+        targetGroup.appendChild(targetCircle);
+        g.appendChild(targetGroup);
+
+        const textGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+        textGroup.setAttribute('id', `mode-text-group-${idx}`);
+        textGroup.setAttribute('transform-origin', `${mx} ${my}`);
+        textGroup.setAttribute('class', 'pointer-events-none');
+
+        const textMode = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        textMode.setAttribute('x', mx);
+        textMode.setAttribute('y', my - 3);
+        textMode.setAttribute('text-anchor', 'middle');
+        textMode.setAttribute('id', `mode-text-${idx}`);
+        textMode.setAttribute('class', 'fill-current font-bold text-base accent-color');
+		// 🔹 AJOUTE CETTE LIGNE pour la taille (ex: 14px ou 16px au lieu du standard ~11px)
+        textMode.setAttribute('font-size', '25px');
+        textMode.textContent = currentLang === 'FR' ? mode.fr : mode.int;
+
+        const baseFr = DIATONIC_BASE_FR[mode.parentDegree];
+        const baseInt = DIATONIC_BASE_INT[mode.parentDegree];
+        const displayBaseNote = currentLang === 'FR' ? baseFr : baseInt;
+
+        const textNote = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        textNote.setAttribute('x', mx);
+        textNote.setAttribute('y', my + 11);
+        textNote.setAttribute('text-anchor', 'middle');
+        textNote.setAttribute('class', 'fill-gray-400 font-semibold text-xs');
+        textNote.textContent = `(${displayBaseNote})`;
+
+        textGroup.appendChild(textNote);
+        textGroup.appendChild(textMode);
+        
+        g.appendChild(hitArea);
+        g.appendChild(textGroup);
+        group.appendChild(g);
+      });
+    }
+
+    function selectMode(idx) {
+      selectedModeIdx = idx;
+      updateUI();
+    }
+
+    function alignModeToNote(noteIdx) {
+      const targetObj = CIRCLE_OF_FIFTHS[noteIdx];
+      currentShift = targetObj.shift;
+      currentRotationDeg = currentShift * 30;
+      updateUI();
+    }
+
+    function rotateSteps(s) {
+      currentShift += s;
+      currentRotationDeg = currentShift * 30;
+      updateUI();
+    }
+
+    function resetRotation() {
+      currentShift = 0;
+      currentRotationDeg = 0;
+      updateUI();
+    }
+
+    function getParentMajorScaleNotes(shift) {
+      const baseFr = [...DIATONIC_BASE_FR];
+      const baseInt = [...DIATONIC_BASE_INT];
+
+      const sharpIndices = [3, 0, 4, 1, 5, 2, 6]; // Fa, Do, Sol, Ré, La, Mi, Si
+      const flatIndices  = [6, 2, 5, 1, 4, 0, 3]; // Si, Mi, La, Ré, Sol, Do, Fa
+
+      // Calcul direct de la note fondamentale de la gamme parente
+      const parentRootDiatonicIdx = ((shift * 4) % 7 + 7) % 7; 
+
+      const result = [];
+
+      for (let i = 0; i < 7; i++) {
+        const diatonicIdx = (parentRootDiatonicIdx + i) % 7;
+        let fr = baseFr[diatonicIdx];
+        let int = baseInt[diatonicIdx];
+
+        if (shift > 0) {
+          for (let s = 0; s < shift && s < 7; s++) {
+            if (sharpIndices[s] === diatonicIdx) {
+              fr += '♯';
+              int += '♯';
+            }
+          }
+        } else if (shift < 0) {
+          const absShift = Math.abs(shift);
+          for (let b = 0; b < absShift && b < 7; b++) {
+            if (flatIndices[b] === diatonicIdx) {
+              fr += '♭';
+              int += '♭';
+            }
+          }
+        }
+
+        result.push({ fr, int });
+      }
+
+      return result;
+    }
+
+function updateUI() {
+	const t = i18n[currentLang];
+      // 1. ROTATION DU CERCLE INTÉRIEUR ET DES TEXTES
+      const innerGroup = document.getElementById('inner-modes-group');
+      innerGroup.style.transform = `rotate(${currentRotationDeg}deg)`;
+
+      MODES.forEach((_, idx) => {
+        const textGroup = document.getElementById(`mode-text-group-${idx}`);
+        const target = document.getElementById(`mode-target-${idx}`);
+        const textMode = document.getElementById(`mode-text-${idx}`);
+
+        if (textGroup) textGroup.style.transform = `rotate(${-currentRotationDeg}deg)`;
+
+        if (idx === selectedModeIdx) {
+          if (target) target.classList.replace('hidden', 'block');
+          if (textMode) textMode.setAttribute('class', 'fill-red-400 font-extrabold text-base');
+        } else {
+          if (target) target.classList.replace('block', 'hidden');
+          if (textMode) textMode.setAttribute('class', 'fill-current font-bold text-sm accent-color');
+        }
+      });
+
+      const activeMode = MODES[selectedModeIdx];
+
+      // 2. RÉCUPÉRATION DE LA NOTE AU SOMMET ET DU SHIFT D'ARMURE
+      const circleIndex = ((currentShift % 12) + 12) % 12;
+      const currentCircleObj = CIRCLE_OF_FIFTHS[circleIndex];
+      const actualShift = currentCircleObj.shift;
+
+      // 3. GENERATION DES NOTES DE LA GAMME PARENTE ET DU MODE
+      const parentScaleNotes = getParentMajorScaleNotes(actualShift);
+
+      // On retrouve la note de la gamme parente (Ionien / 1er degré)
+      const parentRootObj = CIRCLE_OF_FIFTHS.find(n => n.shift === actualShift) || { fr: parentScaleNotes[0].fr, int: parentScaleNotes[0].int };
+
+      // Reconstitution des 7 degrés du mode à partir de la gamme parente
+      const modeStartDegree = activeMode.parentDegree;
+      const modeNotes = [];
+      for (let i = 0; i < 7; i++) {
+        const noteIdx = (modeStartDegree + i) % 7;
+        modeNotes.push(parentScaleNotes[noteIdx]);
+      }
+
+      const rootNoteObj = modeNotes[0];
+
+      // 4. MISE À JOUR DE L'EN-TÊTE CENTRAL (HUB)
+      document.getElementById('hub-mode-title').textContent = (currentLang === 'FR' ? activeMode.fr : activeMode.int).toUpperCase();
+      document.getElementById('hub-root-note').textContent = `sur ${currentLang === 'FR' ? rootNoteObj.fr : rootNoteObj.int}`;
+
+      // 5. AFFICHAGE DES ALTÉRATIONS (COMPTEUR ET BADGES)
+      const countElem = document.getElementById('accidental-count');
+      const descElem = document.getElementById('accidental-desc');
+      const badgeElem = document.getElementById('shift-badge');
+      const badgesContainer = document.getElementById('accidentals-badges');
+
+      <!-- badgeElem.textContent = `${actualShift > 0 ? '+' : ''}${actualShift} Cran${Math.abs(actualShift) > 1 ? 's' : ''}`; -->
+      const absShift = Math.abs(actualShift);
+      badgeElem.textContent = `${actualShift > 0 ? '+' : ''}${actualShift} ${absShift > 1 ? t.badgeShifts : t.badgeShift}`;
+      badgesContainer.innerHTML = '';
+
+		
+		
+      if (actualShift === 0) {
+        countElem.textContent = '0';
+        descElem.textContent = t.naturalDesc;
+      } else if (actualShift > 0) {
+        countElem.textContent = `+${actualShift} ♯`;
+        descElem.textContent = `${actualShift} ${actualShift > 1 ? t.sharpsDescPlural : t.sharpsDesc} ${t.clockwise}`;
+        for (let i = 0; i < Math.min(actualShift, 7); i++) {
+          const span = document.createElement('span');
+          span.className = 'px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 text-xs font-bold border border-amber-500/30';
+          span.textContent = `${(currentLang === 'FR' ? SHARPS_FR : SHARPS_INT)[i]}♯`;
+          badgesContainer.appendChild(span);
+        }
+      } else {
+        const abs = Math.abs(actualShift);
+        countElem.textContent = `-${abs} ♭`;
+        descElem.textContent = `${actualShift} ${actualShift > 1 ? t.sharpsDescPlural : t.sharpsDesc} ${t.clockwise}`;
+
+        for (let i = 0; i < Math.min(abs, 7); i++) {
+          const span = document.createElement('span');
+          span.className = 'px-2 py-0.5 rounded bg-cyan-500/20 text-cyan-300 text-xs font-bold border border-cyan-500/30';
+          span.textContent = `${(currentLang === 'FR' ? FLATS_FR : FLATS_INT)[i]}♭`;
+          badgesContainer.appendChild(span);
+        }
+      }
+
+      // 6. AFFICHAGE DANS LA GRILLE DES 7 DEGRÉS (scale-notes-grid)
+      const scaleGrid = document.getElementById('scale-notes-grid');
+      scaleGrid.innerHTML = '';
+
+      modeNotes.forEach((noteObj, i) => {
+        const noteName = currentLang === 'FR' ? noteObj.fr : noteObj.int;
+
+        const d = document.createElement('div');
+        d.className = 'p-1.5 rounded-lg bg-black/5 dark:bg-white/5 border border-black/5 dark:border-white/5 flex flex-col items-center justify-center';
+        d.innerHTML = `
+          <span class="text-[9px] opacity-50 font-mono mb-0.5">${i + 1}</span>
+          <span class="font-bold text-xs ${i === 0 ? 'accent-color font-extrabold text-sm' : 'opacity-90'}">${noteName}</span>
+        `;
+        scaleGrid.appendChild(d);
+      });
+
+      // 7. MISE À JOUR DE LA GAMME PARENTE (parent-scale-text)
+      const parentName = currentLang === 'FR' ? parentRootObj.fr : parentRootObj.int;
+      const parentSuffix = currentLang === 'FR' ? 'Majeur' : 'Major';
+      document.getElementById('parent-scale-text').textContent = `${parentName} ${parentSuffix}`;
+    }
+
+    function initDrag() {
+      const svg = document.getElementById('wheel-svg');
+      let isDragging = false, hasMoved = false, startAngle = 0, initialRotation = 0;
+
+      function getAngle(x, y) {
+        const rect = svg.getBoundingClientRect();
+        return Math.atan2(y - (rect.top + rect.height / 2), x - (rect.left + rect.width / 2)) * (180 / Math.PI);
+      }
+
+      function down(e) {
+        if (e.target.closest('#inner-modes-group g') || e.target.closest('#outer-notes-group g')) return;
+        
+        isDragging = true;
+        hasMoved = false;
+        const p = e.touches ? e.touches[0] : e;
+        startAngle = getAngle(p.clientX, p.clientY);
+        initialRotation = currentRotationDeg;
+      }
+
+      function move(e) {
+        if (!isDragging) return;
+        const p = e.touches ? e.touches[0] : e;
+        const delta = getAngle(p.clientX, p.clientY) - startAngle;
+        if (Math.abs(delta) > 2) hasMoved = true;
+        
+        currentRotationDeg = initialRotation + delta;
+        currentShift = Math.round(currentRotationDeg / 30);
+        updateUI();
+      }
+
+      function up() {
+        if (isDragging) {
+          isDragging = false;
+          currentRotationDeg = currentShift * 30;
+          updateUI();
+        }
+      }
+
+      svg.addEventListener('mousedown', down);
+      window.addEventListener('mousemove', move);
+      window.addEventListener('mouseup', up);
+      svg.addEventListener('touchstart', down, { passive: true });
+      window.addEventListener('touchmove', move, { passive: true });
+      window.addEventListener('touchend', up);
+    }
+
+    function setLanguage(lang) {
+      currentLang = lang;
+      const t = i18n[lang];
+
+      // 1. Boutons de sélection de langue
+      document.getElementById('btn-fr').className = lang === 'FR' 
+        ? 'px-3 py-1.5 rounded-lg text-xs font-bold transition accent-bg text-black shadow' 
+        : 'px-3 py-1.5 rounded-lg text-xs font-bold transition text-gray-400 hover:text-white';
+      
+      document.getElementById('btn-int').className = lang === 'INT' 
+        ? 'px-3 py-1.5 rounded-lg text-xs font-bold transition accent-bg text-black shadow' 
+        : 'px-3 py-1.5 rounded-lg text-xs font-bold transition text-gray-400 hover:text-white';
+
+      // 2. Textes fixes de l'interface
+      const headerTitle = document.querySelector('header h1 span');
+      if (headerTitle) headerTitle.textContent = t.appTitle;
+
+      const headerSub = document.querySelector('header p');
+      if (headerSub) headerSub.textContent = t.appSubtitle;
+
+      const hubLabel = document.querySelector('#center-hub text:first-of-type');
+      if (hubLabel) hubLabel.textContent = t.centerHubLabel;
+
+      const btnRotateLeft = document.querySelector('button[onclick="rotateSteps(-1)"]');
+      if (btnRotateLeft) btnRotateLeft.innerHTML = `<i class="fa-solid fa-rotate-left accent-color"></i> ${t.rotateLeft}`;
+
+      const btnRotateRight = document.querySelector('button[onclick="rotateSteps(1)"]');
+      if (btnRotateRight) btnRotateRight.innerHTML = `${t.rotateRight} <i class="fa-solid fa-rotate-right accent-color"></i>`;
+
+      const counterTitle = document.querySelector('#accidental-count').parentElement.previousElementSibling.querySelector('span:first-child');
+      if (counterTitle) counterTitle.textContent = t.counterTitle;
+
+      const degreesTitle = document.querySelector('#scale-notes-grid').previousElementSibling.querySelector('h3');
+      if (degreesTitle) degreesTitle.textContent = t.degreesTitle;
+
+      const listenBtn = document.querySelector('button[onclick="playScaleAudio()"]');
+      if (listenBtn) listenBtn.innerHTML = `<i class="fa-solid fa-play"></i> ${t.playBtn}`;
+
+      const parentSub = document.querySelector('#parent-scale-text').nextElementSibling;
+      if (parentSub) parentSub.textContent = t.parentScaleSub;
+
+      const footer = document.querySelector('footer');
+      if (footer) footer.textContent = t.footerText;
+
+      // 3. Re-rendu du cercle des notes/modes et mise à jour dynamique de l'UI
+      renderOuterNotes();
+      renderInnerModes();
+      updateUI();
+    }
+
+    function setTheme(t) {
+      document.body.className = `theme-${t} theme-transition min-h-screen font-sans flex flex-col justify-between p-4 md:p-6`;
+      renderOuterNotes();
+      renderInnerModes();
+      updateUI();
+    }
+
+    function toggleAudio() {
+      audioOn = !audioOn;
+      const b = document.getElementById('btn-audio');
+      if (audioOn) {
+        b.classList.add('accent-border');
+      } else {
+        b.classList.remove('accent-border');
+      }
+    }
+
+    // FONCTION AUDIO AMÉLIORÉE & ROBUSTE
+    function playScaleAudio() {
+      if (!audioContext) {
+        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      if (audioContext.state === 'suspended') {
+        audioContext.resume();
+      }
+
+      const activeMode = MODES[selectedModeIdx];
+
+      // Calcul du décalage (shift) et de la hauteur chromatique de la tonique
+      const circlePos = ((currentShift % 12) + 12) % 12;
+      const currentCircleObj = CIRCLE_OF_FIFTHS[circlePos];
+      const actualShift = currentCircleObj.shift;
+
+      // La tonique de la gamme parente en demi-tons par rapport à Do
+      const parentRootPitch = (actualShift * 7 % 12 + 12) % 12;
+
+      // La tonique du mode sélectionné
+      const modeRootPitch = (parentRootPitch + activeMode.intervals[0]) % 12;
+
+      // Fréquence de base (Do3 = 261.63Hz)
+      const baseFreq = 261.63 * Math.pow(2, modeRootPitch / 12);
+
+      // On ajoute l'octave à la gamme (12 demi-tons)
+      const scaleIntervals = [...activeMode.intervals, 12];
+      const now = audioContext.currentTime;
+
+      scaleIntervals.forEach((interval, step) => {
+        const noteFreq = baseFreq * Math.pow(2, interval / 12);
+        const startTime = now + step * 0.35;
+
+        const osc = audioContext.createOscillator();
+        const gain = audioContext.createGain();
+
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(noteFreq, startTime);
+
+        // Enveloppe sonore ADSR douce
+        gain.gain.setValueAtTime(0, startTime);
+        gain.gain.linearRampToValueAtTime(0.25, startTime + 0.05);
+        gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.3);
+
+        osc.connect(gain);
+        gain.connect(audioContext.destination);
+
+        osc.start(startTime);
+        osc.stop(startTime + 0.32);
+      });
+    }
+  </script>
+</body>
+</html>

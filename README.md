@@ -3,6 +3,38 @@
 Liste de petits outils pour aider à travailler un instrument ou à éditer ses partitions. Certains outils sont basés sur la "notation abc" pour la musique. 
 
 
+
+---
+
+##  Visualiser les Modes
+
+![modes_musicaux_interactifs](./images/modes_musicaux_interactifs.png)
+
+
+* 🚀 Tester l'application : [Ouvrir l'outil (Démo interactive)](https://fxpar.github.io/music-toolbox/modes_musicaux_interactifs.html)
+* 📄 Code source : [modes_musicaux_interactifs.html](https://github.com/fxpar/music-toolbox/blob/main/modes_musicaux_interactifs.html)
+
+**Un outil visuel pour mémoriser les notes de chaque mode: Ré Mixolydien, Fa Locrien...**
+
+Fonctionnalités:
+* Choix du mode
+* Rotation jusqu'à la note
+* Langue Français / International
+* Nombre d'altérations
+* Liste des altérations
+* Notes de la gamme
+* Jeux audio de la gamme
+* Gamme majeure correspondante
+* Thèmes jour / nuit / néon
+
+
+Librairies utilisées: 
+* Tailwind
+
+Code créé par IA (Gemini), et prompté par moi 😉
+
+Licence: CC BY-NC 4.0
+
 ---
 
 ##  Convertisseur tablature Bass → Ukulélé
