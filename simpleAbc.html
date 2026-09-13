@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lecteur ABC Notation avec Curseur</title>
+    
+    <!-- CSS de abcjs pour les contrôles audio et le style de base -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/abcjs@6.2.2/abcjs-audio.css">
+    
+    <!-- Script principal de abcjs -->
+    <script src="https://cdn.jsdelivr.net/npm/abcjs@6.2.2/dist/abcjs-basic-min.js"></script>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 0 20px;
+        }
+
+        textarea {
+            width: 100%;
+            height: 120px;
+            font-family: monospace;
+            font-size: 14px;
+            padding: 10px;
+            box-sizing: border-box;
+            margin-bottom: 10px;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-bottom: 20px;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        #paper {
+            background-color: #fdfdfd;
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-bottom: 20px;
+            min-height: 150px;
+        }
+
+        /* Style du curseur rouge pendant la lecture */
+        .abcjs-highlight {
+            fill: #ff0000 !important;
+            stroke: #ff0000 !important;
+        }
+
+        #audio-controls {
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Lecteur ABC Notation</h1>
+    
+    <label for="abc-code"><strong>Code ABC :</strong></label>
+    <textarea id="abc-code">
+X:1
+T:Une mesure de démonstration
+M:4/4
+L:1/8
+K:C
+C2 E2 G2 c2 |
+    </textarea>
+
+    <button id="render-btn">Mettre à jour & Préparer l'audio</button>
+
+    <!-- Zone d'affichage de la partition SVG -->
+    <div id="paper"></div>
+
+    <!-- Zone d'affichage des contrôles audio -->
+    <div id="audio-controls"></div>
+
+    <script>
+        // Références aux éléments HTML
+        const textarea = document.getElementById("abc-code");
+        const renderBtn = document.getElementById("render-btn");
+        const paperDiv = document.getElementById("paper");
+        const audioDiv = document.getElementById("audio-controls");
+
+        let synthController = null;
+
+        // Classe pour gérer la synchronisation du curseur rouge sur la partition
+        class CursorControl {
+            onStart() {
+                // Optionnel : actions au démarrage
+            }
+            onEvent(ev) {
+                // Retire l'ancienne mise en valeur
+                const lastHighlighted = document.querySelectorAll("#paper .abcjs-highlight");
+                lastHighlighted.forEach(el => el.classList.remove("abcjs-highlight"));
+
+                // Ajoute la classe de surbrillance aux éléments de la note actuelle
+                if (ev && ev.elements) {
+                    ev.elements.forEach(noteGroup => {
+                        noteGroup.forEach(elem => elem.classList.add("abcjs-highlight"));
+                    });
+                }
+            }
+            onFinished() {
+                // Nettoie à la fin de la lecture
+                const lastHighlighted = document.querySelectorAll("#paper .abcjs-highlight");
+                lastHighlighted.forEach(el => el.classList.remove("abcjs-highlight"));
+            }
+        }
+
+        const cursorControl = new CursorControl();
+
+        async function renderAndSetupAudio() {
+            const abcString = textarea.value;
+
+            // 1. Générer la partition SVG
+            const visualObj = ABCJS.renderAbc("paper", abcString, {
+                responsive: "resize"
+            })[0];
+
+            // 2. Vérifier la compatibilité Audio du navigateur
+            if (!ABCJS.synth.supportsAudio()) {
+                audioDiv.innerHTML = "<p style='color:red;'>L'audio n'est pas supporté par ce navigateur.</p>";
+                return;
+            }
+
+            // 3. Initialiser le contrôleur Audio Synthesizer
+            synthController = new ABCJS.synth.SynthController();
+            synthController.load("#audio-controls", cursorControl, {
+                displayLoop: false,
+                displayRestart: true,
+                displayPlay: true,
+                displayProgress: true,
+                displayWarp: true
+            });
+
+            // 4. Préparer les buffers sonores
+            const createSynth = new ABCJS.synth.CreateSynth();
+            
+            try {
+                await createSynth.init({ visualObj: visualObj });
+                await synthController.setTune(visualObj, false, {
+                    chordsOff: false
+                });
+            } catch (error) {
+                console.error("Erreur lors de la création de l'audio :", error);
+            }
+        }
+
+        // Événement au clic sur le bouton
+        renderBtn.addEventListener("click", renderAndSetupAudio);
+
+        // Premier rendu automatique au chargement de la page
+        window.addEventListener("DOMContentLoaded", renderAndSetupAudio);
+    </script>
+</body>
+</html>

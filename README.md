@@ -654,6 +654,27 @@ Licence: CC BY-NC 4.0
 ---
 
 
+## simple Abc
+
+![simpleAbc](./images/simpleAbc.png)
+
+
+* 🚀 Tester l'application : [Ouvrir l'outil (Démo interactive)](https://fxpar.github.io/music-toolbox/simpleAbc.html)
+* 📄 Code source : [chord-recognition.html](https://github.com/fxpar/music-toolbox/blob/main/simpleAbc.html)
+
+
+**Application minimaliste de abcjs, principalement un exemple de code à fournir aux IA quand elles s'emmèlent les pinceaux dans les versions. Ici on a un exemple de base qui fonctionne bien pour la partition et pour l'audio.**
+
+Librairies utilisées: 
+* Abcjs de Paul Rosen
+
+Code créé par IA, et prompté par moi 😉
+Licence: CC BY-NC 4.0
+
+
+
+---
+
 
 
 # Code source
