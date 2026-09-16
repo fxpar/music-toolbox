@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-  <title>Ukulele Pedagogical Tool - V2.1</title>
+  <title>Ukulele Pedagogical Tool - V2.2</title>
   <style>
     /* ==========================================================================
        1. MATERIAL DESIGN 3 DESIGN TOKENS (LIGHT / DARK)
@@ -221,7 +221,7 @@
       color: var(--chord-root-text) !important;
     }
 
-    /* Barré corrigé : bloc de fond propre derrière les notes */
+    /* Barré neutre en arrière-plan */
     .barre-indicator {
       position: absolute;
       top: 4px; bottom: 4px;
@@ -338,7 +338,7 @@
   <!-- Top App Bar -->
   <header class="top-bar">
     <button class="icon-btn" id="btn-menu" aria-label="Menu">☰</button>
-    <h1>Ukulele V2.1</h1>
+    <h1>Ukulele V2.2</h1>
     <div style="display: flex; gap: 4px;">
       <button class="icon-btn" id="btn-notation" title="Basculer Notation FR/INT">FR</button>
       <button class="icon-btn" id="btn-import" title="Importer JSON">📁</button>
@@ -391,8 +391,8 @@
       <div class="row-tools">
         <button class="btn btn-primary" id="btn-mode">Mode: Nom [Cycle]</button>
         <div style="display:flex; gap:4px;">
-          <button class="btn" id="btn-pos-up" title="Monter la position et la racine">▲ Pos</button>
-          <button class="btn" id="btn-pos-down" title="Descendre la position et la racine">▼ Pos</button>
+          <button class="btn" id="btn-pos-up" title="Monter la position sans modifier les noms">▲ Pos</button>
+          <button class="btn" id="btn-pos-down" title="Descendre la position sans modifier les noms">▼ Pos</button>
         </div>
         <button class="btn" id="btn-export">Export</button>
       </div>
@@ -423,19 +423,19 @@
     // --- CONFIGURATION & ÉTATS ---
     let STRING_OFFSETS = [7, 0, 4, 9]; // G, C, E, A
     let STRING_NAMES = ["Sol", "Do", "Mi", "La"];
-    let AUDIO_REF_FREQ = 261.63; // Fréquence de base (Do)
-    let isInternationalNotation = false; // false = FR (Do, Ré, Mi), true = INT (C, D, E)
+    let AUDIO_REF_FREQ = 261.63; 
+    let isInternationalNotation = false; 
     
     const TOTAL_ROWS = 36;
     const ANCHOR_ROW = 12;
 
-    let rootPosition = { string: 1, row: ANCHOR_ROW }; // Racine initiale sur Do au milieu
-    let interactionMode = 0; // 0: Nom (cycle alias), 1: Couleur (position), 2: Barré
+    let rootPosition = { string: 1, row: ANCHOR_ROW }; 
+    let interactionMode = 0; // 0: Nom (cycle alias), 1: Couleur (position), 2: Barré extensible
     
     let gridState = Array.from({ length: 4 }, () => Array(TOTAL_ROWS).fill(0));
-    let customNameAliases = {}; // Stocke l'index de l'alias sélectionné par note: { "s-r": aliasIdx }
+    let customNameAliases = {}; 
     let barreStates = {}; // { rowIdx: { startString, endString } }
-    let colorPositions = {}; // Stocke les positions colorées
+    let colorPositions = {}; 
 
     let presets = [];
     let currentPresetIdx = 0;
@@ -446,14 +446,13 @@
     };
 
     const INTERVAL_NAMES_INT = {
-      0: ['R', '8'], 1: ['b2'], 2: ['2', '9'], 3: ['♫ b3'], 4: ['3'],
+      0: ['R', '8'], 1: ['b2'], 2: ['2', '9'], 3: ['b3'], 4: ['3'],
       5: ['4', '11'], 6: ['b5', '#4'], 7: ['5'], 8: ['#5'], 9: ['6', 'bb7', '13'], 10: ['b7'], 11: ['7']
     };
 
     const fretboardEl = document.getElementById('fretboard');
     const viewportEl = document.getElementById('viewport');
 
-    // --- INITIALISATION DU MANCHE ---
     function buildMatrix() {
       const stringsContainer = fretboardEl.querySelector('.strings-container');
       const stringHeader = fretboardEl.querySelector('.string-header');
@@ -492,7 +491,6 @@
       savePresetState("Init");
     }
 
-    // --- LOGIQUE DES CLICS ET MODES ---
     function handleSpotClick(stringIdx, rowIndex) {
       const key = `${stringIdx}-${rowIndex}`;
       if (interactionMode === 0) {
@@ -510,18 +508,23 @@
         // Mode Couleur : Marquer / Démarquer la position
         colorPositions[key] = !colorPositions[key];
       } else if (interactionMode === 2) {
-        // Mode Barré neutre : crée ou supprime un barré sur cette frette sans modifier les noms/couleurs
+        // Mode Barré extensible : si aucun barré sur cette frette, on crée un point initial. Si déjà présent, on élargit/réduit entre les cordes cliquées.
         if (!barreStates[rowIndex]) {
-          // Déterminer automatiquement les bornes gauche/droite du barré cliqué
           barreStates[rowIndex] = { startString: stringIdx, endString: stringIdx };
         } else {
-          delete barreStates[rowIndex];
+          let b = barreStates[rowIndex];
+          if (b.startString === b.endString && b.startString === stringIdx) {
+            delete barreStates[rowIndex]; // Supprimer si on clique sur l'unique point existant
+          } else {
+            // Étendre ou adapter le barré pour inclure la nouvelle corde cliquée
+            b.startString = Math.min(b.startString, stringIdx);
+            b.endString = Math.max(b.endString, stringIdx);
+          }
         }
       }
       renderState();
     }
 
-    // --- RENDU GRAPHIQUE ---
     function renderState() {
       const spots = fretboardEl.querySelectorAll('.note-spot');
       spots.forEach(spot => {
@@ -544,20 +547,19 @@
 
         if (s === rootPosition.string && r === rootPosition.row) {
           spot.classList.add('root');
-          spot.innerText = isInternationalNotation ? 'R' : 'R';
+          spot.innerText = 'R';
         } else if (gridState[s][r] > 0 || colorPositions[key]) {
           spot.classList.add('active');
         }
       });
 
-      // Rendu des barrés neutres (sans altérer notes/couleurs)
+      // Rendu des barrés neutres
       for (let r = 0; r < TOTAL_ROWS; r++) {
         const rowEl = fretboardEl.querySelector(`.fret-row[data-row="${r}"]`);
         const barreEl = rowEl.querySelector('.barre-indicator');
         const bData = barreStates[r];
         if (bData) {
           barreEl.style.display = 'block';
-          // Calculer la position visuelle du conteneur de barré
           barreEl.style.left = `calc(${bData.startString * 25}% + 8px)`;
           barreEl.style.width = `calc(${((bData.endString - bData.startString + 1) * 25)}% - 16px)`;
         } else {
@@ -565,13 +567,12 @@
         }
       }
 
-      // Mise à jour des noms des cordes
       for(let i=0; i<4; i++) {
         document.getElementById(`sname-${i}`).innerText = `${STRING_NAMES[i]} (${4-i})`;
       }
     }
 
-    // --- D-PAD & DÉPLACEMENT DE LA RACINE ---
+    // --- D-PAD (Étoile) : Adapte uniquement le nom des notes et met en rouge la racine ---
     function moveRoot(dRow, dString) {
       rootPosition.row = Math.max(0, Math.min(TOTAL_ROWS - 1, rootPosition.row + dRow));
       rootPosition.string = Math.max(0, Math.min(3, rootPosition.string + dString));
@@ -585,16 +586,15 @@
     document.getElementById('dpad-right').addEventListener('click', () => moveRoot(0, 1));
     document.getElementById('dpad-center').addEventListener('click', () => savePresetState(`Preset ${presets.length + 1}`));
 
-    // --- DÉPLACEMENT GLOBAL (POSITION + ANCIENNE RACINE TRANSFORMÉE EN BLEU) ---
-    function shiftGlobalPosition(offset) {
-      // 1. L'ancienne position de racine devient une note colorée active (bleue)
+    // --- DÉPLACEMENT GLOBAL DES POSITIONS (SANS MODIFIER LES NOMS) ---
+    function shiftGlobalPositionOnly(offset) {
+      // Transformer l'ancienne position racine en note active de couleur bleue
       colorPositions[`${rootPosition.string}-${rootPosition.row}`] = true;
 
-      // 2. Déplacer la racine mathématiquement
-      let newRow = Math.max(0, Math.min(TOTAL_ROWS - 1, rootPosition.row + offset));
-      rootPosition.row = newRow;
+      // Déplacer la racine mathématiquement
+      rootPosition.row = Math.max(0, Math.min(TOTAL_ROWS - 1, rootPosition.row + offset));
 
-      // 3. Déplacer également l'ensemble des notes colorées existantes
+      // Déplacer l'ensemble des couleurs
       let newColors = {};
       Object.keys(colorPositions).forEach(key => {
         if(colorPositions[key]) {
@@ -604,16 +604,14 @@
         }
       });
       colorPositions = newColors;
-
-      // S'assurer que la nouvelle position de racine ne reste pas marquée en double dans les couleurs
       delete colorPositions[`${rootPosition.string}-${rootPosition.row}`];
 
       renderState();
       centerOnRow(rootPosition.row);
     }
 
-    document.getElementById('btn-pos-up').addEventListener('click', () => shiftGlobalPosition(-1));
-    document.getElementById('btn-pos-down').addEventListener('click', () => shiftGlobalPosition(1));
+    document.getElementById('btn-pos-up').addEventListener('click', () => shiftGlobalPositionOnly(-1));
+    document.getElementById('btn-pos-down').addEventListener('click', () => shiftGlobalPositionOnly(1));
 
     // --- GESTION DES PRESETS & JSON ---
     function savePresetState(name) {
@@ -650,7 +648,6 @@
       });
     }
 
-    // Export JSON
     document.getElementById('btn-export').addEventListener('click', () => {
       const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(presets, null, 2));
       const dlAnchor = document.createElement('a');
@@ -661,7 +658,6 @@
       dlAnchor.remove();
     });
 
-    // Import JSON
     const fileInput = document.getElementById('file-input');
     document.getElementById('btn-import').addEventListener('click', () => fileInput.click());
     fileInput.addEventListener('change', (e) => {
@@ -674,7 +670,6 @@
           if (Array.isArray(imported) && imported.length > 0) {
             presets = imported;
             currentPresetIdx = 0;
-            // Charger le premier preset du fichier
             const p = presets[0];
             rootPosition = { ...p.root };
             gridState = JSON.parse(JSON.stringify(p.grid));
@@ -693,21 +688,18 @@
       fileInput.value = '';
     });
 
-    // --- AUDIO API : ARPÈGE DE LA PLUS GRAVE À LA PLUS AIGUË ---
+    // --- AUDIO API ---
     document.getElementById('btn-audio').addEventListener('click', () => {
       if (!window.AudioContext && !window.webkitAudioContext) return;
       const ctx = new (window.AudioContext || window.webkitAudioContext)();
       
-      // Fréquences de base MIDI pour les 4 cordes (ordre physique ukulélé: G, C, E, A -> 0, 1, 2, 3)
-      // On calcule les fréquences relatives par rapport à la note de référence (Considérant la Racine comme Do de base)
       const baseFrequencies = [
-        AUDIO_REF_FREQ * Math.pow(2, (STRING_OFFSETS[0] - STRING_OFFSETS[1]) / 12), // Corde 0 (Sol)
-        AUDIO_REF_FREQ,                                                              // Corde 1 (Do)
-        AUDIO_REF_FREQ * Math.pow(2, (STRING_OFFSETS[2] - STRING_OFFSETS[1]) / 12), // Corde 2 (Mi)
-        AUDIO_REF_FREQ * Math.pow(2, (STRING_OFFSETS[3] - STRING_OFFSETS[1]) / 12)  // Corde 3 (La)
+        AUDIO_REF_FREQ * Math.pow(2, (STRING_OFFSETS[0] - STRING_OFFSETS[1]) / 12), 
+        AUDIO_REF_FREQ,                                                              
+        AUDIO_REF_FREQ * Math.pow(2, (STRING_OFFSETS[2] - STRING_OFFSETS[1]) / 12), 
+        AUDIO_REF_FREQ * Math.pow(2, (STRING_OFFSETS[3] - STRING_OFFSETS[1]) / 12)  
       ];
 
-      // Trouver pour chaque corde (de 0 à 3) la note active la plus basse jouée sur le manche
       let noteEvents = [];
       for (let s = 0; s < 4; s++) {
         let lowestRow = -1;
@@ -716,18 +708,16 @@
           const isRoot = (s === rootPosition.string && r === rootPosition.row);
           if (isRoot || gridState[s][r] > 0 || colorPositions[key]) {
             lowestRow = r;
-            break; // On prend la plus basse (première trouvée en partant du haut)
+            break; 
           }
         }
         if (lowestRow !== -1) {
-          // Calcul de la fréquence précise de cette note
           const semitoneOffsetFromRoot = lowestRow - rootPosition.row;
           const freq = baseFrequencies[s] * Math.pow(2, semitoneOffsetFromRoot / 12);
           noteEvents.push({ string: s, freq: freq });
         }
       }
 
-      // Jouer les notes l'une après l'autre (arpège de la corde 0 à la corde 3 si actives)
       noteEvents.forEach((ev, index) => {
         playTone(ctx, ev.freq, ctx.currentTime + (index * 0.25));
       });
@@ -746,7 +736,6 @@
       osc.stop(time + 0.6);
     }
 
-    // --- CHANGEMENT DE MODE D'ACTION ---
     const modeBtn = document.getElementById('btn-mode');
     const modeNames = ["Mode: Nom [Cycle]", "Mode: Couleur", "Mode: Barré"];
     modeBtn.addEventListener('click', () => {
@@ -754,7 +743,6 @@
       modeBtn.innerText = modeNames[interactionMode];
     });
 
-    // Bouton de bascule de notation FR / INT
     const notationBtn = document.getElementById('btn-notation');
     notationBtn.addEventListener('click', () => {
       isInternationalNotation = !isInternationalNotation;
@@ -769,7 +757,6 @@
       }
     }
 
-    // --- UI DRAWER & THEME ---
     document.getElementById('btn-theme').addEventListener('click', () => {
       const html = document.documentElement;
       const current = html.getAttribute('data-theme');
@@ -787,7 +774,6 @@
       document.getElementById('drawer-overlay').classList.remove('open');
     });
 
-    // Démarrage initial
     buildMatrix();
   </script>
 </body>
