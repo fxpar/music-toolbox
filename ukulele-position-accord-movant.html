@@ -473,6 +473,13 @@
         const rowEl = document.createElement('div');
         rowEl.className = 'fret-row';
         rowEl.dataset.row = r;
+		
+		// Clic simple sur la frette (sillet)
+        rowEl.addEventListener('click', (e) => {
+          if (e.target === rowEl) {
+            rowEl.classList.toggle('nut-active');
+          }
+        });
 
         const barreEl = document.createElement('div');
         barreEl.className = 'barre-indicator';
@@ -501,6 +508,9 @@
 
     function handleSpotClick(stringIdx, rowIndex) {
       const key = `${stringIdx}-${rowIndex}`;
+	  // Réinitialiser l'épaisseur de toutes les frettes / sillets
+fretboardEl.querySelectorAll('.fret-row.nut-active').forEach(el => el.classList.remove('nut-active'));
+
       if (interactionMode === 0) {
         const rootPitch = (STRING_OFFSETS[rootPosition.string] + rootPosition.row) % 12;
         const spotPitch = (STRING_OFFSETS[stringIdx] + rowIndex) % 12;
@@ -614,13 +624,18 @@
 
     // --- GESTION DES PRESETS & JSON ---
     function savePresetState(name) {
+		const activeNuts = [];
+		fretboardEl.querySelectorAll('.fret-row.nut-active').forEach(el => {
+		  activeNuts.push(parseInt(el.dataset.row));
+		});
       const preset = {
         name: name,
         root: { ...rootPosition },
         grid: JSON.parse(JSON.stringify(gridState)),
         barres: JSON.parse(JSON.stringify(barreStates)),
         colors: JSON.parse(JSON.stringify(colorPositions)),
-        aliases: JSON.parse(JSON.stringify(customNameAliases))
+        aliases: JSON.parse(JSON.stringify(customNameAliases)),
+		nuts: activeNuts // Sauvegarde des sillets
       };
       presets.push(preset);
       renderPresetsUI();
