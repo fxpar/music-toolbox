@@ -290,7 +290,7 @@ Licence: CC BY-NC 4.0
 
 ---
 
-## Position des accords ukulélé movants (outil pédagogique)
+## Position des accords ukulélé mouvants (outil pédagogique)
 
 ![ukulele-position-accord-mouvant](./images/ukulele-position-accord-mouvant.png)
 
