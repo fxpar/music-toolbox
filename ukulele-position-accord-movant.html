@@ -716,18 +716,19 @@ fretboardEl.querySelectorAll('.fret-row.nut-active').forEach(el => el.classList.
 
       let noteEvents = [];
       for (let s = 0; s < 4; s++) {
-        let lowestRow = -1;
-        // Parcourir de haut en bas (du sillet vers le bas du manche) pour trouver la première note active
-        for (let r = 0; r < TOTAL_ROWS; r++) {
+        let highestRow = -1;
+        // Parcourir de bas en haut (depuis la fin du manche vers le sillet) 
+        // pour trouver la note active la plus basse sur le manche (la plus aiguë)
+        for (let r = TOTAL_ROWS - 1; r >= 0; r--) {
           const key = `${s}-${r}`;
           const isRoot = (s === rootPosition.string && r === rootPosition.row);
           if (isRoot || gridState[s][r] > 0 || colorPositions[key]) {
-            lowestRow = r;
+            highestRow = r;
             break; 
           }
         }
-        if (lowestRow !== -1) {
-          const semitoneOffsetFromRoot = lowestRow - rootPosition.row;
+        if (highestRow !== -1) {
+          const semitoneOffsetFromRoot = highestRow - rootPosition.row;
           const freq = baseFrequencies[s] * Math.pow(2, semitoneOffsetFromRoot / 12);
           noteEvents.push({ string: s, freq: freq });
         }
