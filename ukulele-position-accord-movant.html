@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-  <title>Ukulele Pedagogical Tool - V2.2</title>
+  <title>Ukulele Pedagogical Tool - V2.3</title>
   <style>
     /* ==========================================================================
        1. MATERIAL DESIGN 3 DESIGN TOKENS (LIGHT / DARK)
@@ -221,7 +221,6 @@
       color: var(--chord-root-text) !important;
     }
 
-    /* Barré neutre en arrière-plan */
     .barre-indicator {
       position: absolute;
       top: 4px; bottom: 4px;
@@ -286,7 +285,6 @@
       color: var(--md-sys-color-on-primary);
     }
 
-    /* D-Pad (Étoile) pour la racine */
     .dpad-container {
       display: grid;
       grid-template-columns: 36px 36px 36px;
@@ -308,7 +306,6 @@
     }
     .dpad-btn.center { background: var(--md-sys-color-primary-container); color: var(--md-sys-color-on-primary-container); }
 
-    /* Presets horizontaux */
     .presets-row {
       display: flex;
       gap: 4px;
@@ -338,7 +335,7 @@
   <!-- Top App Bar -->
   <header class="top-bar">
     <button class="icon-btn" id="btn-menu" aria-label="Menu">☰</button>
-    <h1>Ukulele V2.2</h1>
+    <h1>Ukulele V2.3</h1>
     <div style="display: flex; gap: 4px;">
       <button class="icon-btn" id="btn-notation" title="Basculer Notation FR/INT">FR</button>
       <button class="icon-btn" id="btn-import" title="Importer JSON">📁</button>
@@ -391,18 +388,16 @@
       <div class="row-tools">
         <button class="btn btn-primary" id="btn-mode">Mode: Nom [Cycle]</button>
         <div style="display:flex; gap:4px;">
-          <button class="btn" id="btn-pos-up" title="Monter la position sans modifier les noms">▲ Pos</button>
-          <button class="btn" id="btn-pos-down" title="Descendre la position sans modifier les noms">▼ Pos</button>
+          <button class="btn" id="btn-pos-up" title="Déplacer les couleurs vers le haut">▲ Pos</button>
+          <button class="btn" id="btn-pos-down" title="Déplacer les couleurs vers le bas">▼ Pos</button>
         </div>
         <button class="btn" id="btn-export">Export</button>
       </div>
 
-      <!-- Ligne 2 : Presets horizontaux d'étapes de progression -->
-      <div class="presets-row" id="presets-container">
-        <!-- Généré dynamiquement -->
-      </div>
+      <!-- Ligne 2 : Presets horizontaux -->
+      <div class="presets-row" id="presets-container"></div>
 
-      <!-- Ligne 3 : Croix de déplacement de la racine (D-Pad) + Bouton central Preset -->
+      <!-- Ligne 3 : Croix de déplacement de la racine (D-Pad) -->
       <div style="display: flex; justify-content: space-between; align-items: center;">
         <div style="font-size: 0.75rem; opacity: 0.8;">Déplacement Racine :</div>
         <div class="dpad-container">
@@ -420,8 +415,7 @@
   </footer>
 
   <script>
-    // --- CONFIGURATION & ÉTATS ---
-    let STRING_OFFSETS = [7, 0, 4, 9]; // G, C, E, A
+    let STRING_OFFSETS = [7, 0, 4, 9]; 
     let STRING_NAMES = ["Sol", "Do", "Mi", "La"];
     let AUDIO_REF_FREQ = 261.63; 
     let isInternationalNotation = false; 
@@ -430,11 +424,11 @@
     const ANCHOR_ROW = 12;
 
     let rootPosition = { string: 1, row: ANCHOR_ROW }; 
-    let interactionMode = 0; // 0: Nom (cycle alias), 1: Couleur (position), 2: Barré extensible
+    let interactionMode = 0; 
     
     let gridState = Array.from({ length: 4 }, () => Array(TOTAL_ROWS).fill(0));
     let customNameAliases = {}; 
-    let barreStates = {}; // { rowIdx: { startString, endString } }
+    let barreStates = {}; 
     let colorPositions = {}; 
 
     let presets = [];
@@ -494,7 +488,6 @@
     function handleSpotClick(stringIdx, rowIndex) {
       const key = `${stringIdx}-${rowIndex}`;
       if (interactionMode === 0) {
-        // Mode Nom : Cycle des alias multiples pour cette note
         const rootPitch = (STRING_OFFSETS[rootPosition.string] + rootPosition.row) % 12;
         const spotPitch = (STRING_OFFSETS[stringIdx] + rowIndex) % 12;
         const interval = (spotPitch - rootPitch + 12) % 12;
@@ -505,18 +498,15 @@
           customNameAliases[key] = (currentIdx + 1) % names.length;
         }
       } else if (interactionMode === 1) {
-        // Mode Couleur : Marquer / Démarquer la position
         colorPositions[key] = !colorPositions[key];
       } else if (interactionMode === 2) {
-        // Mode Barré extensible : si aucun barré sur cette frette, on crée un point initial. Si déjà présent, on élargit/réduit entre les cordes cliquées.
         if (!barreStates[rowIndex]) {
           barreStates[rowIndex] = { startString: stringIdx, endString: stringIdx };
         } else {
           let b = barreStates[rowIndex];
           if (b.startString === b.endString && b.startString === stringIdx) {
-            delete barreStates[rowIndex]; // Supprimer si on clique sur l'unique point existant
+            delete barreStates[rowIndex];
           } else {
-            // Étendre ou adapter le barré pour inclure la nouvelle corde cliquée
             b.startString = Math.min(b.startString, stringIdx);
             b.endString = Math.max(b.endString, stringIdx);
           }
@@ -553,7 +543,6 @@
         }
       });
 
-      // Rendu des barrés neutres
       for (let r = 0; r < TOTAL_ROWS; r++) {
         const rowEl = fretboardEl.querySelector(`.fret-row[data-row="${r}"]`);
         const barreEl = rowEl.querySelector('.barre-indicator');
@@ -572,7 +561,7 @@
       }
     }
 
-    // --- D-PAD (Étoile) : Adapte uniquement le nom des notes et met en rouge la racine ---
+    // --- D-PAD (Étoile) : Modifie la racine et met à jour les noms des notes ---
     function moveRoot(dRow, dString) {
       rootPosition.row = Math.max(0, Math.min(TOTAL_ROWS - 1, rootPosition.row + dRow));
       rootPosition.string = Math.max(0, Math.min(3, rootPosition.string + dString));
@@ -586,32 +575,31 @@
     document.getElementById('dpad-right').addEventListener('click', () => moveRoot(0, 1));
     document.getElementById('dpad-center').addEventListener('click', () => savePresetState(`Preset ${presets.length + 1}`));
 
-    // --- DÉPLACEMENT GLOBAL DES POSITIONS (SANS MODIFIER LES NOMS) ---
-    function shiftGlobalPositionOnly(offset) {
-      // Transformer l'ancienne position racine en note active de couleur bleue
-      colorPositions[`${rootPosition.string}-${rootPosition.row}`] = true;
+    // --- DÉPLACEMENT HAUT / BAS DES COULEURS (La racine ne bouge pas, aucun recalcul de nom) ---
+    function shiftColorsOnly(offset) {
+      // 1. On considère par défaut que la racine actuelle était "activée" pour qu'elle devienne bleue en bougeant
+      let simulatedColors = { ...colorPositions };
+      simulatedColors[`${rootPosition.string}-${rootPosition.row}`] = true;
 
-      // Déplacer la racine mathématiquement
-      rootPosition.row = Math.max(0, Math.min(TOTAL_ROWS - 1, rootPosition.row + offset));
-
-      // Déplacer l'ensemble des couleurs
+      // 2. Transférer/décaler toutes les couleurs d'une frette (haut/bas)
       let newColors = {};
-      Object.keys(colorPositions).forEach(key => {
-        if(colorPositions[key]) {
+      Object.keys(simulatedColors).forEach(key => {
+        if(simulatedColors[key]) {
           let [s, r] = key.split('-').map(Number);
           let shiftedR = Math.max(0, Math.min(TOTAL_ROWS - 1, r + offset));
           newColors[`${s}-${shiftedR}`] = true;
         }
       });
-      colorPositions = newColors;
-      delete colorPositions[`${rootPosition.string}-${rootPosition.row}`];
 
+      // 3. La racine fixe ne doit pas être stockée dans les couleurs actives de l'accord
+      delete newColors[`${rootPosition.string}-${rootPosition.row}`];
+      
+      colorPositions = newColors;
       renderState();
-      centerOnRow(rootPosition.row);
     }
 
-    document.getElementById('btn-pos-up').addEventListener('click', () => shiftGlobalPositionOnly(-1));
-    document.getElementById('btn-pos-down').addEventListener('click', () => shiftGlobalPositionOnly(1));
+    document.getElementById('btn-pos-up').addEventListener('click', () => shiftColorsOnly(-1));
+    document.getElementById('btn-pos-down').addEventListener('click', () => shiftColorsOnly(1));
 
     // --- GESTION DES PRESETS & JSON ---
     function savePresetState(name) {
@@ -688,7 +676,7 @@
       fileInput.value = '';
     });
 
-    // --- AUDIO API ---
+    // --- AUDIO API (Joue les notes sélectionnées les plus basses sur le manche) ---
     document.getElementById('btn-audio').addEventListener('click', () => {
       if (!window.AudioContext && !window.webkitAudioContext) return;
       const ctx = new (window.AudioContext || window.webkitAudioContext)();
@@ -703,6 +691,7 @@
       let noteEvents = [];
       for (let s = 0; s < 4; s++) {
         let lowestRow = -1;
+        // Parcourir de haut en bas (du sillet vers le bas du manche) pour trouver la première note active
         for (let r = 0; r < TOTAL_ROWS; r++) {
           const key = `${s}-${r}`;
           const isRoot = (s === rootPosition.string && r === rootPosition.row);
