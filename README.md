@@ -286,6 +286,41 @@ Code créé par IA (Gemini), et prompté par moi 😉
 
 Licence: CC BY-NC 4.0
 
+
+
+---
+
+## Position des accords ukulélé movants (outil pédagogique)
+
+![ukulele-position-accord-mouvant](./images/ukulele-position-accord-mouvant.png)
+
+
+* 🚀 Tester l'application : [Ouvrir l'outil (Démo interactive)](https://fxpar.github.io/music-toolbox/ukulele-position-accord-mouvant.html)
+* 📄 Code source : [ukulele-position-accord-mouvant.html](https://github.com/fxpar/music-toolbox/blob/main/ukulele-position-accord-mouvant.html)
+
+
+**Permet aux enseignants de déplacer les position d'un accord (couleurs) et la racine de l'accord en montrant les intervals des note.**
+
+Paramètres:
+* Trois modes de clic: couleur, nom, barré
+* Déplacer la Fondamentale (Racine) de l'accord
+* Déplacer les positions d'un accord (couleurs)
+* Stocker des positions (preset)
+* Importer / Exporter un jeu de positions (json)
+* Entendre l'accord (à partir d'un note / fréquence: par défaut Do 261,63)
+* Basculer le nom des cordes entre le français (Sol, Do, Mi, La) et l'international (G,C,E,A)
+* Ajout du sillet à n'importe quelle hauteur
+* Ajout de barrés (sur une ou plusieurs frettes)
+* Mode jour / nuit
+
+Librairies utilisées: 
+* aucune
+
+Code créé par IA (Gemini), et prompté par moi 😉
+
+Licence: CC BY-NC 4.0
+
+
 ---
 
 ## Position des accords ukulélé (outil pédagogique)
