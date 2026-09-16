@@ -167,13 +167,14 @@
       font-size: 0.85rem;
     }
 
+/* Les lignes de cordes doivent être en arrière-plan (z-index inférieur) */
     .strings-container {
       position: absolute;
       top: 36px; bottom: 0; left: 0; right: 0;
       display: flex;
       justify-content: space-around;
       pointer-events: none;
-      z-index: 2;
+      z-index: 1; /* Abaissé pour passer derrière les spots */
     }
 
     .string-line {
@@ -182,6 +183,7 @@
       height: 400vh;
     }
 
+    /* Les lignes de frettes et les notes s'affichent par-dessus */
     .fret-row {
       height: 65px;
       min-height: 65px;
@@ -191,7 +193,7 @@
       display: flex;
       justify-content: space-around;
       align-items: center;
-      z-index: 3;
+      z-index: 2;
     }
 
     .note-spot {
@@ -202,14 +204,13 @@
       align-items: center;
       justify-content: center;
       cursor: pointer;
-      z-index: 4;
+      z-index: 3; /* Au-dessus de la corde pour un contraste net */
       font-weight: 700;
       font-size: 0.8rem;
-      background-color: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      background-color: var(--md-sys-color-surface); /* Fond opaque pour masquer la corde qui traverse la note */
+      border: 1px solid var(--md-sys-color-outline-variant);
       color: var(--md-sys-color-on-surface);
     }
-
     .note-spot.active {
       background-color: var(--chord-interval);
       color: var(--chord-interval-text);
@@ -223,12 +224,26 @@
 
     .barre-indicator {
       position: absolute;
-      top: 4px; bottom: 4px;
+      top: 15px; bottom: 15px;
       background-color: rgba(103, 80, 164, 0.25);
       border: 1px dashed var(--md-sys-color-primary);
-      border-radius: 8px;
+      border-radius: 19px;
       pointer-events: none;
       z-index: 1;
+    }
+	
+	/* Style du sillet / frette renforcée */
+    .fret-row.nut-active::after {
+      content: '';
+      position: absolute;
+      bottom: -4px; /* Recouvre la bordure standard */
+      left: 0;
+      right: 0;
+      height: 8px; /* Épaisseur du sillet */
+      background-color: var(--md-sys-color-primary);
+      box-shadow: 0 0 6px rgba(0, 0, 0, 0.4);
+      z-index: 10;
+      pointer-events: none; /* Laisse passer le clic à travers */
     }
 
     /* Bottom Sheet Controls */
@@ -386,7 +401,7 @@
     <div class="control-panel">
       <!-- Ligne 1 : Mode d'action, Export JSON & Déplacement couleur position -->
       <div class="row-tools">
-        <button class="btn btn-primary" id="btn-mode">Mode: Nom [Cycle]</button>
+        <button class="btn btn-primary" id="btn-mode">Mode: Couleur</button>
         <div style="display:flex; gap:4px;">
           <button class="btn" id="btn-pos-up" title="Déplacer les couleurs vers le haut">▲ Pos</button>
           <button class="btn" id="btn-pos-down" title="Déplacer les couleurs vers le bas">▼ Pos</button>
@@ -424,7 +439,7 @@
     const ANCHOR_ROW = 12;
 
     let rootPosition = { string: 1, row: ANCHOR_ROW }; 
-    let interactionMode = 0; 
+    let interactionMode = 1; 
     
     let gridState = Array.from({ length: 4 }, () => Array(TOTAL_ROWS).fill(0));
     let customNameAliases = {}; 
@@ -479,7 +494,6 @@
 
     function initDefaultState() {
       gridState = Array.from({ length: 4 }, () => Array(TOTAL_ROWS).fill(0));
-      gridState[rootPosition.string][rootPosition.row] = 1;
       renderState();
       centerOnRow(rootPosition.row);
       savePresetState("Init");
@@ -504,9 +518,11 @@
           barreStates[rowIndex] = { startString: stringIdx, endString: stringIdx };
         } else {
           let b = barreStates[rowIndex];
-          if (b.startString === b.endString && b.startString === stringIdx) {
+          // Si on clique sur une corde qui fait déjà partie du barré existant, on supprime tout le barré
+          if (stringIdx >= b.startString && stringIdx <= b.endString) {
             delete barreStates[rowIndex];
           } else {
+            // Sinon, on élargit le barré pour inclure cette nouvelle corde
             b.startString = Math.min(b.startString, stringIdx);
             b.endString = Math.max(b.endString, stringIdx);
           }
@@ -538,6 +554,10 @@
         if (s === rootPosition.string && r === rootPosition.row) {
           spot.classList.add('root');
           spot.innerText = 'R';
+          // Si l'utilisateur a cliqué dessus en mode couleur, on peut aussi l'afficher active
+          if (gridState[s][r] > 0 || colorPositions[key]) {
+            spot.classList.add('active');
+          }
         } else if (gridState[s][r] > 0 || colorPositions[key]) {
           spot.classList.add('active');
         }
@@ -576,27 +596,18 @@
     document.getElementById('dpad-center').addEventListener('click', () => savePresetState(`Preset ${presets.length + 1}`));
 
     // --- DÉPLACEMENT HAUT / BAS DES COULEURS (La racine ne bouge pas, aucun recalcul de nom) ---
-    function shiftColorsOnly(offset) {
-      // 1. On considère par défaut que la racine actuelle était "activée" pour qu'elle devienne bleue en bougeant
-      let simulatedColors = { ...colorPositions };
-      simulatedColors[`${rootPosition.string}-${rootPosition.row}`] = true;
-
-      // 2. Transférer/décaler toutes les couleurs d'une frette (haut/bas)
-      let newColors = {};
-      Object.keys(simulatedColors).forEach(key => {
-        if(simulatedColors[key]) {
-          let [s, r] = key.split('-').map(Number);
-          let shiftedR = Math.max(0, Math.min(TOTAL_ROWS - 1, r + offset));
-          newColors[`${s}-${shiftedR}`] = true;
-        }
-      });
-
-      // 3. La racine fixe ne doit pas être stockée dans les couleurs actives de l'accord
-      delete newColors[`${rootPosition.string}-${rootPosition.row}`];
-      
-      colorPositions = newColors;
-      renderState();
-    }
+	function shiftColorsOnly(offset) {
+	  let newColors = {};
+	  Object.keys(colorPositions).forEach(key => {
+		if(colorPositions[key]) {
+		  let [s, r] = key.split('-').map(Number);
+		  let shiftedR = Math.max(0, Math.min(TOTAL_ROWS - 1, r + offset));
+		  newColors[`${s}-${shiftedR}`] = true;
+		}
+	  });
+	  colorPositions = newColors;
+	  renderState();
+	}
 
     document.getElementById('btn-pos-up').addEventListener('click', () => shiftColorsOnly(-1));
     document.getElementById('btn-pos-down').addEventListener('click', () => shiftColorsOnly(1));
@@ -736,13 +747,29 @@
     notationBtn.addEventListener('click', () => {
       isInternationalNotation = !isInternationalNotation;
       notationBtn.innerText = isInternationalNotation ? 'INT' : 'FR';
+      
+      // Basculement automatique des noms de cordes
+      if (isInternationalNotation) {
+        STRING_NAMES = ["G", "C", "E", "A"];
+      } else {
+        STRING_NAMES = ["Sol", "Do", "Mi", "La"];
+      }
+
       renderState();
     });
 
     function centerOnRow(rowIdx) {
       const rowEl = fretboardEl.querySelector(`.fret-row[data-row="${rowIdx}"]`);
       if (rowEl) {
-        viewportEl.scrollTo({ top: rowEl.offsetTop - (viewportEl.clientHeight / 2), behavior: 'smooth' });
+        // Chaque ligne fait environ 65px de haut. On remonte de 3 lignes (~195px) 
+        // pour compenser l'espace pris par la bottom sheet en bas de l'écran.
+        const rowHeight = 65; 
+        const offsetAdjustment = 3 * rowHeight;
+        
+        viewportEl.scrollTo({ 
+          top: rowEl.offsetTop - (viewportEl.clientHeight / 2) + offsetAdjustment, 
+          behavior: 'smooth' 
+        });
       }
     }
 
