@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Songo Percussion Studio</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    background: #1a1a2e; color: #eaeaea; margin: 0; padding: 16px;
+    min-height: 100vh;
+  }
+  h1 { text-align: center; color: #f0a500; font-size: 1.5em; margin: 0 0 4px; }
+  .subtitle { text-align: center; color: #888; font-size: 0.82em; margin-bottom: 18px; }
+  .container { max-width: 1200px; margin: 0 auto; }
+
+  .topbar {
+    display: flex; flex-wrap: wrap; gap: 10px; align-items: center;
+    justify-content: center; margin-bottom: 16px;
+    background: #16213e; padding: 12px; border-radius: 12px;
+    border: 1px solid #2a3a5e;
+  }
+  button {
+    background: #0f3460; color: #eaeaea; border: 1px solid #f0a500;
+    padding: 8px 16px; border-radius: 8px; cursor: pointer;
+    font-size: 0.9em; transition: all 0.15s;
+  }
+  button:hover { background: #f0a500; color: #1a1a2e; }
+  button.active { background: #f0a500; color: #1a1a2e; font-weight: bold; }
+  button.danger { border-color: #ff6b6b; }
+  button.danger:hover { background: #ff6b6b; }
+  button.small { padding: 4px 10px; font-size: 0.78em; }
+  .tempo-box { display: flex; align-items: center; gap: 8px; }
+  input[type=range] { width: 130px; accent-color: #f0a500; }
+  .tempo-val { min-width: 40px; text-align: center; font-weight: bold; color: #f0a500; }
+  .sep { width: 1px; height: 28px; background: #2a3a5e; margin: 0 4px; }
+
+  .songbar {
+    display: flex; flex-wrap: wrap; gap: 8px; align-items: center;
+    margin-bottom: 16px; background: #16213e; padding: 10px;
+    border-radius: 12px; border: 1px solid #2a3a5e;
+  }
+  .songbar .tabs { display: flex; flex-wrap: wrap; gap: 6px; flex: 1; }
+  .tab {
+    background: #0d1b2a; border: 1px solid #2a3a5e; color: #aab;
+    padding: 6px 12px; border-radius: 8px; cursor: pointer;
+    font-size: 0.85em; position: relative;
+  }
+  .tab:hover { border-color: #f0a500; }
+  .tab.active { background: #f0a500; color: #1a1a2e; font-weight: bold; border-color: #f0a500; }
+  .tab .del {
+    margin-left: 6px; color: #ff6b6b; font-weight: bold;
+    cursor: pointer; opacity: 0.6;
+  }
+  .tab .del:hover { opacity: 1; }
+  .tab.active .del { color: #7a1010; }
+
+  .editor {
+    background: #16213e; border-radius: 12px; padding: 18px;
+    border: 1px solid #2a3a5e; margin-bottom: 16px;
+  }
+  .editor-head {
+    display: flex; flex-wrap: wrap; gap: 10px; align-items: center;
+    margin-bottom: 14px;
+  }
+  .editor-head h2 { margin: 0; font-size: 1.1em; color: #f0a500; flex: 1; }
+  .name-input {
+    background: #0d1b2a; border: 1px solid #2a3a5e;
+    padding: 6px 10px; border-radius: 6px; font-size: 1em;
+    font-weight: bold; color: #f0a500; min-width: 200px;
+  }
+  .name-input:focus { outline: none; border-color: #f0a500; }
+
+  .track {
+    display: grid; grid-template-columns: 150px 1fr 80px;
+    align-items: center; gap: 10px; margin-bottom: 8px;
+  }
+  .track-label {
+    font-size: 0.78em; color: #aab; text-align: right;
+    padding-right: 6px; white-space: nowrap;
+    display: flex; align-items: center; justify-content: flex-end; gap: 6px;
+  }
+  .mute-btn {
+    width: 24px; height: 22px; border-radius: 4px;
+    background: #0d1b2a; border: 1px solid #2a3a5e; color: #667;
+    font-size: 0.7em; padding: 0; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .mute-btn.muted { background: #ff6b6b; color: #1a1a2e; border-color: #ff6b6b; }
+
+  .steps { display: grid; grid-template-columns: repeat(16, 1fr); gap: 3px; }
+  .step {
+    aspect-ratio: 1; border-radius: 5px; background: #0d1b2a;
+    border: 1px solid #1f2f47; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.62em; font-weight: bold; user-select: none;
+    transition: background 0.08s, transform 0.08s, border-color 0.1s;
+  }
+  .step:hover { border-color: #f0a500; }
+  .step.beat { border-color: #2d4a6e; }
+  .step.on { background: #f0a500; color: #1a1a2e; }
+  .step.on.high { background: #4ecdc4; color: #1a1a2e; }
+  .step.on.low { background: #ff6b6b; color: #1a1a2e; }
+  .step.playhead { box-shadow: 0 0 0 2px #fff inset; }
+  .step.flash { transform: scale(1.18); }
+
+  .track-tools { display: flex; gap: 4px; justify-content: flex-end; }
+  .track-tools button { padding: 2px 6px; font-size: 0.65em; border-radius: 4px; }
+
+  .legend {
+    font-size: 0.72em; color: #889; margin-top: 12px; text-align: center;
+    display: flex; flex-wrap: wrap; justify-content: center; gap: 12px;
+  }
+  .dot { display: inline-block; width: 10px; height: 10px; border-radius: 3px; vertical-align: middle; margin-right: 4px; }
+
+  .help {
+    background: #0d1b2a; border: 1px solid #2a3a5e; border-radius: 10px;
+    padding: 12px 16px; font-size: 0.8em; color: #99a;
+  }
+  .help summary { cursor: pointer; color: #f0a500; font-weight: bold; }
+  .help code { background: #1a1a2e; padding: 1px 5px; border-radius: 3px; color: #4ecdc4; }
+
+  .status {
+    text-align: center; font-size: 0.78em; color: #f0a500;
+    min-height: 1.2em; margin: 8px 0;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>🥁 Songo Percussion Studio</h1>
+  <div class="subtitle">Éditeur de rythmes — cliquez sur les cases pour créer et modifier</div>
+
+  <div class="topbar">
+    <button id="playBtn">▶ Lecture</button>
+    <button id="stopBtn">■ Stop</button>
+    <button id="clearBtn" class="danger small">Tout effacer</button>
+    <div class="sep"></div>
+    <div class="tempo-box">
+      <label for="tempo">Tempo</label>
+      <input type="range" id="tempo" min="50" max="220" value="110">
+      <span class="tempo-val" id="tempoVal">110</span>
+    </div>
+    <div class="sep"></div>
+    <button id="newBtn" class="small">＋ Nouveau</button>
+    <button id="dupBtn" class="small">⧉ Dupliquer</button>
+    <button id="exportBtn" class="small">⬇ Exporter</button>
+    <button id="importBtn" class="small">⬆ Importer</button>
+    <input type="file" id="fileInput" accept=".json" style="display:none">
+    <button id="resetBtn" class="small danger">↺ Restaurer défauts</button>
+  </div>
+
+  <div class="songbar">
+    <div class="tabs" id="tabs"></div>
+  </div>
+
+  <div class="editor">
+    <div class="editor-head">
+      <h2>Éditeur</h2>
+      <input type="text" class="name-input" id="songName" placeholder="Nom du morceau">
+    </div>
+    <div id="tracks"></div>
+    <div class="legend">
+      <span><span class="dot" style="background:#f0a500"></span>frappe</span>
+      <span><span class="dot" style="background:#4ecdc4"></span>conga high (o)</span>
+      <span><span class="dot" style="background:#ff6b6b"></span>conga low (0)</span>
+    </div>
+  </div>
+
+  <div class="status" id="status"></div>
+
+  <details class="help">
+    <summary>❔ Aide &amp; fonctionnement</summary>
+    <p style="line-height:1.6">
+      <b>Édition :</b> cliquez sur une case pour activer/désactiver une frappe.
+      Sur la piste <b>conga</b>, cliquez plusieurs fois pour alterner
+      <code>low (0)</code> → <code>high (o)</code> → <code>off</code>.<br>
+      <b>Pistes :</b> <b>🔊/🔇</b> mute une piste. <code>◀</code>/<code>▶</code>
+      décalent le motif d'un pas, <code>×</code> efface la piste.<br>
+      <b>Sauvegarde :</b> tout est conservé automatiquement dans le navigateur
+      (<code>localStorage</code>). <b>Exporter</b>/<b>Importer</b> échangent un fichier JSON.<br>
+      <b>Nouveau</b> crée un morceau vierge, <b>Dupliquer</b> copie le morceau courant.
+      <code>×</code> dans un onglet le supprime.
+    </p>
+  </details>
+</div>
+
+<script>
+/* ============================================================
+   DONNÉES PAR DÉFAUT
+   ============================================================ */
+const DEFAULT_SONGS = [
+  {
+    id: "blas",
+    name: "Blas Egües",
+    tracks: [
+      { label: "2-3 rumba clave", type: "bin",   sound: "clave",  data: "xx0x0xxx0xx0xxx0", mute: false },
+      { label: "guagua",          type: "bin",   sound: "guagua", data: "0xxx0xxx0xxx0xxx", mute: false },
+      { label: "kick",            type: "bin",   sound: "kick",   data: "0xxxxxxx0xxxxxxx", mute: false },
+      { label: "rim of snare",    type: "bin",   sound: "rim",    data: "xxxx0xx0xx0xxxxx", mute: false },
+      { label: "toms",            type: "bin",   sound: "tom",    data: "xxxxxxxxxxxx0x0x", mute: false },
+      { label: "conga tones",     type: "conga", sound: "conga",  data: "xxx0xxoxxxx0xxox", mute: false }
+    ]
+  },
+  {
+    id: "changuito",
+    name: "Changuito (modifié)",
+    tracks: [
+      { label: "2-3 rumba clave", type: "bin",   sound: "clave",  data: "xx0x0xxx0xx0xxx0", mute: false },
+      { label: "guagua",          type: "bin",   sound: "guagua", data: "0xxx0xxx0xxx0xxx", mute: false },
+      { label: "kick",            type: "bin",   sound: "kick",   data: "xxx0xxxxxxx0xxxx", mute: false },
+      { label: "rim of snare",    type: "bin",   sound: "rim",    data: "x00xx0x0x00xxxxx", mute: false },
+      { label: "toms",            type: "bin",   sound: "tom",    data: "xxxxxxxxxxxx0x0x", mute: false },
+      { label: "conga tones",     type: "conga", sound: "conga",  data: "xxxoox000000xxoo", mute: false }
+    ]
+  }
+];
+
+/* ============================================================
+   PERSISTANCE
+   ============================================================ */
+const STORAGE_KEY = "songo-studio-v3";
+
+function deepClone(o) { return JSON.parse(JSON.stringify(o)); }
+function uid() { return "s" + Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return null;
+    const p = JSON.parse(raw);
+    if (!p.songs || !Array.isArray(p.songs) || p.songs.length === 0) return null;
+    return p;
+  } catch (e) { return null; }
+}
+
+function saveState() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({
+      songs: state.songs,
+      currentId: state.currentId,
+      tempo: state.tempo
+    }));
+  } catch (e) { console.warn("Sauvegarde impossible", e); }
+}
+
+/* ============================================================
+   ÉTAT GLOBAL
+   ============================================================ */
+const state = {
+  songs: [],
+  currentId: null,
+  playing: false,
+  step: 0,
+  timer: null,
+  tempo: 110,
+  nextTime: 0
+};
+
+function initState() {
+  const saved = loadState();
+  if (saved) {
+    state.songs = saved.songs;
+    state.currentId = (saved.currentId && saved.songs.find(s => s.id === saved.currentId))
+      ? saved.currentId : saved.songs[0].id;
+    state.tempo = saved.tempo || 110;
+  } else {
+    state.songs = deepClone(DEFAULT_SONGS);
+    state.currentId = state.songs[0].id;
+    state.tempo = 110;
+  }
+}
+
+function getCurrent() {
+  return state.songs.find(s => s.id === state.currentId) || state.songs[0];
+}
+
+/* ============================================================
+   AUDIO
+   ============================================================ */
+let audioCtx = null;
+function getCtx() {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  return audioCtx;
+}
+
+function playSound(sound, when, variant) {
+  const c = getCtx();
+  const t = when || c.currentTime;
+  const g = c.createGain();
+  g.connect(c.destination);
+
+  switch (sound) {
+    case "clave": {
+      const o = c.createOscillator();
+      o.type = "sine"; o.frequency.value = 1150;
+      o.connect(g);
+      g.gain.setValueAtTime(0.5, t);
+      g.gain.exponentialRampToValueAtTime(0.001, t + 0.06);
+      o.start(t); o.stop(t + 0.07);
+      break;
+    }
+    case "guagua": {
+      const o = c.createOscillator();
+      o.type = "triangle"; o.frequency.value = 780;
+      o.connect(g);
+      g.gain.setValueAtTime(0.35, t);
+      g.gain.exponentialRampToValueAtTime(0.001, t + 0.05);
+      o.start(t); o.stop(t + 0.06);
+      break;
+    }
+    case "kick": {
+      const o = c.createOscillator();
+      o.type = "sine";
+      o.frequency.setValueAtTime(140, t);
+      o.frequency.exponentialRampToValueAtTime(45, t + 0.12);
+      o.connect(g);
+      g.gain.setValueAtTime(0.9, t);
+      g.gain.exponentialRampToValueAtTime(0.001, t + 0.18);
+      o.start(t); o.stop(t + 0.2);
+      break;
+    }
+    case "rim": {
+      const bufSize = c.sampleRate * 0.03;
+      const buf = c.createBuffer(1, bufSize, c.sampleRate);
+      const d = buf.getChannelData(0);
+      for (let i = 0; i < bufSize; i++) d[i] = (Math.random() * 2 - 1) * (1 - i / bufSize);
+      const src = c.createBufferSource(); src.buffer = buf;
+      const bp = c.createBiquadFilter(); bp.type = "bandpass";
+      bp.frequency.value = 2400; bp.Q.value = 1.2;
+      src.connect(bp); bp.connect(g);
+      g.gain.setValueAtTime(0.45, t);
+      g.gain.exponentialRampToValueAtTime(0.001, t + 0.04);
+      src.start(t); src.stop(t + 0.05);
+      const o = c.createOscillator();
+      o.type = "square"; o.frequency.value = 1800;
+      o.connect(g);
+      g.gain.setValueAtTime(0.15, t);
+      o.start(t); o.stop(t + 0.02);
+      break;
+    }
+    case "tom": {
+      const o = c.createOscillator();
+      o.type = "sine";
+      o.frequency.setValueAtTime(220, t);
+      o.frequency.exponentialRampToValueAtTime(110, t + 0.15);
+      o.connect(g);
+      g.gain.setValueAtTime(0.6, t);
+      g.gain.exponentialRampToValueAtTime(0.001, t + 0.22);
+      o.start(t); o.stop(t + 0.24);
+      break;
+    }
+    case "conga": {
+      if (variant === "high") {
+        const o = c.createOscillator();
+        o.type = "sine";
+        o.frequency.setValueAtTime(380, t);
+        o.frequency.exponentialRampToValueAtTime(330, t + 0.06);
+        o.connect(g);
+        g.gain.setValueAtTime(0.55, t);
+        g.gain.exponentialRampToValueAtTime(0.001, t + 0.09);
+        o.start(t); o.stop(t + 0.1);
+      } else {
+        const o = c.createOscillator();
+        o.type = "sine";
+        o.frequency.setValueAtTime(190, t);
+        o.frequency.exponentialRampToValueAtTime(150, t + 0.1);
+        o.connect(g);
+        g.gain.setValueAtTime(0.7, t);
+        g.gain.exponentialRampToValueAtTime(0.001, t + 0.14);
+        o.start(t); o.stop(t + 0.15);
+      }
+      break;
+    }
+  }
+}
+
+/* ============================================================
+   SÉQUENCEUR
+   ============================================================ */
+function stepDur() { return 60 / state.tempo / 4; }
+
+function scheduleStep(stepIndex, when) {
+  const song = getCurrent();
+  song.tracks.forEach(tr => {
+    if (tr.mute) return;
+    const ch = tr.data[stepIndex];
+    if (tr.type === "conga") {
+      if (ch === "0") playSound("conga", when, "low");
+      else if (ch === "o") playSound("conga", when, "high");
+    } else if (ch === "0") {
+      playSound(tr.sound, when);
+    }
+  });
+}
+
+function flashStep(stepIndex) {
+  document.querySelectorAll(".step").forEach(el => {
+    el.classList.remove("playhead");
+    if (parseInt(el.dataset.step, 10) === stepIndex) {
+      el.classList.add("playhead", "flash");
+      setTimeout(() => el.classList.remove("flash"), 70);
+    }
+  });
+}
+
+function scheduler() {
+  const c = getCtx();
+  const lookahead = 0.15;
+  while (state.nextTime < c.currentTime + lookahead) {
+    const step = state.step % 16;
+    scheduleStep(step, state.nextTime);
+    const delay = Math.max(0, (state.nextTime - c.currentTime) * 1000);
+    setTimeout(() => flashStep(step), delay);
+    state.nextTime += stepDur();
+    state.step++;
+  }
+  state.timer = setTimeout(scheduler, 25);
+}
+
+function start() {
+  if (state.playing) return;
+  const c = getCtx();
+  if (c.state === "suspended") c.resume();
+  state.playing = true;
+  state.step = 0;
+  state.nextTime = c.currentTime + 0.1;
+  document.getElementById("playBtn").textContent = "⏸ Pause";
+  scheduler();
+}
+
+function stop() {
+  state.playing = false;
+  clearTimeout(state.timer);
+  document.getElementById("playBtn").textContent = "▶ Lecture";
+  document.querySelectorAll(".step").forEach(el => el.classList.remove("playhead"));
+}
+
+/* ============================================================
+   RENDU : ONGLETS
+   ============================================================ */
+function renderTabs() {
+  const tabs = document.getElementById("tabs");
+  tabs.innerHTML = "";
+  state.songs.forEach(song => {
+    const t = document.createElement("div");
+    t.className = "tab" + (song.id === state.currentId ? " active" : "");
+    t.textContent = song.name || "(sans nom)";
+    t.addEventListener("click", (e) => {
+      if (e.target.classList.contains("del")) return;
+      selectSong(song.id);
+    });
+    const del = document.createElement("span");
+    del.className = "del";
+    del.textContent = "×";
+    del.title = "Supprimer ce morceau";
+    del.addEventListener("click", (e) => {
+      e.stopPropagation();
+      deleteSong(song.id);
+    });
+    t.appendChild(del);
+    tabs.appendChild(t);
+  });
+}
+
+function selectSong(id) {
+  if (state.playing) stop();
+  state.currentId = id;
+  renderAll();
+  saveState();
+}
+
+function deleteSong(id) {
+  if (state.songs.length <= 1) { setStatus("Impossible de supprimer le dernier morceau."); return; }
+  if (!confirm("Supprimer ce morceau ?")) return;
+  state.songs = state.songs.filter(s => s.id !== id);
+  if (state.currentId === id) state.currentId = state.songs[0].id;
+  if (state.playing) stop();
+  renderAll();
+  saveState();
+}
+
+/* ============================================================
+   RENDU : ÉDITEUR
+   ============================================================ */
+function renderEditor() {
+  const song = getCurrent();
+  document.getElementById("songName").value = song.name || "";
+
+  const container = document.getElementById("tracks");
+  container.innerHTML = "";
+
+  song.tracks.forEach((tr, ti) => {
+    const row = document.createElement("div");
+    row.className = "track";
+
+    // Label + mute
+    const lbl = document.createElement("div");
+    lbl.className = "track-label";
+    const muteBtn = document.createElement("button");
+    muteBtn.className = "mute-btn" + (tr.mute ? " muted" : "");
+    muteBtn.textContent = tr.mute ? "🔇" : "🔊";
+    muteBtn.title = "Mute / unmute";
+    muteBtn.addEventListener("click", () => {
+      tr.mute = !tr.mute;
+      saveState();
+      renderEditor();
+    });
+    lbl.appendChild(muteBtn);
+    const nameSpan = document.createElement("span");
+    nameSpan.textContent = tr.label;
+    lbl.appendChild(nameSpan);
+    row.appendChild(lbl);
+
+    // Grille 16 pas
+    const steps = document.createElement("div");
+    steps.className = "steps";
+    for (let i = 0; i < 16; i++) {
+      const s = document.createElement("div");
+      s.className = "step";
+      if (i % 4 === 0) s.classList.add("beat");
+      const ch = tr.data[i];
+      if (tr.type === "conga") {
+        if (ch === "0") { s.classList.add("on", "low"); s.textContent = "0"; }
+        else if (ch === "o") { s.classList.add("on", "high"); s.textContent = "o"; }
+      } else if (ch === "0") {
+        s.classList.add("on");
+      }
+      s.dataset.track = ti;
+      s.dataset.step = i;
+      s.addEventListener("click", () => toggleStep(ti, i));
+      steps.appendChild(s);
+    }
+    row.appendChild(steps);
+
+    // Outils
+    const tools = document.createElement("div");
+    tools.className = "track-tools";
+    const leftBtn = document.createElement("button");
+    leftBtn.className = "small"; leftBtn.textContent = "◀";
+    leftBtn.title = "Décaler à gauche";
+    leftBtn.addEventListener("click", () => shiftTrack(ti, -1));
+    const rightBtn = document.createElement("button");
+    rightBtn.className = "small"; rightBtn.textContent = "▶";
+    rightBtn.title = "Décaler à droite";
+    rightBtn.addEventListener("click", () => shiftTrack(ti, 1));
+    const clrBtn = document.createElement("button");
+    clrBtn.className = "small danger"; clrBtn.textContent = "×";
+    clrBtn.title = "Effacer la piste";
+    clrBtn.addEventListener("click", () => clearTrack(ti));
+    tools.appendChild(leftBtn);
+    tools.appendChild(rightBtn);
+    tools.appendChild(clrBtn);
+    row.appendChild(tools);
+
+    container.appendChild(row);
+  });
+}
+
+function toggleStep(ti, si) {
+  const song = getCurrent();
+  const tr = song.tracks[ti];
+  const chars = tr.data.split("");
+  const cur = chars[si];
+  if (tr.type === "conga") {
+    if (cur === "0") chars[si] = "o";
+    else if (cur === "o") chars[si] = ".";
+    else chars[si] = "0";
+  } else {
+    chars[si] = (cur === "0") ? "." : "0";
+  }
+  tr.data = chars.join("");
+  saveState();
+
+  const cell = document.querySelector('.step[data-track="' + ti + '"][data-step="' + si + '"]');
+  if (cell) {
+    cell.classList.remove("on", "low", "high");
+    cell.textContent = "";
+    const ch = tr.data[si];
+    if (tr.type === "conga") {
+      if (ch === "0") { cell.classList.add("on", "low"); cell.textContent = "0"; }
+      else if (ch === "o") { cell.classList.add("on", "high"); cell.textContent = "o"; }
+    } else if (ch === "0") {
+      cell.classList.add("on");
+    }
+  }
+}
+
+function shiftTrack(ti, dir) {
+  const song = getCurrent();
+  const tr = song.tracks[ti];
+  const chars = tr.data.split("");
+  if (dir < 0) chars.push(chars.shift());
+  else chars.unshift(chars.pop());
+  tr.data = chars.join("");
+  saveState();
+  renderEditor();
+}
+
+function clearTrack(ti) {
+  const song = getCurrent();
+  song.tracks[ti].data = ".".repeat(16);
+  saveState();
+  renderEditor();
+}
+
+/* ============================================================
+   ACTIONS GLOBALES
+   ============================================================ */
+function clearAll() {
+  if (!confirm("Effacer toutes les frappes du morceau courant ?")) return;
+  getCurrent().tracks.forEach(tr => tr.data = ".".repeat(16));
+  saveState();
+  renderEditor();
+}
+
+function newSong() {
+  const song = {
+    id: uid(),
+    name: "Nouveau morceau",
+    tracks: [
+      { label: "2-3 rumba clave", type: "bin",   sound: "clave",  data: "................", mute: false },
+      { label: "guagua",          type: "bin",   sound: "guagua", data: "................", mute: false },
+      { label: "kick",            type: "bin",   sound: "kick",   data: "................", mute: false },
+      { label: "rim of snare",    type: "bin",   sound: "rim",    data: "................", mute: false },
+      { label: "toms",            type: "bin",   sound: "tom",    data: "................", mute: false },
+      { label: "conga tones",     type: "conga", sound: "conga",  data: "................", mute: false }
+    ]
+  };
+  state.songs.push(song);
+  state.currentId = song.id;
+  if (state.playing) stop();
+  renderAll();
+  saveState();
+  setStatus("Nouveau morceau créé.");
+}
+
+function duplicateSong() {
+  const copy = deepClone(getCurrent());
+  copy.id = uid();
+  copy.name = copy.name + " (copie)";
+  state.songs.push(copy);
+  state.currentId = copy.id;
+  if (state.playing) stop();
+  renderAll();
+  saveState();
+  setStatus("Morceau dupliqué.");
+}
+
+function exportSongs() {
+  const data = JSON.stringify({ songs: state.songs }, null, 2);
+  const blob = new Blob([data], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "songo-rythmes-" + new Date().toISOString().slice(0, 10) + ".json";
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  setStatus("Export effectué.");
+}
+
+function importSongs(file) {
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    try {
+      const parsed = JSON.parse(e.target.result);
+      const imported = parsed.songs || (Array.isArray(parsed) ? parsed : null);
+      if (!imported || !Array.isArray(imported) || imported.length === 0) {
+        throw new Error("Format invalide");
+      }
+      const existingIds = new Set(state.songs.map(s => s.id));
+      let lastId = null;
+      imported.forEach(song => {
+        if (!song.tracks || !Array.isArray(song.tracks)) return;
+        if (existingIds.has(song.id)) song.id = uid();
+        song.tracks.forEach(tr => {
+          if (typeof tr.data !== "string") tr.data = ".".repeat(16);
+          tr.data = (tr.data + "................").slice(0, 16);
+        });
+        state.songs.push(song);
+        lastId = song.id;
+      });
+      if (lastId) state.currentId = lastId;
+      if (state.playing) stop();
+      renderAll();
+      saveState();
+      setStatus(imported.length + " morceau(x) importé(s).");
+    } catch (err) {
+      alert("Impossible d'importer ce fichier : " + err.message);
+    }
+  };
+  reader.readAsText(file);
+}
+
+function resetDefaults() {
+  if (!confirm("Restaurer les deux morceaux par défaut ? Tous vos morceaux seront supprimés.")) return;
+  state.songs = deepClone(DEFAULT_SONGS);
+  state.currentId = state.songs[0].id;
+  if (state.playing) stop();
+  renderAll();
+  saveState();
+  setStatus("Morceaux par défaut restaurés.");
+}
+
+function setStatus(msg) {
+  const el = document.getElementById("status");
+  el.textContent = msg;
+  clearTimeout(setStatus._t);
+  setStatus._t = setTimeout(() => { el.textContent = ""; }, 4000);
+}
+
+/* ============================================================
+   INIT & ÉVÉNEMENTS
+   ============================================================ */
+function renderAll() {
+  renderTabs();
+  renderEditor();
+}
+
+function bindUI() {
+  document.getElementById("playBtn").addEventListener("click", () => {
+    if (state.playing) stop(); else start();
+  });
+  document.getElementById("stopBtn").addEventListener("click", stop);
+  document.getElementById("clearBtn").addEventListener("click", clearAll);
+  document.getElementById("newBtn").addEventListener("click", newSong);
+  document.getElementById("dupBtn").addEventListener("click", duplicateSong);
+  document.getElementById("exportBtn").addEventListener("click", exportSongs);
+  document.getElementById("importBtn").addEventListener("click", () => {
+    document.getElementById("fileInput").click();
+  });
+  document.getElementById("fileInput").addEventListener("change", (e) => {
+    if (e.target.files[0]) importSongs(e.target.files[0]);
+    e.target.value = "";
+  });
+  document.getElementById("resetBtn").addEventListener("click", resetDefaults);
+
+  document.getElementById("tempo").addEventListener("input", (e) => {
+    state.tempo = parseInt(e.target.value, 10);
+    document.getElementById("tempoVal").textContent = state.tempo;
+    saveState();
+  });
+
+  document.getElementById("songName").addEventListener("input", (e) => {
+    getCurrent().name = e.target.value;
+    renderTabs();
+    saveState();
+  });
+}
+
+/* ---- Démarrage ---- */
+initState();
+bindUI();
+document.getElementById("tempo").value = state.tempo;
+document.getElementById("tempoVal").textContent = state.tempo;
+renderAll();
+</script>
+</body>
+</html>
