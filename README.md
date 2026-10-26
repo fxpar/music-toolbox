@@ -37,6 +37,38 @@ Licence: CC BY-NC 4.0
 
 ---
 
+##  Percussions latines
+
+![latin-percussions](./images/latin-percussions.png)
+
+
+* 🚀 Tester l'application : [Ouvrir l'outil (Démo interactive)](https://fxpar.github.io/music-toolbox/latin-percussions.html)
+* 📄 Code source : [key-signatures-svg.html](https://github.com/fxpar/music-toolbox/blob/main/latin-percussions.html)
+
+**Jouer les rythmes complexes de percussions latines rumba claver, guagua, conga (high / Low) .**
+
+Fonctionnalités:
+* Activer désactiver un instrument
+* 16 cellules
+* décaler une ligne
+* exporter / importer / Dupliquer / Renommer
+* deux exemples au démarrage (Blas Egües, Changuito)
+* Tempo
+* Lecture / Stop
+
+
+
+Librairies utilisées: 
+* Aucune
+
+Code créé par IA (Deepseek), et prompté par moi 😉
+
+Licence: CC BY-NC 4.0
+
+
+---
+
+
 ##  Convertisseur tablature Bass → Ukulélé
 
 ![convertisseur-tab-bass-ukulele](./images/convertisseur-tab-bass-ukulele.png)
@@ -283,6 +315,39 @@ Librairies utilisées:
 * aucune
 
 Code créé par IA (Gemini), et prompté par moi 😉
+
+Licence: CC BY-NC 4.0
+
+
+---
+
+## Cadences au ukulélé (outil pédagogique)
+
+![ukulele-cadences](./images/ukulele-cadences.png)
+
+
+* 🚀 Tester l'application : [Ouvrir l'outil (Démo interactive)](https://fxpar.github.io/music-toolbox/ukulele-cadences.html)
+* 📄 Code source : [ukulele-cadences.html](https://github.com/fxpar/music-toolbox/blob/main/ukulele-cadences.html)
+
+
+**Permet aux enseignants de déplacer les position d'un accord (couleurs) et la racine de l'accord en montrant les intervals des note.**
+
+Paramètres:
+* Déplacer l'origine de la cadence
+* Activer / Désactiver le degré de la cadence
+* Déplacer la Fondamentale (Racine) de l'accord
+* Activer désactiver les notes d'accords
+* Stocker les positions des cadences + accords
+* Importer / Exporter un jeu de positions (json)
+* Entendre l'accord (à partir d'un note / fréquence: par défaut Do 261,63)
+* Basculer le nom des cordes entre le français (Sol, Do, Mi, La) et l'international (G,C,E,A)
+* Barrer une ligne
+* Mode jour / nuit
+
+Librairies utilisées: 
+* bootstrap 5
+
+Code créé par IA (Deepseek), et prompté par moi 😉
 
 Licence: CC BY-NC 4.0
 
