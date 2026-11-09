@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Métronome graduel</title>
     <!-- <link rel="stylesheet" href="./css/bootstrap-icons.min.css"> -->
 	<!-- <link rel="stylesheet" href="./css/bootstrap.min.css"/> -->
@@ -288,6 +288,16 @@ body.dark-mode .preset-card {
     transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
 }
     </style>
+  <!-- Zone sûre (encoche / barre d'état), nécessite viewport-fit=cover. Ignoré par les vieux navigateurs. -->
+  <style id="fx-safe-area">
+    body {
+      padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+    }
+    .offcanvas-start, .offcanvas-end {
+      padding-top: env(safe-area-inset-top);
+      padding-bottom: env(safe-area-inset-bottom);
+    }
+  </style>
 </head>
 <body>
     <div class="container mt-4">
@@ -545,14 +555,14 @@ body.dark-mode .preset-card {
 		  <!-- Colonne 1 : Copyright & Titre -->
 		  <div class="col-12 col-md-6 text-center text-md-start">
 			<span class="small">
-			  CC BY-NC-SA 4.0 <span id="currentYear"></span> <strong>François Parlant</strong> &mdash; Créé avec passion pour le rythme et la mélodie.
+			  CC BY-NC 4.0 <span id="currentYear"></span><script>document.getElementById("currentYear").textContent = new Date().getFullYear();</script> <strong>François Parlant</strong> &mdash; Créé avec passion pour le rythme et la mélodie.
 			</span>
 		  </div>
 
 		  <!-- Colonne 2 : Liens Réseaux Sociaux -->
 		  <div class="col-12 col-md-6 text-center text-md-end">
 			<div class="d-inline-flex gap-3 align-items-center">
-			  <a href="https://github.com/fxpar/abc-notation-artifacts" target="_blank" rel="noopener noreferrer" class="text-body-secondary text-decoration-none fs-5 hover-accent" title="Code source GitHub"> 
+			  <a href="https://github.com/fxpar/music-toolbox/blob/main/metronome-graduel.html" target="_blank" rel="noopener noreferrer" class="text-body-secondary text-decoration-none fs-5 hover-accent" title="Code source GitHub"> 
 				<i class="bi bi-github"></i> 
 			  </a> 
 			  <a href="https://www.linkedin.com/in/francois-parlant" target="_blank" rel="noopener noreferrer" class="text-body-secondary text-decoration-none fs-5 hover-accent" title="LinkedIn: François Parlant">

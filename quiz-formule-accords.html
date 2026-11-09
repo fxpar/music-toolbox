@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Entraînement Accords Jazz</title>
     <!-- Material Icons & Typography -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
@@ -360,6 +360,89 @@
         .chord-table th {
             background: var(--md-sys-color-surface-variant);
         }
+
+        .chord-table .group-row td {
+            background: var(--md-sys-color-primary-container);
+            color: var(--md-sys-color-on-primary-container);
+            font-weight: 700;
+        }
+
+        /* Consigne courte */
+        .instruction {
+            font-size: 0.9rem;
+            line-height: 1.4;
+            color: var(--md-sys-color-outline);
+            margin-bottom: 8px;
+        }
+
+        /* États des réponses (après verrouillage) */
+        .option-btn:disabled { cursor: default; opacity: 0.55; }
+        .option-btn.is-correct, .option-btn.is-correct:disabled {
+            opacity: 1;
+            background-color: var(--md-sys-color-success);
+            border-color: var(--md-sys-color-success);
+            color: var(--md-sys-color-card-bg);
+        }
+        .option-btn.is-wrong, .option-btn.is-wrong:disabled {
+            opacity: 1;
+            background-color: var(--md-sys-color-error);
+            border-color: var(--md-sys-color-error);
+            color: var(--md-sys-color-card-bg);
+        }
+
+        .explanation {
+            display: none;
+            margin-top: 10px;
+            font-size: 0.9rem;
+            line-height: 1.45;
+            text-align: left;
+            white-space: pre-line;
+        }
+        .explanation.show { display: block; }
+
+        /* Gros bouton « Question suivante » (pouce) */
+        .next-btn {
+            display: none;
+            width: 100%;
+            min-height: 56px;
+            border: none;
+            border-radius: 100px;
+            background-color: var(--md-sys-color-primary);
+            color: var(--md-sys-color-on-primary);
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+        }
+        .next-btn.show { display: block; }
+        .next-btn:active { scale: 0.97; }
+
+        .score-board strong { color: var(--md-sys-color-on-surface); }
+        .score-board.top {
+            border-top: none;
+            border-bottom: 1px solid var(--md-sys-color-surface-variant);
+            padding-top: 0;
+            padding-bottom: 12px;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        /* Écran de fin de série */
+        .end-screen { display: none; text-align: center; }
+        .end-screen.show { display: block; }
+        .end-screen .big-score {
+            font-size: 2.6rem;
+            font-weight: 700;
+            color: var(--md-sys-color-primary);
+            margin: 8px 0 4px 0;
+        }
+        .end-screen ul {
+            text-align: left;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            padding-left: 20px;
+            margin: 12px 0;
+        }
+        .hidden { display: none !important; }
 		footer {
 			border-top: 1px solid;
 			padding-top:20px;
@@ -368,6 +451,19 @@
 		}
 		
     </style>
+  <!-- Zone sûre (encoche / barre d'état), nécessite viewport-fit=cover. Ignoré par les vieux navigateurs. -->
+  <style id="fx-safe-area">
+    body {
+      padding-top: calc(16px + env(safe-area-inset-top));
+      padding-right: calc(16px + env(safe-area-inset-right));
+      padding-bottom: calc(16px + env(safe-area-inset-bottom));
+      padding-left: calc(16px + env(safe-area-inset-left));
+    }
+    .offcanvas-start, .offcanvas-end {
+      padding-top: env(safe-area-inset-top);
+      padding-bottom: env(safe-area-inset-bottom);
+    }
+  </style>
 </head>
 <body>
 
@@ -394,9 +490,16 @@
         <button class="level-btn" onclick="setLevel('advanced', this)">Avancé</button>
     </div>
 
-    <!-- Question -->
+    <!-- Tableau de score (toujours visible) -->
+    <div class="score-board top">
+        <span>Question <strong id="qnum-val">1 / 10</strong></span>
+        <span>Réussites <strong id="score-val">0 / 0</strong> <span id="rate-val"></span></span>
+        <span>Série <strong id="streak-val">0</strong></span>
+    </div>
+
     <!-- Question (fixe, ne saute plus) -->
-    <div class="card">
+    <div class="card" id="question-card">
+        <p class="instruction">Trouvez l'intervalle manquant dans la formule de l'accord.<br>R = fondamentale (la note qui donne son nom à l'accord).</p>
         <div class="card-header">
             <div class="chord-name" id="chord-name">m7</div>
             <button class="hint-btn" onclick="toggleHint()" title="Afficher l'indice">
@@ -406,15 +509,23 @@
 
         <div class="formula-display" id="formula-display">R - ? - 5 - b7</div>
         <div class="feedback" id="feedback"></div>
+        <div class="explanation" id="explanation"></div>
     </div>
 
     <!-- Choix -->
     <div class="options-grid" id="options-grid"></div>
 
-    <!-- Tableau de score -->
-    <div class="score-board">
-        <span>Score: <strong id="score-val">0</strong></span>
-        <span>Série: <strong id="streak-val">0</strong></span>
+    <!-- Bouton suivant (apparaît après la réponse) -->
+    <button class="next-btn" id="next-btn" onclick="goNext()">Question suivante</button>
+
+    <!-- Écran de fin de série -->
+    <div class="card end-screen" id="end-screen">
+        <h2 style="font-size:1.2rem;">Série terminée</h2>
+        <div class="big-score" id="end-score">0 / 10</div>
+        <p id="end-rate"></p>
+        <p id="end-best" style="font-size:0.9rem; color: var(--md-sys-color-outline); margin-top:4px;"></p>
+        <ul id="end-missed"></ul>
+        <button class="next-btn show" onclick="startSession()">Rejouer</button>
     </div>
 </div>
 
@@ -422,23 +533,31 @@
 <div class="drawer-scrim" id="drawer-scrim" onclick="toggleDrawer()"></div>
 <div class="drawer" id="drawer">
     <div class="drawer-header">
-        <h2>Cours & Répères</h2>
+        <h2>Cours &amp; repères</h2>
         <button class="icon-btn" onclick="toggleDrawer()">
             <span class="material-icons-outlined">close</span>
         </button>
     </div>
     <div class="drawer-content">
-        <p>Les formules d'accords expriment la distance (les intervalles) entre la <strong>Fondamentale (R)</strong> et les autres notes.</p>
+        <h3>Comment jouer</h3>
+        <p>Une série compte 10 questions. Pour chaque accord, une note de la formule est remplacée par « ? » : touchez l'intervalle manquant. Une seule réponse est acceptée ; la bonne réponse et une courte explication s'affichent ensuite. L'ampoule donne un indice.</p>
 
-        <h3>Symbologie classique</h3>
+        <h3>Rappels de théorie</h3>
+        <p>Une formule d'accord indique la distance (l'intervalle) entre la <strong>fondamentale (R)</strong> et chacune des autres notes. R vient de l'anglais <em>Root</em> (racine).</p>
+
+        <h3>Symboles</h3>
         <ul>
-            <li><strong>R</strong> : Root (Fondamentale)</li>
-            <li><strong>b3 / 3</strong> : Tierce mineure / majeure</li>
-            <li><strong>b5 / 5 / #5</strong> : Quinte dim / juste / aug</li>
-            <li><strong>b7 / 7 / bb7</strong> : Septième min / maj / diminuée</li>
+            <li><strong>R</strong> : fondamentale</li>
+            <li><strong>b3 / 3</strong> : tierce mineure / majeure</li>
+            <li><strong>4</strong> : quarte juste</li>
+            <li><strong>b5 / 5 / #5</strong> : quinte diminuée / juste / augmentée</li>
+            <li><strong>6</strong> : sixte majeure</li>
+            <li><strong>bb7 / b7 / 7</strong> : septième diminuée / mineure / majeure</li>
+            <li><strong>b9 / 9 / #9</strong> : neuvième mineure / majeure / augmentée</li>
+            <li><strong>11 / #11 / 13</strong> : onzième juste / augmentée, treizième</li>
         </ul>
 
-        <h3>Les 4 Familles d'Accords (7e)</h3>
+        <h3>Les familles d'accords</h3>
         <table class="chord-table">
             <thead>
                 <tr>
@@ -447,16 +566,38 @@
                 </tr>
             </thead>
             <tbody>
+                <tr class="group-row"><td colspan="2">Triades (3 sons)</td></tr>
+                <tr><td><strong>Majeur</strong></td><td>R - 3 - 5</td></tr>
+                <tr><td><strong>Mineur</strong> (m)</td><td>R - b3 - 5</td></tr>
+                <tr><td><strong>Diminué</strong> (dim)</td><td>R - b3 - b5</td></tr>
+                <tr><td><strong>Augmenté</strong> (aug)</td><td>R - 3 - #5</td></tr>
+                <tr><td><strong>Suspendu 4</strong> (sus4)</td><td>R - 4 - 5</td></tr>
+                <tr><td><strong>Suspendu 2</strong> (sus2)</td><td>R - 2 - 5</td></tr>
+                <tr><td><strong>Power chord</strong> (5)</td><td>R - 5</td></tr>
+                <tr class="group-row"><td colspan="2">Accords de septième (4 sons)</td></tr>
                 <tr><td><strong>Majeur 7</strong> (maj7)</td><td>R - 3 - 5 - 7</td></tr>
                 <tr><td><strong>Dominante</strong> (7)</td><td>R - 3 - 5 - b7</td></tr>
                 <tr><td><strong>Mineur 7</strong> (m7)</td><td>R - b3 - 5 - b7</td></tr>
                 <tr><td><strong>Demi-diminué</strong> (m7b5)</td><td>R - b3 - b5 - b7</td></tr>
                 <tr><td><strong>Diminué 7</strong> (dim7)</td><td>R - b3 - b5 - bb7</td></tr>
+                <tr><td><strong>Mineur-majeur 7</strong> (mMaj7)</td><td>R - b3 - 5 - 7</td></tr>
+                <tr class="group-row"><td colspan="2">Accords de sixte</td></tr>
+                <tr><td><strong>Majeur 6</strong> (6)</td><td>R - 3 - 5 - 6</td></tr>
+                <tr><td><strong>Mineur 6</strong> (m6)</td><td>R - b3 - 5 - 6</td></tr>
+                <tr class="group-row"><td colspan="2">Extensions et altérations</td></tr>
+                <tr><td><strong>Dominante 9</strong> (9)</td><td>R - 3 - 5 - b7 - 9</td></tr>
+                <tr><td><strong>Majeur 9</strong> (maj9)</td><td>R - 3 - 5 - 7 - 9</td></tr>
+                <tr><td><strong>Mineur 9</strong> (m9)</td><td>R - b3 - 5 - b7 - 9</td></tr>
+                <tr><td><strong>Dominante b9 / #9</strong> (7b9 / 7#9)</td><td>R - 3 - 5 - b7 - b9 (ou #9)</td></tr>
+                <tr><td><strong>Altéré</strong> (7alt)</td><td>R - 3 - b5 (ou #5) - b7 - b9 (ou #9)</td></tr>
+                <tr><td><strong>Dominante 11</strong> (11)</td><td>R - (3) - 5 - b7 - (9) - 11</td></tr>
+                <tr><td><strong>Dominante 13</strong> (13)</td><td>R - 3 - 5 - b7 - (9) - 13</td></tr>
             </tbody>
         </table>
+        <p style="margin-top:8px;">Les notes entre parenthèses sont souvent omises.</p>
 
-        <h3>Tensions complexes</h3>
-        <p>Les altérations de dominante (7alt) comportent des tensions enrichies : <strong>b9, #9, b5 (#11), #5 (b13)</strong>.</p>
+        <h3>Notes équivalentes (enharmonies)</h3>
+        <p>Certains intervalles sonnent pareil mais s'écrivent différemment selon leur rôle : <strong>b5 = #11</strong>, <strong>#5 = b13</strong>, <strong>#9 = b3</strong>, <strong>bb7 = 6 = 13</strong>. Le quiz ne vous proposera jamais deux réponses équivalentes à la fois.</p>
     </div>
 	
 	
@@ -467,14 +608,14 @@
 		  <!-- Colonne 1 : Copyright & Titre -->
 		  <div class="col-12 col-md-6 text-center text-md-start">
 			<span class="small">
-			  CC BY-NC-SA 4.0 <span id="currentYear"></span> <strong>François Parlant</strong> &mdash; Créé avec passion pour le rythme et la mélodie.
+			  CC BY-NC 4.0 <span id="currentYear"></span><script>document.getElementById("currentYear").textContent = new Date().getFullYear();</script> <strong>François Parlant</strong> &mdash; Créé avec passion pour le rythme et la mélodie.
 			</span>
 		  </div>
 
 		  <!-- Colonne 2 : Liens Réseaux Sociaux -->
 		  <div class="col-12 col-md-6 text-center text-md-end">
 			<div class="d-inline-flex gap-3 align-items-center">
-			  <a href="https://github.com/fxpar/abc-notation-artifacts" target="_blank" rel="noopener noreferrer" class="text-body-secondary text-decoration-none fs-5 hover-accent" title="Code source GitHub"> 
+			  <a href="https://github.com/fxpar/music-toolbox/blob/main/quiz-formule-accords.html" target="_blank" rel="noopener noreferrer" class="text-body-secondary text-decoration-none fs-5 hover-accent" title="Code source GitHub"> 
 				<i class="bi bi-github"></i> Github
 			  </a> &mdash;
 			  <a href="https://www.linkedin.com/in/francois-parlant" target="_blank" rel="noopener noreferrer" class="text-body-secondary text-decoration-none fs-5 hover-accent" title="LinkedIn: François Parlant">
@@ -512,110 +653,164 @@
 
 
 <script>
+    // TEXTES DE L'INTERFACE (regroupés ici pour une future traduction FR/EN)
+    var TXT = {
+        questionCounter: "{n} / {total}",
+        scoreCounter: "{ok} / {done}",
+        rate: "({pct} %)",
+        correct: "Bonne réponse !",
+        incorrect: "Raté : la bonne réponse est {answer}.",
+        missingIs: "La note manquante est {answer} : {info}.",
+        hintLabel: "Indice : ",
+        hintDefault: "Trouvez l'intervalle manquant dans la formule.",
+        next: "Question suivante",
+        seeResults: "Voir le bilan",
+        endRate: "Taux de réussite : {pct} %",
+        bestScore: "Meilleur score (niveau {level}) : {best} / {total}",
+        newRecord: "Nouveau record !",
+        noMistake: "Aucune erreur, bravo !",
+        missedTitle: "À revoir :",
+        missedItem: "{chord} : {formula} (il manquait {answer})",
+        levelNames: { simple: "Simple", advanced: "Avancé" }
+    };
+
+    function fmt(str, values) {
+        return str.replace(/\{(\w+)\}/g, function (m, key) {
+            return values.hasOwnProperty(key) ? values[key] : m;
+        });
+    }
+
+    var SESSION_LENGTH = 10;
+
     // BASE DE DONNÉES ENRICHIE D'INDICES PÉDAGOGIQUES
     const CHORDS = {
         simple: [
-            { 
-                name: "maj7", 
+            {
+                name: "maj7",
                 formula: ["R", "3", "5", "7"],
-                desc: "L'accord Majeur 7 a une sonorité très douce et stable.",
+                desc: "L'accord majeur 7 a une sonorité très douce et stable.",
                 hints: {
-                    "3": "Tierce majeure : elle définit la couleur majeure fondamentale.",
+                    "3": "Tierce majeure : elle donne la couleur majeure de l'accord.",
                     "5": "Quinte juste : le pilier de stabilité de l'accord.",
-                    "7": "Septième majeure : située à un demi-ton sous la fondamentale."
+                    "7": "Septième majeure : située un demi-ton sous la fondamentale."
                 }
             },
-            { 
-                name: "7 (Dominant)", 
+            {
+                name: "7 (dominante)",
                 formula: ["R", "3", "5", "b7"],
-                desc: "L'accord de dominante crée une tension qui veut se résoudre.",
+                desc: "L'accord de dominante crée une tension qui demande à se résoudre.",
                 hints: {
-                    "3": "Tierce majeure : essentielle pour le caractère dominant.",
-                    "5": "Quinte juste : apporte du corps à l'accord.",
-                    "b7": "Septième mineure : crée le triton de tension avec la tierce."
+                    "3": "Tierce majeure : essentielle au caractère de dominante.",
+                    "5": "Quinte juste : elle apporte du corps à l'accord.",
+                    "b7": "Septième mineure : elle forme avec la tierce le triton, source de la tension."
                 }
             },
-            { 
-                name: "m7", 
+            {
+                name: "m7",
                 formula: ["R", "b3", "5", "b7"],
-                desc: "L'accord mineur 7 de base en jazz (ex: le ii en II-V-I).",
+                desc: "L'accord mineur 7 de base du jazz (ex. : le ii de la cadence ii-V-I).",
                 hints: {
-                    "b3": "Tierce mineure : abaisse la 3ce d'un demi-ton pour assombrir l'accord.",
-                    "5": "Quinte juste : reste inchangée dans un accord m7 classique.",
-                    "b7": "Septième mineure : présente dans presque tous les accords m7."
+                    "b3": "Tierce mineure : la tierce abaissée d'un demi-ton assombrit l'accord.",
+                    "5": "Quinte juste : elle reste inchangée dans un accord m7.",
+                    "b7": "Septième mineure : présente dans tous les accords m7."
                 }
             },
-            { 
-                name: "m7b5 (Demi-dim)", 
+            {
+                name: "m7b5 (demi-diminué)",
                 formula: ["R", "b3", "b5", "b7"],
-                desc: "Souvent utilisé sur le degré ii du mode mineur.",
+                desc: "Souvent utilisé sur le ii d'une cadence en mineur.",
                 hints: {
-                    "b3": "Tierce mineure : donne la base mineure.",
-                    "b5": "Quinte diminuée : l'élément clé qui caractérise le 'b5'.",
-                    "b7": "Septième mineure : le distingue de l'accord totalement diminué."
+                    "b3": "Tierce mineure : elle donne la base mineure.",
+                    "b5": "Quinte diminuée : c'est elle que désigne le « b5 » du nom.",
+                    "b7": "Septième mineure : elle le distingue de l'accord diminué 7 (bb7)."
                 }
             },
-            { 
-                name: "dim7", 
+            {
+                name: "dim7",
                 formula: ["R", "b3", "b5", "bb7"],
-                desc: "Accord symétrique composé uniquement de tierces mineures superposées.",
+                desc: "Accord symétrique formé uniquement de tierces mineures superposées.",
                 hints: {
-                    "b3": "Tierce mineure : 1ère empilement de 1.5 ton.",
-                    "b5": "Quinte diminuée : crée une quarte augmentée / triton.",
-                    "bb7": "Double-bémol 7 : équivalent enharmonique à une 6te majeure."
+                    "b3": "Tierce mineure : premier empilement d'un ton et demi.",
+                    "b5": "Quinte diminuée : elle forme un triton avec la fondamentale.",
+                    "bb7": "Septième diminuée (double bémol) : elle sonne comme une sixte majeure, mais s'écrit bb7 car c'est une septième."
                 }
             },
-            { 
-                name: "6", 
+            {
+                name: "6",
                 formula: ["R", "3", "5", "6"],
-                desc: "L'accord Majeur 6 est une alternative très courante au maj7.",
+                desc: "L'accord majeur 6 est une alternative très courante au maj7.",
                 hints: {
                     "3": "Tierce majeure.",
                     "5": "Quinte juste.",
-                    "6": "Sixte majeure : remplace la septième pour un son plus consonnat."
+                    "6": "Sixte majeure : elle remplace la septième pour un son plus consonant."
                 }
             }
         ],
         advanced: [
-            { 
-                name: "7b9", 
+            {
+                name: "7b9",
                 formula: ["R", "3", "5", "b7", "b9"],
-                desc: "Accord de dominante avec tension mineure (souvent résolu vers un accord mineur).",
+                desc: "Accord de dominante avec une neuvième mineure (il se résout souvent vers un accord mineur).",
                 hints: {
-                    "b7": "Septième mineure classique de dominante.",
-                    "b9": "Neuvième bémol : apporte une tension très expressive (1 demi-ton au dessus de R)."
+                    "b7": "Septième mineure, celle de tout accord de dominante.",
+                    "b9": "Neuvième mineure : un demi-ton au-dessus de la fondamentale (une octave plus haut), très expressive."
                 }
             },
-            { 
-                name: "7#9", 
+            {
+                name: "7#9",
                 formula: ["R", "3", "5", "b7", "#9"],
-                desc: "Le célèbre 'accord Hendrix' (mélange de couleur majeure et mineure).",
+                desc: "Le célèbre « accord Hendrix », qui mélange couleurs majeure et mineure.",
                 hints: {
                     "3": "Tierce majeure.",
-                    "#9": "Neuvième augmentée : sonne enharmoniquement comme une tierce mineure !"
+                    "#9": "Neuvième augmentée : elle sonne comme une tierce mineure !"
                 }
             },
-            { 
-                name: "7alt", 
+            {
+                name: "7alt",
                 formula: ["R", "3", "b7", "b9", "#9", "b5", "#5"],
-                desc: "L'accord altéré contient TOUTES les altérations possibles (b9, #9, b5, #5).",
+                desc: "L'accord altéré réunit les altérations de la quinte et de la neuvième (b5, #5, b9, #9).",
                 hints: {
                     "3": "Tierce majeure : indispensable.",
                     "b7": "Septième mineure.",
-                    "b5": "Quinte altérée (baisée).",
-                    "#5": "Quinte altérée (augmentée)."
+                    "b5": "Quinte diminuée (abaissée d'un demi-ton), équivalente à #11.",
+                    "#5": "Quinte augmentée (haussée d'un demi-ton), équivalente à b13."
                 }
             },
-            { 
-                name: "maj7(#11)", 
+            {
+                name: "maj7(#11)",
                 formula: ["R", "3", "5", "7", "#11"],
-                desc: "Accord majeur lydien. Le #11 apporte une couleur moderne et aérienne.",
+                desc: "Accord majeur lydien : le #11 apporte une couleur moderne et aérienne.",
                 hints: {
                     "7": "Septième majeure.",
                     "#11": "Onzième augmentée : la note caractéristique du mode lydien."
                 }
             }
         ]
+    };
+
+    // Nom et taille (en demi-tons) de chaque intervalle : sert à l'explication
+    // et à écarter les réponses enharmoniquement équivalentes.
+    const INTERVAL_INFO = {
+        "R":   { st: 0,  label: "fondamentale" },
+        "1":   { st: 0,  label: "fondamentale" },
+        "b9":  { st: 1,  label: "neuvième mineure (un demi-ton au-dessus de R, une octave plus haut)" },
+        "bb3": { st: 2,  label: "tierce diminuée (2 demi-tons)" },
+        "9":   { st: 2,  label: "neuvième majeure (un ton au-dessus de R, une octave plus haut)" },
+        "b3":  { st: 3,  label: "tierce mineure (3 demi-tons)" },
+        "#9":  { st: 3,  label: "neuvième augmentée (sonne comme une tierce mineure)" },
+        "3":   { st: 4,  label: "tierce majeure (4 demi-tons)" },
+        "4":   { st: 5,  label: "quarte juste (5 demi-tons)" },
+        "11":  { st: 5,  label: "onzième juste (une quarte, une octave plus haut)" },
+        "b5":  { st: 6,  label: "quinte diminuée (6 demi-tons)" },
+        "#11": { st: 6,  label: "onzième augmentée (sonne comme une quinte diminuée)" },
+        "5":   { st: 7,  label: "quinte juste (7 demi-tons)" },
+        "#5":  { st: 8,  label: "quinte augmentée (8 demi-tons)" },
+        "b13": { st: 8,  label: "treizième mineure (sonne comme une quinte augmentée)" },
+        "6":   { st: 9,  label: "sixte majeure (9 demi-tons)" },
+        "bb7": { st: 9,  label: "septième diminuée (9 demi-tons, sonne comme une sixte)" },
+        "13":  { st: 9,  label: "treizième (une sixte, une octave plus haut)" },
+        "b7":  { st: 10, label: "septième mineure (10 demi-tons)" },
+        "7":   { st: 11, label: "septième majeure (11 demi-tons)" }
     };
 
     const INTERVAL_CATEGORIES = {
@@ -630,8 +825,20 @@
     let currentChord = null;
     let missingIndex = -1;
     let correctAnswer = "";
-    let score = 0;
+    let locked = false;
+    let questionNum = 0;
+    let answeredCount = 0;
+    let correctCount = 0;
     let streak = 0;
+    let missed = [];
+
+    // --- STOCKAGE (protégé : localStorage peut être absent dans une WebView) ---
+    function storageGet(key) {
+        try { return window.localStorage.getItem(key); } catch (e) { return null; }
+    }
+    function storageSet(key, value) {
+        try { window.localStorage.setItem(key, value); } catch (e) { /* stockage indisponible */ }
+    }
 
     // --- TIROIR COURS ---
     function toggleDrawer() {
@@ -648,8 +855,8 @@
 
     // --- THÈME SOMBRE ---
     function initTheme() {
-        const savedTheme = localStorage.getItem('theme');
-        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const savedTheme = storageGet('theme');
+        const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
         if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
             document.body.classList.add('dark-mode');
             document.getElementById('theme-icon').innerText = 'light_mode';
@@ -660,7 +867,7 @@
         document.body.classList.toggle('dark-mode');
         const isDark = document.body.classList.contains('dark-mode');
         document.getElementById('theme-icon').innerText = isDark ? 'light_mode' : 'dark_mode';
-        localStorage.setItem('theme', isDark ? 'dark' : 'light');
+        storageSet('theme', isDark ? 'dark' : 'light');
     }
 
     // --- LOGIQUE DU JEU ---
@@ -668,70 +875,132 @@
         currentLevel = level;
         document.querySelectorAll('.level-btn').forEach(btn => btn.classList.remove('active'));
         btnElement.classList.add('active');
-        nextQuestion();
+        startSession();
     }
 
     function getRandomItem(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
-    function shuffle(arr) { return [...arr].sort(() => Math.random() - 0.5); }
+    function shuffle(arr) {
+        const a = arr.slice();
+        for (let i = a.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            const tmp = a[i]; a[i] = a[j]; a[j] = tmp;
+        }
+        return a;
+    }
 
     function getCategoryForInterval(interval) {
-        for (const [cat, items] of Object.entries(INTERVAL_CATEGORIES)) {
-            if (items.includes(interval)) return cat;
+        const cats = Object.keys(INTERVAL_CATEGORIES);
+        for (let i = 0; i < cats.length; i++) {
+            if (INTERVAL_CATEGORIES[cats[i]].indexOf(interval) !== -1) return cats[i];
         }
         return 'tension';
     }
 
+    function semitones(interval) {
+        return INTERVAL_INFO[interval] ? INTERVAL_INFO[interval].st : -1;
+    }
+
+    function updateScoreBoard() {
+        const shownNum = Math.min(Math.max(questionNum, 1), SESSION_LENGTH);
+        document.getElementById('qnum-val').innerText = fmt(TXT.questionCounter, { n: shownNum, total: SESSION_LENGTH });
+        document.getElementById('score-val').innerText = fmt(TXT.scoreCounter, { ok: correctCount, done: answeredCount });
+        document.getElementById('rate-val').innerText = answeredCount > 0
+            ? fmt(TXT.rate, { pct: Math.round(100 * correctCount / answeredCount) })
+            : "";
+        document.getElementById('streak-val').innerText = streak;
+    }
+
+    function startSession() {
+        questionNum = 0;
+        answeredCount = 0;
+        correctCount = 0;
+        streak = 0;
+        missed = [];
+        currentChord = null;
+        document.getElementById('end-screen').classList.remove('show');
+        document.getElementById('question-card').classList.remove('hidden');
+        document.getElementById('options-grid').classList.remove('hidden');
+        nextQuestion();
+    }
+
+    function goNext() {
+        if (questionNum >= SESSION_LENGTH) {
+            showEndScreen();
+        } else {
+            nextQuestion();
+        }
+    }
+
     function nextQuestion() {
+        locked = false;
+        questionNum += 1;
+
         // Réinitialiser les affichages
-        document.getElementById('feedback').innerText = "";
-        document.getElementById('feedback').className = "feedback";
-        //document.getElementById('hint-box').classList.remove('open');
+        const feedbackEl = document.getElementById('feedback');
+        feedbackEl.innerText = "";
+        feedbackEl.className = "feedback";
+        const explEl = document.getElementById('explanation');
+        explEl.innerText = "";
+        explEl.className = "explanation";
+        document.getElementById('next-btn').classList.remove('show');
 		// Fermer la modale d'indice si elle était ouverte
         document.getElementById('hint-modal').classList.remove('open');
         document.getElementById('hint-scrim').classList.remove('open');
 
+        // Choix d'un accord (évite de reposer le même deux fois de suite)
         const list = CHORDS[currentLevel] || CHORDS.simple;
-        currentChord = getRandomItem(list);
+        let chord = getRandomItem(list);
+        if (list.length > 1) {
+            while (chord === currentChord) chord = getRandomItem(list);
+        }
+        currentChord = chord;
 
         // Sélection d'un trou (hors "R")
         missingIndex = Math.floor(Math.random() * (currentChord.formula.length - 1)) + 1;
         correctAnswer = currentChord.formula[missingIndex];
 
         document.getElementById('chord-name').innerText = currentChord.name;
-
-        // Générer la formule avec le "?"
-        const displayFormula = currentChord.formula.map((item, idx) => 
-            idx === missingIndex ? '<span class="missing-slot">?</span>' : item
-        ).join(' - ');
-
-        document.getElementById('formula-display').innerHTML = displayFormula;
+        document.getElementById('formula-display').innerHTML = formulaHtml(currentChord, missingIndex, false);
 
         // Mettre à jour l'indice contextuel
-        const specificHint = currentChord.hints && currentChord.hints[correctAnswer] 
-            ? currentChord.hints[correctAnswer] 
-            : "Trouvez l'intervalle manquant dans la formule.";
+        const specificHint = currentChord.hints && currentChord.hints[correctAnswer]
+            ? currentChord.hints[correctAnswer]
+            : TXT.hintDefault;
 
         document.getElementById('hint-title').innerText = currentChord.name;
-        document.getElementById('hint-text').innerText = `${currentChord.desc}\n\n💡 Indice : ${specificHint}`;
+        document.getElementById('hint-text').innerText = currentChord.desc + "\n\n💡 " + TXT.hintLabel + specificHint;
 
+        updateScoreBoard();
         generateOptions();
+    }
+
+    // Formule affichée : "?" à la place de la note manquante, ou la réponse une fois révélée
+    function formulaHtml(chord, holeIdx, reveal) {
+        return chord.formula.map((item, idx) => {
+            if (idx !== holeIdx) return item;
+            return '<span class="missing-slot">' + (reveal ? item : '?') + '</span>';
+        }).join(' - ');
     }
 
     function generateOptions() {
         const optionsSet = new Set([correctAnswer]);
+        const correctSt = semitones(correctAnswer);
         const targetCategory = getCategoryForInterval(correctAnswer);
 
-        // Pièges prioritaires de la même catégorie
-        const sameCatItems = shuffle(INTERVAL_CATEGORIES[targetCategory]);
-        for (const item of sameCatItems) {
-            if (optionsSet.size < 4) optionsSet.add(item);
+        // Un distracteur ne doit jamais sonner comme la bonne réponse (ex. b5 / #11, 6 / bb7)
+        function tryAdd(item, max) {
+            if (optionsSet.size >= max || optionsSet.has(item)) return;
+            if (item === "R" || item === "1") return;
+            if (semitones(item) === correctSt) return;
+            optionsSet.add(item);
         }
 
+        // Pièges prioritaires de la même catégorie
+        shuffle(INTERVAL_CATEGORIES[targetCategory]).forEach(item => tryAdd(item, 4));
+
         // Compléter avec d'autres choix
-        const fallbackPool = shuffle(["b3", "3", "b5", "5", "#5", "b7", "7", "b9", "9", "#9", "#11", "b13", "13"]);
-        for (const item of fallbackPool) {
-            if (optionsSet.size < 6) optionsSet.add(item);
-        }
+        const fallbackPool = shuffle(["b3", "3", "4", "b5", "5", "#5", "6", "b7", "7", "b9", "9", "#9", "#11", "b13", "13"]);
+        fallbackPool.forEach(item => tryAdd(item, 6));
 
         const optionsArray = shuffle(Array.from(optionsSet));
         const grid = document.getElementById('options-grid');
@@ -741,34 +1010,113 @@
             const btn = document.createElement('button');
             btn.className = 'option-btn';
             btn.innerText = opt;
-            btn.onclick = () => checkAnswer(opt);
+            btn.setAttribute('data-value', opt);
+            btn.onclick = () => checkAnswer(opt, btn);
             grid.appendChild(btn);
         });
     }
 
-    function checkAnswer(selected) {
+    function checkAnswer(selected, btnEl) {
+        // Verrou : une seule réponse par question (évite les doubles clics)
+        if (locked) return;
+        locked = true;
+
         const feedbackEl = document.getElementById('feedback');
-        
-        if (selected === correctAnswer) {
-            feedbackEl.innerText = "Parfait !";
-            feedbackEl.className = "feedback correct";
-            score += 10;
-            streak += 1;
-            document.getElementById('score-val').innerText = score;
-            document.getElementById('streak-val').innerText = streak;
-            
-            setTimeout(nextQuestion, 700);
-        } else {
-            feedbackEl.innerText = `Erreur ! La réponse était : ${correctAnswer}`;
-            feedbackEl.className = "feedback incorrect";
-            streak = 0;
-            document.getElementById('streak-val').innerText = streak;
+        const isCorrect = selected === correctAnswer;
+        answeredCount += 1;
+
+        const buttons = document.querySelectorAll('#options-grid .option-btn');
+        for (let i = 0; i < buttons.length; i++) {
+            buttons[i].disabled = true;
+            if (buttons[i].getAttribute('data-value') === correctAnswer) buttons[i].classList.add('is-correct');
         }
+
+        if (isCorrect) {
+            correctCount += 1;
+            streak += 1;
+            feedbackEl.innerText = "✓ " + TXT.correct;
+            feedbackEl.className = "feedback correct";
+        } else {
+            streak = 0;
+            btnEl.classList.add('is-wrong');
+            feedbackEl.innerText = "✗ " + fmt(TXT.incorrect, { answer: correctAnswer });
+            feedbackEl.className = "feedback incorrect";
+            missed.push(fmt(TXT.missedItem, {
+                chord: currentChord.name,
+                formula: currentChord.formula.join(' - '),
+                answer: correctAnswer
+            }));
+        }
+
+        // Révéler la réponse dans la formule + explication courte
+        document.getElementById('formula-display').innerHTML = formulaHtml(currentChord, missingIndex, true);
+        const info = INTERVAL_INFO[correctAnswer] ? INTERVAL_INFO[correctAnswer].label : "";
+        let expl = fmt(TXT.missingIs, { answer: correctAnswer, info: info });
+        if (currentChord.hints && currentChord.hints[correctAnswer]) {
+            expl += "\n" + currentChord.hints[correctAnswer];
+        }
+        const explEl = document.getElementById('explanation');
+        explEl.innerText = expl;
+        explEl.className = "explanation show";
+
+        const nextBtn = document.getElementById('next-btn');
+        nextBtn.innerText = questionNum >= SESSION_LENGTH ? TXT.seeResults : TXT.next;
+        nextBtn.classList.add('show');
+
+        updateScoreBoard();
+    }
+
+    function showEndScreen() {
+        document.getElementById('question-card').classList.add('hidden');
+        document.getElementById('options-grid').classList.add('hidden');
+        document.getElementById('next-btn').classList.remove('show');
+
+        const pct = answeredCount > 0 ? Math.round(100 * correctCount / answeredCount) : 0;
+        const bestKey = 'quizFormuleAccords.best.' + currentLevel;
+        const previousBest = parseInt(storageGet(bestKey), 10);
+        let bestText;
+        if (isNaN(previousBest) || correctCount > previousBest) {
+            storageSet(bestKey, String(correctCount));
+            bestText = TXT.newRecord;
+        } else {
+            bestText = fmt(TXT.bestScore, {
+                level: TXT.levelNames[currentLevel] || currentLevel,
+                best: previousBest,
+                total: SESSION_LENGTH
+            });
+        }
+
+        document.getElementById('end-score').innerText = fmt(TXT.scoreCounter, { ok: correctCount, done: answeredCount });
+        document.getElementById('end-rate').innerText = fmt(TXT.endRate, { pct: pct });
+        document.getElementById('end-best').innerText = bestText;
+
+        const missedEl = document.getElementById('end-missed');
+        missedEl.innerHTML = '';
+        if (missed.length === 0) {
+            const li = document.createElement('li');
+            li.innerText = TXT.noMistake;
+            missedEl.appendChild(li);
+        } else {
+            const title = document.createElement('li');
+            title.style.listStyle = 'none';
+            title.style.marginLeft = '-20px';
+            title.style.fontWeight = '700';
+            title.innerText = TXT.missedTitle;
+            missedEl.appendChild(title);
+            missed.forEach(m => {
+                const li = document.createElement('li');
+                li.innerText = m;
+                missedEl.appendChild(li);
+            });
+        }
+        document.getElementById('end-screen').classList.add('show');
+        updateScoreBoard();
+        window.scrollTo(0, 0);
     }
 
     // Initialisation
     initTheme();
-    nextQuestion();
+    startSession();
 </script>
 
 </body>

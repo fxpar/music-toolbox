@@ -168,33 +168,114 @@
 <ul class="list-unstyled small">
   <li class="mb-2 d-flex align-items-start">
     <i class="bi bi-check-circle-fill text-success me-2 mt-1"></i>
-    <div><strong>Parfaite (V–I)</strong> — conclusive, la plus forte</div>
+    <div>
+      <strong data-i18n="cadencePerfectName">Parfaite (V–I)</strong>
+      <span data-i18n="cadencePerfectDesc"> — conclusive, la plus forte</span>
+    </div>
   </li>
   <li class="mb-2 d-flex align-items-start">
     <i class="bi bi-check-circle text-secondary me-2 mt-1"></i>
-    <div><strong>Plagale (IV–I)</strong> — « Amen », conclusive douce</div>
+    <div>
+      <strong data-i18n="cadencePlagalName">Plagale (IV–I)</strong>
+      <span data-i18n="cadencePlagalDesc"> — « Amen », conclusive douce</span>
+    </div>
   </li>
   <li class="mb-2 d-flex align-items-start">
     <i class="bi bi-pause-circle text-warning me-2 mt-1"></i>
-    <div><strong>Demi-cadence (I–V)</strong> — suspensive, comme une virgule </div>
+    <div>
+      <strong data-i18n="cadenceHalfName">Demi-cadence (I–V)</strong>
+      <span data-i18n="cadenceHalfDesc"> — suspensive, comme une virgule</span>
+    </div>
   </li>
   <li class="mb-2 d-flex align-items-start">
     <i class="bi bi-signpost-split text-danger me-2 mt-1"></i>
-    <div><strong>Rompue (V–vi)</strong> — surprise, évite la tonique </div>
+    <div>
+      <strong data-i18n="cadenceDeceptiveName">Rompue (V–vi)</strong>
+      <span data-i18n="cadenceDeceptiveDesc"> — surprise, évite la tonique</span>
+    </div>
   </li>
   <li class="mb-2 d-flex align-items-start">
     <i class="bi bi-arrow-repeat text-info me-2 mt-1"></i>
-    <div><strong>Anatole (vi–ii–V–I)</strong> — cycle très courant en jazz/pop </div>
+    <div>
+      <strong data-i18n="cadenceAnatoleName">Anatole (vi–ii–V–I)</strong>
+      <span data-i18n="cadenceAnatoleDesc"> — cycle très courant en jazz/pop</span>
+    </div>
   </li>
   <li class="mb-2 d-flex align-items-start">
     <i class="bi bi-music-note-beamed text-primary me-2 mt-1"></i>
-    <div><strong>Andalouse (iv–III–II–I)</strong> — couleur flamenco/Phrygien </div>
+    <div>
+      <strong data-i18n="cadenceAndalusianName">Andalouse (iv–III–♭II–I)</strong>
+      <span data-i18n="cadenceAndalusianDesc"> — couleur flamenco/Phrygien</span>
+    </div>
   </li>
   <li class="mb-2 d-flex align-items-start">
-    <i class="bi bi-arrow-down-circle text-dark me-2 mt-1"></i>
-    <div><strong>Phrygienne (iv⁶–V)</strong> — demi-cadence en mode mineur </div>
+    <i class="bi bi-arrow-down-circle text-body me-2 mt-1"></i>
+    <div>
+      <strong data-i18n="cadencePhrygianName">Phrygienne (iv⁶–V)</strong>
+      <span data-i18n="cadencePhrygianDesc"> — demi-cadence en mode mineur</span>
+    </div>
   </li>
 </ul>
+
+
+<h6 class="small text-uppercase text-secondary fw-bold mt-3" data-i18n="theoryTitle">Rappels de théorie musicale</h6>
+
+<p class="small text-secondary mb-2" data-i18n="theoryIntro">
+  Les formules d'accords expriment la distance (les intervalles) entre la Fondamentale (R) et les autres notes.
+</p>
+
+<h6 class="small fw-bold mb-1" data-i18n="theorySymbolsTitle">Symboles classiques</h6>
+<ul class="list-unstyled small text-secondary mb-2">
+  <li><strong>R</strong> <span data-i18n="symRoot">— Root (Fondamentale)</span></li>
+  <li><strong>b3 / 3</strong> <span data-i18n="symThird">— Tierce mineure / majeure</span></li>
+  <li><strong>b5 / 5 / #5</strong> <span data-i18n="symFifth">— Quinte dim / juste / aug</span></li>
+  <li><strong>b7 / 7 / bb7</strong> <span data-i18n="symSeventh">— Septième min / maj / diminuée</span></li>
+</ul>
+
+<h6 class="small fw-bold mb-1" data-i18n="theoryFamiliesTitle">Les familles d'accords</h6>
+
+<div class="table-responsive">
+  <table class="table table-sm table-borderless small mb-2">
+    <thead>
+      <tr class="border-bottom">
+        <th scope="col" class="fw-semibold text-secondary" data-i18n="thType">Type</th>
+        <th scope="col" class="fw-semibold text-secondary" data-i18n="thFormula">Formule</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td data-i18n="chordMajorName">Majeur (triade)</td><td><code>R - 3 - 5</code></td></tr>
+      <tr><td data-i18n="chordMinorName">Mineur (triade) (m)</td><td><code>R - b3 - 5</code></td></tr>
+      <tr><td data-i18n="chordDimName">Diminué (triade) (dim)</td><td><code>R - b3 - b5</code></td></tr>
+      <tr><td data-i18n="chordAugName">Augmenté (triade) (aug)</td><td><code>R - 3 - #5</code></td></tr>
+      <tr><td data-i18n="chordSus4Name">Suspendu 4 (sus4)</td><td><code>R - 4 - 5</code></td></tr>
+      <tr><td data-i18n="chordSus2Name">Suspendu 2 (sus2)</td><td><code>R - 2 - 5</code></td></tr>
+      <tr><td data-i18n="chordPowerName">Power Chord (5)</td><td><code>R - 5</code></td></tr>
+      <tr><td data-i18n="chordMaj7Name">Majeur 7 (maj7)</td><td><code>R - 3 - 5 - 7</code></td></tr>
+      <tr><td data-i18n="chordDom7Name">Dominante (7)</td><td><code>R - 3 - 5 - b7</code></td></tr>
+      <tr><td data-i18n="chordMin7Name">Mineur 7 (m7)</td><td><code>R - b3 - 5 - b7</code></td></tr>
+      <tr><td data-i18n="chordHalfDimName">Demi-diminué (m7b5)</td><td><code>R - b3 - b5 - b7</code></td></tr>
+      <tr><td data-i18n="chordDim7Name">Diminué 7 (dim7)</td><td><code>R - b3 - b5 - bb7</code></td></tr>
+      <tr><td data-i18n="chordMinMaj7Name">Mineur-Majeur 7 (mMaj7)</td><td><code>R - b3 - 5 - 7</code></td></tr>
+      <tr><td data-i18n="chordMaj6Name">Majeur 6 (6)</td><td><code>R - 3 - 5 - 6</code></td></tr>
+      <tr><td data-i18n="chordMin6Name">Mineur 6 (m6)</td><td><code>R - b3 - 5 - 6</code></td></tr>
+      <tr><td data-i18n="chordDom9Name">Dominante 9 (9)</td><td><code>R - 3 - 5 - b7 - 9</code></td></tr>
+      <tr><td data-i18n="chordMaj9Name">Majeur 9 (maj9)</td><td><code>R - 3 - 5 - 7 - 9</code></td></tr>
+      <tr><td data-i18n="chordMin9Name">Mineur 9 (m9)</td><td><code>R - b3 - 5 - b7 - 9</code></td></tr>
+      <tr><td data-i18n="chordAltName">7 Altéré (7alt)</td><td><code>R - 3 - b5 (#5) - b7 - b9 (#9)</code></td></tr>
+      <tr><td data-i18n="chord7b9Name">7 Altéré b9/#9 (7b9 / 7#9)</td><td><code>R - 3 - 5 - b7 - b9 (#9)</code></td></tr>
+      <tr><td data-i18n="chordDom11Name">Dominante 11 (11)</td><td><code>R - (3) - 5 - b7 - (9) - 11</code></td></tr>
+      <tr><td data-i18n="chordDom13Name">Dominante 13 (13)</td><td><code>R - 3 - 5 - b7 - (9) - 13</code></td></tr>
+    </tbody>
+  </table>
+</div>
+
+<h6 class="small fw-bold mb-1" data-i18n="theoryTensionsTitle">Tensions complexes</h6>
+<p class="small text-secondary mb-2" data-i18n="theoryTensionsDesc">
+  Les altérations de dominante (7alt) comportent des tensions enrichies : b9, #9, b5 (#11), #5 (b13).
+</p>
+
+
+
     </div>
   </div>
 
@@ -204,6 +285,52 @@
       <div class="string-lines" id="stringLines"></div>
       <div id="rowsContainer"></div>
     </div>
+
+    <!-- Aide repliable (fermée par défaut) -->
+    <section class="px-2" style="max-width:400px;margin:0 auto;padding-bottom:90px">
+      <div class="accordion accordion-flush border rounded small" id="helpAccordion">
+        <div class="accordion-item">
+          <h2 class="accordion-header">
+            <button class="accordion-button collapsed py-2 small" type="button" data-bs-toggle="collapse" data-bs-target="#helpGoal" aria-expanded="false" aria-controls="helpGoal">
+              <span data-i18n="helpGoalTitle">Objectif</span>
+            </button>
+          </h2>
+          <div id="helpGoal" class="accordion-collapse collapse" data-bs-parent="#helpAccordion">
+            <div class="accordion-body py-2" data-i18n="helpGoalText">Comprendre que la connaissance du manche est relative : les ronds donnent le degré de chaque note par rapport à la racine de l'accord (chiffres arabes), les badges donnent le degré par rapport à l'origine de la cadence (chiffres romains). En enregistrant plusieurs positions, vous construisez un « film » dont le fil conducteur est l'enchaînement des toniques.</div>
+          </div>
+        </div>
+        <div class="accordion-item">
+          <h2 class="accordion-header">
+            <button class="accordion-button collapsed py-2 small" type="button" data-bs-toggle="collapse" data-bs-target="#helpHow" aria-expanded="false" aria-controls="helpHow">
+              <span data-i18n="helpHowTitle">Comment faire</span>
+            </button>
+          </h2>
+          <div id="helpHow" class="accordion-collapse collapse" data-bs-parent="#helpAccordion">
+            <div class="accordion-body py-2">
+              <ul class="ps-3 mb-0">
+                <li data-i18n="helpHowSpot">Poser une note : touchez un rond ; touchez-le à nouveau pour l'enlever.</li>
+                <li data-i18n="helpHowRoot">Déplacer la racine (anneau rose) : flèches « Racine » du panneau du bas (touchez la poignée pour l'ouvrir). Les chiffres des ronds sont recalculés.</li>
+                <li data-i18n="helpHowCadence">Déplacer l'origine de la cadence : flèches « Cadence ». Tous les badges romains et les numéros de case sont recalculés.</li>
+                <li data-i18n="helpHowBadge">Activer un degré : touchez le petit badge en haut à droite d'une case ; il passe en jaune.</li>
+                <li data-i18n="helpHowBarre">Barrer une ligne : touchez le fond de la ligne (hors ronds et badges) ; touchez à nouveau pour retirer le barré.</li>
+                <li data-i18n="helpHowPositions">Enregistrer une position : bouton « Enregistrer ». Touchez son nom pour la rejouer ; crayon, flèches et corbeille pour la renommer, la déplacer ou la supprimer.</li>
+                <li data-i18n="helpHowIO">Exporter / Importer : sauvegarde ou recharge la liste des positions (fichier JSON). Un fichier invalide est refusé sans rien modifier.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="accordion-item">
+          <h2 class="accordion-header">
+            <button class="accordion-button collapsed py-2 small" type="button" data-bs-toggle="collapse" data-bs-target="#helpNum" aria-expanded="false" aria-controls="helpNum">
+              <span data-i18n="helpNumTitle">Lire les numéros de case (relatifs)</span>
+            </button>
+          </h2>
+          <div id="helpNum" class="accordion-collapse collapse" data-bs-parent="#helpAccordion">
+            <div class="accordion-body py-2" data-i18n="helpNumText">Les numéros à gauche ne sont pas des numéros de frette : la ligne de l'origine de la cadence vaut 0 (trait rose), la case au-dessus -1, celle d'en dessous +1, etc. Si vous déplacez l'origine, le 0 la suit. Une même forme se reconnaît ainsi à ses écarts, quelle que soit la tonalité.</div>
+          </div>
+        </div>
+      </div>
+    </section>
   </main>
 
   <footer class="bottom-sheet collapsed" id="bottomSheet">
@@ -274,6 +401,68 @@
       emptyPositions: "Aucune position enregistrée",
       stringNames: ["Sol", "Do", "Mi", "La"],
       renamePrompt: "Nouveau nom de la position :",
+	  cadencesTitle: "Cadences essentielles",
+		cadencePerfectName: "Parfaite (V–I)",
+		cadencePerfectDesc: " — conclusive, la plus forte",
+		cadencePlagalName: "Plagale (IV–I)",
+		cadencePlagalDesc: " — « Amen », conclusive douce",
+		cadenceHalfName: "Demi-cadence (I–V)",
+		cadenceHalfDesc: " — suspensive, comme une virgule",
+		cadenceDeceptiveName: "Rompue (V–vi)",
+		cadenceDeceptiveDesc: " — surprise, évite la tonique",
+		cadenceAnatoleName: "Anatole (vi–ii–V–I)",
+		cadenceAnatoleDesc: " — cycle très courant en jazz/pop",
+		cadenceAndalusianName: "Andalouse (iv–III–♭II–I)",
+		cadenceAndalusianDesc: " — couleur flamenco/Phrygien",
+		cadencePhrygianName: "Phrygienne (iv⁶–V)",
+		cadencePhrygianDesc: " — demi-cadence en mode mineur",
+		theoryTitle: "Rappels de théorie musicale",
+	theoryIntro: "Les formules d'accords expriment la distance (les intervalles) entre la Fondamentale (R) et les autres notes.",
+	theorySymbolsTitle: "Symboles classiques",
+	symRoot: "— Root (Fondamentale)",
+	symThird: "— Tierce mineure / majeure",
+	symFifth: "— Quinte dim / juste / aug",
+	symSeventh: "— Septième min / maj / diminuée",
+	theoryFamiliesTitle: "Les familles d'accords",
+	thType: "Type",
+	thFormula: "Formule",
+	chordMajorName: "Majeur (triade)",
+	chordMinorName: "Mineur (triade) (m)",
+	chordDimName: "Diminué (triade) (dim)",
+	chordAugName: "Augmenté (triade) (aug)",
+	chordSus4Name: "Suspendu 4 (sus4)",
+	chordSus2Name: "Suspendu 2 (sus2)",
+	chordPowerName: "Power Chord (5)",
+	chordMaj7Name: "Majeur 7 (maj7)",
+	chordDom7Name: "Dominante (7)",
+	chordMin7Name: "Mineur 7 (m7)",
+	chordHalfDimName: "Demi-diminué (m7b5)",
+	chordDim7Name: "Diminué 7 (dim7)",
+	chordMinMaj7Name: "Mineur-Majeur 7 (mMaj7)",
+	chordMaj6Name: "Majeur 6 (6)",
+	chordMin6Name: "Mineur 6 (m6)",
+	chordDom9Name: "Dominante 9 (9)",
+	chordMaj9Name: "Majeur 9 (maj9)",
+	chordMin9Name: "Mineur 9 (m9)",
+	chordAltName: "7 Altéré (7alt)",
+	chord7b9Name: "7 Altéré b9/#9 (7b9 / 7#9)",
+	chordDom11Name: "Dominante 11 (11)",
+	chordDom13Name: "Dominante 13 (13)",
+	theoryTensionsTitle: "Tensions complexes",
+	theoryTensionsDesc: "Les altérations de dominante (7alt) comportent des tensions enrichies : b9, #9, b5 (#11), #5 (b13).",
+	importError: "Fichier JSON invalide : aucune position n'a été modifiée.",
+	helpGoalTitle: "Objectif",
+	helpGoalText: "Comprendre que la connaissance du manche est relative : les ronds donnent le degré de chaque note par rapport à la racine de l'accord (chiffres arabes), les badges donnent le degré par rapport à l'origine de la cadence (chiffres romains). En enregistrant plusieurs positions, vous construisez un « film » dont le fil conducteur est l'enchaînement des toniques.",
+	helpHowTitle: "Comment faire",
+	helpHowSpot: "Poser une note : touchez un rond ; touchez-le à nouveau pour l'enlever.",
+	helpHowRoot: "Déplacer la racine (anneau rose) : flèches « Racine » du panneau du bas (touchez la poignée pour l'ouvrir). Les chiffres des ronds sont recalculés.",
+	helpHowCadence: "Déplacer l'origine de la cadence : flèches « Cadence ». Tous les badges romains et les numéros de case sont recalculés.",
+	helpHowBadge: "Activer un degré : touchez le petit badge en haut à droite d'une case ; il passe en jaune.",
+	helpHowBarre: "Barrer une ligne : touchez le fond de la ligne (hors ronds et badges) ; touchez à nouveau pour retirer le barré.",
+	helpHowPositions: "Enregistrer une position : bouton « Enregistrer ». Touchez son nom pour la rejouer ; crayon, flèches et corbeille pour la renommer, la déplacer ou la supprimer.",
+	helpHowIO: "Exporter / Importer : sauvegarde ou recharge la liste des positions (fichier JSON). Un fichier invalide est refusé sans rien modifier.",
+	helpNumTitle: "Lire les numéros de case (relatifs)",
+	helpNumText: "Les numéros à gauche ne sont pas des numéros de frette : la ligne de l'origine de la cadence vaut 0 (trait rose), la case au-dessus -1, celle d'en dessous +1, etc. Si vous déplacez l'origine, le 0 la suit. Une même forme se reconnaît ainsi à ses écarts, quelle que soit la tonalité.",
     },
     en: {
       appTitle: "Ukulele Harmony", instruction: "Major cadence",
@@ -289,6 +478,68 @@
       emptyPositions: "No saved positions",
       stringNames: ["G", "C", "E", "A"],
       renamePrompt: "New position name:",
+	  cadencesTitle: "Essential cadences",
+	cadencePerfectName: "Perfect (V–I)",
+	cadencePerfectDesc: " — conclusive, the strongest",
+	cadencePlagalName: "Plagal (IV–I)",
+	cadencePlagalDesc: " — “Amen”, soft conclusive",
+	cadenceHalfName: "Half (I–V)",
+	cadenceHalfDesc: " — suspensive, like a comma",
+	cadenceDeceptiveName: "Deceptive (V–vi)",
+	cadenceDeceptiveDesc: " — surprise, avoids the tonic",
+	cadenceAnatoleName: "Anatole / Turnaround (vi–ii–V–I)",
+	cadenceAnatoleDesc: " — very common in jazz/pop",
+	cadenceAndalusianName: "Andalusian (iv–III–♭II–I)",
+	cadenceAndalusianDesc: " — flamenco/Phrygian colour",
+	cadencePhrygianName: "Phrygian (iv⁶–V)",
+	cadencePhrygianDesc: " — half cadence in minor mode",
+	theoryTitle: "Music theory reminders",
+	theoryIntro: "Chord formulas express the distance (intervals) between the Root (R) and the other notes.",
+	theorySymbolsTitle: "Standard symbols",
+	symRoot: "— Root",
+	symThird: "— Minor / major third",
+	symFifth: "— Diminished / perfect / augmented fifth",
+	symSeventh: "— Minor / major / diminished seventh",
+	theoryFamiliesTitle: "Chord families",
+	thType: "Type",
+	thFormula: "Formula",
+	chordMajorName: "Major (triad)",
+	chordMinorName: "Minor (triad) (m)",
+	chordDimName: "Diminished (triad) (dim)",
+	chordAugName: "Augmented (triad) (aug)",
+	chordSus4Name: "Suspended 4th (sus4)",
+	chordSus2Name: "Suspended 2nd (sus2)",
+	chordPowerName: "Power chord (5)",
+	chordMaj7Name: "Major 7 (maj7)",
+	chordDom7Name: "Dominant (7)",
+	chordMin7Name: "Minor 7 (m7)",
+	chordHalfDimName: "Half-diminished (m7b5)",
+	chordDim7Name: "Diminished 7 (dim7)",
+	chordMinMaj7Name: "Minor-major 7 (mMaj7)",
+	chordMaj6Name: "Major 6 (6)",
+	chordMin6Name: "Minor 6 (m6)",
+	chordDom9Name: "Dominant 9 (9)",
+	chordMaj9Name: "Major 9 (maj9)",
+	chordMin9Name: "Minor 9 (m9)",
+	chordAltName: "Altered 7 (7alt)",
+	chord7b9Name: "Altered b9/#9 (7b9 / 7#9)",
+	chordDom11Name: "Dominant 11 (11)",
+	chordDom13Name: "Dominant 13 (13)",
+	theoryTensionsTitle: "Complex tensions",
+	theoryTensionsDesc: "Dominant alterations (7alt) include enriched tensions: b9, #9, b5 (#11), #5 (b13).",
+	importError: "Invalid JSON file: no position was changed.",
+	helpGoalTitle: "Goal",
+	helpGoalText: "Understand that fretboard knowledge is relative: spots show each note's degree relative to the chord root (Arabic numerals), badges show the degree relative to the cadence origin (Roman numerals). Saving several positions builds a “film” driven by the succession of tonics.",
+	helpHowTitle: "How to use",
+	helpHowSpot: "Place a note: tap a spot; tap it again to remove it.",
+	helpHowRoot: "Move the root (pink ring): “Root” arrows in the bottom panel (tap the handle to open it). Spot numbers are recomputed.",
+	helpHowCadence: "Move the cadence origin: “Cadence” arrows. All Roman badges and fret numbers are recomputed.",
+	helpHowBadge: "Activate a degree: tap the small badge at the top right of a cell; it turns yellow.",
+	helpHowBarre: "Barre a row: tap the row background (outside spots and badges); tap again to remove it.",
+	helpHowPositions: "Save a position: “Save” button. Tap its name to replay it; pencil, arrows and bin to rename, reorder or delete.",
+	helpHowIO: "Export / Import: save or reload the position list (JSON file). An invalid file is rejected without any change.",
+	helpNumTitle: "Reading the fret numbers (relative)",
+	helpNumText: "The numbers on the left are not fret numbers: the cadence origin row is 0 (pink line), the one above is -1, the one below +1, etc. If you move the origin, 0 follows it. A shape is thus recognised by its intervals, whatever the key.",
     }
   };
 
@@ -329,6 +580,18 @@
   const v = TRANSLATIONS[state.lang][k];
   return (v === undefined || v === null) ? k : v;
 };
+  const escapeHtml = str => String(str)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+  // localStorage peut être indisponible (WebView, mode privé) : accès protégé
+  function lsGet(k) { try { return window.localStorage.getItem(k); } catch (err) { return null; } }
+  function lsSet(k, v) { try { window.localStorage.setItem(k, v); } catch (err) { /* ignoré */ } }
+  // Numéro de case RELATIF : 0 = ligne de l'origine de la cadence, -1 au-dessus, +1 en dessous
+  // (affichage seulement ; les numéros de ligne internes restent 0..TOTAL_ROWS-1)
+  const relRowLabel = r => {
+    const d = r - state.cadenceRow;
+    return d > 0 ? '+' + d : String(d);
+  };
 
   /* ============ DOM ============ */
   const viewportEl = document.getElementById('viewport');
@@ -354,7 +617,7 @@
 
       const idx = document.createElement('div');
       idx.className = 'row-index';
-      idx.textContent = r === 0 ? '' : r;
+      idx.textContent = relRowLabel(r); // mis à jour dans render()
       rowEl.appendChild(idx);
 
       const barre = document.createElement('div');
@@ -387,12 +650,10 @@
           const k = key(s, r);
           const was = !!state.badges[k];
           state.badges[k] = !was;
-          if (!was) {
-            // Fige le degré romain par rapport à la cadence au moment de l'activation
-            state.badgeValues[k] = romanLabel(degreeAt(s, r, state.cadenceRow, state.cadenceString));
-          } else {
-            delete state.badgeValues[k];
-          }
+          // Le degré romain n'est plus figé : il est recalculé dans render()
+          // par rapport à l'origine de cadence courante (badgeValues conservé
+          // uniquement pour compatibilité avec les JSON existants).
+          delete state.badgeValues[k];
           render();
         });
 
@@ -416,12 +677,18 @@
       spotEl.classList.toggle('active', !!state.spots[k]);
       spotEl.classList.toggle('root-marker', s === state.rootString && r === state.rootRow);
 
-      // BADGE : chiffre ROMAIN, relatif à la CADENCE
+      // BADGE : chiffre ROMAIN, relatif à l'ORIGINE DE CADENCE courante (actif ou non)
       const badgeOn = !!state.badges[k];
       badgeEl.classList.toggle('active', badgeOn);
-      badgeEl.textContent = badgeOn
-        ? state.badgeValues[k]                                  // valeur figée à l'activation
-        : romanLabel(degreeAt(s, r, state.cadenceRow, state.cadenceString)); // indicatif si inactif
+      badgeEl.textContent = romanLabel(degreeAt(s, r, state.cadenceRow, state.cadenceString));
+    });
+
+    // Numéros de case relatifs + trait rose sur la ligne de l'origine de cadence
+    rowsContainerEl.querySelectorAll('.grid-row').forEach(rowEl => {
+      const r = +rowEl.dataset.row;
+      const idx = rowEl.querySelector('.row-index');
+      if (idx) idx.textContent = relRowLabel(r);
+      rowEl.classList.toggle('center-row', r === state.cadenceRow);
     });
 
     document.getElementById('cadenceLabel').textContent =
@@ -445,7 +712,7 @@
       li.className = 'pos-item' + (pos.id === state.activePositionId ? ' active' : '');
       li.innerHTML = `
         <span class="badge bg-secondary">${i + 1}</span>
-        <span class="pos-label" title="${pos.label}">${pos.label}</span>
+        <span class="pos-label" title="${escapeHtml(pos.label)}">${escapeHtml(pos.label)}</span>
         <button class="btn-icon" data-act="rename" title="Renommer"><i class="bi bi-pencil"></i></button>
         <button class="btn-icon" data-act="up" title="Monter"><i class="bi bi-arrow-up"></i></button>
         <button class="btn-icon" data-act="down" title="Descendre"><i class="bi bi-arrow-down"></i></button>
@@ -478,7 +745,8 @@
     if (dir === 'left') s = Math.max(0, s - 1);
     if (dir === 'right') s = Math.min(STRING_COUNT - 1, s + 1);
     state.rootRow = r; state.rootString = s;
-    // Les badges actifs gardent leur valeur figée (badgeValues) → pas de recalcul
+    // Les badges romains dépendent de l'origine de cadence, pas de la racine :
+    // seuls les chiffres des ronds changent ici.
     render();
   }
 
@@ -487,16 +755,17 @@
     return {
       cadenceRow: state.cadenceRow, cadenceString: state.cadenceString,
       rootRow: state.rootRow, rootString: state.rootString,
-      spots: { ...state.spots }, badges: { ...state.badges },
-      badgeValues: { ...state.badgeValues }, barreRows: { ...state.barreRows },
+      // Object.assign plutôt que {...obj} (spread d'objet = ES2018, absent des vieilles WebView)
+      spots: Object.assign({}, state.spots), badges: Object.assign({}, state.badges),
+      badgeValues: Object.assign({}, state.badgeValues), barreRows: Object.assign({}, state.barreRows),
     };
   }
   function restoreSnapshot(snap) {
     Object.assign(state, {
       cadenceRow: snap.cadenceRow, cadenceString: snap.cadenceString,
       rootRow: snap.rootRow, rootString: snap.rootString,
-      spots: { ...snap.spots }, badges: { ...snap.badges },
-      badgeValues: { ...snap.badgeValues }, barreRows: { ...snap.barreRows },
+      spots: Object.assign({}, snap.spots), badges: Object.assign({}, snap.badges),
+      badgeValues: Object.assign({}, snap.badgeValues), barreRows: Object.assign({}, snap.barreRows),
     });
     rowsContainerEl.querySelectorAll('.grid-row').forEach(rowEl => {
       rowEl.classList.toggle('nut-active', !!state.barreRows[+rowEl.dataset.row]);
@@ -561,16 +830,33 @@
     document.body.appendChild(a); a.click(); a.remove();
     URL.revokeObjectURL(url);
   }
+  // Vérifie qu'un snapshot est restaurable (lignes/cordes entières dans les bornes)
+  function isValidSnapshot(snap) {
+    if (!snap || typeof snap !== 'object') return false;
+    const okRow = v => typeof v === 'number' && v % 1 === 0 && v >= 0 && v < TOTAL_ROWS;
+    const okStr = v => typeof v === 'number' && v % 1 === 0 && v >= 0 && v < STRING_COUNT;
+    const okObj = v => v === undefined || (v !== null && typeof v === 'object' && !Array.isArray(v));
+    return okRow(snap.cadenceRow) && okRow(snap.rootRow) &&
+      okStr(snap.cadenceString) && okStr(snap.rootString) &&
+      okObj(snap.spots) && okObj(snap.badges) && okObj(snap.badgeValues) && okObj(snap.barreRows);
+  }
   function importPositions(file) {
     const reader = new FileReader();
     reader.onload = e => {
       try {
         const data = JSON.parse(e.target.result);
-        if (!Array.isArray(data.positions)) throw new Error();
-        state.positions = data.positions;
+        if (!data || !Array.isArray(data.positions)) throw new Error('positions');
+        const ok = data.positions.every(p => p && typeof p === 'object' && isValidSnapshot(p.snapshot));
+        if (!ok) throw new Error('snapshot');
+        // Normalise id/label sans toucher aux snapshots (format JSON inchangé)
+        const positions = data.positions.map((p, i) => Object.assign({}, p, {
+          id: (typeof p.id === 'string' && p.id) ? p.id : 'p' + Date.now() + '-' + i,
+          label: (p.label === undefined || p.label === null) ? String(i + 1) : String(p.label),
+        }));
+        state.positions = positions;
         state.activePositionId = null;
         render();
-      } catch { alert('Fichier JSON invalide.'); }
+      } catch (err) { alert(t('importError')); }
     };
     reader.readAsText(file);
   }
@@ -592,11 +878,11 @@
     state.theme = th;
     document.documentElement.setAttribute('data-bs-theme', th);
     document.querySelector('#btn-theme i').className = th === 'dark' ? 'bi bi-sun' : 'bi bi-moon-stars';
-    localStorage.setItem('uk.theme', th);
+    lsSet('uk.theme', th);
   }
   function applyLang(lang) {
     state.lang = lang;
-    localStorage.setItem('uk.lang', lang);
+    lsSet('uk.lang', lang);
     document.getElementById('btn-lang').textContent = lang.toUpperCase();
     document.querySelectorAll('[data-i18n]').forEach(el => {
       const v = t(el.dataset.i18n);
@@ -608,10 +894,10 @@
 
   /* ============ INIT ============ */
   function init() {
-    applyTheme(localStorage.getItem('uk.theme') || 'light');
+    applyTheme(lsGet('uk.theme') === 'dark' ? 'dark' : 'light');
     buildStringLines();
     buildRows();
-    applyLang(localStorage.getItem('uk.lang') || 'fr');
+    applyLang(lsGet('uk.lang') === 'en' ? 'en' : 'fr');
 
     document.getElementById('sheetHandle').addEventListener('click', () =>
       document.getElementById('bottomSheet').classList.toggle('collapsed'));

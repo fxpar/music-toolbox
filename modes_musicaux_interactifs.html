@@ -2,7 +2,7 @@
 <html lang="fr" class="dark">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Harmonie Modale Pédagogique</title>
   
   <script src="https://cdn.tailwindcss.com"></script>
@@ -74,6 +74,22 @@
       fill: var(--circle-note-text);
     }
   </style>
+  <!-- Zone sûre (encoche / barre d'état), nécessite viewport-fit=cover. Ignoré par les vieux navigateurs. -->
+  <style id="fx-safe-area">
+    /* body.p-4 : plus spécifique que les classes Tailwind p-4 / md:p-6, dont on reprend les valeurs */
+    body.p-4 {
+      padding: calc(1rem + env(safe-area-inset-top)) calc(1rem + env(safe-area-inset-right)) calc(1rem + env(safe-area-inset-bottom)) calc(1rem + env(safe-area-inset-left));
+    }
+    @media (min-width: 768px) {
+      body.p-4 {
+        padding: calc(1.5rem + env(safe-area-inset-top)) calc(1.5rem + env(safe-area-inset-right)) calc(1.5rem + env(safe-area-inset-bottom)) calc(1.5rem + env(safe-area-inset-left));
+      }
+    }
+    .offcanvas-start, .offcanvas-end {
+      padding-top: env(safe-area-inset-top);
+      padding-bottom: env(safe-area-inset-bottom);
+    }
+  </style>
 </head>
 <body class="theme-obsidian theme-transition min-h-screen font-sans flex flex-col justify-between p-4 md:p-6">
 
@@ -133,6 +149,7 @@
               <text x="300" y="270" text-anchor="middle" class="fill-current text-[10px] font-bold font-tech opacity-50">MODE SÉLECTIONNÉ</text>
               <text id="hub-mode-title" x="300" y="300" text-anchor="middle" class="fill-current font-extrabold text-2xl accent-color">IONIEN</text>
               <text id="hub-root-note" x="300" y="330" text-anchor="middle" class="fill-current font-bold text-sm opacity-90">sur Do (C)</text>
+              <text id="hub-accidentals" x="300" y="372" text-anchor="middle" font-size="28px" class="fill-current font-extrabold font-tech">0</text>
             </g>
           </svg>
         </div>
@@ -281,6 +298,7 @@ const i18n = {
         playBtn: 'Écouter',
         parentScaleSub: 'Gamme majeure parente',
         majorSuffix: 'Majeur',
+        onWord: 'sur',
         footerText: 'Harmonie Modale Pédagogique — Cercle des Quintes'
       },
       INT: {
@@ -303,6 +321,7 @@ const i18n = {
         playBtn: 'Listen',
         parentScaleSub: 'Parent major scale',
         majorSuffix: 'Major',
+        onWord: 'on',
         footerText: 'Pedagogical Modal Harmony — Circle of Fifths'
       }
     };
@@ -561,7 +580,7 @@ function updateUI() {
 
       // 4. MISE À JOUR DE L'EN-TÊTE CENTRAL (HUB)
       document.getElementById('hub-mode-title').textContent = (currentLang === 'FR' ? activeMode.fr : activeMode.int).toUpperCase();
-      document.getElementById('hub-root-note').textContent = `sur ${currentLang === 'FR' ? rootNoteObj.fr : rootNoteObj.int}`;
+      document.getElementById('hub-root-note').textContent = `${t.onWord} ${currentLang === 'FR' ? rootNoteObj.fr : rootNoteObj.int}`;
 
       // 5. AFFICHAGE DES ALTÉRATIONS (COMPTEUR ET BADGES)
       const countElem = document.getElementById('accidental-count');
@@ -573,6 +592,10 @@ function updateUI() {
       const absShift = Math.abs(actualShift);
       badgeElem.textContent = `${actualShift > 0 ? '+' : ''}${actualShift} ${absShift > 1 ? t.badgeShifts : t.badgeShift}`;
       badgesContainer.innerHTML = '';
+
+      // Rappel du nombre d'altérations au centre de la roue
+      const hubAcc = document.getElementById('hub-accidentals');
+      if (hubAcc) hubAcc.textContent = actualShift === 0 ? '0' : (absShift + ' ' + (actualShift > 0 ? '♯' : '♭'));
 
 		
 		
@@ -591,7 +614,7 @@ function updateUI() {
       } else {
         const abs = Math.abs(actualShift);
         countElem.textContent = `-${abs} ♭`;
-        descElem.textContent = `${actualShift} ${actualShift > 1 ? t.sharpsDescPlural : t.sharpsDesc} ${t.counterClockwise}`;
+        descElem.textContent = `${abs} ${abs > 1 ? t.flatsDescPlural : t.flatsDesc} ${t.counterClockwise}`;
 
         for (let i = 0; i < Math.min(abs, 7); i++) {
           const span = document.createElement('span');
@@ -729,15 +752,30 @@ function updateUI() {
     function toggleAudio() {
       audioOn = !audioOn;
       const b = document.getElementById('btn-audio');
+      const icon = b.querySelector('i');
       if (audioOn) {
         b.classList.add('accent-border');
+        b.style.opacity = '';
+        if (icon) icon.className = 'fa-solid fa-volume-high accent-color';
       } else {
         b.classList.remove('accent-border');
+        b.style.opacity = '0.5';
+        if (icon) icon.className = 'fa-solid fa-volume-xmark';
       }
+    }
+
+    // Décalage (en demi-tons) de chaque degré de la gamme majeure parente
+    const MAJOR_DEGREE_SEMITONES = [0, 2, 4, 5, 7, 9, 11];
+
+    // Hauteur chromatique (0 = Do) de la tonique du mode courant
+    function getModeRootPitch(shift, parentDegree) {
+      const parentRootPitch = ((shift * 7) % 12 + 12) % 12;
+      return (parentRootPitch + MAJOR_DEGREE_SEMITONES[parentDegree]) % 12;
     }
 
     // FONCTION AUDIO AMÉLIORÉE & ROBUSTE
     function playScaleAudio() {
+      if (!audioOn) return;
       if (!audioContext) {
         audioContext = new (window.AudioContext || window.webkitAudioContext)();
       }
@@ -752,13 +790,10 @@ function updateUI() {
       const currentCircleObj = CIRCLE_OF_FIFTHS[circlePos];
       const actualShift = currentCircleObj.shift;
 
-      // La tonique de la gamme parente en demi-tons par rapport à Do
-      const parentRootPitch = (actualShift * 7 % 12 + 12) % 12;
+      // La tonique du mode sélectionné = tonique parente + degré du mode dans la gamme majeure
+      const modeRootPitch = getModeRootPitch(actualShift, activeMode.parentDegree);
 
-      // La tonique du mode sélectionné
-      const modeRootPitch = (parentRootPitch + activeMode.intervals[0]) % 12;
-
-      // Fréquence de base (Do3 = 261.63Hz)
+      // Fréquence de base (Do4 = 261.63Hz) : tonique entre Do4 et Si4
       const baseFreq = 261.63 * Math.pow(2, modeRootPitch / 12);
 
       // On ajoute l'octave à la gamme (12 demi-tons)

@@ -2,8 +2,8 @@
 <html lang="fr" data-theme="dark">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-  <title>Ukulele Intervals & Shape Trainer - MD3</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Ukulélé : transformer un accord</title>
   <style>
     /* ==========================================================================
        1. MATERIAL DESIGN 3 DESIGN TOKENS (LIGHT / DARK)
@@ -204,7 +204,7 @@
       background-color: var(--fretboard-wood);
       display: flex;
       justify-content: center;
-      padding-bottom: 180px; /* Leave space for bottom sheet */
+      padding-bottom: 240px; /* Laisse la place au panneau du bas */
     }
 
     .fretboard {
@@ -386,6 +386,12 @@
       color: var(--md-sys-color-on-primary);
     }
 
+    .score-line {
+      font-size: 0.85rem;
+      text-align: center;
+      color: var(--md-sys-color-on-surface-variant);
+    }
+
     .score-badge {
       display: inline-block;
       padding: 2px 10px;
@@ -396,6 +402,16 @@
       font-weight: bold;
     }
   </style>
+  <!-- Zone sûre (encoche / barre d'état), nécessite viewport-fit=cover. Ignoré par les vieux navigateurs. -->
+  <style id="fx-safe-area">
+    body {
+      padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+    }
+    .offcanvas-start, .offcanvas-end {
+      padding-top: env(safe-area-inset-top);
+      padding-bottom: env(safe-area-inset-bottom);
+    }
+  </style>
 </head>
 <body>
 
@@ -403,10 +419,10 @@
   <header class="top-bar">
     <button class="icon-btn" id="btn-menu" aria-label="Menu">☰</button>
     <div class="title-container">
-      <h1>Ukulele Shape Shift</h1>
+      <h1>Transformer un accord</h1>
       <div class="instruction" id="instruction-text">Majeur ➔ Mineur</div>
     </div>
-    <button class="icon-btn" id="btn-theme" aria-label="Toggle Theme">🌙</button>
+    <button class="icon-btn" id="btn-theme" aria-label="Changer de thème">🌙</button>
   </header>
 
   <!-- Navigation Drawer -->
@@ -415,14 +431,19 @@
 	<button id="btn-close-drawer" class="btn btn-secondary" style="width: 100%; height:2em; margin-top: 15px;padding:5px"onclick="closeDrawer()">
       ✕ Fermer
     </button>
-      <h2>Modes de Jeu</h2>
-	  
+      <h2>Mode de jeu</h2>
+
       <div class="menu-item active">
-        <span>1. Shift de Formes (Actif)</span>
+        <span>Transformer un accord</span>
       </div>
-      <div class="menu-item">
-        <span>2. Prochainement...</span>
-      </div>
+      <h2 style="margin-top: 8px;">Comment jouer</h2>
+      <ul style="font-size: 0.9rem; line-height: 1.5; color: var(--md-sys-color-on-surface-variant); padding-left: 20px;">
+        <li>Le manche est vu de face : les cordes G, C, E, A de gauche à droite, les cases de haut en bas.</li>
+        <li>L'accord de départ est affiché. La pastille rouge est la racine : elle ne bouge pas.</li>
+        <li>Touchez une case pour y déplacer la note de cette corde (une note par corde).</li>
+        <li>Toutes les notes de l'accord cible doivent être présentes, sans note étrangère, sur 5 cases au plus.</li>
+        <li>« Indice » affiche les formules ; « Correction » montre une forme possible (la question ne rapporte alors plus de points).</li>
+      </ul>
       <hr style="border: 0.5px solid var(--md-sys-color-outline-variant); margin: 8px 0;">
       <div style="font-size: 0.9rem; color: var(--md-sys-color-on-surface-variant)">
         Score : <span class="score-badge" id="total-score">0 pts</span>
@@ -439,14 +460,14 @@
 		  <!-- Colonne 1 : Copyright & Titre -->
 		  <div class="col-12 col-md-6 text-center text-md-start">
 			<span class="small">
-			  CC BY-NC-SA 4.0 <span id="currentYear"></span> <strong>François Parlant</strong> &mdash; Créé avec passion pour le ukulélé.
+			  CC BY-NC 4.0 <span id="currentYear"></span><script>document.getElementById("currentYear").textContent = new Date().getFullYear();</script> <strong>François Parlant</strong> &mdash; Créé avec passion pour le ukulélé.
 			</span>
 		  </div>
 
 		  <!-- Colonne 2 : Liens Réseaux Sociaux -->
 		  <div class="col-12 col-md-6 text-center text-md-end">
 			<div class="d-inline-flex gap-3 align-items-center">
-			  <a href="https://github.com/fxpar/abc-notation-artifacts" target="_blank" rel="noopener noreferrer" class="text-body-secondary text-decoration-none fs-5 hover-accent" title="Code source GitHub">
+			  <a href="https://github.com/fxpar/music-toolbox/blob/main/ukulele-position-accord-quiz.html" target="_blank" rel="noopener noreferrer" class="text-body-secondary text-decoration-none fs-5 hover-accent" title="Code source GitHub">
 				<i class="bi bi-github"></i> Github
 			  </a> &mdash; 
 			  <a href="https://www.linkedin.com/in/francois-parlant" target="_blank" rel="noopener noreferrer" class="text-body-secondary text-decoration-none fs-5 hover-accent" title="LinkedIn: François Parlant">
@@ -488,7 +509,11 @@
   <!-- Bottom Sheet Controls -->
   <footer class="bottom-sheet">
     <div class="sheet-handle"></div>
-    <div class="feedback-text" id="feedback">Déplacez les notes pour obtenir la forme cible.</div>
+    <div class="score-line">
+      Score : <span class="score-badge" id="score-live">0 pts</span>
+      &nbsp;·&nbsp; Réussies sans aide : <b id="solved-live">0 / 0</b>
+    </div>
+    <div class="feedback-text" id="feedback">Transformez l'accord de départ en accord cible en gardant la même racine.</div>
     
     <div class="hint-box" id="hint-box">
       <!-- Hidden formula hints displayed on request -->
@@ -504,12 +529,40 @@
 
   <script>
     /* ==========================================================================
+       0. TEXTES DE L'INTERFACE (regroupés pour une future traduction FR/EN)
+       ========================================================================== */
+    var TXT = {
+      instruction: "Transformez l'accord de départ ({from}) en accord {to} en gardant la même racine (pastille rouge). Touchez une case pour y déplacer la note de la corde.",
+      rootMoved: "❌ La racine (pastille rouge) ne doit pas être déplacée.",
+      missing: "Il manque : {list}.",
+      extra: "Hors accord : {list}.",
+      tooWide: "❌ Notes trop écartées : 4 cases d'écart au maximum entre la plus basse et la plus haute.",
+      wrongPrefix: "❌ ",
+      success: "🎉 Bravo ! C'est bien un accord {to}. +{pts} pts",
+      successNoPoints: "✓ Forme correcte. Pas de points cette fois (correction affichée).",
+      correctionShown: "Les cercles en pointillés montrent une forme correcte : touchez-les pour y placer vos notes, puis validez (cette question ne rapportera pas de points).",
+      hintFrom: "Départ",
+      hintTo: "Cible",
+      points: "{n} pts",
+      solvedCounter: "{ok} / {done}"
+    };
+
+    function fmt(str, values) {
+      return str.replace(/\{(\w+)\}/g, function (m, key) {
+        return values.hasOwnProperty(key) ? values[key] : m;
+      });
+    }
+
+    /* ==========================================================================
        5. MATRIX & MUSIC THEORY DATA ENGINE
        ========================================================================== */
     // Strings order: [G, C, E, A]
     // Base semitones relative to Root C (C=0, E=4, G=7, A=9)
     const STRING_OFFSETS = [7, 0, 4, 9];
     const TOTAL_ROWS = 36; // 3 cycles of 12 semitones
+    const POINTS_PER_SHAPE = 100;
+    const SEARCH_WINDOW = 4; // cases explorées de part et d'autre de la racine
+    const MAX_SPAN = 4;      // écart max. (en cases) entre la note la plus basse et la plus haute
 
     // Pitch Class to standard interval names
     const INTERVAL_MAP = {
@@ -518,7 +571,7 @@
       2:  { name: '9',  alt: '2' },
       3:  { name: 'b3', alt: '#2' },
       4:  { name: '3',  alt: '3' },
-      5:  { name: '4',  alt: '#11' },
+      5:  { name: '4',  alt: '11' },
       6:  { name: 'b5', alt: '#4' },
       7:  { name: '5',  alt: '5' },
       8:  { name: 'b6', alt: '#5' },
@@ -532,7 +585,7 @@ const CHORDS = {
   'Majeur':     { intervals: [0, 4, 7],     labels: {0:'R', 4:'3', 7:'5'},     hint: 'R - 3 - 5' },
   'Mineur':     { intervals: [0, 3, 7],     labels: {0:'R', 3:'b3', 7:'5'},    hint: 'R - b3 - 5' },
   '7 (Dom)':    { intervals: [0, 4, 7, 10], labels: {0:'R', 4:'3', 7:'5', 10:'b7'}, hint: 'R - 3 - 5 - b7' },
-  'm7':         { intervals: [0, 3, 7, 10], labels: {0:'R', b3:'b3', 7:'5', 10:'b7'},hint: 'R - b3 - 5 - b7' },
+  'm7':         { intervals: [0, 3, 7, 10], labels: {0:'R', 3:'b3', 7:'5', 10:'b7'},hint: 'R - b3 - 5 - b7' },
   'maj7':       { intervals: [0, 4, 7, 11], labels: {0:'R', 4:'3', 7:'5', 11:'7'}, hint: 'R - 3 - 5 - 7' },
   'Diminué':    { intervals: [0, 3, 6],     labels: {0:'R', 3:'b3', 6:'b5'},   hint: 'R - b3 - b5' },
   'Augmenté':   { intervals: [0, 4, 8],     labels: {0:'R', 4:'3', 8:'#5'},    hint: 'R - 3 - #5' },
@@ -541,13 +594,12 @@ const CHORDS = {
 
 let currentQuestion = null;
 
-// Générateur de question aléatoire
 // Générateur de question avec Racine sur N'IMPORTE QUELLE corde
 function generateRandomQuestion() {
   const keys = Object.keys(CHORDS);
   const fromKey = keys[Math.floor(Math.random() * keys.length)];
   let toKey = fromKey;
-  
+
   while (toKey === fromKey) {
     toKey = keys[Math.floor(Math.random() * keys.length)];
   }
@@ -556,49 +608,108 @@ function generateRandomQuestion() {
   const rootString = Math.floor(Math.random() * 4);
   const rootRow = 12; // On garde la ligne 12 au centre pour la lisibilité
 
-  // 2. Génération de la forme initiale autour de cette racine
-  const initialRows = generateValidShape(CHORDS[fromKey], rootRow, rootString);
+  // 2. Forme de départ (la plus serrée autour de la racine), puis solution
+  //    la plus proche de cette forme de départ.
+  const initialRows = findBestShape(CHORDS[fromKey], rootRow, rootString, null);
+  const solution = findBestShape(CHORDS[toKey], rootRow, rootString, initialRows);
 
   return {
     from: fromKey,
     to: toKey,
     rootRow: rootRow,
     rootString: rootString, // Dynamique !
-    initialRows: initialRows
+    initialRows: initialRows,
+    solution: solution
   };
 }
 
-// Génère une forme valide selon la corde de racine choisie
-function generateValidShape(chordDef, rootRow, rootString) {
+// Intervalle (0-11) joué sur chaque corde, par rapport à la racine
+function playedIntervals(rows, rootRow, rootString) {
   const rootPitch = getPitchClass(rootRow, rootString);
-  let shape = [0, 0, 0, 0];
-  shape[rootString] = rootRow; // On fixe la racine sur la corde choisie
+  return rows.map((r, s) => (getPitchClass(r, s) - rootPitch + 12) % 12);
+}
 
-  // Pour les 3 autres cordes
-  [0, 1, 2, 3].forEach(s => {
-    if (s === rootString) return;
+// RÈGLE UNIQUE DE VALIDATION (utilisée par « Valider » ET par la recherche de correction)
+// Renvoie { ok, reason, missing, extra }
+//  - la racine reste en place sur sa corde ;
+//  - toutes les notes jouées appartiennent à l'accord ;
+//  - toutes les notes de l'accord sont présentes (accord de 4 sons sur 4 cordes :
+//    chaque note exactement une fois ; triade : une note doublée) ;
+//  - écart de doigté (case max - case min) <= MAX_SPAN.
+function checkShape(rows, chordDef, rootRow, rootString) {
+  if (rows[rootString] !== rootRow) {
+    return { ok: false, reason: 'root', missing: [], extra: [] };
+  }
+  const played = playedIntervals(rows, rootRow, rootString);
+  const extra = [];
+  played.forEach(i => {
+    if (chordDef.intervals.indexOf(i) === -1 && extra.indexOf(i) === -1) extra.push(i);
+  });
+  const missing = chordDef.intervals.filter(i => played.indexOf(i) === -1);
+  if (extra.length > 0 || missing.length > 0) {
+    return { ok: false, reason: 'notes', missing: missing, extra: extra };
+  }
+  const span = Math.max.apply(null, rows) - Math.min.apply(null, rows);
+  if (span > MAX_SPAN) {
+    return { ok: false, reason: 'span', missing: [], extra: [] };
+  }
+  return { ok: true, reason: '', missing: [], extra: [] };
+}
 
-    let bestRow = rootRow;
-    let minDiff = 99;
-    
-    // Cherche la case la plus proche (+/- 3 cases) qui contient une note de la formule
-    for (let r = rootRow - 3; r <= rootRow + 3; r++) {
-      const pitch = getPitchClass(r, s);
-      const interval = (pitch - rootPitch + 12) % 12;
-      if (chordDef.intervals.includes(interval)) {
-        if (Math.abs(r - rootRow) < minDiff) {
-          minDiff = Math.abs(r - rootRow);
-          bestRow = r;
-        }
+// Recherche exhaustive de la meilleure forme jouable.
+// Pour chaque corde (sauf celle de la racine), on essaie toutes les cases de la
+// fenêtre [racine - SEARCH_WINDOW, racine + SEARCH_WINDOW] qui portent une note de
+// l'accord (au plus 9 cases par corde, donc au plus 9^3 combinaisons).
+// Critères : forme valide (checkShape), puis écart de doigté minimal, puis
+// déplacement minimal depuis refRows (ou distance à la racine si refRows est null).
+function findBestShape(chordDef, rootRow, rootString, refRows) {
+  const rootPitch = getPitchClass(rootRow, rootString);
+  const candidates = [];
+  for (let s = 0; s < 4; s++) {
+    const list = [];
+    if (s === rootString) {
+      list.push(rootRow);
+    } else {
+      for (let r = Math.max(0, rootRow - SEARCH_WINDOW); r <= Math.min(TOTAL_ROWS - 1, rootRow + SEARCH_WINDOW); r++) {
+        const interval = (getPitchClass(r, s) - rootPitch + 12) % 12;
+        if (chordDef.intervals.indexOf(interval) !== -1) list.push(r);
       }
     }
-    shape[s] = bestRow;
-  });
-  return shape;
+    candidates.push(list);
+  }
+
+  let best = null;
+  let bestCost = Infinity;
+  const rows = [0, 0, 0, 0];
+  function explore(s) {
+    if (s === 4) {
+      if (!checkShape(rows, chordDef, rootRow, rootString).ok) return;
+      const span = Math.max.apply(null, rows) - Math.min.apply(null, rows);
+      let move = 0;
+      for (let k = 0; k < 4; k++) {
+        move += Math.abs(rows[k] - (refRows ? refRows[k] : rootRow));
+      }
+      const cost = span * 1000 + move;
+      if (cost < bestCost) {
+        bestCost = cost;
+        best = rows.slice();
+      }
+      return;
+    }
+    for (let i = 0; i < candidates[s].length; i++) {
+      rows[s] = candidates[s][i];
+      explore(s + 1);
+    }
+  }
+  explore(0);
+  return best;
 }
-    let currentQIdx = 0;
     let userState = [0, 0, 0, 0]; // Selected row per string [G, C, E, A]
     let score = 0;
+    let correctionUsed = false;  // la correction a été affichée pour cette question
+    let questionDone = false;    // la question a été validée
+    let solvedCount = 0;         // réussies sans correction
+    let doneCount = 0;           // questions terminées
 
     /* ==========================================================================
        6. DOM GENERATION & GAME LOGIC
@@ -613,6 +724,8 @@ function generateValidShape(chordDef, rootRow, rootString) {
     const btnNext = document.getElementById('btn-next');
     const btnHint = document.getElementById('btn-hint');
     const totalScoreEl = document.getElementById('total-score');
+    const scoreLiveEl = document.getElementById('score-live');
+    const solvedLiveEl = document.getElementById('solved-live');
 
     function getPitchClass(row, stringIdx) {
       return (STRING_OFFSETS[stringIdx] + row) % 12;
@@ -643,16 +756,29 @@ function generateValidShape(chordDef, rootRow, rootString) {
       renderState();
     }
 
-    function renderState(showSolutions = false) {
+    function intervalLabel(chordDef, intervalVal) {
+      return chordDef.labels[intervalVal] || INTERVAL_MAP[intervalVal].name;
+    }
+
+    function updateScore() {
+      const pts = fmt(TXT.points, { n: score });
+      totalScoreEl.innerText = pts;
+      scoreLiveEl.innerText = pts;
+      solvedLiveEl.innerText = fmt(TXT.solvedCounter, { ok: solvedCount, done: doneCount });
+    }
+
+    function renderState() {
   const q = currentQuestion;
   const rootRow = q.rootRow;
-  const rootString = q.rootString; // Corde de C (index 1)
+  const rootString = q.rootString;
   const rootPitch = getPitchClass(rootRow, rootString);
+  const targetChord = CHORDS[q.to];
+  const sol = correctionUsed ? q.solution : null;
 
   const spots = fretboardEl.querySelectorAll('.note-spot');
   spots.forEach(spot => {
-    const s = parseInt(spot.dataset.string);
-    const r = parseInt(spot.dataset.row);
+    const s = parseInt(spot.dataset.string, 10);
+    const r = parseInt(spot.dataset.row, 10);
 
     spot.classList.remove('active', 'root', 'correct-solution');
     spot.innerText = '';
@@ -660,133 +786,136 @@ function generateValidShape(chordDef, rootRow, rootString) {
     // Affichage des notes sélectionnées par l'utilisateur
     if (userState[s] === r) {
       spot.classList.add('active');
-      
-      const spotPitch = getPitchClass(r, s);
-      const intervalVal = (spotPitch - rootPitch + 12) % 12;
 
+      const intervalVal = (getPitchClass(r, s) - rootPitch + 12) % 12;
       // Récupère le nom de l'intervalle selon la cible
-      const targetChord = CHORDS[q.to];
-      let label = targetChord.labels[intervalVal] || INTERVAL_MAP[intervalVal].name;
-      spot.innerText = label;
+      spot.innerText = intervalLabel(targetChord, intervalVal);
 
-      // REGLE 2 : Seule la Root figée (C-String à rootRow) a la couleur spéciale .root
+      // REGLE 2 : Seule la Root figée a la couleur spéciale .root
       if (s === rootString && r === rootRow) {
         spot.classList.add('root');
       }
     }
 
-    // Affichage d'une correction visuelle si demandée
-    if (showSolutions) {
-      const sol = generateValidShape(CHORDS[q.to], q.rootRow, q.rootString);
-      if (sol[s] === r && userState[s] !== r) {
-        spot.classList.add('correct-solution');
-        const spotPitch = getPitchClass(r, s);
-        const intervalVal = (spotPitch - rootPitch + 12) % 12;
-        spot.innerText = CHORDS[q.to].labels[intervalVal] || INTERVAL_MAP[intervalVal].name;
-      }
+    // Affichage de la correction (cercles en pointillés) tant qu'elle est demandée
+    if (sol && sol[s] === r && userState[s] !== r) {
+      spot.classList.add('correct-solution');
+      const intervalVal = (getPitchClass(r, s) - rootPitch + 12) % 12;
+      spot.innerText = intervalLabel(targetChord, intervalVal);
     }
   });
 }
 
     function loadQuestion() {
   currentQuestion = generateRandomQuestion();
+  // Sécurité : ne devrait jamais arriver (vérifié pour toutes les paires et racines)
+  let guard = 0;
+  while ((!currentQuestion.initialRows || !currentQuestion.solution) && guard < 50) {
+    currentQuestion = generateRandomQuestion();
+    guard++;
+  }
+  correctionUsed = false;
+  questionDone = false;
   instructionEl.innerText = `${currentQuestion.from} ➔ ${currentQuestion.to}`;
-  userState = [...currentQuestion.initialRows];
+  userState = currentQuestion.initialRows.slice();
 
-  feedbackEl.innerText = "Déplacez les notes pour obtenir la forme cible.";
+  feedbackEl.innerText = fmt(TXT.instruction, { from: currentQuestion.from, to: currentQuestion.to });
   feedbackEl.style.color = "var(--md-sys-color-on-surface)";
   hintBoxEl.style.display = "none";
-  
+
   btnValidate.style.display = "inline-flex";
+  btnCorrect.style.display = "inline-flex";
   btnNext.style.display = "none";
 
   renderState();
-  centerViewportOnActiveChord();
+  centerViewportOnRows(userState);
 }
 
-// Mise à jour du bouton Suivant
+// Bouton Suivant (un seul listener)
 btnNext.addEventListener('click', () => {
   loadQuestion();
 });
 
-    function centerViewportOnActiveChord() {
-      const avgRow = Math.round(userState.reduce((a, b) => a + b, 0) / userState.length);
+    function centerViewportOnRows(rowsArr) {
+      const avgRow = Math.round(rowsArr.reduce((a, b) => a + b, 0) / rowsArr.length);
       const rowEl = fretboardEl.querySelector(`.fret-row[data-row="${avgRow}"]`);
       if (rowEl) {
-        const scrollPos = rowEl.offsetTop - (viewportEl.clientHeight / 2) + 38;
-        viewportEl.scrollTo({ top: Math.max(0, scrollPos), behavior: 'smooth' });
+        const scrollPos = Math.max(0, rowEl.offsetTop - (viewportEl.clientHeight / 2) + 38);
+        if (typeof viewportEl.scrollTo === 'function') {
+          try {
+            viewportEl.scrollTo({ top: scrollPos, behavior: 'smooth' });
+          } catch (e) {
+            viewportEl.scrollTop = scrollPos;
+          }
+        } else {
+          viewportEl.scrollTop = scrollPos;
+        }
       }
     }
 
     /* ==========================================================================
        7. BUTTON HANDLERS & VALIDATION
        ========================================================================== */
-    // Validation harmonique (Formule)
+    // Validation harmonique (Formule) : même règle que la correction (checkShape)
 btnValidate.addEventListener('click', () => {
+  if (questionDone) return;
   const q = currentQuestion;
   const targetChord = CHORDS[q.to];
-  const rootPitch = getPitchClass(q.rootRow, q.rootString);
+  const res = checkShape(userState, targetChord, q.rootRow, q.rootString);
 
-  // 1. Vérifie si l'ancre Root a bougé
-  if (userState[q.rootString] !== q.rootRow) {
-    feedbackEl.innerText = "❌ La fondamentale principale ne doit pas être déplacée.";
-    feedbackEl.style.color = "var(--chord-error)";
+  if (res.ok) {
+    questionDone = true;
+    doneCount += 1;
+    if (correctionUsed) {
+      feedbackEl.innerText = TXT.successNoPoints;
+    } else {
+      score += POINTS_PER_SHAPE;
+      solvedCount += 1;
+      feedbackEl.innerText = fmt(TXT.success, { to: q.to, pts: POINTS_PER_SHAPE });
+    }
+    feedbackEl.style.color = "var(--md-sys-color-primary)";
+    updateScore();
+    btnValidate.style.display = "none";
+    btnCorrect.style.display = "none";
+    btnNext.style.display = "inline-flex";
     return;
   }
 
-  // 2. Extraire les intervalles joués sur les 4 cordes
-  const playedIntervals = userState.map((r, s) => {
-    const pitch = getPitchClass(r, s);
-    return (pitch - rootPitch + 12) % 12;
-  });
-
-  // 3. Vérifier si TOUS les intervalles joués font partie de la formule cible
-  const allNotesInFormula = playedIntervals.every(interval => 
-    targetChord.intervals.includes(interval)
-  );
-
-  // 4. Vérifier que CHAQUE note obligatoire de la formule est présente au moins une fois
-  const allRequiredNotesPresent = targetChord.intervals.every(requiredInterval => 
-    playedIntervals.includes(requiredInterval)
-  );
-
-  if (allNotesInFormula && allRequiredNotesPresent) {
-    score += 100;
-    totalScoreEl.innerText = `${score} pts`;
-    feedbackEl.innerText = "🎉 Bravo ! Formule harmonique parfaitement respectée.";
-    feedbackEl.style.color = "var(--md-sys-color-primary)";
-    btnValidate.style.display = "none";
-    btnNext.style.display = "inline-flex";
+  let msg;
+  if (res.reason === 'root') {
+    msg = TXT.rootMoved;
+  } else if (res.reason === 'span') {
+    msg = TXT.tooWide;
   } else {
-    feedbackEl.innerText = "❌ Formule incomplète ou note hors accord. Vérifiez votre forme.";
-    feedbackEl.style.color = "var(--chord-error)";
+    const parts = [];
+    if (res.missing.length) {
+      parts.push(fmt(TXT.missing, { list: res.missing.map(i => intervalLabel(targetChord, i)).join(', ') }));
+    }
+    if (res.extra.length) {
+      parts.push(fmt(TXT.extra, { list: res.extra.map(i => INTERVAL_MAP[i].name).join(', ') }));
+    }
+    msg = TXT.wrongPrefix + parts.join(' ');
   }
+  feedbackEl.innerText = msg;
+  feedbackEl.style.color = "var(--chord-error)";
 });
 
     btnCorrect.addEventListener('click', () => {
   const q = currentQuestion;
-  // Génère la forme de solution basée sur l'accord cible (q.to) et la racine active
-  userState = generateValidShape(CHORDS[q.to], q.rootRow, q.rootString);
-  
-  // Re-rend l'état en activant l'affichage des solutions
-  renderState(true);
-  centerViewportOnActiveChord();
-  
-  feedbackEl.innerText = "Voici une forme correcte possible !";
+  // Affiche la solution (calculée par findBestShape) en pointillés ; plus de points pour cette question
+  correctionUsed = true;
+  renderState();
+  centerViewportOnRows(q.solution);
+  feedbackEl.innerText = TXT.correctionShown;
   feedbackEl.style.color = "var(--md-sys-color-on-surface)";
 });
 
     // Indice dynamique
 btnHint.addEventListener('click', () => {
   const q = currentQuestion;
-  hintBoxEl.innerHTML = `<b>Départ (${q.from}) :</b> ${CHORDS[q.from].hint}<br><b>Cible (${q.to}) :</b> ${CHORDS[q.to].hint}`;
+  hintBoxEl.innerHTML = `<b>${TXT.hintFrom} (${q.from}) :</b> ${CHORDS[q.from].hint}<br><b>${TXT.hintTo} (${q.to}) :</b> ${CHORDS[q.to].hint}`;
   hintBoxEl.style.display = hintBoxEl.style.display === "block" ? "none" : "block";
 });
-
-    btnNext.addEventListener('click', () => {
-      const nextIdx = (currentQIdx + 1) % questions.length;
-      loadQuestion(nextIdx);
-    });
 
     /* ==========================================================================
        8. THEME & DRAWER CONTROLS
@@ -817,7 +946,8 @@ btnHint.addEventListener('click', () => {
 
     // Initialize App
     buildMatrix();
-    loadQuestion(0);
+    updateScore();
+    loadQuestion();
   </script>
 </body>
 </html>

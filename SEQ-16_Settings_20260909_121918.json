@@ -1,0 +1,327 @@
+{
+  "global": { "bpm": 115, "swing": 0, "loops": 4, "masterVolume": 0, "masterTone": 20000, "masterDrive": 1, "delayWet": 0, "reverbWet": 0, "humanize": 0, "eqActive": true, "eqLow": 0, "eqLowMid": 0, "eqHighMid": 0, "eqHigh": 0, "vinyl": 0, "tapeHiss": 0, "polymetricModeEnabled": false },
+  "soloActive": false,
+  "acoustic": {
+    "kitId": 3
+  },
+  "instrumentSettings": {
+    "kick": {
+      "volume": 0,
+      "pan": 0,
+      "muted": 0,
+      "soloed": 0,
+      "p1": { "label": "PITCH", "min": -12, "max": 12, "val": 0, "unit": "st", "param": "pitch" },
+      "p2": { "label": "DECAY", "min": 0.01, "max": 5, "val": 5, "unit": "s", "param": "decay" },
+      "p3": { "label": "TONE", "min": 20, "max": 20000, "val": 20000, "unit": "Hz", "param": "tone" },
+      "sequence": [1, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0]
+    },
+    "kick2": {
+      "volume": 0,
+      "pan": 0,
+      "muted": 0,
+      "soloed": 0,
+      "p1": { "label": "PITCH", "min": -12, "max": 12, "val": 0, "unit": "st", "param": "pitch" },
+      "p2": { "label": "DECAY", "min": 0.01, "max": 5, "val": 5, "unit": "s", "param": "decay" },
+      "p3": { "label": "TONE", "min": 20, "max": 20000, "val": 20000, "unit": "Hz", "param": "tone" },
+      "sequence": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    },
+    "snare": {
+      "volume": 0,
+      "pan": 0,
+      "muted": 0,
+      "soloed": 0,
+      "p1": { "label": "PITCH", "min": -12, "max": 12, "val": 0, "unit": "st", "param": "pitch" },
+      "p2": { "label": "DECAY", "min": 0.01, "max": 5, "val": 5, "unit": "s", "param": "decay" },
+      "p3": { "label": "TONE", "min": 20, "max": 20000, "val": 20000, "unit": "Hz", "param": "tone" },
+      "sequence": [0, 0, 1, 0, 1, 1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 1]
+    },
+    "ltom": {
+      "volume": 0,
+      "pan": 0,
+      "muted": 0,
+      "soloed": 0,
+      "p1": { "label": "PITCH", "min": -12, "max": 12, "val": 0, "unit": "st", "param": "pitch" },
+      "p2": { "label": "DECAY", "min": 0.01, "max": 5, "val": 5, "unit": "s", "param": "decay" },
+      "p3": { "label": "TONE", "min": 20, "max": 20000, "val": 20000, "unit": "Hz", "param": "tone" },
+      "sequence": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    },
+    "mtom": {
+      "volume": 0,
+      "pan": 0,
+      "muted": 0,
+      "soloed": 0,
+      "p1": { "label": "PITCH", "min": -12, "max": 12, "val": 0, "unit": "st", "param": "pitch" },
+      "p2": { "label": "DECAY", "min": 0.01, "max": 5, "val": 5, "unit": "s", "param": "decay" },
+      "p3": { "label": "TONE", "min": 20, "max": 20000, "val": 20000, "unit": "Hz", "param": "tone" },
+      "sequence": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    },
+    "htom": {
+      "volume": 0,
+      "pan": 0,
+      "muted": 0,
+      "soloed": 0,
+      "p1": { "label": "PITCH", "min": -12, "max": 12, "val": 0, "unit": "st", "param": "pitch" },
+      "p2": { "label": "DECAY", "min": 0.01, "max": 5, "val": 5, "unit": "s", "param": "decay" },
+      "p3": { "label": "TONE", "min": 20, "max": 20000, "val": 20000, "unit": "Hz", "param": "tone" },
+      "sequence": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    },
+    "conga": {
+      "volume": 0,
+      "pan": 0,
+      "muted": 0,
+      "soloed": 0,
+      "p1": { "label": "PITCH", "min": -12, "max": 12, "val": 2, "unit": "st", "param": "pitch" },
+      "p2": { "label": "DECAY", "min": 0.01, "max": 5, "val": 5, "unit": "s", "param": "decay" },
+      "p3": { "label": "TONE", "min": 20, "max": 20000, "val": 20000, "unit": "Hz", "param": "tone" },
+      "sequence": [0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0]
+    },
+    "rim": {
+      "volume": 0,
+      "pan": 0,
+      "muted": 0,
+      "soloed": 0,
+      "p1": { "label": "PITCH", "min": -12, "max": 12, "val": -2, "unit": "st", "param": "pitch" },
+      "p2": { "label": "DECAY", "min": 0.01, "max": 5, "val": 5, "unit": "s", "param": "decay" },
+      "p3": { "label": "TONE", "min": 20, "max": 20000, "val": 20000, "unit": "Hz", "param": "tone" },
+      "sequence": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    },
+    "ch": {
+      "volume": -3,
+      "pan": 0,
+      "muted": 0,
+      "soloed": 0,
+      "p1": { "label": "PITCH", "min": -12, "max": 12, "val": 0, "unit": "st", "param": "pitch" },
+      "p2": { "label": "DECAY", "min": 0.01, "max": 5, "val": 5, "unit": "s", "param": "decay" },
+      "p3": { "label": "TONE", "min": 20, "max": 20000, "val": 20000, "unit": "Hz", "param": "tone" },
+      "sequence": [1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0]
+    },
+    "oh": {
+      "volume": -8,
+      "pan": 0,
+      "muted": 0,
+      "soloed": 0,
+      "p1": { "label": "PITCH", "min": -12, "max": 12, "val": 0, "unit": "st", "param": "pitch" },
+      "p2": { "label": "DECAY", "min": 0.01, "max": 5, "val": 5, "unit": "s", "param": "decay" },
+      "p3": { "label": "TONE", "min": 20, "max": 20000, "val": 20000, "unit": "Hz", "param": "tone" },
+      "sequence": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    },
+    "crash": {
+      "volume": -8,
+      "pan": 0,
+      "muted": 0,
+      "soloed": 0,
+      "p1": { "label": "PITCH", "min": -12, "max": 12, "val": 0, "unit": "st", "param": "pitch" },
+      "p2": { "label": "DECAY", "min": 0.01, "max": 5, "val": 5, "unit": "s", "param": "decay" },
+      "p3": { "label": "TONE", "min": 20, "max": 20000, "val": 20000, "unit": "Hz", "param": "tone" },
+      "sequence": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    },
+    "ride": {
+      "volume": -8,
+      "pan": 0,
+      "muted": 0,
+      "soloed": 0,
+      "p1": { "label": "PITCH", "min": -12, "max": 12, "val": 2, "unit": "st", "param": "pitch" },
+      "p2": { "label": "DECAY", "min": 0.01, "max": 5, "val": 5, "unit": "s", "param": "decay" },
+      "p3": { "label": "TONE", "min": 20, "max": 20000, "val": 20000, "unit": "Hz", "param": "tone" },
+      "sequence": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    },
+    "cowbell": {
+      "volume": 0,
+      "pan": 0,
+      "muted": 0,
+      "soloed": 0,
+      "p1": { "label": "PITCH", "min": -12, "max": 12, "val": -2, "unit": "st", "param": "pitch" },
+      "p2": { "label": "DECAY", "min": 0.01, "max": 5, "val": 5, "unit": "s", "param": "decay" },
+      "p3": { "label": "TONE", "min": 20, "max": 20000, "val": 20000, "unit": "Hz", "param": "tone" },
+      "sequence": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    },
+    "claves": {
+      "volume": 0,
+      "pan": 0,
+      "muted": 0,
+      "soloed": 0,
+      "p1": { "label": "PITCH", "min": -12, "max": 12, "val": -2, "unit": "st", "param": "pitch" },
+      "p2": { "label": "DECAY", "min": 0.01, "max": 5, "val": 5, "unit": "s", "param": "decay" },
+      "p3": { "label": "TONE", "min": 20, "max": 20000, "val": 20000, "unit": "Hz", "param": "tone" },
+      "sequence": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    },
+    "masterSample": {
+      "volume": -6,
+      "pan": 0,
+      "muted": 0,
+      "soloed": 0,
+      "p1": null,
+      "p2": { "label": "DECAY", "min": 0.05, "max": 2, "val": 2, "unit": "s", "param": "decay" },
+      "p3": { "label": "TONE", "min": 20, "max": 20000, "val": 20000, "unit": "Hz", "param": "tone" },
+      "sequence": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    }
+  },
+  "patterns": {
+    "A": {
+      "tracks": {
+        "kick": [1, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0],
+        "kick2": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        "snare": [0, 0, 1, 0, 1, 1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 1],
+        "ltom": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        "mtom": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        "htom": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        "conga": [0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0],
+        "rim": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        "ch": [1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0],
+        "oh": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        "crash": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        "ride": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        "cowbell": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        "claves": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        "masterSample": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        "masterSampleA": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        "masterSampleB": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+      },
+      "trackLengths": {
+        "kick": 16,
+        "kick2": 16,
+        "snare": 16,
+        "ltom": 16,
+        "mtom": 16,
+        "htom": 16,
+        "conga": 16,
+        "rim": 16,
+        "ch": 16,
+        "oh": 16,
+        "crash": 16,
+        "ride": 16,
+        "cowbell": 16,
+        "claves": 16,
+        "masterSample": 16
+      }
+    }
+  },
+  "chain": ["A"],
+  "currentEditingPattern": "A",
+  "sampler": {
+    "current": "A",
+    "decks": {
+      "A": {
+        "url": null,
+        "sampleOffset": 0,
+        "sourceLabel": "",
+        "crateLabel": "",
+        "volume": -6,
+        "pan": 0,
+        "p3": { "label": "TONE", "min": 20, "max": 20000, "val": 20000, "unit": "Hz", "param": "tone" },
+        "sequence": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        "reverse": false,
+        "isHalfSpeed": false,
+        "stutterOn": false,
+        "stutterSpeed": 1,
+        "stutterDecay": 0.5,
+        "stutterCutoff": 0.01,
+        "gateOn": false,
+        "gatePercent": 25,
+        "loop": false,
+        "trimStart": 0,
+        "trimEnd": 1
+      },
+      "B": {
+        "url": null,
+        "sampleOffset": 0,
+        "sourceLabel": "",
+        "crateLabel": "",
+        "volume": -12,
+        "pan": 0,
+        "p3": { "label": "TONE", "min": 20, "max": 20000, "val": 20000, "unit": "Hz", "param": "tone" },
+        "sequence": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        "reverse": false,
+        "isHalfSpeed": false,
+        "stutterOn": false,
+        "stutterSpeed": 1,
+        "stutterDecay": 0.5,
+        "stutterCutoff": 0.01,
+        "gateOn": false,
+        "gatePercent": 25,
+        "loop": false,
+        "trimStart": 0,
+        "trimEnd": 1
+      }
+    }
+  },
+  "masterSample": {
+    "url": null,
+    "sampleOffset": 0,
+    "sourceLabel": "",
+    "crateLabel": "",
+    "volume": -6,
+    "pan": 0,
+    "p3": { "label": "TONE", "min": 20, "max": 20000, "val": 20000, "unit": "Hz", "param": "tone" },
+    "sequence": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    "reverse": false,
+    "isHalfSpeed": false,
+    "stutterOn": false,
+    "stutterSpeed": 1,
+    "stutterDecay": 0.5,
+    "stutterCutoff": 0.01,
+    "gateOn": false,
+    "gatePercent": 25,
+    "loop": false,
+    "trimStart": 0,
+    "trimEnd": 1
+  },
+  "customSamples": {
+    "kick": {
+      "url": "/api/audio-proxy?url=https%3A%2F%2Farchive.org%2Fdownload%2Fdrum-machines-collection%2FKorg%2520DDM110.zip%2FKorg%2520DDM110%252FBassDrum.wav",
+      "fileName": "Roland TR606/Kick_OD.wav"
+    },
+    "kick2": {
+      "url": "/api/audio-proxy?url=https%3A%2F%2Farchive.org%2Fdownload%2Fdrum-machines-collection%2FKorg%2520DDM110.zip%2FKorg%2520DDM110%252FHt.wav",
+      "fileName": "Korg DDM110/Ht.wav"
+    },
+    "snare": {
+      "url": "/api/audio-proxy?url=https%3A%2F%2Farchive.org%2Fdownload%2Fdrum-machines-collection%2FKorg%2520DDM110.zip%2FKorg%2520DDM110%252FSd.wav",
+      "fileName": "Korg DDM110/Sd.wav"
+    },
+    "ltom": {
+      "url": "/api/audio-proxy?url=https%3A%2F%2Farchive.org%2Fdownload%2Fdrum-machines-collection%2FKorg%2520DDM110.zip%2FKorg%2520DDM110%252FLt.wav",
+      "fileName": "Korg DDM110/Lt.wav"
+    },
+    "mtom": {
+      "url": "/api/audio-proxy?url=https%3A%2F%2Farchive.org%2Fdownload%2Fdrum-machines-collection%2FKorg%2520DDM110.zip%2FKorg%2520DDM110%252FRs.wav",
+      "fileName": "Korg DDM110/Rs.wav"
+    },
+    "htom": {
+      "url": "/api/audio-proxy?url=https%3A%2F%2Farchive.org%2Fdownload%2Fdrum-machines-collection%2FKorg%2520DDM110.zip%2FKorg%2520DDM110%252FCp.wav",
+      "fileName": "Korg DDM110/Cp.wav"
+    },
+    "conga": {
+      "url": "/api/audio-proxy?url=https%3A%2F%2Farchive.org%2Fdownload%2Fdrum-machines-collection%2FKorg%2520DDM110.zip%2FKorg%2520DDM110%252FRs.wav",
+      "fileName": "Korg DDM110/Rs.wav"
+    },
+    "rim": {
+      "url": "/api/audio-proxy?url=https%3A%2F%2Farchive.org%2Fdownload%2Fdrum-machines-collection%2FKorg%2520DDM110.zip%2FKorg%2520DDM110%252FRs.wav",
+      "fileName": "Korg DDM110/Rs.wav"
+    },
+    "ch": {
+      "url": "/api/audio-proxy?url=https%3A%2F%2Farchive.org%2Fdownload%2Fdrum-machines-collection%2FKorg%2520DDM110.zip%2FKorg%2520DDM110%252FCh.wav",
+      "fileName": "Korg DDM110/Ch.wav"
+    },
+    "oh": {
+      "url": "/api/audio-proxy?url=https%3A%2F%2Farchive.org%2Fdownload%2Fdrum-machines-collection%2FKorg%2520DDM110.zip%2FKorg%2520DDM110%252FOh.wav",
+      "fileName": "Korg DDM110/Oh.wav"
+    },
+    "crash": {
+      "url": "/api/audio-proxy?url=https%3A%2F%2Farchive.org%2Fdownload%2Fdrum-machines-collection%2FKorg%2520DDM110.zip%2FKorg%2520DDM110%252FCy.wav",
+      "fileName": "Korg DDM110/Cy.wav"
+    },
+    "ride": {
+      "url": "/api/audio-proxy?url=https%3A%2F%2Farchive.org%2Fdownload%2Fdrum-machines-collection%2FKorg%2520DDM110.zip%2FKorg%2520DDM110%252FCy.wav",
+      "fileName": "Korg DDM110/Cy.wav"
+    },
+    "cowbell": {
+      "url": "/api/audio-proxy?url=https%3A%2F%2Farchive.org%2Fdownload%2Fdrum-machines-collection%2FKorg%2520DDM110.zip%2FKorg%2520DDM110%252FRs.wav",
+      "fileName": "Korg DDM110/Rs.wav"
+    },
+    "claves": {
+      "url": "/api/audio-proxy?url=https%3A%2F%2Farchive.org%2Fdownload%2Fdrum-machines-collection%2FKorg%2520DDM110.zip%2FKorg%2520DDM110%252FRs.wav",
+      "fileName": "Korg DDM110/Rs.wav"
+    }
+  }
+}

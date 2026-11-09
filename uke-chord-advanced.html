@@ -5,7 +5,7 @@ body[unresolved] {opacity: 0; display: block; overflow: hidden; position: relati
 </style>
   <meta charset="UTF-8">
   <title>uke-chord by pianosnake</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   
   <link href="./css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="./css/bootstrap-icons.min.css">
@@ -40,6 +40,16 @@ uke-chord-advanced {
 <script src="./js/uke-chord-advanced.js"></script>
 <script src="./js/bootstrap.bundle.min.js"></script>
 <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script> -->
+  <!-- Zone sûre (encoche / barre d'état), nécessite viewport-fit=cover. Ignoré par les vieux navigateurs. -->
+  <style id="fx-safe-area">
+    body {
+      padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+    }
+    .offcanvas-start, .offcanvas-end {
+      padding-top: env(safe-area-inset-top);
+      padding-bottom: env(safe-area-inset-bottom);
+    }
+  </style>
 </head>
 
 <body >
@@ -91,14 +101,14 @@ uke-chord-advanced {
 		  <!-- Colonne 1 : Copyright & Titre -->
 		  <div class="col-12 col-md-6 text-center text-md-start">
 			<span class="small">
-			  CC BY-NC-SA 4.0 <span id="currentYear"></span> <strong>François Parlant</strong> &mdash; Créé avec passion pour le ukulélé.
+			  CC BY-NC 4.0 <span id="currentYear"></span><script>document.getElementById("currentYear").textContent = new Date().getFullYear();</script> <strong>François Parlant</strong> &mdash; Créé avec passion pour le ukulélé.
 			</span>
 		  </div>
 
 		  <!-- Colonne 2 : Liens Réseaux Sociaux -->
 		  <div class="col-12 col-md-6 text-center text-md-end">
 			<div class="d-inline-flex gap-3 align-items-center">
-			  <a href="https://github.com/fxpar/abc-notation-artifacts" target="_blank" rel="noopener noreferrer" class="text-body-secondary text-decoration-none fs-5 hover-accent" title="Code source GitHub"> 
+			  <a href="https://github.com/fxpar/music-toolbox/blob/main/uke-chord-advanced.html" target="_blank" rel="noopener noreferrer" class="text-body-secondary text-decoration-none fs-5 hover-accent" title="Code source GitHub"> 
 				<i class="bi bi-github"></i> 
 			  </a> 
 			  <a href="https://www.linkedin.com/in/francois-parlant" target="_blank" rel="noopener noreferrer" class="text-body-secondary text-decoration-none fs-5 hover-accent" title="LinkedIn: François Parlant">

@@ -43,7 +43,7 @@ Licence: CC BY-NC 4.0
 
 
 * 🚀 Tester l'application : [Ouvrir l'outil (Démo interactive)](https://fxpar.github.io/music-toolbox/latin-percussions.html)
-* 📄 Code source : [key-signatures-svg.html](https://github.com/fxpar/music-toolbox/blob/main/latin-percussions.html)
+* 📄 Code source : [latin-percussions.html](https://github.com/fxpar/music-toolbox/blob/main/latin-percussions.html)
 
 **Jouer les rythmes complexes de percussions latines rumba claver, guagua, conga (high / Low) .**
 
@@ -75,7 +75,7 @@ Licence: CC BY-NC 4.0
 
 
 * 🚀 Tester l'application : [Ouvrir l'outil (Démo interactive)](https://fxpar.github.io/music-toolbox/convertisseur-tab-bass-ukulele.html)
-* 📄 Code source : [key-signatures-svg.html](https://github.com/fxpar/music-toolbox/blob/main/convertisseur-tab-bass-ukulele.html)
+* 📄 Code source : [convertisseur-tab-bass-ukulele.html](https://github.com/fxpar/music-toolbox/blob/main/convertisseur-tab-bass-ukulele.html)
 
 **Un outil convertir les tablatures de bass en partition / tablature Ukulélé. On saisie les notes au format alphatab (12.2 veut dire douzième frette sur la deuxième corde).**
 
@@ -285,7 +285,7 @@ Paramètres:
 * Mode Jour / Nuit
 
 A faire:
-* [ ] Lié à la base de données des accords pour simplifier la saisie
+* [x] Lié à la base de données des accords pour simplifier la saisie
 
 Librairies utilisées: 
 * [uke chord](https://github.com/pianosnake/uke-chord)(MIT Licence)
@@ -502,7 +502,7 @@ Licence: CC BY-NC 4.0
 
 
 * 🚀 Tester l'application : [Ouvrir l'outil (Démo interactive)](https://fxpar.github.io/music-toolbox/sample_json_abc.html)
-* 📄 Code source : [sample_json_abc.html](https://github.com/fxpar/music-toolbox/blob/main/sample_json_abc)
+* 📄 Code source : [sample_json_abc.html](https://github.com/fxpar/music-toolbox/blob/main/sample_json_abc.html)
 
 
 **Permet de convertir en abc les exports de drum machine en json.**
@@ -760,7 +760,7 @@ Licence: CC BY-NC 4.0
 
 
 * 🚀 Tester l'application : [Ouvrir l'outil (Démo interactive)](https://fxpar.github.io/music-toolbox/simpleAbc.html)
-* 📄 Code source : [chord-recognition.html](https://github.com/fxpar/music-toolbox/blob/main/simpleAbc.html)
+* 📄 Code source : [simpleAbc.html](https://github.com/fxpar/music-toolbox/blob/main/simpleAbc.html)
 
 
 **Application minimaliste de abcjs, principalement un exemple de code à fournir aux IA quand elles s'emmèlent les pinceaux dans les versions. Ici on a un exemple de base qui fonctionne bien pour la partition et pour l'audio.**
