@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title data-i18n="title">Nommer l'intervalle (clé de sol)</title>
+<meta name="description" content="Exercice de lecture : nommer l'intervalle entre deux notes écrites sur une portée en clé de sol.">
+<script>
+	// thème mémorisé (clé partagée 'theme' : 'light' | 'dark'), appliqué avant l'affichage
+	try { if (localStorage.getItem('theme') === 'dark') { document.documentElement.setAttribute('data-bs-theme', 'dark'); } } catch (e) { /* stockage indisponible */ }
+</script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<!-- <link rel="stylesheet" href="./css/bootstrap.min.css"/> -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<!-- <link rel="stylesheet" href="./css/bootstrap-icons.min.css"> -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/abcjs@6.6.3/abcjs-audio.css">
+<!-- <link rel="stylesheet" href="./css/abcjs-audio.css"/> -->
+<!-- <link rel="stylesheet" href="./css/abcfx.css"/> -->
+<!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous"> -->
+	<!-- <script src="tonal.min.js"></script> -->
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+	<!-- <script src="./js/popper.min.js"></script> -->
+	<!-- <script src="./js/bootstrap.min.js"></script> -->
+	<script src="./js/tonalfx.js"></script>
+	<script src="./js/abcjs-basicfx.js"></script>
+	<!-- <script type="text/javascript" src="js/abcjs-basicfxv3.js"></script> -->
+	<!-- <script src="./js/tonalIntervals-abcplayer.js"></script> -->
+	<script src="./js/i18n-fx.js"></script>
+<style id="fx-safe-area">
+body {
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+}
+.offcanvas-end {
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+</style>
+<style>
+.abcjs-inline-audio { padding: 12px 20px; }
+.fx-question { font-size: 1.6rem; }
+.fx-paper { background: #fff; color: #000; border-radius: .375rem; max-width: 380px; margin: 0 auto .5rem auto; }
+/* masqué mais rendu (abcjs a besoin d'un élément affiché pour mesurer la partition) */
+.fx-off { position: absolute !important; left: -10000px !important; top: 0; width: 600px; visibility: hidden; }
+#noteKeyboard .btn { width: 100%; padding-left: 2px; padding-right: 2px; white-space: normal; word-wrap: break-word; }
+@media (max-width: 576px) { #noteKeyboard .btn { font-size: .85rem; } .fx-question { font-size: 1.3rem; } }
+#noteKeyboard .btn small { opacity: .75; }
+.help summary { cursor: pointer; font-weight: bold; }
+.help table { width: auto; }
+</style>
+</head>
+
+<body>
+<!-- Paramètres -->
+<div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
+  <div class="offcanvas-header">
+    <h5 id="offcanvasRightLabel" data-i18n="settings">Paramètres</h5>
+    <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Fermer" data-i18n-aria="aria.close"></button>
+  </div>
+  <div class="offcanvas-body">
+    <div class="mb-1 fw-bold" data-i18n="theme">Thème</div>
+    <button type="button" class="btn btn-light border me-2" onclick="fxSetTheme('light')"><i class="bi bi-sun"></i> <span data-i18n="theme.light">Clair</span></button>
+    <button type="button" class="btn btn-dark" onclick="fxSetTheme('dark')"><i class="bi bi-moon"></i> <span data-i18n="theme.dark">Sombre</span></button>
+    <div class="mt-4 mb-1 fw-bold" data-i18n="language">Langue</div>
+    <button type="button" class="btn btn-outline-primary me-2" onclick="FxI18n.setLang('fr')">Français</button>
+    <button type="button" class="btn btn-outline-primary" onclick="FxI18n.setLang('en')">English</button>
+    <div class="mt-4">
+      <button type="button" class="btn btn-outline-danger" onclick="fxResetScore()" data-bs-dismiss="offcanvas"><i class="bi bi-arrow-counterclockwise"></i> <span data-i18n="reset">Remettre le score à zéro</span></button>
+    </div>
+  </div>
+</div>
+
+<!-- Content -->
+<div class="container" style="max-width:760px">
+
+	<div class="d-flex align-items-center justify-content-between py-2">
+		<h1 class="h5 m-0 me-2" data-i18n="title">Nommer l'intervalle (clé de sol)</h1>
+		<div class="d-flex align-items-center flex-shrink-0">
+			<span class="badge text-bg-primary fs-6 me-2" title="Bonnes réponses / questions" data-i18n-title="score.title"><span data-i18n="score">Score</span> <span id="points">0 / 0</span></span>
+			<button type="button" class="btn btn-outline-secondary btn-sm me-2" data-i18n-toggle>FR</button>
+			<a class="btn btn-outline-secondary btn-sm" data-bs-toggle="offcanvas" href="#offcanvasRight" role="button" aria-controls="offcanvasRight" aria-label="Paramètres" data-i18n-aria="aria.settings"><i class="bi bi-list"></i></a>
+		</div>
+	</div>
+
+	<p class="text-body-secondary mb-2" data-i18n-html="intro">Lisez les deux notes sur la portée en clé de sol (la seconde est <b>au-dessus</b> de la première) et choisissez le nom de l'intervalle. ▶ permet de l'écouter.</p>
+
+	<div id="feedback" class="mb-2"></div>
+
+	<div class="alert alert-primary text-center mb-2">
+		<div id="currentQuestion" class="fx-question"></div>
+	</div>
+
+		<div class="fx-paper"><div id="paper_abc_ex_01"></div></div>
+
+	<div id="audio_abc_ex_01" class="mb-2"></div>
+
+	<div class="d-flex justify-content-end my-2">
+		<button id="btnHint" type="button" class="btn btn-outline-secondary me-2" aria-expanded="false" title="" data-i18n-title="btn.hint.title"><i class="bi bi-eye"></i> <span data-i18n="btn.hint">Indice</span></button>
+		<button id="btnSolution" type="button" class="btn btn-outline-secondary" aria-expanded="false" title="" data-i18n-title="btn.solution.title"><i class="bi bi-lightbulb"></i> <span data-i18n="btn.solution">Solution</span></button>
+	</div>
+
+	<div id="hintBox" class="alert alert-info fx-off">
+		<div id="hintText"></div>
+	</div>
+	<div id="solutionBox" class="alert alert-success fx-off">
+		<div class="text-center"><span data-i18n="solution.label">Réponse attendue :</span> <b id="currentAnswer" class="fs-3"></b></div>
+	</div>
+
+	<div id="noteKeyboard" class="mb-3"></div>
+
+	<h2 id="historyTitle" class="h6" style="display:none" data-i18n="history">Réponses précédentes</h2>
+	<div id="history" class="small mb-3"></div>
+
+	<details class="help mb-4">
+		<summary data-i18n-html="help.summary">❔ Aide : lire les intervalles</summary>
+		<div class="mt-2" data-i18n-html="help.mode"></div>
+		<div data-i18n-html="help.body"></div>
+		<div id="ivTable"></div>
+	</details>
+
+	<div id="warnings_abc_ex_01" style="display:none"></div>
+	<textarea id="abc_ex_01" cols="20" rows="5" style="display:none; width:100%"></textarea>
+</div>
+
+<footer class="mt-auto py-3 bg-body-tertiary border-top text-body-secondary">
+  <div class="container">
+	<div class="row align-items-center gy-2">
+	  <div class="col-12 col-md-6 text-center text-md-start">
+		<span class="small">
+		  CC BY-NC 4.0 <span id="currentYear"></span><script>document.getElementById("currentYear").textContent = new Date().getFullYear();</script> <strong>François Parlant</strong> &mdash; <span data-i18n="footer.made">Créé avec passion pour la musique.</span>
+		</span>
+	  </div>
+	  <div class="col-12 col-md-6 text-center text-md-end">
+		<div class="d-inline-flex align-items-center">
+		  <a href="https://github.com/fxpar/music-toolbox/blob/main/tonal_intervals_namesTrebble.html" target="_blank" rel="noopener noreferrer" class="text-body-secondary text-decoration-none fs-5" title="Code source GitHub" data-i18n-title="footer.github">
+			<i class="bi bi-github"></i> Github
+		  </a>&nbsp;&mdash;&nbsp;
+		  <a href="https://www.linkedin.com/in/francois-parlant" target="_blank" rel="noopener noreferrer" class="text-body-secondary text-decoration-none fs-5" title="LinkedIn: François Parlant" data-i18n-title="footer.linkedin">
+			<i class="bi bi-linkedin"></i> LinkedIn
+		  </a>&nbsp;&mdash;&nbsp;
+		  <a href="https://www.youtube.com/c/enparlantdebureautiqueformezvous" target="_blank" rel="noopener noreferrer" class="text-body-secondary text-decoration-none fs-5" title="Tutos YouTube: En parlant de bureautique" data-i18n-title="footer.youtube">
+			<i class="bi bi-youtube"></i> Youtube
+		  </a>
+		</div>
+	  </div>
+	</div>
+  </div>
+</footer>
+
+<!-- Textes FR / EN (module commun js/i18n-fx.js) -->
+<script id="fx-i18n">
+var FX_DICT = {
+	fr: {
+		"title": "Nommer l'intervalle (clé de sol)",
+		"intro": "Lisez les deux notes sur la portée en clé de sol (la seconde est <b>au-dessus</b> de la première) et choisissez le nom de l'intervalle. ▶ permet de l'écouter.",
+		"q": "<b>{a}</b> → <b>{b}</b> : quel intervalle ?",
+		"h.q": "{a} – {b}",
+		"hint": "Entre ces deux notes : {n} demi-ton(s). Comptez aussi les noms de notes pour trouver le nombre.",
+		"btn.hint.title": "Indice : nombre de demi-tons",
+		"help.mode": "<p><b>Comment jouer :</b> comptez les noms de notes de la première à la seconde (le nombre), puis les demi-tons (la qualité), et cliquez le nom de l'intervalle. <b>Indice</b> (œil) donne le nombre de demi-tons ; <b>Solution</b> affiche la réponse, mais la question ne rapporte alors pas de point. Une nouvelle question arrive après chaque réponse ; le résultat s'affiche au-dessus de la question.</p>",
+		"settings": "Paramètres",
+		"theme": "Thème",
+		"theme.light": "Clair",
+		"theme.dark": "Sombre",
+		"language": "Langue",
+		"reset": "Remettre le score à zéro",
+		"aria.settings": "Ouvrir les paramètres",
+		"aria.close": "Fermer",
+		"score": "Score",
+		"score.title": "Bonnes réponses / questions posées",
+		"btn.hint": "Indice",
+		"btn.solution": "Solution",
+		"btn.solution.title": "Afficher la réponse (la question ne rapportera alors pas de point)",
+		"solution.label": "Réponse attendue :",
+		"history": "Réponses précédentes",
+		"iv.fmt": "{n} {q}",
+		"iv.n2": "seconde", "iv.n3": "tierce", "iv.n4": "quarte", "iv.n5": "quinte", "iv.n6": "sixte", "iv.n7": "septième",
+		"iv.qm": "mineure", "iv.qM": "majeure", "iv.qP": "juste", "iv.qA": "augmentée", "iv.qd": "diminuée",
+		"fb.ok": "✔ Juste ! {q} → <b>{exp}</b>",
+		"fb.ko": "✘ Faux. {q} → <b>{exp}</b> (votre réponse : {given})",
+		"fb.closeNote": "Même son, mais l'orthographe attendue est {exp}.",
+		"fb.closeName": "Même nombre de demi-tons, mais le nom attendu est {exp}.",
+		"fb.seen": "(solution affichée : pas de point)",
+		"table.iv": "Intervalle",
+		"table.code": "Abréviation",
+		"table.semi": "Demi-tons",
+		"help.summary": "❔ Aide : lire les intervalles",
+		"help.body": "<p><b>Le nombre</b> (2, 3, 4…) compte les noms de notes, en incluant la note de départ et la note d'arrivée : Do → Mi = Do, Ré, Mi = <b>tierce</b> (3). 2 = seconde, 3 = tierce, 4 = quarte, 5 = quinte, 6 = sixte, 7 = septième. Le nombre fixe donc le <b>nom</b> de la note d'arrivée : une tierce au-dessus de Ré est toujours un Fa (Fa, Fa♯, Fa♭…).</p><p><b>La qualité</b> donne le nombre exact de demi-tons : <b>m</b> = mineure et <b>M</b> = majeure (secondes, tierces, sixtes, septièmes) ; <b>P</b> = juste (quartes et quintes) ; <b>A</b> = augmentée (un demi-ton de plus que majeure ou juste) ; <b>d</b> = diminuée (un demi-ton de moins que juste).</p><p><b>Orthographe :</b> Ré♯ et Mi♭ sonnent pareil (notes enharmoniques) mais ne s'écrivent pas pareil. Seule l'orthographe exacte est acceptée : la tierce majeure de Si est Ré♯, pas Mi♭. Selon la note de départ, la réponse peut demander un double dièse (♯♯) ou un double bémol (♭♭).</p>",
+		"footer.made": "Créé avec passion pour la musique.",
+		"footer.github": "Code source GitHub",
+		"footer.linkedin": "LinkedIn : François Parlant",
+		"footer.youtube": "Tutos YouTube : En parlant de bureautique"
+	},
+	en: {
+		"title": "Name the interval (treble clef)",
+		"intro": "Read the two notes on the treble clef staff (the second one is <b>above</b> the first) and pick the name of the interval. ▶ lets you hear it.",
+		"q": "<b>{a}</b> → <b>{b}</b>: which interval?",
+		"h.q": "{a} – {b}",
+		"hint": "Between these two notes: {n} semitone(s). Also count the note letters to find the number.",
+		"btn.hint.title": "Hint: number of semitones",
+		"help.mode": "<p><b>How to play:</b> count the note letters from the first note to the second (the number), then the semitones (the quality), and click the interval name. <b>Hint</b> (eye) gives the number of semitones; <b>Solution</b> shows the answer, but the question then scores no point. A new question comes after each answer; the result is shown above the question.</p>",
+		"settings": "Settings",
+		"theme": "Theme",
+		"theme.light": "Light",
+		"theme.dark": "Dark",
+		"language": "Language",
+		"reset": "Reset score",
+		"aria.settings": "Open settings",
+		"aria.close": "Close",
+		"score": "Score",
+		"score.title": "Correct answers / questions asked",
+		"btn.hint": "Hint",
+		"btn.solution": "Solution",
+		"btn.solution.title": "Show the answer (this question will then score no point)",
+		"solution.label": "Expected answer:",
+		"history": "Previous answers",
+		"iv.fmt": "{q} {n}",
+		"iv.n2": "2nd", "iv.n3": "3rd", "iv.n4": "4th", "iv.n5": "5th", "iv.n6": "6th", "iv.n7": "7th",
+		"iv.qm": "minor", "iv.qM": "major", "iv.qP": "perfect", "iv.qA": "augmented", "iv.qd": "diminished",
+		"fb.ok": "✔ Correct! {q} → <b>{exp}</b>",
+		"fb.ko": "✘ Wrong. {q} → <b>{exp}</b> (your answer: {given})",
+		"fb.closeNote": "Same sound, but the expected spelling is {exp}.",
+		"fb.closeName": "Same number of semitones, but the expected name is {exp}.",
+		"fb.seen": "(solution shown: no point)",
+		"table.iv": "Interval",
+		"table.code": "Abbreviation",
+		"table.semi": "Semitones",
+		"help.summary": "❔ Help: reading intervals",
+		"help.body": "<p><b>The number</b> (2, 3, 4…) counts note letters, including both the starting and the ending note: C → E = C, D, E = <b>3rd</b>. So the number fixes the <b>letter</b> of the ending note: a 3rd above D is always some kind of F (F, F♯, F♭…).</p><p><b>The quality</b> gives the exact number of semitones: <b>m</b> = minor and <b>M</b> = major (2nds, 3rds, 6ths, 7ths); <b>P</b> = perfect (4ths and 5ths); <b>A</b> = augmented (one semitone more than major or perfect); <b>d</b> = diminished (one semitone less than perfect).</p><p><b>Spelling:</b> D♯ and E♭ sound the same (enharmonic notes) but are written differently. Only the exact spelling is accepted: the major 3rd above B is D♯, not E♭. Depending on the starting note, the answer may need a double sharp (♯♯) or a double flat (♭♭).</p>",
+		"footer.made": "Made with passion for music.",
+		"footer.github": "GitHub source code",
+		"footer.linkedin": "LinkedIn: François Parlant",
+		"footer.youtube": "YouTube tutorials: En parlant de bureautique"
+	}
+};
+FxI18n.add(FX_DICT);
+</script>
+
+<!-- Logique musicale (sans DOM : testée hors navigateur) -->
+<script id="fx-logic">
+// mode : "note" = trouver la note, "ear" = idem avec écoute (portée en indice), "name" = nommer l'intervalle
+var FX_PAGE = { mode: "name", clef: "treble", notes: ["Ab4", "A4", "A#4", "Bb4", "B4", "B#4", "Cb4", "C4", "C#4", "Db4", "D4", "D#4", "Eb4", "E4", "E#4", "Fb4", "F4", "F#4", "Gb4", "G4", "G#4"] };
+
+// intervalles ascendants : m mineur, M majeur, P juste, A augmenté, d diminué (notation Tonal)
+var FX_INTERVALS = ["2m", "2M", "2A", "3m", "3M", "3A", "4d", "4P", "4A", "5d", "5P", "5A", "6m", "6M", "6A", "7m", "7M", "7A"];
+// clavier de réponse : 7 noms de notes x 5 altérations (valeurs internes : C, C#, C##, Cb, Cbb…)
+var FX_LETTERS = ["C", "D", "E", "F", "G", "A", "B"];
+var FX_ACCS = ["bb", "b", "", "#", "##"];
+var FX_FR_LETTER = { C: "Do", D: "Ré", E: "Mi", F: "Fa", G: "Sol", A: "La", B: "Si" };
+
+// note utilisable : au plus double dièse / double bémol (présente sur le clavier et écrivable en ABC)
+function fxNoteOk(n) {
+	var p = Tonal.Note.get(n);
+	return !p.empty && p.acc.length <= 2;
+}
+
+// toutes les questions possibles ; on écarte celles dont la réponse demanderait un triple dièse/bémol (ex. Si♯ + 7A)
+function fxBuildQuestions() {
+	var list = [];
+	for (var i = 0; i < FX_PAGE.notes.length; i++) {
+		for (var j = 0; j < FX_INTERVALS.length; j++) {
+			var s = FX_PAGE.notes[i], iv = FX_INTERVALS[j];
+			var a = Tonal.Note.transpose(s, iv);
+			if (a && fxNoteOk(s) && fxNoteOk(a) && Tonal.Interval.distance(s, a) === iv) {
+				list.push({ start: s, iv: iv, answer: a });
+			}
+		}
+	}
+	return list;
+}
+
+// valeurs du clavier de réponse
+function fxChoices() {
+	var out = [], i, j;
+	if (FX_PAGE.mode === "name") return FX_INTERVALS.slice();
+	for (i = 0; i < FX_LETTERS.length; i++) {
+		for (j = 0; j < FX_ACCS.length; j++) out.push(FX_LETTERS[i] + FX_ACCS[j]);
+	}
+	return out;
+}
+
+// réponse attendue (orthographe exacte, sans octave)
+function fxExpected(q) {
+	return FX_PAGE.mode === "name" ? q.iv : Tonal.Note.get(q.answer).pc;
+}
+
+function fxAccSymbol(acc) {
+	return acc.split("#").join("♯").split("b").join("♭");
+}
+
+// nom affiché : Do Ré Mi… en français, C D E… en anglais
+function fxNoteLabel(n) {
+	var p = Tonal.Note.get(n);
+	var base = FxI18n.getLang() === "fr" ? FX_FR_LETTER[p.letter] : p.letter;
+	return base + fxAccSymbol(p.acc);
+}
+
+function fxIvParts(iv) {
+	var m = /^(\d+)([mMPAd])$/.exec(iv);
+	return { num: m[1], q: m[2] };
+}
+
+// "3M" -> "tierce majeure" / "major 3rd"
+function fxIvLabel(iv) {
+	var p = fxIvParts(iv);
+	return FxI18n.t("iv.fmt", { n: FxI18n.t("iv.n" + p.num), q: FxI18n.t("iv.q" + p.q) });
+}
+
+// abréviation : 3M en français, M3 en anglais
+function fxIvCode(iv) {
+	var p = fxIvParts(iv);
+	return FxI18n.getLang() === "fr" ? p.num + p.q : p.q + p.num;
+}
+
+function fxSemitones(iv) {
+	return Tonal.Interval.get(iv).semitones;
+}
+
+// partition ABC : note de départ puis note d'arrivée (rondes), jouées deux fois
+function fxAbc(q, lyrics) {
+	var s = Tonal.AbcNotation.scientificToAbcNotation(q.start);
+	var a = Tonal.AbcNotation.scientificToAbcNotation(q.answer);
+	return "X:1\nL:1/1\nK:C" + (FX_PAGE.clef === "bass" ? " clef=bass" : "") +
+		"\n|:" + s + "|" + a + ":|" + (lyrics ? "\nw:" + lyrics : "");
+}
+</script>
+
+<!-- Interface -->
+<script id="fx-ui">
+var fxSetTheme, fxResetScore;
+(function () {
+	'use strict';
+	var questions = fxBuildQuestions();
+	var state = { q: null, lastIndex: -1, asked: 0, ok: 0, solutionSeen: false, history: [] };
+	var editor = null;
+	var MODE = FX_PAGE.mode;
+
+	function $(id) { return document.getElementById(id); }
+	function t(k, v) { return FxI18n.t(k, v); }
+
+	fxSetTheme = function (th) {
+		document.documentElement.setAttribute('data-bs-theme', th);
+		try { localStorage.setItem('theme', th); } catch (e) { /* stockage indisponible */ }
+	};
+
+	fxResetScore = function () {
+		state.asked = 0;
+		state.ok = 0;
+		state.history = [];
+		newQuestion();
+	};
+
+	// curseur de lecture abcjs
+	function CursorControl(selector) {
+		var self = this;
+		self.beatSubdivisions = 2;
+		self.onStart = function () {
+			var svg = document.querySelector("#" + selector + " svg");
+			if (!svg) return;
+			var cursor = document.createElementNS("http://www.w3.org/2000/svg", "line");
+			cursor.setAttribute("class", "abcjs-cursor");
+			cursor.setAttributeNS(null, 'x1', 0);
+			cursor.setAttributeNS(null, 'y1', 0);
+			cursor.setAttributeNS(null, 'x2', 0);
+			cursor.setAttributeNS(null, 'y2', 0);
+			svg.appendChild(cursor);
+		};
+		self.onEvent = function (ev) {
+			if (ev.measureStart && ev.left === null) return; // seconde partie d'une liaison : ignorer
+			var i, j, k;
+			var last = document.querySelectorAll("#" + selector + " svg .highlight");
+			for (k = 0; k < last.length; k++) last[k].classList.remove("highlight");
+			for (i = 0; i < ev.elements.length; i++) {
+				for (j = 0; j < ev.elements[i].length; j++) ev.elements[i][j].classList.add("highlight");
+			}
+			var cursor = document.querySelector("#" + selector + " svg .abcjs-cursor");
+			if (cursor) {
+				cursor.setAttribute("x1", ev.left - 2);
+				cursor.setAttribute("x2", ev.left - 2);
+				cursor.setAttribute("y1", ev.top);
+				cursor.setAttribute("y2", ev.top + ev.height);
+			}
+		};
+		self.onFinished = function () {
+			var els = document.querySelectorAll("#" + selector + " svg .highlight");
+			for (var i = 0; i < els.length; i++) els[i].classList.remove("highlight");
+			var cursor = document.querySelector("#" + selector + " svg .abcjs-cursor");
+			if (cursor) {
+				cursor.setAttribute("x1", 0);
+				cursor.setAttribute("x2", 0);
+				cursor.setAttribute("y1", 0);
+				cursor.setAttribute("y2", 0);
+			}
+		};
+	}
+
+	// un seul éditeur abcjs pour toute la session : on remplace juste le texte ABC
+	// (setTune du lecteur arrête la lecture en cours)
+	function renderStaff(abc) {
+		$("abc_ex_01").value = abc;
+		if (typeof ABCJS === "undefined") return;
+		if (!editor) {
+			editor = new ABCJS.Editor("abc_ex_01", {
+				canvas_id: "paper_abc_ex_01",
+				warnings_id: "warnings_abc_ex_01",
+				synth: {
+					el: "#audio_abc_ex_01",
+					cursorControl: new CursorControl("paper_abc_ex_01"),
+					options: { displayLoop: true, displayRestart: true, displayPlay: true, displayProgress: true, displayWarp: true }
+				},
+				abcjsParams: { responsive: "resize", staffwidth: 260, add_classes: true }
+			});
+		} else if (editor.parseABC()) {
+			editor.modelChanged();
+		}
+	}
+
+	function buildKeyboard() {
+		var kb = $("noteKeyboard"), html = "", i, j, v, rows = [];
+		var choices = fxChoices();
+		var perRow = MODE === "name" ? 3 : FX_ACCS.length;
+		for (i = 0; i < choices.length; i += perRow) rows.push(choices.slice(i, i + perRow));
+		for (i = 0; i < rows.length; i++) {
+			html += '<div class="row g-1 mb-1">';
+			for (j = 0; j < rows[i].length; j++) {
+				v = rows[i][j];
+				html += '<div class="col"><button type="button" class="btn btn-primary" id="' + v + '" data-value="' + v + '"></button></div>';
+			}
+			html += '</div>';
+		}
+		kb.innerHTML = html;
+		kb.addEventListener("click", function (ev) {
+			var el = ev.target;
+			while (el && el !== kb && !el.getAttribute("data-value")) el = el.parentNode;
+			if (el && el !== kb) answer(el.getAttribute("data-value"));
+		});
+	}
+
+	function labelKeyboard() {
+		var btns = $("noteKeyboard").querySelectorAll("button[data-value]");
+		for (var i = 0; i < btns.length; i++) {
+			var v = btns[i].getAttribute("data-value");
+			if (MODE === "name") btns[i].innerHTML = fxIvLabel(v) + '<br><small>' + fxIvCode(v) + '</small>';
+			else btns[i].textContent = fxNoteLabel(v);
+		}
+	}
+
+	function ivTable() {
+		var h = '<table class="table table-sm table-bordered small"><thead><tr><th>' + t("table.iv") + '</th><th>' +
+			t("table.code") + '</th><th>' + t("table.semi") + '</th></tr></thead><tbody>';
+		for (var i = 0; i < FX_INTERVALS.length; i++) {
+			var iv = FX_INTERVALS[i];
+			h += '<tr><td>' + fxIvLabel(iv) + '</td><td>' + fxIvCode(iv) + '</td><td>' + fxSemitones(iv) + '</td></tr>';
+		}
+		$("ivTable").innerHTML = h + '</tbody></table>';
+	}
+
+	function setOff(id, off) {
+		var el = $(id);
+		if (off) el.classList.add("fx-off"); else el.classList.remove("fx-off");
+	}
+
+	function toggle(boxId, btnId) {
+		var show = $(boxId).classList.contains("fx-off");
+		setOff(boxId, !show);
+		$(btnId).setAttribute("aria-expanded", show ? "true" : "false");
+		if (show && boxId === "solutionBox") state.solutionSeen = true;
+	}
+
+	function newQuestion() {
+		var idx;
+		do { idx = Math.floor(Math.random() * questions.length); } while (questions.length > 1 && idx === state.lastIndex);
+		state.lastIndex = idx;
+		state.q = questions[idx];
+		state.solutionSeen = false;
+		setOff("hintBox", true);
+		setOff("solutionBox", true);
+		$("btnHint").setAttribute("aria-expanded", "false");
+		$("btnSolution").setAttribute("aria-expanded", "false");
+		renderQuestion();
+	}
+
+	function questionText(q) {
+		if (MODE === "name") return t("h.q", { a: fxNoteLabel(q.start), b: fxNoteLabel(q.answer) });
+		return t("h.q", { iv: fxIvLabel(q.iv), note: fxNoteLabel(q.start) });
+	}
+
+	function renderQuestion() {
+		var q = state.q;
+		if (!q) return;
+		var start = fxNoteLabel(q.start), ans = fxNoteLabel(q.answer);
+		var lyrics;
+		if (MODE === "name") {
+			$("currentQuestion").innerHTML = t("q", { a: start, b: ans });
+			$("currentAnswer").textContent = fxIvLabel(q.iv) + " (" + fxIvCode(q.iv) + ")";
+			$("hintText").textContent = t("hint", { n: fxSemitones(q.iv) });
+			lyrics = start + " " + ans;
+		} else {
+			$("currentQuestion").innerHTML = t("q", { iv: fxIvLabel(q.iv), code: fxIvCode(q.iv), note: start });
+			$("currentAnswer").textContent = ans;
+			$("hintText").textContent = t("hint", { iv: fxIvLabel(q.iv), n: fxSemitones(q.iv), note: start });
+			lyrics = MODE === "ear" ? start + " ?" : start + " " + ans;
+		}
+		renderStaff(fxAbc(q, lyrics));
+		renderHistory();
+	}
+
+	function entryHtml(e) {
+		var q = e.q, exp, given, s;
+		if (MODE === "name") { exp = fxIvLabel(q.iv); given = fxIvLabel(e.given); }
+		else { exp = fxNoteLabel(q.answer); given = fxNoteLabel(e.given); }
+		if (e.ok) s = t("fb.ok", { q: questionText(q), exp: exp });
+		else {
+			s = t("fb.ko", { q: questionText(q), exp: exp, given: given });
+			if (e.close) s += " " + t(MODE === "name" ? "fb.closeName" : "fb.closeNote", { exp: exp });
+		}
+		if (e.seen) s += " " + t("fb.seen");
+		return s;
+	}
+
+	function renderHistory() {
+		$("points").textContent = state.ok + " / " + state.asked;
+		var fb = $("feedback"), h = "", i;
+		if (state.history.length) {
+			var e = state.history[0];
+			fb.innerHTML = '<div class="alert ' + (e.ok ? "alert-success" : "alert-danger") + ' py-2 mb-0">' + entryHtml(e) + '</div>';
+		} else {
+			fb.innerHTML = "";
+		}
+		for (i = 1; i < state.history.length; i++) h += '<div class="border-bottom py-1">' + entryHtml(state.history[i]) + '</div>';
+		$("history").innerHTML = h;
+		$("historyTitle").style.display = state.history.length > 1 ? "" : "none";
+	}
+
+	function answer(value) {
+		var q = state.q;
+		if (!q) return;
+		var expected = fxExpected(q);
+		var ok = value === expected, close = false;
+		if (!ok) {
+			close = MODE === "name" ? fxSemitones(value) === fxSemitones(expected)
+				: Tonal.Note.chroma(value) === Tonal.Note.chroma(expected);
+		}
+		state.asked++;
+		if (ok && !state.solutionSeen) state.ok++;
+		state.history.unshift({ q: q, given: value, ok: ok, close: close, seen: state.solutionSeen });
+		if (state.history.length > 30) state.history.pop();
+		newQuestion();
+	}
+
+	$("btnHint").addEventListener("click", function () { toggle("hintBox", "btnHint"); });
+	$("btnSolution").addEventListener("click", function () { toggle("solutionBox", "btnSolution"); });
+
+	FxI18n.onChange(function () {
+		labelKeyboard();
+		ivTable();
+		renderQuestion();
+	});
+
+	buildKeyboard();
+	labelKeyboard();
+	ivTable();
+	newQuestion();
+})();
+</script>
+</body>
+</html>

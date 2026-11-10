@@ -9,6 +9,7 @@
     <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/abcjs@6.2.2/abcjs-audio.css"> -->
     <link rel="stylesheet" href="./css/abcjs-audio.min.css">
     <script src="https://cdn.jsdelivr.net/npm/abcjs@6.2.2/dist/abcjs-basic-min.js"></script>
+    <script src="./js/i18n-fx.js"></script>
     
     <style>
         * {
@@ -293,6 +294,18 @@ button.abcjs-btn {
         #abc-output-code {
             display: none;
         }
+
+        /* Bouton de langue FR / EN */
+        .lang-bar {
+            text-align: right;
+            margin-bottom: -10px;
+        }
+        .lang-bar button {
+            flex: none;
+            min-width: 0;
+            padding: 4px 12px;
+            font-size: 13px;
+        }
     </style>
   <!-- Zone sûre (encoche / barre d'état), nécessite viewport-fit=cover. Ignoré par les vieux navigateurs. -->
   <style id="fx-safe-area">
@@ -310,8 +323,9 @@ button.abcjs-btn {
 </head>
 <body>
 
-    <h1>🥁 JSON → ABC Notation avec Lecteur</h1>
-    <p style="text-align:center;color:#aaa;font-size:14px;">
+    <div class="lang-bar"><button type="button" data-i18n-toggle>FR</button></div>
+    <h1 data-i18n="ui.h1">🥁 JSON → ABC Notation avec Lecteur</h1>
+    <p style="text-align:center;color:#aaa;font-size:14px;" data-i18n-html="ui.intro">
         Convertit les séquences de rythme d'un fichier JSON en notation ABC avec <code>%%percmap</code>.
         Tous les instruments sont rassemblés sur une seule portée.
     </p>
@@ -320,14 +334,14 @@ button.abcjs-btn {
 
         <!-- Panneau gauche : entrée JSON -->
         <div class="panel">
-            <h2>📥 Entrée JSON</h2>
-            <p style="font-size:13px;color:#aaa;margin:0 0 10px 0;">
+            <h2 data-i18n="ui.inTitle">📥 Entrée JSON</h2>
+            <p style="font-size:13px;color:#aaa;margin:0 0 10px 0;" data-i18n="ui.inHelp">
                 Collez le contenu JSON ci-dessous ou chargez un fichier.
             </p>
             <div class="file-input-wrapper">
                 <input type="file" id="fileInput" accept=".json,application/json">
             </div>
-            <textarea id="jsonInput" placeholder="Collez votre JSON ici...">
+            <textarea id="jsonInput" placeholder="Collez votre JSON ici..." data-i18n-placeholder="ui.inPh">
 			{
   "global": { "bpm": 115, "swing": 0, "loops": 4, "masterVolume": 0, "masterTone": 20000, "masterDrive": 1, "delayWet": 0, "reverbWet": 0, "humanize": 0, "eqActive": true, "eqLow": 0, "eqLowMid": 0, "eqHighMid": 0, "eqHigh": 0, "vinyl": 0, "tapeHiss": 0, "polymetricModeEnabled": false },
   "soloActive": false,
@@ -657,9 +671,9 @@ button.abcjs-btn {
 }
 			</textarea>
             <div class="button-group">
-                <button class="primary" onclick="convertJSONtoABC()">🔄 Convertir en ABC</button>
-                <button onclick="clearAll()">🗑️ Effacer</button>
-                <button onclick="loadExample()">📝 Exemple</button>
+                <button class="primary" onclick="convertJSONtoABC()" data-i18n="ui.convert">🔄 Convertir en ABC</button>
+                <button onclick="clearAll()" data-i18n="ui.clear">🗑️ Effacer</button>
+                <button onclick="loadExample()" data-i18n="ui.example">📝 Exemple</button>
             </div>
             <div id="statusMessage"></div>
             <div id="stats" class="stats">⏳ En attente d'un JSON valide...</div>
@@ -667,19 +681,17 @@ button.abcjs-btn {
 
         <!-- Panneau droit : sortie ABC -->
         <div class="panel">
-            <h2>🎵 Résultat ABC</h2>
-            <p style="font-size:13px;color:#aaa;margin:0 0 10px 0;">
+            <h2 data-i18n="ui.outTitle">🎵 Résultat ABC</h2>
+            <p style="font-size:13px;color:#aaa;margin:0 0 10px 0;" data-i18n-html="ui.outHelp">
                 Notation ABC avec <code>%%percmap</code>.
             </p>
             <div class="button-group">
-                <button class="copy-btn" onclick="copyABC()">📋 Copier</button>
-                <button onclick="downloadABC()">💾 Télécharger .abc</button>
+                <button class="copy-btn" onclick="copyABC()" data-i18n="ui.copy">📋 Copier</button>
+                <button onclick="downloadABC()" data-i18n="ui.download">💾 Télécharger .abc</button>
             </div>
-            <div id="abcOutput" class="output-area">
-                ⚡ Le résultat ABC apparaîtra ici après la conversion.
-            </div>
+            <div id="abcOutput" class="output-area" data-i18n="out.placeholder">⚡ Le résultat ABC apparaîtra ici après la conversion.</div>
             <div id="abcPreview" class="abc-preview" style="display:none;">
-                <h3>🔊 Aperçu des instruments</h3>
+                <h3 data-i18n="ui.preview">🔊 Aperçu des instruments</h3>
                 <div id="instrumentPreview" class="instrument-list"></div>
             </div>
         </div>
@@ -689,7 +701,7 @@ button.abcjs-btn {
     <!-- Panneau du lecteur ABC -->
     <div id="abcPlayerContainer" class="abc-player-container" style="margin-top:20px;">
         <div class="panel" style="width:100%;">
-            <h2 style="margin-top:0;color:#88ccff;border-bottom:1px solid #444;padding-bottom:5px;">🎹 Partition et lecteur ABC</h2>
+            <h2 style="margin-top:0;color:#88ccff;border-bottom:1px solid #444;padding-bottom:5px;" data-i18n="ui.player">🎹 Partition et lecteur ABC</h2>
             
             <!-- Zone d'affichage de la partition SVG -->
             <div id="paper"></div>
@@ -699,12 +711,98 @@ button.abcjs-btn {
         </div>
     </div>
 
-    <div class="footer">
+    <div class="footer" data-i18n-html="ui.footer">
         ⚡ Convertit les séquences 16 temps en ABC percussion — Tous les instruments sur une seule portée.
         <br>Basé sur abcjs v6.2.2 - Utilisez les boutons de contrôle sous la partition pour jouer/arrêter.
     </div>
 
     <script>
+        // ====================== TRADUCTIONS FR / EN (js/i18n-fx.js) ======================
+        FxI18n.add({
+            fr: {
+                "page.title": "JSON → ABC Notation avec Lecteur",
+                "ui.h1": "🥁 JSON → ABC Notation avec Lecteur",
+                "ui.intro": "Convertit les séquences de rythme d'un fichier JSON en notation ABC avec <code>%%percmap</code>.\n        Tous les instruments sont rassemblés sur une seule portée.",
+                "ui.inTitle": "📥 Entrée JSON", "ui.inHelp": "Collez le contenu JSON ci-dessous ou chargez un fichier.",
+                "ui.inPh": "Collez votre JSON ici...",
+                "ui.convert": "🔄 Convertir en ABC", "ui.clear": "🗑️ Effacer", "ui.example": "📝 Exemple",
+                "ui.outTitle": "🎵 Résultat ABC", "ui.outHelp": "Notation ABC avec <code>%%percmap</code>.",
+                "ui.copy": "📋 Copier", "ui.download": "💾 Télécharger .abc",
+                "ui.preview": "🔊 Aperçu des instruments", "ui.player": "🎹 Partition et lecteur ABC",
+                "ui.footer": "⚡ Convertit les séquences 16 temps en ABC percussion — Tous les instruments sur une seule portée.\n        <br>Basé sur abcjs v6.2.2 - Utilisez les boutons de contrôle sous la partition pour jouer/arrêter.",
+                "out.placeholder": "⚡ Le résultat ABC apparaîtra ici après la conversion.",
+                "st.waiting": "⏳ En attente d'un JSON valide...", "st.converted": "✅ {n} instruments convertis",
+                "err.empty": "❌ Veuillez coller un JSON ou charger un fichier.",
+                "err.parse": "❌ Erreur de parsing JSON : {msg}",
+                "err.structure": "❌ Structure JSON invalide : \"instrumentSettings\" ou \"patterns\" manquant.",
+                "err.noSeq": "❌ Aucune séquence trouvée dans le JSON.",
+                "ok.converted": "✅ Conversion réussie ! {n} instruments.",
+                "ok.fileLoaded": "✅ Fichier \"{name}\" chargé ({size} octets).",
+                "err.fileRead": "❌ Erreur lors de la lecture du fichier.",
+                "ok.example": "✅ Exemple chargé.",
+                "paper.empty": "Aucune partition à afficher.", "paper.renderError": "Erreur de rendu de la partition",
+                "audio.unsupported": "⚠️ L'audio n'est pas supporté par ce navigateur.", "paper.error": "❌ Erreur: {msg}",
+                "alert.nothingCopy": "⚠️ Rien à copier. Veuillez d'abord convertir un JSON.",
+                "alert.copied": "✅ ABC copié dans le presse-papiers !", "alert.copiedShort": "✅ ABC copié !",
+                "alert.nothingDownload": "⚠️ Rien à télécharger. Veuillez d'abord convertir un JSON."
+            },
+            en: {
+                "page.title": "JSON → ABC Notation with Player",
+                "ui.h1": "🥁 JSON → ABC Notation with Player",
+                "ui.intro": "Converts the rhythm sequences of a JSON file into ABC notation with <code>%%percmap</code>.\n        All instruments are gathered on a single staff.",
+                "ui.inTitle": "📥 JSON input", "ui.inHelp": "Paste the JSON content below or load a file.",
+                "ui.inPh": "Paste your JSON here...",
+                "ui.convert": "🔄 Convert to ABC", "ui.clear": "🗑️ Clear", "ui.example": "📝 Example",
+                "ui.outTitle": "🎵 ABC result", "ui.outHelp": "ABC notation with <code>%%percmap</code>.",
+                "ui.copy": "📋 Copy", "ui.download": "💾 Download .abc",
+                "ui.preview": "🔊 Instrument preview", "ui.player": "🎹 ABC score and player",
+                "ui.footer": "⚡ Converts 16-step sequences into ABC percussion — all instruments on a single staff.\n        <br>Based on abcjs v6.2.2 - Use the control buttons below the score to play/stop.",
+                "out.placeholder": "⚡ The ABC result will appear here after conversion.",
+                "st.waiting": "⏳ Waiting for valid JSON...", "st.converted": "✅ {n} instruments converted",
+                "err.empty": "❌ Please paste some JSON or load a file.",
+                "err.parse": "❌ JSON parsing error: {msg}",
+                "err.structure": "❌ Invalid JSON structure: \"instrumentSettings\" or \"patterns\" missing.",
+                "err.noSeq": "❌ No sequence found in the JSON.",
+                "ok.converted": "✅ Conversion successful! {n} instruments.",
+                "ok.fileLoaded": "✅ File \"{name}\" loaded ({size} bytes).",
+                "err.fileRead": "❌ Error while reading the file.",
+                "ok.example": "✅ Example loaded.",
+                "paper.empty": "No score to display.", "paper.renderError": "Score rendering error",
+                "audio.unsupported": "⚠️ Audio is not supported by this browser.", "paper.error": "❌ Error: {msg}",
+                "alert.nothingCopy": "⚠️ Nothing to copy. Please convert some JSON first.",
+                "alert.copied": "✅ ABC copied to the clipboard!", "alert.copiedShort": "✅ ABC copied!",
+                "alert.nothingDownload": "⚠️ Nothing to download. Please convert some JSON first."
+            }
+        });
+
+        // Messages de statut / compteur : on mémorise clé + variables pour les re-traduire
+        var lastStatus = null; // { cls, key, vars }
+        var lastStats = { key: "st.waiting", vars: null };
+        function escapeHtml(s) {
+            return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+        }
+        function renderStatus() {
+            var div = document.getElementById("statusMessage");
+            if (!lastStatus) { div.innerHTML = ""; return; }
+            div.innerHTML = '<div class="' + lastStatus.cls + '">' + escapeHtml(FxI18n.t(lastStatus.key, lastStatus.vars)) + "</div>";
+        }
+        function setStatus(cls, key, vars) {
+            lastStatus = cls ? { cls: cls, key: key, vars: vars || null } : null;
+            renderStatus();
+        }
+        function renderStats() {
+            document.getElementById("stats").textContent = FxI18n.t(lastStats.key, lastStats.vars);
+        }
+        function setStats(key, vars) {
+            lastStats = { key: key, vars: vars || null };
+            renderStats();
+        }
+        FxI18n.onChange(function () {
+            document.title = FxI18n.t("page.title");
+            renderStatus();
+            renderStats();
+        });
+
         // ====================== VARIABLES GLOBALES ======================
         let currentABC = '';
         let synthController = null;
@@ -756,12 +854,13 @@ button.abcjs-btn {
 
             // Réinitialiser
             outputDiv.textContent = '';
-            statusDiv.innerHTML = '';
+            outputDiv.removeAttribute('data-i18n');
+            setStatus(null);
             document.getElementById('abcPreview').style.display = 'none';
             document.getElementById('abcPlayerContainer').classList.remove('active');
 
             if (!input) {
-                statusDiv.innerHTML = '<div class="error">❌ Veuillez coller un JSON ou charger un fichier.</div>';
+                setStatus('error', 'err.empty');
                 return;
             }
 
@@ -769,18 +868,18 @@ button.abcjs-btn {
             try {
                 data = JSON.parse(input);
             } catch (e) {
-                statusDiv.innerHTML = `<div class="error">❌ Erreur de parsing JSON : ${e.message}</div>`;
+                setStatus('error', 'err.parse', { msg: e.message });
                 return;
             }
 
             if (!data.instrumentSettings && !data.patterns) {
-                statusDiv.innerHTML = '<div class="error">❌ Structure JSON invalide : "instrumentSettings" ou "patterns" manquant.</div>';
+                setStatus('error', 'err.structure');
                 return;
             }
 
             const sequences = extractSequences(data);
             if (Object.keys(sequences).length === 0) {
-                statusDiv.innerHTML = '<div class="error">❌ Aucune séquence trouvée dans le JSON.</div>';
+                setStatus('error', 'err.noSeq');
                 return;
             }
 
@@ -789,10 +888,10 @@ button.abcjs-btn {
             outputDiv.textContent = abc;
 
             const instrumentCount = Object.keys(sequences).length;
-            statsDiv.innerHTML = `✅ ${instrumentCount} instruments convertis`;
+            setStats('st.converted', { n: instrumentCount });
 
             showInstrumentPreview(sequences);
-            statusDiv.innerHTML = `<div class="success">✅ Conversion réussie ! ${instrumentCount} instruments.</div>`;
+            setStatus('success', 'ok.converted', { n: instrumentCount });
 
             // Afficher le lecteur ABC
             renderAndSetupAudio(abc);
@@ -839,8 +938,8 @@ button.abcjs-btn {
          * Génère la notation ABC
          */
         function generateABC(sequences, originalData) {
-            const bpm = originalData.global?.bpm || 120;
-            const title = originalData.global?.title || 'Drum Machine Pattern';
+            const bpm = (originalData.global && originalData.global.bpm) || 120;
+            const title = (originalData.global && originalData.global.title) || 'Drum Machine Pattern';
             
             let sequenceLength = 16;
             for (const seq of Object.values(sequences)) {
@@ -938,13 +1037,13 @@ ${abcNotes}`;
         /**
          * Rend la partition et prépare l'audio avec abcjs
          */
-        async function renderAndSetupAudio(abcString) {
+        function renderAndSetupAudio(abcString) {
             const paperDiv = document.getElementById('paper');
             const audioDiv = document.getElementById('audio-controls');
             const container = document.getElementById('abcPlayerContainer');
 
             if (!abcString || abcString.trim() === '') {
-                paperDiv.innerHTML = '<p style="color:#666;text-align:center;">Aucune partition à afficher.</p>';
+                paperDiv.innerHTML = '<p style="color:#666;text-align:center;">' + FxI18n.t('paper.empty') + '</p>';
                 container.classList.remove('active');
                 return;
             }
@@ -956,7 +1055,7 @@ ${abcNotes}`;
                 });
                 
                 if (!visualObj || visualObj.length === 0) {
-                    throw new Error('Erreur de rendu de la partition');
+                    throw new Error(FxI18n.t('paper.renderError'));
                 }
                 
                 currentVisualObj = visualObj[0];
@@ -964,7 +1063,7 @@ ${abcNotes}`;
 
                 // 2. Vérifier la compatibilité Audio
                 if (!ABCJS.synth.supportsAudio()) {
-                    audioDiv.innerHTML = "<p style='color:#ff6666;'>⚠️ L'audio n'est pas supporté par ce navigateur.</p>";
+                    audioDiv.innerHTML = "<p style='color:#ff6666;'>" + FxI18n.t('audio.unsupported') + "</p>";
                     return;
                 }
 
@@ -980,16 +1079,21 @@ ${abcNotes}`;
 
                 // 4. Préparer les buffers sonores
                 const createSynth = new ABCJS.synth.CreateSynth();
-                await createSynth.init({ visualObj: currentVisualObj });
-                await synthController.setTune(currentVisualObj, false, {
-                    chordsOff: false
-                });
-
-                console.log('✅ Audio prêt');
+                return createSynth.init({ visualObj: currentVisualObj }).then(function () {
+                    return synthController.setTune(currentVisualObj, false, {
+                        chordsOff: false
+                    });
+                }).then(function () {
+                    console.log('✅ Audio prêt');
+                }).catch(onAudioError);
 
             } catch (error) {
+                onAudioError(error);
+            }
+
+            function onAudioError(error) {
                 console.error("❌ Erreur lors de la création de l'audio :", error);
-                paperDiv.innerHTML = `<p style="color:#ff6666;">❌ Erreur: ${error.message}</p>`;
+                paperDiv.innerHTML = '<p style="color:#ff6666;">' + FxI18n.t('paper.error', { msg: error.message }) + '</p>';
                 container.classList.add('active');
             }
         }
@@ -1006,11 +1110,11 @@ ${abcNotes}`;
             const reader = new FileReader();
             reader.onload = function(event) {
                 document.getElementById('jsonInput').value = event.target.result;
-                document.getElementById('statusMessage').innerHTML = `<div class="success">✅ Fichier "${file.name}" chargé (${file.size} octets).</div>`;
+                setStatus('success', 'ok.fileLoaded', { name: file.name, size: file.size });
                 convertJSONtoABC();
             };
             reader.onerror = function() {
-                document.getElementById('statusMessage').innerHTML = '<div class="error">❌ Erreur lors de la lecture du fichier.</div>';
+                setStatus('error', 'err.fileRead');
             };
             reader.readAsText(file);
         });
@@ -1019,13 +1123,14 @@ ${abcNotes}`;
          * Copie le résultat ABC
          */
         function copyABC() {
-            const output = document.getElementById('abcOutput').textContent;
-            if (!output || output.includes('résultat ABC')) {
-                alert('⚠️ Rien à copier. Veuillez d\'abord convertir un JSON.');
+            const outputEl = document.getElementById('abcOutput');
+            const output = outputEl.textContent;
+            if (!output || outputEl.hasAttribute('data-i18n')) {
+                alert(FxI18n.t('alert.nothingCopy'));
                 return;
             }
             navigator.clipboard.writeText(output).then(() => {
-                alert('✅ ABC copié dans le presse-papiers !');
+                alert(FxI18n.t('alert.copied'));
             }).catch(() => {
                 const textarea = document.createElement('textarea');
                 textarea.value = output;
@@ -1033,7 +1138,7 @@ ${abcNotes}`;
                 textarea.select();
                 document.execCommand('copy');
                 document.body.removeChild(textarea);
-                alert('✅ ABC copié !');
+                alert(FxI18n.t('alert.copiedShort'));
             });
         }
 
@@ -1041,9 +1146,10 @@ ${abcNotes}`;
          * Télécharge le résultat en fichier .abc
          */
         function downloadABC() {
-            const output = document.getElementById('abcOutput').textContent;
-            if (!output || output.includes('résultat ABC')) {
-                alert('⚠️ Rien à télécharger. Veuillez d\'abord convertir un JSON.');
+            const outputEl = document.getElementById('abcOutput');
+            const output = outputEl.textContent;
+            if (!output || outputEl.hasAttribute('data-i18n')) {
+                alert(FxI18n.t('alert.nothingDownload'));
                 return;
             }
             const blob = new Blob([output], { type: 'text/plain' });
@@ -1062,9 +1168,10 @@ ${abcNotes}`;
          */
         function clearAll() {
             document.getElementById('jsonInput').value = '';
-            document.getElementById('abcOutput').textContent = '⚡ Le résultat ABC apparaîtra ici après la conversion.';
-            document.getElementById('statusMessage').innerHTML = '';
-            document.getElementById('stats').innerHTML = '⏳ En attente d\'un JSON valide...';
+            document.getElementById('abcOutput').setAttribute('data-i18n', 'out.placeholder');
+            document.getElementById('abcOutput').textContent = FxI18n.t('out.placeholder');
+            setStatus(null);
+            setStats('st.waiting');
             document.getElementById('abcPreview').style.display = 'none';
             document.getElementById('abcPlayerContainer').classList.remove('active');
             document.getElementById('fileInput').value = '';
@@ -1095,7 +1202,7 @@ ${abcNotes}`;
                 }
             };
             document.getElementById('jsonInput').value = JSON.stringify(example, null, 2);
-            document.getElementById('statusMessage').innerHTML = '<div class="success">✅ Exemple chargé.</div>';
+            setStatus('success', 'ok.example');
             convertJSONtoABC();
         }
 

@@ -93,7 +93,8 @@
 </head>
 <body>
 <div class="position-absolute top-0 end-0 p-3" style="z-index: 1050;">
-    <button id="btn-dark-mode" class="btn btn-outline-secondary rounded-circle shadow-sm" title="Mode Nuit">
+    <button type="button" data-i18n-toggle class="btn btn-outline-secondary rounded-circle shadow-sm fw-bold small me-1" style="width:42px;height:38px;padding:0;">FR</button>
+    <button id="btn-dark-mode" class="btn btn-outline-secondary rounded-circle shadow-sm" title="Mode Nuit" data-i18n-title="cc.darkMode">
         <i class="bi bi-moon-fill" id="dark-mode-icon"></i>
     </button>
 </div>
@@ -104,7 +105,7 @@
     <div class="row g-3 text-center mb-4">
         <div class="col-6">
             <div class="card chord-card active p-3 h-100">
-                <span class="badge bg-primary mb-2">ACTUEL</span>
+                <span class="badge bg-primary mb-2" data-i18n="cc.current">ACTUEL</span>
                 <h3 id="current-chord-name" class="fw-bold">-</h3>
                 <div id="current-chord-container" class="d-flex justify-content-center align-items-center" style="min-height: 150px;">
                     </div>
@@ -112,7 +113,7 @@
         </div>
         <div class="col-6">
             <div class="card chord-card p-3 h-100 bg-light">
-                <span class="badge bg-secondary mb-2">SUIVANT</span>
+                <span class="badge bg-secondary mb-2" data-i18n="cc.next">SUIVANT</span>
                 <h3 id="next-chord-name" class="fw-bold text-muted">-</h3>
                 <div id="next-chord-container" class="d-flex justify-content-center align-items-center" style="min-height: 150px; opacity: 0.7;">
                     </div>
@@ -130,80 +131,80 @@
     </div>
 
     <div class="d-grid gap-2 mb-4">
-        <button id="btn-start" class="btn btn-success btn-lg shadow"><i class="bi bi-play-fill"></i> Démarrer l'entraînement</button>
-        <button id="btn-stop" class="btn btn-danger btn-lg shadow d-none"><i class="bi bi-stop-fill"></i> Arrêter</button>
+        <button id="btn-start" class="btn btn-success btn-lg shadow"><i class="bi bi-play-fill"></i> <span data-i18n="cc.start">Démarrer l'entraînement</span></button>
+        <button id="btn-stop" class="btn btn-danger btn-lg shadow d-none"><i class="bi bi-stop-fill"></i> <span data-i18n="cc.stop">Arrêter</span></button>
     </div>
 
     <div class="accordion mb-4" id="paramAccordion">
         <div class="accordion-item">
             <h2 class="accordion-header">
                 <button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapseParams">
-                    <i class="bi bi-gear-fill me-2"></i> Configuration des paramètres
+                    <i class="bi bi-gear-fill me-2"></i> <span data-i18n="cc.settings">Configuration des paramètres</span>
                 </button>
             </h2>
             <div id="collapseParams" class="accordion-collapse collapse" data-bs-parent="#paramAccordion">
                 <div class="accordion-body bg-white">
                     
                     <div class="mb-3">
-                        <label class="form-label fw-bold">Instrument</label>
+                        <label class="form-label fw-bold" data-i18n="cc.instrument">Instrument</label>
                         <select id="param-instrument" class="form-select">
-                            <option value="ukulele" selected>Ukulélé (Défaut)</option>
-                            <option value="guitar">Guitare</option>
+                            <option value="ukulele" selected data-i18n="cc.ukuleleDefault">Ukulélé (Défaut)</option>
+                            <option value="guitar" data-i18n="cc.guitar">Guitare</option>
                         </select>
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label fw-bold">Niveau / Catégorie</label>
+                        <label class="form-label fw-bold" data-i18n="cc.level">Niveau / Catégorie</label>
                         <div id="category-checkboxes">
                             <div class="form-check">
                                 <input class="form-check-input cat-check" type="checkbox" value="debutant" id="cat-deb" checked>
-                                <label class="form-check-label" for="cat-deb">Débutant</label>
+                                <label class="form-check-label" for="cat-deb" data-i18n="cc.beginner">Débutant</label>
                             </div>
                             <div class="form-check">
                                 <input class="form-check-input cat-check" type="checkbox" value="intermediaire" id="cat-int" checked>
-                                <label class="form-check-label" for="cat-int">Intermédiaire</label>
+                                <label class="form-check-label" for="cat-int" data-i18n="cc.intermediate">Intermédiaire</label>
                             </div>
                             <div class="form-check">
                                 <input class="form-check-input cat-check" type="checkbox" value="avance" id="cat-av">
-                                <label class="form-check-label" for="cat-av">Avancé</label>
+                                <label class="form-check-label" for="cat-av" data-i18n="cc.advanced">Avancé</label>
                             </div>
                         </div>
                     </div>
 
                     <div class="mb-3">
-                        <label for="param-custom-list" class="form-label fw-bold">Liste personnalisée d'accords (Optionnel)</label>
-                        <input type="text" id="param-custom-list" class="form-control" placeholder="Ex: C, G, Am, F (Séparez par des virgules)">
-                        <div class="form-text">Laisse vide pour utiliser toute la catégorie sélectionnée.</div>
+                        <label for="param-custom-list" class="form-label fw-bold" data-i18n="cc.customList">Liste personnalisée d'accords (Optionnel)</label>
+                        <input type="text" id="param-custom-list" class="form-control" placeholder="Ex: C, G, Am, F (Séparez par des virgules)" data-i18n-placeholder="cc.customListPh">
+                        <div class="form-text" data-i18n="cc.customListHelp">Laisse vide pour utiliser toute la catégorie sélectionnée.</div>
                     </div>
 
                     <div class="row g-2 mb-3">
                         <div class="col-6">
                             <label for="param-bpm" class="form-label fw-bold">Tempo (BPM)</label>
-                            <input type="number" id="param-bpm" class="form-control" value="80" min="40" max="240">
+                            <input type="number" id="param-bpm" class="form-control" value="80" min="30" max="240">
                         </div>
                         <div class="col-6">
-                            <label id="param-beats" class="form-label fw-bold">Mesure</label>
+                            <label id="param-beats" class="form-label fw-bold" data-i18n="cc.timeSig">Mesure</label>
                             <select id="param-time-sig" class="form-select">
-                                <option value="4" selected>4 Temps (4/4)</option>
-                                <option value="3">3 Temps (3/4)</option>
+                                <option value="4" selected data-i18n="cc.ts4">4 Temps (4/4)</option>
+                                <option value="3" data-i18n="cc.ts3">3 Temps (3/4)</option>
                             </select>
                         </div>
                     </div>
 
                     <div class="form-check form-switch mb-3">
                         <input class="form-check-input" type="checkbox" id="param-random" checked>
-                        <label class="form-check-label fw-bold" for="param-random">Défilement aléatoire</label>
+                        <label class="form-check-label fw-bold" for="param-random" data-i18n="cc.random">Défilement aléatoire</label>
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label fw-bold">Fin de l'exercice</label>
+                        <label class="form-label fw-bold" data-i18n="cc.endMode">Fin de l'exercice</label>
                         <select id="param-loop-mode" class="form-select mb-2">
-                            <option value="loop" selected>En boucle (Infini)</option>
-                            <option value="once">Faire la liste 1 seule fois</option>
-                            <option value="count">Nombre précis d'accords</option>
+                            <option value="loop" selected data-i18n="cc.endLoop">En boucle (Infini)</option>
+                            <option value="once" data-i18n="cc.endOnce">Faire la liste 1 seule fois</option>
+                            <option value="count" data-i18n="cc.endCount">Nombre précis d'accords</option>
                         </select>
                         <div id="div-precise-count" class="d-none">
-                            <input type="number" id="param-precise-count" class="form-control" value="10" min="1" placeholder="Nombre de changements">
+                            <input type="number" id="param-precise-count" class="form-control" value="10" min="1" placeholder="Nombre de changements" data-i18n-placeholder="cc.countPh">
                         </div>
                     </div>
 
@@ -219,20 +220,20 @@
 		  <!-- Colonne 1 : Copyright & Titre -->
 		  <div class="col-12 col-md-6 text-center text-md-start">
 			<span class="small">
-			  CC BY-NC 4.0 <span id="currentYear"></span><script>document.getElementById("currentYear").textContent = new Date().getFullYear();</script> <strong>François Parlant</strong> &mdash; Créé avec passion pour le rythme et la mélodie.
+			  CC BY-NC 4.0 <span id="currentYear"></span><script>document.getElementById("currentYear").textContent = new Date().getFullYear();</script> <strong>François Parlant</strong> &mdash; <span data-i18n="ft.passion">Créé avec passion pour le rythme et la mélodie.</span>
 			</span>
 		  </div>
 
 		  <!-- Colonne 2 : Liens Réseaux Sociaux -->
 		  <div class="col-12 col-md-6 text-center text-md-end">
 			<div class="d-inline-flex gap-3 align-items-center">
-			  <a href="https://github.com/fxpar/music-toolbox/blob/main/chord-change.html" target="_blank" rel="noopener noreferrer" class="text-body-secondary text-decoration-none fs-5 hover-accent" title="Code source GitHub"> 
+			  <a href="https://github.com/fxpar/music-toolbox/blob/main/chord-change.html" target="_blank" rel="noopener noreferrer" class="text-body-secondary text-decoration-none fs-5 hover-accent" title="Code source GitHub" data-i18n-title="ft.github"> 
 				<i class="bi bi-github"></i> 
 			  </a> 
-			  <a href="https://www.linkedin.com/in/francois-parlant" target="_blank" rel="noopener noreferrer" class="text-body-secondary text-decoration-none fs-5 hover-accent" title="LinkedIn: François Parlant">
+			  <a href="https://www.linkedin.com/in/francois-parlant" target="_blank" rel="noopener noreferrer" class="text-body-secondary text-decoration-none fs-5 hover-accent" title="LinkedIn: François Parlant" data-i18n-title="ft.linkedin">
 				<i class="bi bi-linkedin"></i> 
 			  </a> 
-			  <a href="https://www.youtube.com/c/enparlantdebureautiqueformezvous" target="_blank" rel="noopener noreferrer" class="text-body-secondary text-decoration-none fs-5 hover-accent" title="Tutos YouTube: En parlant de bureautique">
+			  <a href="https://www.youtube.com/c/enparlantdebureautiqueformezvous" target="_blank" rel="noopener noreferrer" class="text-body-secondary text-decoration-none fs-5 hover-accent" title="Tutos YouTube: En parlant de bureautique" data-i18n-title="ft.youtube">
 				<i class="bi bi-youtube"></i> 
 			  </a>
 			</div>
@@ -254,12 +255,88 @@
     }
 </script>
 
+<script src="./js/i18n-fx.js"></script>
 <!-- <script src="https://pianosnake.github.io/uke-chord/uke-chord.js"></script> -->
 <script src="https://pianosnake.github.io/uke-chord/uke-chord.js"></script>
 <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script> -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
+    // --- TEXTES FR / EN (module js/i18n-fx.js) ---
+    FxI18n.add({
+        fr: {
+            "cc.pageTitle": "Entraînement Accords Guitare & Ukulélé",
+            "cc.darkMode": "Mode Nuit",
+            "cc.current": "ACTUEL", "cc.next": "SUIVANT",
+            "cc.ready": "Prêt", "cc.loopInit": "Tour : 0/0",
+            "cc.start": "Démarrer l'entraînement", "cc.stop": "Arrêter",
+            "cc.settings": "Configuration des paramètres",
+            "cc.instrument": "Instrument", "cc.ukuleleDefault": "Ukulélé (Défaut)", "cc.guitar": "Guitare",
+            "cc.level": "Niveau / Catégorie", "cc.beginner": "Débutant", "cc.intermediate": "Intermédiaire", "cc.advanced": "Avancé",
+            "cc.customList": "Liste personnalisée d'accords (Optionnel)",
+            "cc.customListPh": "Ex: C, G, Am, F (Séparez par des virgules)",
+            "cc.customListHelp": "Laisse vide pour utiliser toute la catégorie sélectionnée.",
+            "cc.timeSig": "Mesure", "cc.ts4": "4 Temps (4/4)", "cc.ts3": "3 Temps (3/4)",
+            "cc.random": "Défilement aléatoire",
+            "cc.endMode": "Fin de l'exercice", "cc.endLoop": "En boucle (Infini)", "cc.endOnce": "Faire la liste 1 seule fois", "cc.endCount": "Nombre précis d'accords",
+            "cc.countPh": "Nombre de changements",
+            "cc.unknownChords": "Accord(s) inconnu(s) pour cet instrument : {list}\n\nAccords disponibles : {known}",
+            "cc.noChord": "Aucun accord trouvé. Vérifiez vos catégories ou votre liste.",
+            "cc.stopped": "Arrêté",
+            "cc.countIn": "Mesures à vide... ({n})",
+            "cc.changes": "Changements : {n}",
+            "cc.go": "C'est parti ! Jouez !",
+            "cc.done": "Exercice terminé avec succès !",
+            "cc.endList": "Fin de la liste d'accords !",
+            "ft.passion": "Créé avec passion pour le rythme et la mélodie.",
+            "ft.github": "Code source GitHub", "ft.linkedin": "LinkedIn: François Parlant", "ft.youtube": "Tutos YouTube: En parlant de bureautique"
+        },
+        en: {
+            "cc.pageTitle": "Guitar & Ukulele Chord Trainer",
+            "cc.darkMode": "Night mode",
+            "cc.current": "CURRENT", "cc.next": "NEXT",
+            "cc.ready": "Ready", "cc.loopInit": "Round: 0/0",
+            "cc.start": "Start training", "cc.stop": "Stop",
+            "cc.settings": "Settings",
+            "cc.instrument": "Instrument", "cc.ukuleleDefault": "Ukulele (default)", "cc.guitar": "Guitar",
+            "cc.level": "Level / Category", "cc.beginner": "Beginner", "cc.intermediate": "Intermediate", "cc.advanced": "Advanced",
+            "cc.customList": "Custom chord list (optional)",
+            "cc.customListPh": "E.g. C, G, Am, F (comma-separated)",
+            "cc.customListHelp": "Leave empty to use every chord of the selected categories.",
+            "cc.timeSig": "Time signature", "cc.ts4": "4 beats (4/4)", "cc.ts3": "3 beats (3/4)",
+            "cc.random": "Random order",
+            "cc.endMode": "End of exercise", "cc.endLoop": "Loop (endless)", "cc.endOnce": "Play the list once", "cc.endCount": "Set number of chords",
+            "cc.countPh": "Number of changes",
+            "cc.unknownChords": "Unknown chord(s) for this instrument: {list}\n\nAvailable chords: {known}",
+            "cc.noChord": "No chord found. Check your categories or your list.",
+            "cc.stopped": "Stopped",
+            "cc.countIn": "Count-in bars... ({n})",
+            "cc.changes": "Changes: {n}",
+            "cc.go": "Here we go! Play!",
+            "cc.done": "Exercise completed!",
+            "cc.endList": "End of the chord list!",
+            "ft.passion": "Made with passion for rhythm and melody.",
+            "ft.github": "GitHub source code", "ft.linkedin": "LinkedIn: François Parlant", "ft.youtube": "YouTube tutorials: En parlant de bureautique"
+        }
+    });
+
+    // Textes d'état générés en JS : on mémorise la clé pour pouvoir les retraduire
+    let statusKey = 'cc.ready', statusVars = null;
+    let loopKey = 'cc.loopInit', loopVars = null;
+    function setStatus(key, vars) {
+        statusKey = key; statusVars = vars || null;
+        document.getElementById('info-status').innerText = FxI18n.t(key, statusVars);
+    }
+    function setLoopInfo(key, vars) {
+        loopKey = key; loopVars = vars || null;
+        document.getElementById('info-loop').innerText = FxI18n.t(key, loopVars);
+    }
+    FxI18n.onChange(function () {
+        document.title = FxI18n.t('cc.pageTitle');
+        document.getElementById('info-status').innerText = FxI18n.t(statusKey, statusVars);
+        document.getElementById('info-loop').innerText = FxI18n.t(loopKey, loopVars);
+    });
+
     // --- BASE DE DONNÉES DES ACCORDS (Structurée par Instrument et Catégorie) ---
     const chordLibrary = {
         ukulele: {
@@ -274,30 +351,26 @@
                 { name: "Dm", frets: "2210" },
                 { name: "Em", frets: "0432" },
                 { name: "D", frets: "2220" },
-                { name: "Bm", frets: "4222" },
                 { name: "Bm", frets: "4222", barre: "2222" },
 				{ name: "G7", frets: "0212", position: "0" },  // Sol 7 (Dominante)
 				{ name: "C7", frets: "0001", position: "0" },  // Do 7 (Dominante)
-				{ name: "D7", frets: "2020", position: "0"},  // Ré 7 (Dominante)
+				{ name: "D7", frets: "2020", position: "0"},  // Ré 7, forme débutant usuelle (La Do Fa# La : sans fondamentale ; forme complète : 2223)
 				{ name: "E7", frets: "1202", position: "0" },  // Mi 7 (Dominante)
-				{ name: "C (Haut)", frets: "5433", position: "3" }, // Do majeur en haut du manche (Barré case 3)
-				{ name: "C (Haut)", frets: "5433", position: "3", barre: "3333" }, // Do majeur en haut du manche (Barré case 3)
-				{ name: "G (Haut)", frets: "7772", position: "2" } // Sol majeur en haut du manche (Barré case 2)
+				// Convention uke-chord : avec position >= 1, frets est relatif (1 = case "position"), barre aussi.
+				{ name: "C (Haut)", frets: "3211", position: "3", barre: "1111" }, // Do majeur barré case 3 (cases réelles 5433)
+				{ name: "G (Haut)", frets: "3121", position: "2", barre: "1111" }  // Sol majeur barré case 2 (cases réelles 4232)
             ],
             avance: [
                 { name: "Bb", frets: "3211", barre: "1111" },
-                { name: "B", frets: "4322" },
                 { name: "B", frets: "4322", barre: "2222" },
-                { name: "C#m", frets: "6444" },
-                { name: "C#m", frets: "6444", barre: "4444" },
+                { name: "C#m", frets: "3111", position: "4", barre: "1111" }, // barré case 4 (cases réelles 6444)
 				{ name: "Cmaj7", frets: "0002", position: "0" }, // Do 7ème majeure (Très doux, jazz)
 				{ name: "G6", frets: "0202", position: "0" },    // Sol 6 (Sonorité swing/hawaienne)
 				{ name: "Cdim7", frets: "2323", position: "0" }, // Do diminué 7 (Tension jazz/blues)
 				{ name: "Gsus4", frets: "0233", position: "0" }, // Sol suspendu 4 (Moderne, suspendu)
 				{ name: "A7sus4", frets: "0200", position: "0" },// La 7 suspendu 4
 				{ name: "Bb7", frets: "1211", position: "1", barre: "1111" },   // Si bémol 7 (Forme de barré jazz mobile)
-				{ name: "Bb7", frets: "1211", position: "1" },   // Si bémol 7 (Forme de barré jazz mobile)
-				{ name: "F#m7b5", frets: "2423", position: "2" } // Fa dièse mineur 7 quinte bémol (Le fameux accord demi-diminué)
+				{ name: "F#m7b5", frets: "2423", position: "0" } // Fa dièse mineur 7 quinte bémol (cases réelles 2423 : La Mi Fa# Do)
             ]
         },
         guitar: {
@@ -317,10 +390,10 @@
 			],
 			avance: [
 				{ name: "F", frets: "133211", position: "1" },  // Fa majeur (grand barré case 1)
-				{ name: "Bm", frets: "x13331", position: "2" }, // Si mineur (barré en case 2)
+				{ name: "Bm", frets: "x13321", position: "2" }, // Si mineur (barré en case 2, cases réelles x24432)
 				{ name: "B", frets: "x13331", position: "2" },  // Si majeur (barré en case 2)
 				{ name: "C#m", frets: "x13321", position: "4" },// Do dièse mineur (barré en case 4)
-				{ name: "G7 (Barré)", frets: "353433", position: "3" } // Sol 7 (barré en case 3)
+				{ name: "G7 (Barré)", frets: "131211", position: "3" } // Sol 7 (barré en case 3, cases réelles 353433)
 			]
 		}
     };
@@ -391,24 +464,33 @@
             });
         } else {
             // Création depuis la liste personnalisée
-            const names = customListInput.split(',').map(n => n.trim().toUpperCase());
+            // On garde la casse saisie : "Am" (La mineur) ne doit pas devenir "AM"
+            const names = customListInput.split(',').map(n => n.trim()).filter(n => n.length > 0);
             // On cherche dans toutes les catégories de l'instrument choisi
             const allInstrumentChords = [];
-            Object.values(chordLibrary[instrument]).forEach(catArr => allInstrumentChords.push(...catArr));
+            Object.keys(chordLibrary[instrument]).forEach(cat => allInstrumentChords.push(...chordLibrary[instrument][cat]));
 
+            const unknown = [];
             names.forEach(name => {
-                let found = allInstrumentChords.find(c => c.name.toUpperCase() === name);
+                // Correspondance exacte d'abord, puis sans tenir compte de la casse (ex. "am" -> "Am")
+                let found = allInstrumentChords.find(c => c.name === name);
+                if (!found) found = allInstrumentChords.find(c => c.name.toLowerCase() === name.toLowerCase());
                 if (found) {
                     pool.push(found);
                 } else {
-                    // Si l'accord personnalisé n'est pas dans notre petite BDD d'exemple, on crée un motif générique vide
-                    pool.push({ name: name, frets: "0000" });
+                    unknown.push(name);
                 }
             });
+
+            if (unknown.length > 0) {
+                const known = allInstrumentChords.map(c => c.name).join(', ');
+                alert(FxI18n.t('cc.unknownChords', { list: unknown.join(', '), known: known }));
+                return false;
+            }
         }
 
         if (pool.length === 0) {
-            alert("Aucun accord trouvé. Vérifiez vos catégories ou votre liste.");
+            alert(FxI18n.t('cc.noChord'));
             return false;
         }
 
@@ -471,7 +553,7 @@
         clearInterval(timerId);
         btnStart.classList.remove('d-none');
         btnStop.classList.add('d-none');
-        document.getElementById('info-status').innerText = "Arrêté";
+        setStatus('cc.stopped');
     }
 
     function startTraining() {
@@ -486,14 +568,19 @@
         countInMeasuresLeft = 2; // 2 mesures à vide
         beatsPerMeasure = parseInt(document.getElementById('param-time-sig').value);
         
-        const bpm = parseInt(document.getElementById('param-bpm').value);
+        // Validation du tempo : vide/invalide -> 80, borné entre 30 et 240 (évite NaN et setInterval emballé)
+        const bpmInput = document.getElementById('param-bpm');
+        let bpm = parseInt(bpmInput.value, 10);
+        if (isNaN(bpm)) bpm = 80;
+        bpm = Math.min(240, Math.max(30, bpm));
+        bpmInput.value = bpm;
         const intervalMs = (60 / bpm) * 1000;
 
         btnStart.classList.add('d-none');
         btnStop.classList.remove('d-none');
         
-        document.getElementById('info-status').innerText = `Mesures à vide... (${countInMeasuresLeft})`;
-        document.getElementById('info-loop').innerText = `Changements : 1`;
+        setStatus('cc.countIn', { n: countInMeasuresLeft });
+        setLoopInfo('cc.changes', { n: 1 });
 
         // Premier affichage initial
         updateChordDisplay();
@@ -511,21 +598,23 @@
 
             if (currentBeat === 0) { // On vérifie si on est SUR le premier temps
                 if (isCountIn) {
-                    countInMeasuresLeft--;
-                    if (countInMeasuresLeft <= 0) {
-                        isCountIn = false;
-                        document.getElementById('info-status').innerText = "C'est parti ! Jouez !";
+                    // Chaque premier temps pendant le décompte consomme une mesure à vide ;
+                    // le premier temps qui suit les N mesures lance l'exercice (N mesures réellement vides).
+                    if (countInMeasuresLeft > 0) {
+                        setStatus('cc.countIn', { n: countInMeasuresLeft });
+                        countInMeasuresLeft--;
                     } else {
-                        document.getElementById('info-status').innerText = `Mesures à vide... (${countInMeasuresLeft})`;
+                        isCountIn = false;
+                        setStatus('cc.go');
                     }
                 } else {
                     // C'est le moment de changer d'accord !
                     const loopMode = paramLoopMode.value;
-                    const maxPreciseCount = parseInt(document.getElementById('param-precise-count').value);
+                    const maxPreciseCount = parseInt(document.getElementById('param-precise-count').value, 10) || 10;
 
                     if (loopMode === 'count' && totalChordsPlayed >= maxPreciseCount) {
                         stopTraining();
-                        alert("Exercice terminé avec succès !");
+                        alert(FxI18n.t('cc.done'));
                         return;
                     }
 
@@ -533,7 +622,7 @@
                     if (currentIndex >= sessionChords.length) {
                         if (loopMode === 'once') {
                             stopTraining();
-                            alert("Fin de la liste d'accords !");
+                            alert(FxI18n.t('cc.endList'));
                             return;
                         } else {
                             currentIndex = 0;
@@ -541,7 +630,7 @@
                     }
 
                     totalChordsPlayed++;
-                    document.getElementById('info-loop').innerText = `Changements : ${totalChordsPlayed}`;
+                    setLoopInfo('cc.changes', { n: totalChordsPlayed });
                     updateChordDisplay();
                 }
             }

@@ -8,6 +8,7 @@
 	<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/abcjs@6.6.3/abcjs-audio.min.css">
     
+    <script src="./js/i18n-fx.js"></script>
     <style>
         body { 
             background-color: #f4f6f8; 
@@ -123,28 +124,29 @@
         <button class="navbar-toggler d-block me-3" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebarLibrary" aria-controls="sidebarLibrary">
             <span class="navbar-toggler-icon"></span>
         </button>
-        <a class="navbar-brand fw-bold" href="#">Éditeur & Lecteur ABCJS</a>
+        <a class="navbar-brand fw-bold" href="#" data-i18n="ui.brand">Éditeur & Lecteur ABCJS</a>
 			<div>
-                <button id="btn-export" class="btn btn-success me-2">📥 Sauvegarder la bibliothèque (Télécharger)</button>
-                <button id="btn-import-trigger" class="btn btn-warning">📤 Ouvrir une bibliothèque (Charger)</button>
+                <button id="btn-export" class="btn btn-success me-2" data-i18n="ui.export">📥 Sauvegarder la bibliothèque (Télécharger)</button>
+                <button id="btn-import-trigger" class="btn btn-warning" data-i18n="ui.import">📤 Ouvrir une bibliothèque (Charger)</button>
+                <button type="button" class="btn btn-outline-light ms-2" data-i18n-toggle>FR</button>
                 <input type="file" id="file-import" accept=".json" class="d-none">
             </div>
-        <span id="save-status" class="badge bg-success ms-auto d-none">Enregistré</span>
+        <span id="save-status" class="badge bg-success ms-auto d-none" data-i18n="ui.saved">Enregistré</span>
     </div>
 </nav>
 
 <div class="offcanvas offcanvas-start" tabindex="-1" id="sidebarLibrary" aria-labelledby="sidebarLibraryLabel">
     <div class="offcanvas-header border-bottom">
-        <h5 class="offcanvas-title fw-bold" id="sidebarLibraryLabel">Bibliothèque</h5>
+        <h5 class="offcanvas-title fw-bold" id="sidebarLibraryLabel" data-i18n="ui.library">Bibliothèque</h5>
         <button type="button" class="btn-close" data-bs-canvas="offcanvas" data-bs-dismiss="offcanvas" aria-label="Close"></button>
     </div>
     <div class="offcanvas-body d-flex flex-column justify-content-between">
         <div class="mb-3">
-            <label for="score-selector" class="form-label text-muted small uppercase fw-bold">Morceaux enregistrés</label>
+            <label for="score-selector" class="form-label text-muted small uppercase fw-bold" data-i18n="ui.savedTunes">Morceaux enregistrés</label>
             <select id="score-selector" class="form-select" size="15" style="height: auto; max-height: 65vh;">
                 </select>
         </div>
-        <button id="btn-new" class="btn btn-primary w-100 py-2">
+        <button id="btn-new" class="btn btn-primary w-100 py-2" data-i18n="ui.newTune">
             + Nouveau morceau
         </button>
     </div>
@@ -156,8 +158,8 @@
         <div class="music-zone">
             <div class="paper">
                 <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h4 class="text-secondary fs-6 m-0 text-uppercase fw-bold tracking-wider">Partition</h4>
-                    <button id="btn-rename" class="btn btn-outline-secondary btn-sm">✏️ Renommer le morceau</button>
+                    <h4 class="text-secondary fs-6 m-0 text-uppercase fw-bold tracking-wider" data-i18n="ui.score">Partition</h4>
+                    <button id="btn-rename" class="btn btn-outline-secondary btn-sm" data-i18n="ui.rename">✏️ Renommer le morceau</button>
                 </div>
                 <div id="notation"></div>
             </div>
@@ -166,7 +168,7 @@
         <div class="code-zone">
             <div class="card border-0 shadow-sm">
                 <div class="card-body p-4">
-                    <label for="abc-code" class="form-label fw-bold mb-3 text-secondary text-uppercase fs-6">Code Source ABC</label>
+                    <label for="abc-code" class="form-label fw-bold mb-3 text-secondary text-uppercase fs-6" data-i18n="ui.source">Code Source ABC</label>
                     <textarea id="abc-code" class="form-control font-monospace" rows="18" style="font-size: 0.9rem; resize: vertical;"></textarea>
                 </div>
             </div>
@@ -188,6 +190,7 @@
                         aria-expanded="false" 
                         aria-controls="advanced-player-menu" 
                         title="Options avancées"
+                        data-i18n-title="ui.advanced"
                         style="font-size: 1.3rem; line-height: 1;">
                     ⋮
                 </button>
@@ -202,7 +205,7 @@
 				<div class="row g-3 align-items-center mb-3">
 					
 					<div class="col-6 col-sm-3 col-md-2">
-						<label for="opt-transpose" class="form-label small fw-bold text-muted mb-1">Transposer (½ tons)</label>
+						<label for="opt-transpose" class="form-label small fw-bold text-muted mb-1" data-i18n="ui.transpose">Transposer (½ tons)</label>
 						<input type="number" id="opt-transpose" class="form-control form-control-sm text-center" value="0" min="-12" max="12">
 					</div>
 					
@@ -218,11 +221,11 @@
 						<div class="d-flex gap-3 flex-wrap">
 							<div class="form-check form-switch">
 								<input class="form-check-input" type="checkbox" role="switch" id="opt-mute-melody">
-								<label class="form-check-input-label small fw-bold text-muted ms-1" for="opt-mute-melody">Taire la mélodie</label>
+								<label class="form-check-input-label small fw-bold text-muted ms-1" for="opt-mute-melody" data-i18n="ui.muteMelody">Taire la mélodie</label>
 							</div>
 							<div class="form-check form-switch">
 								<input class="form-check-input" type="checkbox" role="switch" id="opt-mute-chords">
-								<label class="form-check-input-label small fw-bold text-muted ms-1" for="opt-mute-chords">Taire les accords</label>
+								<label class="form-check-input-label small fw-bold text-muted ms-1" for="opt-mute-chords" data-i18n="ui.muteChords">Taire les accords</label>
 							</div>
 						</div>
 					</div>
@@ -230,7 +233,7 @@
 					<div class="col-12 col-md-3 pt-md-3 text-md-end">
 						<div class="form-check form-switch d-inline-block">
 							<input class="form-check-input" type="checkbox" role="switch" id="opt-auto-scroll" checked>
-							<label class="form-check-input-label small fw-bold text-muted ms-1" for="opt-auto-scroll">Défiler avec la musique</label>
+							<label class="form-check-input-label small fw-bold text-muted ms-1" for="opt-auto-scroll" data-i18n="ui.autoScroll">Défiler avec la musique</label>
 						</div>
 					</div>
 
@@ -240,7 +243,7 @@
 					<div class="d-flex align-items-center gap-2 mb-2">
 						<div class="form-check form-switch m-0">
 							<input class="form-check-input" type="checkbox" role="switch" id="opt-drum-enabled">
-							<label class="form-check-input-label small fw-bold text-muted ms-1" for="opt-drum-enabled">Activer Rythme/Métronome</label>
+							<label class="form-check-input-label small fw-bold text-muted ms-1" for="opt-drum-enabled" data-i18n="ui.drum">Activer Rythme/Métronome</label>
 						</div>
 					</div>
 					<div class="row g-2">
@@ -257,11 +260,11 @@
 							</select>
 						</div>
 						<div class="col-4">
-							<label for="opt-drum-intro" class="form-label micro-label small text-muted mb-0" style="font-size:0.75rem;">Mesures Intro</label>
+							<label for="opt-drum-intro" class="form-label micro-label small text-muted mb-0" style="font-size:0.75rem;" data-i18n="ui.introBars">Mesures Intro</label>
 							<input type="number" id="opt-drum-intro" class="form-control form-control-sm text-center" value="2" min="0" max="8">
 						</div>
 						<div class="col-4">
-							<label for="opt-drum-bars" class="form-label micro-label small text-muted mb-0" style="font-size:0.75rem;">Total Mesures</label>
+							<label for="opt-drum-bars" class="form-label micro-label small text-muted mb-0" style="font-size:0.75rem;" data-i18n="ui.totalBars">Total Mesures</label>
 							<input type="number" id="opt-drum-bars" class="form-control form-control-sm text-center" value="2" min="1" max="99">
 						</div>
 					</div>
@@ -271,26 +274,26 @@
 				<div class="row g-3 align-items-end border-top pt-3">
 					
 					<div class="col-6 col-sm-4 col-md-3">
-						<label for="opt-tab-instrument" class="form-label small fw-bold text-muted mb-1">Tablature instrument</label>
+						<label for="opt-tab-instrument" class="form-label small fw-bold text-muted mb-1" data-i18n="ui.tabInstrument">Tablature instrument</label>
 						<select id="opt-tab-instrument" class="form-select form-select-sm" onchange="document.getElementById('opt-tab-tuning').disabled = (this.value === 'none')">
-							<option value="none" selected>Aucune</option>
-							<option value="guitar">Guitare</option>
-							<option value="violin">Violon / Mandoline</option>
-							<option value="viola">Alto (Viola)</option>
+							<option value="none" selected data-i18n="ui.none">Aucune</option>
+							<option value="guitar" data-i18n="ui.guitar">Guitare</option>
+							<option value="violin" data-i18n="ui.violin">Violon / Mandoline</option>
+							<option value="viola" data-i18n="ui.viola">Alto (Viola)</option>
 						</select>
 					</div>
 
 					<div class="col-6 col-sm-4 col-md-3">
-						<label for="opt-tab-tuning" class="form-label small fw-bold text-muted mb-1">Accordage (Ex: E,A,D,G,B,e)</label>
-						<input type="text" id="opt-tab-tuning" class="form-control form-control-sm" placeholder="Par défaut" disabled>
+						<label for="opt-tab-tuning" class="form-label small fw-bold text-muted mb-1" data-i18n="ui.tuning">Accordage (Ex: E,A,D,G,B,e)</label>
+						<input type="text" id="opt-tab-tuning" class="form-control form-control-sm" placeholder="Par défaut" data-i18n-placeholder="ui.default" disabled>
 					</div>
 
 					<div class="col-12 col-sm-4 col-md-6 d-flex justify-content-between align-items-center pt-2 pt-sm-0">
-						<button id="btn-apply-settings" class="btn btn-sm btn-primary px-3 fw-bold">
+						<button id="btn-apply-settings" class="btn btn-sm btn-primary px-3 fw-bold" data-i18n="ui.apply">
 							🔄 Appliquer les changements
 						</button>
 
-<a id="btn-export-midi" class="btn btn-outline-secondary" download="morceau.mid" href="#">💾Exporter MIDI</a>
+<a id="btn-export-midi" class="btn btn-outline-secondary" download="morceau.mid" href="#" data-i18n="ui.exportMidi">💾Exporter MIDI</a>
 
 						
 					</div>
@@ -307,20 +310,20 @@
 		  <!-- Colonne 1 : Copyright & Titre -->
 		  <div class="col-12 col-md-6 text-center text-md-start">
 			<span class="small">
-			  CC BY-NC 4.0 <span id="currentYear"></span><script>document.getElementById("currentYear").textContent = new Date().getFullYear();</script> <strong>François Parlant</strong> &mdash; Créé avec passion pour le rythme et la mélodie.
+			  CC BY-NC 4.0 <span id="currentYear"></span><script>document.getElementById("currentYear").textContent = new Date().getFullYear();</script> <strong>François Parlant</strong> &mdash; <span data-i18n="footer.tagline">Créé avec passion pour le rythme et la mélodie.</span>
 			</span>
 		  </div>
 
 		  <!-- Colonne 2 : Liens Réseaux Sociaux -->
 		  <div class="col-12 col-md-6 text-center text-md-end">
 			<div class="d-inline-flex gap-3 align-items-center">
-			  <a href="https://github.com/fxpar/music-toolbox/blob/main/abc-editor-player.html" target="_blank" rel="noopener noreferrer" class="text-body-secondary text-decoration-none fs-5 hover-accent" title="Code source GitHub"> 
+			  <a href="https://github.com/fxpar/music-toolbox/blob/main/abc-editor-player.html" target="_blank" rel="noopener noreferrer" class="text-body-secondary text-decoration-none fs-5 hover-accent" title="Code source GitHub" data-i18n-title="footer.github"> 
 				<i class="bi bi-github"></i> 
 			  </a> 
-			  <a href="https://www.linkedin.com/in/francois-parlant" target="_blank" rel="noopener noreferrer" class="text-body-secondary text-decoration-none fs-5 hover-accent" title="LinkedIn: François Parlant">
+			  <a href="https://www.linkedin.com/in/francois-parlant" target="_blank" rel="noopener noreferrer" class="text-body-secondary text-decoration-none fs-5 hover-accent" title="LinkedIn: François Parlant" data-i18n-title="footer.linkedin">
 				<i class="bi bi-linkedin"></i> 
 			  </a> 
-			  <a href="https://www.youtube.com/c/enparlantdebureautiqueformezvous" target="_blank" rel="noopener noreferrer" class="text-body-secondary text-decoration-none fs-5 hover-accent" title="Tutos YouTube: En parlant de bureautique">
+			  <a href="https://www.youtube.com/c/enparlantdebureautiqueformezvous" target="_blank" rel="noopener noreferrer" class="text-body-secondary text-decoration-none fs-5 hover-accent" title="Tutos YouTube: En parlant de bureautique" data-i18n-title="footer.youtube">
 				<i class="bi bi-youtube"></i> 
 			  </a>
 			</div>
@@ -337,6 +340,57 @@
 <script src="https://cdn.jsdelivr.net/npm/abcjs@6.4.0/dist/abcjs-basic-min.js"></script>
 
 <script>
+    // --- Traductions FR / EN (module commun js/i18n-fx.js) ---
+    FxI18n.add({
+        fr: {
+            "page.title": "Lecteur ABCJS & Partition Locale",
+            "ui.brand": "Éditeur & Lecteur ABCJS",
+            "ui.export": "📥 Sauvegarder la bibliothèque (Télécharger)", "ui.import": "📤 Ouvrir une bibliothèque (Charger)",
+            "ui.saved": "Enregistré", "ui.library": "Bibliothèque", "ui.savedTunes": "Morceaux enregistrés", "ui.newTune": "+ Nouveau morceau",
+            "ui.score": "Partition", "ui.rename": "✏️ Renommer le morceau", "ui.source": "Code Source ABC",
+            "ui.advanced": "Options avancées", "ui.transpose": "Transposer (½ tons)",
+            "ui.muteMelody": "Taire la mélodie", "ui.muteChords": "Taire les accords", "ui.autoScroll": "Défiler avec la musique",
+            "ui.drum": "Activer Rythme/Métronome", "ui.introBars": "Mesures Intro", "ui.totalBars": "Total Mesures",
+            "ui.tabInstrument": "Tablature instrument", "ui.none": "Aucune", "ui.guitar": "Guitare", "ui.violin": "Violon / Mandoline", "ui.viola": "Alto (Viola)",
+            "ui.tuning": "Accordage (Ex: E,A,D,G,B,e)", "ui.default": "Par défaut",
+            "ui.apply": "🔄 Appliquer les changements", "ui.exportMidi": "💾Exporter MIDI",
+            "msg.emptyLibrary": "La bibliothèque est vide.", "file.library": "ma_bibliotheque_abc.json",
+            "msg.confirmOverwrite": "Voulez-vous écraser votre bibliothèque actuelle par celle-ci ?",
+            "msg.loaded": "Bibliothèque chargée avec succès !",
+            "msg.badFormat": "Format de fichier invalide. Ce n'est pas une bibliothèque ABC valide.",
+            "msg.readError": "Erreur lors de la lecture du fichier JSON.",
+            "msg.newPrompt": "Entrez le nom du nouveau morceau :", "song.new": "Nouveau Morceau",
+            "msg.renamePrompt": "Modifier le nom du morceau :", "song.noTitle": "Sans titre", "song.untitled": "Morceau sans titre",
+            "footer.tagline": "Créé avec passion pour le rythme et la mélodie.", "footer.github": "Code source GitHub",
+            "footer.linkedin": "LinkedIn: François Parlant", "footer.youtube": "Tutos YouTube: En parlant de bureautique"
+        },
+        en: {
+            "page.title": "ABCJS Player & Local Scores",
+            "ui.brand": "ABCJS Editor & Player",
+            "ui.export": "📥 Save library (Download)", "ui.import": "📤 Open a library (Load)",
+            "ui.saved": "Saved", "ui.library": "Library", "ui.savedTunes": "Saved tunes", "ui.newTune": "+ New tune",
+            "ui.score": "Score", "ui.rename": "✏️ Rename tune", "ui.source": "ABC source code",
+            "ui.advanced": "Advanced options", "ui.transpose": "Transpose (semitones)",
+            "ui.muteMelody": "Mute melody", "ui.muteChords": "Mute chords", "ui.autoScroll": "Scroll with the music",
+            "ui.drum": "Enable rhythm/metronome", "ui.introBars": "Intro bars", "ui.totalBars": "Total bars",
+            "ui.tabInstrument": "Tablature instrument", "ui.none": "None", "ui.guitar": "Guitar", "ui.violin": "Violin / Mandolin", "ui.viola": "Viola",
+            "ui.tuning": "Tuning (e.g. E,A,D,G,B,e)", "ui.default": "Default",
+            "ui.apply": "🔄 Apply changes", "ui.exportMidi": "💾Export MIDI",
+            "msg.emptyLibrary": "The library is empty.", "file.library": "my_abc_library.json",
+            "msg.confirmOverwrite": "Replace your current library with this one?",
+            "msg.loaded": "Library loaded successfully!",
+            "msg.badFormat": "Invalid file format. This is not a valid ABC library.",
+            "msg.readError": "Error while reading the JSON file.",
+            "msg.newPrompt": "Enter the name of the new tune:", "song.new": "New Tune",
+            "msg.renamePrompt": "Edit the tune name:", "song.noTitle": "Untitled", "song.untitled": "Untitled tune",
+            "footer.tagline": "Made with passion for rhythm and melody.", "footer.github": "Source code on GitHub",
+            "footer.linkedin": "LinkedIn: François Parlant", "footer.youtube": "YouTube tutorials: En parlant de bureautique"
+        }
+    });
+    FxI18n.onChange(function () {
+        document.title = FxI18n.t("page.title");
+    });
+
     // --- MOTEUR DE STOCKAGE LOCALSTORAGE (SÉCURISÉ POUR FILE:///) ---
     function getScoresFromStorage() {
         const scoresRaw = localStorage.getItem("AbcJs_Scores_Database");
@@ -387,13 +441,13 @@
     document.getElementById('btn-export').addEventListener('click', function() {
         const scores = getScoresFromStorage();
         if (scores.length === 0) {
-            alert("La bibliothèque est vide.");
+            alert(FxI18n.t("msg.emptyLibrary"));
             return;
         }
         const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(scores, null, 2));
         const downloadAnchor = document.createElement('a');
         downloadAnchor.setAttribute("href", dataStr);
-        downloadAnchor.setAttribute("download", "ma_bibliotheque_abc.json");
+        downloadAnchor.setAttribute("download", FxI18n.t("file.library"));
         document.body.appendChild(downloadAnchor);
         downloadAnchor.click();
         downloadAnchor.remove();
@@ -412,18 +466,18 @@
             try {
                 const importedScores = JSON.parse(event.target.result);
                 if (Array.isArray(importedScores) && importedScores.length > 0 && importedScores[0].abc) {
-                    if (confirm("Voulez-vous écraser votre bibliothèque actuelle par celle-ci ?")) {
+                    if (confirm(FxI18n.t("msg.confirmOverwrite"))) {
                         saveScoresToStorage(importedScores);
                         currentId = importedScores[0].id;
                         localStorage.setItem("AbcJs_LastCurrentId", currentId);
                         refreshListAndSelect(currentId);
-                        alert("Bibliothèque chargée avec succès !");
+                        alert(FxI18n.t("msg.loaded"));
                     }
                 } else {
-                    alert("Format de fichier invalide. Ce n'est pas une bibliothèque ABC valide.");
+                    alert(FxI18n.t("msg.badFormat"));
                 }
             } catch(err) {
-                alert("Erreur lors de la lecture du fichier JSON.");
+                alert(FxI18n.t("msg.readError"));
             }
         };
         reader.readAsText(file);
@@ -536,9 +590,9 @@
         });
 
         document.getElementById('btn-new').addEventListener('click', function() {
-            const name = prompt("Entrez le nom du nouveau morceau :", "Nouveau Morceau");
+            const name = prompt(FxI18n.t("msg.newPrompt"), FxI18n.t("song.new"));
             if (name === null) return;
-            const finalName = name.trim() || "Nouveau Morceau";
+            const finalName = name.trim() || FxI18n.t("song.new");
             const emptyABC = `X:1\nT:${finalName}\nM:4/4\nL:1/4\nK:C\n| C D E F | G A B c |`;
             
             saveScoreToDB(finalName, emptyABC, function(id) {
@@ -566,9 +620,9 @@
         document.getElementById('btn-rename').addEventListener('click', function() {
             if (!currentId) return;
             getScoreFromDB(currentId, function(score) {
-                const newName = prompt("Modifier le nom du morceau :", score.title);
+                const newName = prompt(FxI18n.t("msg.renamePrompt"), score.title);
                 if (newName === null) return;
-                const finalName = newName.trim() || "Sans titre";
+                const finalName = newName.trim() || FxI18n.t("song.noTitle");
 
                 let abc = document.getElementById('abc-code').value;
                 if (abc.match(/^T:\s*(.*)$/m)) {
@@ -696,7 +750,7 @@
                 }
 
                 const currentABC = document.getElementById('abc-code').value;
-                const currentTitle = parseTitle(currentABC) || "Morceau sans titre";
+                const currentTitle = parseTitle(currentABC) || FxI18n.t("song.untitled");
                 
                 if (currentId) {
                     updateScoreInDB(currentId, currentTitle, currentABC, function() {

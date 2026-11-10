@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Entraînement Rythmique Ukulélé</title>
+    <script src="./js/i18n-fx.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.min.css">
     <style>
@@ -35,13 +36,16 @@
 <div class="container py-5">
     <div class="row justify-content-center text-center">
         <div class="col-md-8">
-            <h1 class="fw-bold mb-3">🎵 Coach Rythmique Ukulélé</h1>
-            <p class="text-muted mb-4">Jouez la progression d'accords en rythme. L'application valide si vous êtes calé !</p>
+            <div class="text-end">
+                <button type="button" class="btn btn-outline-secondary btn-sm" data-i18n-toggle>FR</button>
+            </div>
+            <h1 class="fw-bold mb-3" data-i18n="uh.h1">🎵 Coach Rythmique Ukulélé</h1>
+            <p class="text-muted mb-4" data-i18n="uh.intro">Jouez la progression d'accords en rythme. L'application valide si vous êtes calé !</p>
 
             <div class="card p-4 mb-4 shadow-sm">
                 <div class="row align-items-center g-3">
                     <div class="col-sm-6">
-                        <label for="bpmRange" class="form-label fw-bold">Tempo : <span id="bpmValue">60</span> BPM</label>
+                        <label for="bpmRange" class="form-label fw-bold"><span data-i18n="uh.tempo">Tempo :</span> <span id="bpmValue">60</span> BPM</label>
                         <input type="range" class="form-range" id="bpmRange" min="40" max="120" value="60">
                     </div>
                     <div class="col-sm-6">
@@ -58,31 +62,31 @@
                 <div class="col-3">
                     <div id="card-0" class="card p-3 chord-card active-chord text-center">
                         <h2 class="fw-bold text-primary mb-1">C</h2>
-                        <small class="text-muted">Do, Mi, Sol</small>
+                        <small class="text-muted" data-i18n="uh.notesC">Do, Mi, Sol</small>
                     </div>
                 </div>
                 <div class="col-3">
                     <div id="card-1" class="card p-3 chord-card text-center">
                         <h2 class="fw-bold text-dark mb-1">G</h2>
-                        <small class="text-muted">Sol, Si, Ré</small>
+                        <small class="text-muted" data-i18n="uh.notesG">Sol, Si, Ré</small>
                     </div>
                 </div>
                 <div class="col-3">
                     <div id="card-2" class="card p-3 chord-card text-center">
                         <h2 class="fw-bold text-dark mb-1">Am</h2>
-                        <small class="text-muted">La, Do, Mi</small>
+                        <small class="text-muted" data-i18n="uh.notesAm">La, Do, Mi</small>
                     </div>
                 </div>
                 <div class="col-3">
                     <div id="card-3" class="card p-3 chord-card text-center">
                         <h2 class="fw-bold text-dark mb-1">F</h2>
-                        <small class="text-muted">Fa, La, Do</small>
+                        <small class="text-muted" data-i18n="uh.notesF">Fa, La, Do</small>
                     </div>
                 </div>
             </div>
 
             <div class="card p-4 shadow-sm bg-white">
-                <h4 class="text-muted mb-2">Statut de votre jeu :</h4>
+                <h4 class="text-muted mb-2" data-i18n="uh.statusTitle">Statut de votre jeu :</h4>
                 <div id="gameStatus" class="display-6 fw-bold text-warning">Appuyez sur Démarrer</div>
                 <div id="scoreStatus" class="fs-5 mt-2 text-success fw-semibold"></div>
             </div>
@@ -97,20 +101,20 @@
 		  <!-- Colonne 1 : Copyright & Titre -->
 		  <div class="col-12 col-md-6 text-center text-md-start">
 			<span class="small">
-			  CC BY-NC 4.0 <span id="currentYear"></span><script>document.getElementById("currentYear").textContent = new Date().getFullYear();</script> <strong>François Parlant</strong> &mdash; Créé avec passion pour le rythme et la mélodie.
+			  CC BY-NC 4.0 <span id="currentYear"></span><script>document.getElementById("currentYear").textContent = new Date().getFullYear();</script> <strong>François Parlant</strong> &mdash; <span data-i18n="footer.made">Créé avec passion pour le rythme et la mélodie.</span>
 			</span>
 		  </div>
 
 		  <!-- Colonne 2 : Liens Réseaux Sociaux -->
 		  <div class="col-12 col-md-6 text-center text-md-end">
 			<div class="d-inline-flex gap-3 align-items-center">
-			  <a href="https://github.com/fxpar/music-toolbox/blob/main/uku-hero.html" target="_blank" rel="noopener noreferrer" class="text-body-secondary text-decoration-none fs-5 hover-accent" title="Code source GitHub"> 
+			  <a href="https://github.com/fxpar/music-toolbox/blob/main/uku-hero.html" target="_blank" rel="noopener noreferrer" class="text-body-secondary text-decoration-none fs-5 hover-accent" title="Code source GitHub" data-i18n-title="footer.github"> 
 				<i class="bi bi-github"></i> 
 			  </a> 
-			  <a href="https://www.linkedin.com/in/francois-parlant" target="_blank" rel="noopener noreferrer" class="text-body-secondary text-decoration-none fs-5 hover-accent" title="LinkedIn: François Parlant">
+			  <a href="https://www.linkedin.com/in/francois-parlant" target="_blank" rel="noopener noreferrer" class="text-body-secondary text-decoration-none fs-5 hover-accent" title="LinkedIn: François Parlant" data-i18n-title="footer.linkedin">
 				<i class="bi bi-linkedin"></i> 
 			  </a> 
-			  <a href="https://www.youtube.com/c/enparlantdebureautiqueformezvous" target="_blank" rel="noopener noreferrer" class="text-body-secondary text-decoration-none fs-5 hover-accent" title="Tutos YouTube: En parlant de bureautique">
+			  <a href="https://www.youtube.com/c/enparlantdebureautiqueformezvous" target="_blank" rel="noopener noreferrer" class="text-body-secondary text-decoration-none fs-5 hover-accent" title="Tutos YouTube: En parlant de bureautique" data-i18n-title="footer.youtube">
 				<i class="bi bi-youtube"></i> 
 			  </a>
 			</div>
@@ -122,6 +126,64 @@
 
 
 <script>
+    FxI18n.add({
+        fr: {
+            "page.title": "Entraînement Rythmique Ukulélé",
+            "uh.h1": "🎵 Coach Rythmique Ukulélé",
+            "uh.intro": "Jouez la progression d'accords en rythme. L'application valide si vous êtes calé !",
+            "uh.tempo": "Tempo :",
+            "uh.start": "🚀 Démarrer la session",
+            "uh.stop": "⏱️ Arrêter",
+            "uh.notesC": "Do, Mi, Sol",
+            "uh.notesG": "Sol, Si, Ré",
+            "uh.notesAm": "La, Do, Mi",
+            "uh.notesF": "Fa, La, Do",
+            "uh.statusTitle": "Statut de votre jeu :",
+            "uh.pressStart": "Appuyez sur Démarrer",
+            "uh.play": "JOUEZ LE : {chord}",
+            "uh.late": "❌ TROP TARD / RATE !",
+            "uh.perfect": "✅ PARFAIT ! ({chord})",
+            "uh.stopped": "Session arrêtée",
+            "uh.score": "Précision : {ok}/{total} ({percent}%)",
+            "uh.micError": "Erreur d'accès au micro : {err}",
+            "footer.made": "Créé avec passion pour le rythme et la mélodie.",
+            "footer.github": "Code source GitHub",
+            "footer.linkedin": "LinkedIn: François Parlant",
+            "footer.youtube": "Tutos YouTube: En parlant de bureautique"
+        },
+        en: {
+            "page.title": "Ukulele Rhythm Training",
+            "uh.h1": "🎵 Ukulele Rhythm Coach",
+            "uh.intro": "Play the chord progression in time. The app checks whether you're locked in!",
+            "uh.tempo": "Tempo:",
+            "uh.start": "🚀 Start session",
+            "uh.stop": "⏱️ Stop",
+            "uh.notesC": "C, E, G",
+            "uh.notesG": "G, B, D",
+            "uh.notesAm": "A, C, E",
+            "uh.notesF": "F, A, C",
+            "uh.statusTitle": "Your playing status:",
+            "uh.pressStart": "Press Start",
+            "uh.play": "PLAY: {chord}",
+            "uh.late": "❌ TOO LATE / MISSED!",
+            "uh.perfect": "✅ PERFECT! ({chord})",
+            "uh.stopped": "Session stopped",
+            "uh.score": "Accuracy: {ok}/{total} ({percent}%)",
+            "uh.micError": "Microphone access error: {err}",
+            "footer.made": "Made with passion for rhythm and melody.",
+            "footer.github": "GitHub source code",
+            "footer.linkedin": "LinkedIn: François Parlant",
+            "footer.youtube": "YouTube tutorials: En parlant de bureautique"
+        }
+    });
+
+    // Dernier statut affiché (clé + variables) pour pouvoir le re-traduire
+    var lastStatus = { key: 'uh.pressStart', vars: null };
+    function setGameStatus(key, vars) {
+        lastStatus = { key: key, vars: vars || null };
+        document.getElementById('gameStatus').textContent = FxI18n.t(key, vars);
+    }
+
     // 1. DÉFINITION DES ACCORDS ET LEURS FRÉQUENCES (Fondamentales adaptées au Ukulélé)
     const CHORDS_DB = [
         { name: "C",  notes: { C: [261.6], E: [329.6], G: [196.0, 392.0] } },
@@ -172,7 +234,7 @@
             source.connect(analyser);
 
             isPlaying = true;
-            startBtn.textContent = "⏱️ Arrêter";
+            startBtn.textContent = FxI18n.t('uh.stop');
             startBtn.className = "btn btn-danger btn-lg w-100 fw-bold shadow-sm";
             
             successfulChords = 0;
@@ -184,7 +246,7 @@
             requestAnimationFrame(detectLoop);
 
         } catch (err) {
-            alert("Erreur d'accès au micro : " + err);
+            alert(FxI18n.t('uh.micError', { err: err }));
         }
     });
 
@@ -200,14 +262,14 @@
             beatProgress.style.width = '100%';
         }, 10);
 
-        gameStatus.textContent = `JOUEZ LE : ${CHORDS_DB[currentChordIndex].name}`;
+        setGameStatus('uh.play', { chord: CHORDS_DB[currentChordIndex].name });
         gameStatus.className = "display-6 fw-bold text-primary";
 
         beatInterval = setTimeout(() => {
             // Fin du temps imparti pour cet accord
             totalBeats++;
             if (!chordValidatedThisBeat) {
-                gameStatus.textContent = "❌ TROP TARD / RATE !";
+                setGameStatus('uh.late');
                 gameStatus.className = "display-6 fw-bold text-danger";
             }
 
@@ -232,9 +294,9 @@
     function stopGame() {
         isPlaying = false;
         clearTimeout(beatInterval);
-        startBtn.textContent = "🚀 Démarrer la session";
+        startBtn.textContent = FxI18n.t('uh.start');
         startBtn.className = "btn btn-success btn-lg w-100 fw-bold shadow-sm";
-        gameStatus.textContent = "Session arrêtée";
+        setGameStatus('uh.stopped');
         gameStatus.className = "display-6 fw-bold text-muted";
         beatProgress.style.width = '0%';
     }
@@ -248,7 +310,7 @@
     function updateScore() {
         if(totalBeats > 0) {
             const percent = Math.round((successfulChords / totalBeats) * 100);
-            scoreStatus.textContent = `Précision : ${successfulChords}/${totalBeats} (${percent}%)`;
+            scoreStatus.textContent = FxI18n.t('uh.score', { ok: successfulChords, total: totalBeats, percent: percent });
         }
     }
 
@@ -289,7 +351,7 @@
         if (allNotesDetected && !chordValidatedThisBeat) {
             chordValidatedThisBeat = true;
             successfulChords++;
-            gameStatus.textContent = `✅ PARFAIT ! (${activeChord.name})`;
+            setGameStatus('uh.perfect', { chord: activeChord.name });
             gameStatus.className = "display-6 fw-bold text-success";
             
             // Petit flash visuel vert sur la carte de l'accord réussi
@@ -300,6 +362,14 @@
 
         requestAnimationFrame(detectLoop);
     }
+
+    // Changement de langue : re-traduire bouton, statut et score sans interrompre la session
+    FxI18n.onChange(function () {
+        document.title = FxI18n.t('page.title');
+        startBtn.textContent = FxI18n.t(isPlaying ? 'uh.stop' : 'uh.start');
+        gameStatus.textContent = FxI18n.t(lastStatus.key, lastStatus.vars);
+        updateScore();
+    });
 </script>
 
 </body>

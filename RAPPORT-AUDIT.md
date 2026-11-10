@@ -38,6 +38,60 @@
 
 **À valider par l'auteur** : dans cadences, le « 0 » suit l'origine de la cadence quand on la déplace (au départ il est bien sur la ligne 18).
 
+### Fait le 9/11/2026, 2e vague (non commité, non testé sur Android 7)
+| Sujet | Fichiers | Vérification |
+|---|---|---|
+| Accords ABC et noms de notes recalculés depuis les doigtés, un temps = une noire, clé de Fa pour la guitare, portée lisible en sombre, message si pas d'audio. abcjs : CDN 6.4.0 commenté, `js/abcjs-basicfx.js` actif. | chord-ear-trainer.html | script : 0 erreur ; navigateur |
+| Doublons retirés, Bm et G7 guitare corrigés, formes « Haut » corrigées, liste perso sensible à la casse, tempo borné (30-240), vraies 2 mesures à vide. D7 ukulélé gardé en `2020` (forme débutant). | chord-change.html | script ; navigateur |
+| 4 vraies grilles de 12 mesures (ii-V-I, iim7-V7-Imaj7, blues jazz, turnaround), descriptions dynamiques, repli enharmonique (F#7 ↔ Gb7…) | blues-grids.html | 28 combinaisons, 0 « Inconnu » |
+| Mode R repart vraiment de la base ; horloge Web Audio à anticipation ; `AudioContext` créé au clic ; erreurs de formule visibles ; tempo min 20 | metronome-graduel.html | clics à 0,5000 s à 120 bpm |
+| `Tone.immediate()` (biais de +100 ms supprimé), écart à la cible la plus proche, presets réparés (p6, p7), statistiques de session, `async/await` retiré | timing-trainer.html | frappes simulées : écart < 3 ms |
+| Transposition en ♯ ou ♭ selon la tonalité, repli enharmonique des diagrammes, 2e « Enregistrer » neutralisé (commenté), regex d'accords stricte, recherche par tags, fermeture de la modale | js/songbookfx*.js | 68 accords détectés avant/après ; navigateur |
+| La forme est conservée en changeant de corde de référence, validation avant application, en-tête de cordes dynamique, clés i18n manquantes ajoutées, deux `?.` retirés | ukulele-position-accord-pedago.html | navigateur |
+| Plugin soundfont local avec repli CDN + plan du player unique | js/abcjs-localsoundfont-fx.js, PLAN-PLAYER.md | session dédiée, abcjs 6.6.3 / 6.7.2 non modifiés |
+
+### Fait le 9/11/2026, 3e vague : traduction anglaise (non commité, non testé sur Android 7)
+- **Architecture** : module commun `js/i18n-fx.js` (publié grâce au « fx »).
+  - Dictionnaires FR/EN **dans chaque page**, sans `fetch` : fonctionne en ligne, en `file://` et dans la WebView.
+  - Attributs `data-i18n*`, `FxI18n.t()` pour les textes générés en JS, bouton `data-i18n-toggle`.
+  - Une seule préférence de langue `fx.lang` pour tous les outils (navigateur non francophone → anglais par défaut).
+  - L'ancien `js/i18n.js` (fetch de JSON, non publié) n'est pas utilisé.
+- **Pages traduites avec le module (24)** : abc-editeur-simple, abc-editor-player, abc-grid, abc-grid+diagrams, sample_json_abc, drum-licks, latin-percussions, metronome-graduel, timing-trainer, chord-change, chord-ear-trainer (notes affichées C E G en anglais), blues-grids, key-signatures-svg, songbookfx, quiz-formule-accords, ukulele-position-accord-quiz, ukulele-position-accord-mouvant, ukulele-chords-search, uke-chord-advanced, convertisseur-tab-bass-ukulele, volume-tester, chord-recognition, uku-hero, privacy.
+- **Pages qui gardent leur propre système** mais lisent et écrivent maintenant `fx.lang` : ukulele-cadences, ukulele-position-accord-pedago (FR/EN/DE), modes_musicaux_interactifs (FR/INT).
+- **Non traduites** : index.html (construite à partir du README, en français), simpleAbc (gabarit), deleteMe, `*_local`.
+- **Corrigé au passage pour Android 7** :
+  - `?.` et `async/await` dans sample_json_abc ;
+  - paramètre par défaut dans songbookfx.js ;
+  - 3 `{...obj}` dans mouvant ;
+  - `padEnd` dans songbookfx-parser.js.
+  - Restent des `async/await` dans les outils micro, index et simpleAbc, qui ne servent pas dans l'appli.
+- **À l'usage** : dans mouvant, le bouton de notation FR/INT et le nouveau bouton FR/EN se ressemblent (distingués seulement par l'infobulle).
+
+### Fait le 9/11/2026, 4e vague : pages « Tonal » venues de l'appli Android (non commité)
+- **Pages** : `tonal_intervals_note`, `tonal_intervals_ear`, `tonal_intervals_namesTrebble`, `tonal_intervals_names_Bass`, `tonal_scale_namesTrebble`, `tonal_scale_namesTrebble_ear`. La librairie `js/tonalfx.js` est copiée depuis `musicTheoryGamesWww` (publiée grâce au « fx »).
+- **Chemins** :
+  - en ligne actifs : Bootstrap 5.3.3, icônes, CSS abcjs 6.6.3 ;
+  - `./js/abcjs-basicfx.js` remplace `abcjs-basicfxv3.js` ;
+  - lignes locales gardées **en commentaire**, ainsi que `scale-coach-lg.js` (clés manquantes → « undefined ») et `lesson.js` (inexistant).
+- **Bugs corrigés** :
+  - titres vides, `document.write`, offcanvas de démo, icône absente ;
+  - `paper_abc_ex_01` en double, `<!-- -->` dans le JS, textes FR en dur ;
+  - éditeur abcjs recréé à chaque question ;
+  - octave calculée avec `8M`.
+- **Justesse (tests exhaustifs)** :
+  - intervalles : 362 questions en clé de sol et 518 en clé de fa, 0 impossible ; les 16 à 22 combinaisons à triple altération sont exclues ;
+  - gammes : 103 sur 105 retenues (Mi et Si augmentées exclues).
+- **Ajouts** : consigne, score, retour détaillé (enharmonie signalée), indice/solution (la solution annule le point), aide en accordéon en bas, FR/EN avec notes Do Ré Mi / C D E.
+- **Attention** : les 4 pages d'intervalles ont été **régénérées depuis un gabarit commun** ; elles ne correspondent plus ligne à ligne à la version Android, et la version web devient la référence. Les pages « ear » restent ta variante : le nom de l'intervalle ou la tonique reste affiché, ce n'est pas une dictée pure.
+- **Pas encore dans le README**, donc absentes de la page d'accueil.
+
+**Points ouverts :**
+- ~~**Métronome, R**~~ : réglé. R garde son sens (retour à la base, la partie entre parenthèses n'est jouée qu'une fois) ; le preset « Gammes lentes » devient `5D, 5T+5, R` → 72×5, 77×5, 72×5… (vérifié par simulation), et un exemple est ajouté à l'aide.
+- **Diagrammes manquants** : `js/songbookfx-chords.js` n'a pas plusieurs accords courants (Ab7, C#7, Cm7, F#7, Bbm, Ebm, G#m, F#, et beaucoup d'accords guitare de base).
+- **`chord-library.js`** : convention de position décalée d'une case (Ebmaj7 ukulélé ; Bm7, C#m7, Dm7, Cm7 guitare) ; doigtés faux `A_v2` (1343) et `Am_v3`.
+- **Android 7** : `padEnd` (ES2017) est utilisé dans songbookfx-parser.js (code d'origine) ; à surveiller si la WebView est antérieure à Chrome 57.
+- **chord-ear-trainer en ligne** : la version locale d'abcjs cherche d'abord `sound/*.mp3` (404 en ligne, puis CDN). À basculer sur abcjs officiel + le nouveau plugin quand il sera adopté.
+
 ---
 
 ## Sommaire

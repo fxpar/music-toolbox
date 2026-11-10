@@ -41,25 +41,26 @@
 
 <div class="container" style="max-width: 800px;">
     <div class="card bg-secondary bg-opacity-10 border-secondary shadow-lg">
-        <div class="card-header border-secondary text-center py-3">
-            <h1 class="h3 mb-0"><i class="bi bi-metronome me-2 text-primary"></i>Développement du Sens du Temps</h1>
-            <p class="text-muted small mb-0 mt-1">Tapez sur la barre d'espace ou sur le grand bouton bleu</p>
+        <div class="card-header border-secondary text-center py-3 position-relative">
+            <button type="button" class="btn btn-sm btn-outline-secondary position-absolute top-0 end-0 m-2" data-i18n-toggle>FR</button>
+            <h1 class="h3 mb-0"><i class="bi bi-metronome me-2 text-primary"></i><span data-i18n="h1">Développement du Sens du Temps</span></h1>
+            <p class="text-muted small mb-0 mt-1" data-i18n="subtitle">Tapez sur la barre d'espace ou sur le grand bouton bleu</p>
         </div>
         
         <div class="card-body p-4">
             
             <!-- Presets -->
             <div class="mb-4">
-                <label for="presetSelect" class="form-label fw-bold"><i class="bi bi-bookmarks me-1"></i> Presets d'entraînement</label>
+                <label for="presetSelect" class="form-label fw-bold"><i class="bi bi-bookmarks me-1"></i> <span data-i18n="presetsLabel">Presets d'entraînement</span></label>
                 <select id="presetSelect" class="form-select bg-dark text-light border-secondary">
-                    <option value="">-- Choisir un preset --</option>
-                    <option value="p1">1. Tout joué (Metronome classique)</option>
-                    <option value="p2">2. Uniquement le 1er temps (Ancre de mesure)</option>
-                    <option value="p3">3. Temps faibles Jazz/Pop (Temps 2 et 4)</option>
-                    <option value="p4" selected>4. Le 4ème temps uniquement (Anticipation de mesure)</option>
-                    <option value="p5">5. Le 3ème temps uniquement (Balance centrale)</option>
-                    <option value="p6">6. Le "2" uniquement (Rebond)</option>
-                    <option value="p7">7. Extrémités (Temps 1 et 4)</option>
+                    <option value="" data-i18n="presetNone">-- Choisir un preset --</option>
+                    <option value="p1" data-i18n="p1">1. Tout joué (Metronome classique)</option>
+                    <option value="p2" data-i18n="p2">2. Uniquement le 1er temps (Ancre de mesure)</option>
+                    <option value="p3" data-i18n="p3">3. Temps faibles Jazz/Pop (Temps 2 et 4)</option>
+                    <option value="p4" selected data-i18n="p4">4. Le 4ème temps uniquement (Anticipation de mesure)</option>
+                    <option value="p5" data-i18n="p5">5. Le 3ème temps uniquement (Balance centrale)</option>
+                    <option value="p6" data-i18n="p6">6. Le 2ème temps uniquement (Rebond)</option>
+                    <option value="p7" data-i18n="p7">7. Extrémités (Temps 1 et 4)</option>
                 </select>
             </div>
 
@@ -73,7 +74,7 @@
                     <input type="range" class="form-range" id="bpmRange" min="40" max="200" value="80">
                 </div>
                 <div class="col-md-6">
-                    <label for="beatsPerMeasure" class="form-label fw-bold"><i class="bi bi-grid-3x3-gap me-1"></i> Temps par mesure</label>
+                    <label for="beatsPerMeasure" class="form-label fw-bold"><i class="bi bi-grid-3x3-gap me-1"></i> <span data-i18n="beatsPerBar">Temps par mesure</span></label>
                     <select id="beatsPerMeasure" class="form-select bg-dark text-light border-secondary">
                         <option value="2">2 temps</option>
                         <option value="3">3 temps</option>
@@ -87,7 +88,7 @@
 			  <div class="accordion-item bg-dark border-secondary">
 				<h2 class="accordion-header">
 				  <button class="accordion-button bg-dark text-light border-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseBeats">
-					<i class="bi bi-sliders me-2"></i> Configuration des temps (🔊 Entendre / 🎯 Cibler)
+					<i class="bi bi-sliders me-2"></i> <span data-i18n="beatsConfig">Configuration des temps (🔊 Entendre / 🎯 Cibler)</span>
 				  </button>
 				</h2>
 				<div id="collapseBeats" class="accordion-collapse collapse show" data-bs-parent="#beatsAccordion">
@@ -101,18 +102,18 @@
             <!-- Bouton Play/Stop -->
             <div class="d-grid gap-2 mb-4">
                 <button id="playBtn" class="btn btn-outline-light btn-lg py-2 fw-bold">
-                    <i class="bi bi-play-fill me-2"></i> Démarrer le jeu
+                    <i class="bi bi-play-fill me-2"></i> <span data-i18n="start">Démarrer le jeu</span>
                 </button>
             </div>
 
             <!-- ZONE DE FRAPPE ET FEEDBACK -->
             <div class="p-3 bg-dark rounded border border-secondary text-center">
                 <div id="tapArea" class="p-4 rounded bg-primary text-white fw-bold fs-4 mb-3 cursor-pointer shadow" style="display: none;">
-                    <i class="bi bi-hand-index-thumb me-2"></i> TAPEZ ICI (ou ESPACE)
+                    <i class="bi bi-hand-index-thumb me-2"></i> <span data-i18n="tapHere">TAPEZ ICI (ou ESPACE)</span>
                 </div>
 
                 <!-- Afficheur de Précision -->
-                <div id="feedbackResult" class="fs-3 fw-bold mb-2 text-muted">En attente de frappe...</div>
+                <div id="feedbackResult" class="fs-3 fw-bold mb-2 text-muted" data-i18n="waiting">En attente de frappe...</div>
                 
                 <!-- Cible visuelle (Gauche = En avance / Droite = En retard) -->
                 <div class="target-bar mb-2">
@@ -120,10 +121,12 @@
                     <div id="hitMarker" class="hit-marker" style="left: 50%; display: none;"></div>
                 </div>
                 <div class="d-flex justify-content-between text-muted small">
-                    <span>TROP TÔT <span class="d-none d-md-inline">(En avance)</span></span>
-                    <span>PARFAIT</span>
-                    <span>TROP TARD <span class="d-none d-md-inline">(En retard)</span></span>
+                    <span><span data-i18n="tooEarly">TROP TÔT</span> <span class="d-none d-md-inline" data-i18n="ahead">(En avance)</span></span>
+                    <span data-i18n="perfect">PARFAIT</span>
+                    <span><span data-i18n="tooLate">TROP TARD</span> <span class="d-none d-md-inline" data-i18n="behind">(En retard)</span></span>
                 </div>
+                <!-- Statistiques de la session (réinitialisées à chaque Démarrer) -->
+                <div id="sessionStats" class="small text-muted mt-2">Frappes : 0</div>
             </div>
 
         </div>
@@ -136,20 +139,20 @@
 		  <!-- Colonne 1 : Copyright & Titre -->
 		  <div class="col-12 col-md-6 text-center text-md-start">
 			<span class="small">
-			  CC BY-NC 4.0 <span id="currentYear"></span><script>document.getElementById("currentYear").textContent = new Date().getFullYear();</script> <strong>François Parlant</strong> &mdash; Créé avec passion pour le rythme et les percussions.
+			  CC BY-NC 4.0 <span id="currentYear"></span><script>document.getElementById("currentYear").textContent = new Date().getFullYear();</script> <strong>François Parlant</strong> &mdash; <span data-i18n="footerMade">Créé avec passion pour le rythme et les percussions.</span>
 			</span>
 		  </div>
 
 		  <!-- Colonne 2 : Liens Réseaux Sociaux -->
 		  <div class="col-12 col-md-6 text-center text-md-end">
 			<div class="d-inline-flex gap-3 align-items-center">
-			  <a href="https://github.com/fxpar/music-toolbox/blob/main/timing-trainer.html" target="_blank" rel="noopener noreferrer" class="text-body-secondary text-decoration-none fs-5 hover-accent" title="Code source GitHub"> 
+			  <a href="https://github.com/fxpar/music-toolbox/blob/main/timing-trainer.html" target="_blank" rel="noopener noreferrer" class="text-body-secondary text-decoration-none fs-5 hover-accent" title="Code source GitHub" data-i18n-title="ftGithub"> 
 				<i class="bi bi-github"></i>
 			  </a>
 			  <a href="https://www.linkedin.com/in/francois-parlant" target="_blank" rel="noopener noreferrer" class="text-body-secondary text-decoration-none fs-5 hover-accent" title="LinkedIn: François Parlant">
 				<i class="bi bi-linkedin"></i>
 			  </a>
-			  <a href="https://www.youtube.com/c/enparlantdebureautiqueformezvous" target="_blank" rel="noopener noreferrer" class="text-body-secondary text-decoration-none fs-5 hover-accent" title="Tutos YouTube: En parlant de bureautique">
+			  <a href="https://www.youtube.com/c/enparlantdebureautiqueformezvous" target="_blank" rel="noopener noreferrer" class="text-body-secondary text-decoration-none fs-5 hover-accent" title="Tutos YouTube: En parlant de bureautique" data-i18n-title="ftYoutube">
 				<i class="bi bi-youtube"></i>
 			  </a>
 			</div>
@@ -162,8 +165,89 @@
 	<!-- <script src="./js/bootstrap.min.js"></script> -->
 	
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+	<script src="./js/i18n-fx.js"></script>
 
 <script>
+// --- Traductions FR / EN (module ./js/i18n-fx.js) ---
+FxI18n.add({
+    fr: {
+        pageTitle: "Entraînement au Sens du Temps",
+        h1: "Développement du Sens du Temps",
+        subtitle: "Tapez sur la barre d'espace ou sur le grand bouton bleu",
+        presetsLabel: "Presets d'entraînement",
+        presetNone: "-- Choisir un preset --",
+        p1: "1. Tout joué (Metronome classique)",
+        p2: "2. Uniquement le 1er temps (Ancre de mesure)",
+        p3: "3. Temps faibles Jazz/Pop (Temps 2 et 4)",
+        p4: "4. Le 4ème temps uniquement (Anticipation de mesure)",
+        p5: "5. Le 3ème temps uniquement (Balance centrale)",
+        p6: "6. Le 2ème temps uniquement (Rebond)",
+        p7: "7. Extrémités (Temps 1 et 4)",
+        beatsPerBar: "Temps par mesure",
+        beatsOption: "{n} temps",
+        beatsConfig: "Configuration des temps (🔊 Entendre / 🎯 Cibler)",
+        listenTitle: "Entendre ce temps",
+        listen: "Entendre",
+        aimTitle: "Évaluer la frappe sur ce temps",
+        aim: "Viser",
+        start: "Démarrer le jeu",
+        stop: "Arrêter",
+        tapHere: "TAPEZ ICI (ou ESPACE)",
+        waiting: "En attente de frappe...",
+        tooEarly: "TROP TÔT",
+        ahead: "(En avance)",
+        perfect: "PARFAIT",
+        tooLate: "TROP TARD",
+        behind: "(En retard)",
+        fbPerfect: "PARFAIT ! ({ms} ms)",
+        fbEarly: "Trop TÔT (-{ms} ms)",
+        fbLate: "Trop TARD (+{ms} ms)",
+        statsZero: "Frappes : 0",
+        stats: "Frappes : {n} · Écart moyen : {mean} ms · Régularité (écart-type) : {sd}",
+        footerMade: "Créé avec passion pour le rythme et les percussions.",
+        ftGithub: "Code source GitHub",
+        ftYoutube: "Tutos YouTube: En parlant de bureautique"
+    },
+    en: {
+        pageTitle: "Timing Trainer",
+        h1: "Develop Your Sense of Time",
+        subtitle: "Tap the space bar or the big blue button",
+        presetsLabel: "Practice presets",
+        presetNone: "-- Choose a preset --",
+        p1: "1. Every beat played (classic metronome)",
+        p2: "2. Beat 1 only (bar anchor)",
+        p3: "3. Jazz/Pop backbeats (beats 2 and 4)",
+        p4: "4. Beat 4 only (anticipating the bar)",
+        p5: "5. Beat 3 only (center balance)",
+        p6: "6. Beat 2 only (bounce)",
+        p7: "7. Outer beats (beats 1 and 4)",
+        beatsPerBar: "Beats per bar",
+        beatsOption: "{n} beats",
+        beatsConfig: "Beat settings (🔊 Hear / 🎯 Target)",
+        listenTitle: "Hear this beat",
+        listen: "Hear",
+        aimTitle: "Score your tap on this beat",
+        aim: "Target",
+        start: "Start",
+        stop: "Stop",
+        tapHere: "TAP HERE (or SPACE)",
+        waiting: "Waiting for a tap...",
+        tooEarly: "TOO EARLY",
+        ahead: "(Rushing)",
+        perfect: "PERFECT",
+        tooLate: "TOO LATE",
+        behind: "(Dragging)",
+        fbPerfect: "PERFECT! ({ms} ms)",
+        fbEarly: "Too EARLY (-{ms} ms)",
+        fbLate: "Too LATE (+{ms} ms)",
+        statsZero: "Taps: 0",
+        stats: "Taps: {n} · Average offset: {mean} ms · Consistency (std. dev.): {sd}",
+        footerMade: "Made with passion for rhythm and percussion.",
+        ftGithub: "GitHub source code",
+        ftYoutube: "YouTube tutorials: En parlant de bureautique"
+    }
+});
+
     // Synthétiseurs
 const highClick = new Tone.MembraneSynth({ pitchDecay: 0.008, octaves: 2, oscillator: { type: "square" }, envelope: { attack: 0.001, decay: 0.05, sustain: 0 } }).toDestination();
 const lowClick = new Tone.MembraneSynth({ pitchDecay: 0.008, octaves: 2, oscillator: { type: "triangle" }, envelope: { attack: 0.001, decay: 0.03, sustain: 0 } }).toDestination();
@@ -181,7 +265,8 @@ userTapSynth.volume.value = 0;
 let isPlaying = false;
 let currentBeat = 0;
 let loopEvent = null;
-let lastBeatTimes = {}; // Horodatage exact de chaque temps
+let lastBeatTimes = {}; // Horodatage exact de chaque temps (horloge AudioContext, = paramètre "time" du Loop)
+let sessionDiffs = [];  // Écarts (s) de la session en cours, pour les statistiques
 
 // Éléments DOM
 const playBtn = document.getElementById('playBtn');
@@ -193,6 +278,10 @@ const presetSelect = document.getElementById('presetSelect');
 const tapArea = document.getElementById('tapArea');
 const feedbackResult = document.getElementById('feedbackResult');
 const hitMarker = document.getElementById('hitMarker');
+const sessionStats = document.getElementById('sessionStats');
+function playBtnLabel() { return '<i class="bi bi-play-fill me-2"></i> <span data-i18n="start">' + FxI18n.t('start') + '</span>'; }
+function stopBtnLabel() { return '<i class="bi bi-stop-fill me-2"></i> <span data-i18n="stop">' + FxI18n.t('stop') + '</span>'; }
+let lastFeedbackMs = null; // dernier écart affiché (pour ré-afficher lors du changement de langue)
 
 // 1. Rendu de la grille dynamique (Jusqu'à 16 temps + Séparation Entendre/Viser + Accordéon)
 function renderBeatsGrid(count) {
@@ -211,15 +300,15 @@ function renderBeatsGrid(count) {
     <div class="fw-bold fs-6 mb-1 text-primary">${i}</div>
     
     <!-- Ajout de ps-0 sur le conteneur du switch -->
-    <div class="form-check form-switch ps-0 d-flex flex-column align-items-center mb-1" title="Entendre ce temps">
+    <div class="form-check form-switch ps-0 d-flex flex-column align-items-center mb-1" data-i18n-title="listenTitle" title="${FxI18n.t('listenTitle')}">
         <input class="form-check-input listen-checkbox ms-0" type="checkbox" id="listen-${i}" ${i === 1 ? 'checked' : ''}>
-        <label class="form-check-label text-muted align-self-center ps-0" style="font-size: 0.65rem;">🔊 <span class="d-none d-md-inline">Entendre</span></label>
+        <label class="form-check-label text-muted align-self-center ps-0" style="font-size: 0.65rem;">🔊 <span class="d-none d-md-inline" data-i18n="listen">${FxI18n.t('listen')}</span></label>
     </div>
     
     <!-- Ajout de ps-0 sur le conteneur du switch -->
-    <div class="form-check form-switch ps-0 d-flex flex-column align-items-center" title="Évaluer la frappe sur ce temps">
+    <div class="form-check form-switch ps-0 d-flex flex-column align-items-center" data-i18n-title="aimTitle" title="${FxI18n.t('aimTitle')}">
         <input class="form-check-input measure-checkbox ms-0" type="checkbox" id="measure-${i}" ${i === 4 || (count < 4 && i === count) ? 'checked' : ''}>
-        <label class="form-check-label text-muted align-self-center ps-0" style="font-size: 0.65rem;">🎯 <span class="d-none d-md-inline">Viser</span></label>
+        <label class="form-check-label text-muted align-self-center ps-0" style="font-size: 0.65rem;">🎯 <span class="d-none d-md-inline" data-i18n="aim">${FxI18n.t('aim')}</span></label>
     </div>
 </div>
         `;
@@ -233,7 +322,7 @@ function updateBeatsOptions() {
     for(let i = 2; i <= 16; i++) {
         const opt = document.createElement('option');
         opt.value = i;
-        opt.textContent = `${i} temps`;
+        opt.textContent = FxI18n.t('beatsOption', { n: i });
         if(i === 4) opt.selected = true;
         beatsPerMeasureSelect.appendChild(opt);
     }
@@ -246,7 +335,8 @@ const presets = {
     p3: { beats: 4, listen: [2, 4], measure: [2, 4] },
     p4: { beats: 4, listen: [1], measure: [4] }, // Ancre sur le 1, frappe sur le 4
     p5: { beats: 4, listen: [1], measure: [3] },
-    p6: { beats: 8, listen: [1], measure: [5] }, // 8 temps : Ancre sur le 1, frappe sur le 5
+    p6: { beats: 4, listen: [1], measure: [2] }, // "Le 2" : ancre sur le 1, frappe sur le 2ème temps
+    p7: { beats: 4, listen: [1], measure: [1, 4] }, // Extrémités : frappe sur les temps 1 et 4
 };
 
 function applyPreset(key) {
@@ -254,6 +344,8 @@ function applyPreset(key) {
     const config = presets[key];
     beatsPerMeasureSelect.value = config.beats;
     renderBeatsGrid(config.beats);
+    // renderBeatsGrid coche des cases par défaut (Entendre 1, Viser 4) : on décoche tout d'abord
+    document.querySelectorAll('.listen-checkbox, .measure-checkbox').forEach(cb => { cb.checked = false; });
     
     config.listen.forEach(b => {
         const cb = document.getElementById(`listen-${b}`);
@@ -281,6 +373,7 @@ presetSelect.addEventListener('change', (e) => { applyPreset(e.target.value); })
 function startAudio() {
     Tone.Transport.bpm.value = bpmRange.value;
     currentBeat = 0;
+    lastBeatTimes = {}; // Pas de temps périmés d'une session précédente
     
     loopEvent = new Tone.Loop((time) => {
         const totalBeats = parseInt(beatsPerMeasureSelect.value);
@@ -325,25 +418,31 @@ function stopAudio() {
 function handleUserTap() {
     if (!isPlaying) return;
 
-    const tapTime = Tone.now();
+    // Instant RÉEL de la frappe dans le repère de l'AudioContext.
+    // (Tone.now() ajoute le lookAhead ~0,1 s -> biais de +100 ms.)
+    // Les temps cibles (lastBeatTimes) sont le paramètre "time" du Loop : même repère.
+    const tapTime = (typeof Tone.immediate === 'function') ? Tone.immediate() : Tone.context.rawContext.currentTime;
     const bpm = parseInt(bpmRange.value);
     const beatDuration = 60 / bpm; // Fenêtre maximale d'un temps
     const maxWindow = beatDuration / 2; // Tolerance max (+/- ms)
+    const totalBeats = parseInt(beatsPerMeasureSelect.value);
+    const measureDuration = beatDuration * totalBeats;
 
     let minDiff = Infinity;
     let targetBeat = null;
 
-    // Chercher le temps ciblé le plus proche parmi CEUX QUE L'ON DOIT Viser
+    // Chercher le temps ciblé le plus proche parmi CEUX QUE L'ON DOIT Viser :
+    // pour chaque cible, on prend son occurrence la plus proche de la frappe
+    // (mesure courante, précédente ou suivante : repliement sur la MESURE, pas sur un temps).
     Object.keys(lastBeatTimes).forEach(beatNum => {
+        if (parseInt(beatNum) > totalBeats) return;
         const measureCb = document.getElementById(`measure-${beatNum}`);
         if (!measureCb || !measureCb.checked) return;
 
         const theoreticalTime = lastBeatTimes[beatNum];
-        let diff = tapTime - theoreticalTime;
-
-        if (diff > maxWindow) diff -= beatDuration;
-        if (diff < -maxWindow) diff += beatDuration;
-
+        // Nombre (entier) de mesures entre la dernière occurrence connue et la frappe
+        const k = Math.round((tapTime - theoreticalTime) / measureDuration);
+        const diff = tapTime - (theoreticalTime + k * measureDuration);
         if (Math.abs(diff) < Math.abs(minDiff)) {
             minDiff = diff;
             targetBeat = beatNum;
@@ -365,9 +464,29 @@ function handleUserTap() {
     userTapSynth.triggerAttackRelease(pitchedFreq, "32n", tapTime);
 
     displayFeedback(minDiff * 1000);
+    sessionDiffs.push(minDiff);
+    updateSessionStats();
+}
+
+// Statistiques de session : nombre de frappes, écart moyen (signé), régularité (écart-type)
+function updateSessionStats() {
+    const n = sessionDiffs.length;
+    if (n === 0) {
+        sessionStats.textContent = FxI18n.t('statsZero');
+        return;
+    }
+    let sum = 0;
+    sessionDiffs.forEach(d => { sum += d; });
+    const mean = sum / n;
+    let sq = 0;
+    sessionDiffs.forEach(d => { sq += (d - mean) * (d - mean); });
+    const sd = n > 1 ? Math.sqrt(sq / (n - 1)) : 0;
+    const meanMs = Math.round(mean * 1000);
+    sessionStats.textContent = FxI18n.t('stats', { n: n, mean: (meanMs > 0 ? '+' : '') + meanMs, sd: (n > 1 ? Math.round(sd * 1000) + ' ms' : '-') });
 }
 
 function displayFeedback(diffMs) {
+    lastFeedbackMs = diffMs;
     const absDiff = Math.abs(Math.round(diffMs));
     hitMarker.style.display = "block";
 
@@ -377,15 +496,15 @@ function displayFeedback(diffMs) {
 
     if (absDiff <= 25) {
         feedbackResult.className = "fs-3 fw-bold mb-2 text-success";
-        feedbackResult.textContent = `PARFAIT ! (${absDiff} ms)`;
+        feedbackResult.textContent = FxI18n.t('fbPerfect', { ms: absDiff });
         hitMarker.style.background = "#198754";
     } else if (diffMs < 0) {
         feedbackResult.className = "fs-3 fw-bold mb-2 text-warning";
-        feedbackResult.textContent = `Trop TÔT (-${absDiff} ms)`;
+        feedbackResult.textContent = FxI18n.t('fbEarly', { ms: absDiff });
         hitMarker.style.background = "#ffc107";
     } else {
         feedbackResult.className = "fs-3 fw-bold mb-2 text-info";
-        feedbackResult.textContent = `Trop TARD (+${absDiff} ms)`;
+        feedbackResult.textContent = FxI18n.t('fbLate', { ms: absDiff });
         hitMarker.style.background = "#0dcaf0";
     }
 }
@@ -399,17 +518,20 @@ document.addEventListener('keydown', (e) => {
     }
 });
 
-playBtn.addEventListener('click', async () => {
+playBtn.addEventListener('click', () => {
     if (!isPlaying) {
-        await Tone.start();
-        startAudio();
-        playBtn.classList.replace('btn-outline-light', 'btn-danger');
-        playBtn.innerHTML = '<i class="bi bi-stop-fill me-2"></i> Arrêter';
-        isPlaying = true;
+        Tone.start().then(() => {
+            sessionDiffs = [];
+            updateSessionStats();
+            startAudio();
+            playBtn.classList.replace('btn-outline-light', 'btn-danger');
+            playBtn.innerHTML = stopBtnLabel();
+            isPlaying = true;
+        });
     } else {
         stopAudio();
         playBtn.classList.replace('btn-danger', 'btn-outline-light');
-        playBtn.innerHTML = '<i class="bi bi-play-fill me-2"></i> Activer le métronome';
+        playBtn.innerHTML = playBtnLabel(); // libellé initial du bouton
         isPlaying = false;
     }
 });
@@ -418,6 +540,22 @@ playBtn.addEventListener('click', async () => {
 updateBeatsOptions();
 renderBeatsGrid(4);
 applyPreset('p4');
+
+// Changement de langue : on ne re-rend que les textes générés (les cases cochées et l'audio restent intacts)
+FxI18n.onChange(function () {
+    document.title = FxI18n.t('pageTitle');
+    for (let i = 0; i < beatsPerMeasureSelect.options.length; i++) {
+        const o = beatsPerMeasureSelect.options[i];
+        o.textContent = FxI18n.t('beatsOption', { n: o.value });
+    }
+    playBtn.innerHTML = isPlaying ? stopBtnLabel() : playBtnLabel();
+    updateSessionStats();
+    if (lastFeedbackMs !== null) {
+        const keep = hitMarker.style.left;
+        displayFeedback(lastFeedbackMs);
+        hitMarker.style.left = keep;
+    }
+});
 </script>
 
 </body>

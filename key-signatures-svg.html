@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Générateur SVG - Key Signatures VexFlow</title>
+  <script src="./js/i18n-fx.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/vexflow@4.2.2/build/cjs/vexflow.js"></script>
   <style>
     :root {
@@ -158,31 +159,34 @@
 <body>
 
   <header>
-    <h1>Armatures VexFlow (SVG)</h1>
-    <button id="themeToggle" class="theme-toggle" title="Changer le mode">🌙</button>
+    <h1 data-i18n="ks.h1">Armatures VexFlow (SVG)</h1>
+    <div style="display:flex;gap:8px;">
+      <button type="button" class="theme-toggle" data-i18n-toggle>FR</button>
+      <button id="themeToggle" class="theme-toggle" title="Changer le mode" data-i18n-title="ks.theme">🌙</button>
+    </div>
   </header>
 
   <!-- Panneau de configuration -->
   <div class="controls-panel">
     <div class="control-group">
-      <label>Clés :</label>
+      <label data-i18n="ks.clefs">Clés :</label>
       <div class="checkbox-group">
-        <label><input type="checkbox" class="clef-cb" value="treble" checked> Sol (Treble)</label>
-        <label><input type="checkbox" class="clef-cb" value="bass"> Fa (Bass)</label>
-        <label><input type="checkbox" class="clef-cb" value="alto"> Ut (Alto)</label>
-        <label><input type="checkbox" class="clef-cb" value="tenor"> Ut (Ténor)</label>
-        <label><input type="checkbox" class="clef-cb" value="percussion"> Percussion</label>
+        <label><input type="checkbox" class="clef-cb" value="treble" checked> <span data-i18n="ks.treble">Sol (Treble)</span></label>
+        <label><input type="checkbox" class="clef-cb" value="bass"> <span data-i18n="ks.bass">Fa (Bass)</span></label>
+        <label><input type="checkbox" class="clef-cb" value="alto"> <span data-i18n="ks.alto">Ut (Alto)</span></label>
+        <label><input type="checkbox" class="clef-cb" value="tenor"> <span data-i18n="ks.tenor">Ut (Ténor)</span></label>
+        <label><input type="checkbox" class="clef-cb" value="percussion"> <span data-i18n="ks.percussion">Percussion</span></label>
       </div>
     </div>
 
     <div class="control-group">
       <label for="showEndBar">
-        <input type="checkbox" id="showEndBar"> Mesure de fin fermée
+        <input type="checkbox" id="showEndBar"> <span data-i18n="ks.endBar">Mesure de fin fermée</span>
       </label>
     </div>
 
     <div class="control-group">
-      <label for="colorPicker">Couleur SVG :</label>
+      <label for="colorPicker" data-i18n="ks.color">Couleur SVG :</label>
       <input type="color" id="colorPicker" value="#000000">
     </div>
   </div>
@@ -190,6 +194,62 @@
   <div id="grid" class="grid"></div>
 
   <script>
+    // --- TEXTES FR / EN (module js/i18n-fx.js) ---
+    FxI18n.add({
+      fr: {
+        'ks.pageTitle': 'Générateur SVG - Key Signatures VexFlow',
+        'ks.h1': 'Armatures VexFlow (SVG)',
+        'ks.theme': 'Changer le mode',
+        'ks.clefs': 'Clés :',
+        'ks.treble': 'Sol (Treble)', 'ks.bass': 'Fa (Bass)', 'ks.alto': 'Ut (Alto)', 'ks.tenor': 'Ut (Ténor)', 'ks.percussion': 'Percussion',
+        'ks.endBar': 'Mesure de fin fermée',
+        'ks.color': 'Couleur SVG :',
+        'ks.download': 'Télécharger SVG',
+        'ks.key.C': 'Do Maj / La min (0)',
+        'ks.key.G': 'Sol Maj / Mi min (1♯)',
+        'ks.key.D': 'Ré Maj / Si min (2♯)',
+        'ks.key.A': 'La Maj / Fa♯ min (3♯)',
+        'ks.key.E': 'Mi Maj / Do♯ min (4♯)',
+        'ks.key.B': 'Si Maj / Sol♯ min (5♯)',
+        'ks.key.F#': 'Fa♯ Maj / Ré♯ min (6♯)',
+        'ks.key.C#': 'Do♯ Maj / La♯ min (7♯)',
+        'ks.key.F': 'Fa Maj / Ré min (1♭)',
+        'ks.key.Bb': 'Si♭ Maj / Sol min (2♭)',
+        'ks.key.Eb': 'Mi♭ Maj / Do min (3♭)',
+        'ks.key.Ab': 'La♭ Maj / Fa min (4♭)',
+        'ks.key.Db': 'Ré♭ Maj / Si♭ min (5♭)',
+        'ks.key.Gb': 'Sol♭ Maj / Mi♭ min (6♭)',
+        'ks.key.Cb': 'Do♭ Maj / La♭ min (7♭)'
+      },
+      en: {
+        'ks.pageTitle': 'SVG Generator - VexFlow Key Signatures',
+        'ks.h1': 'VexFlow Key Signatures (SVG)',
+        'ks.theme': 'Toggle light/dark mode',
+        'ks.clefs': 'Clefs:',
+        'ks.treble': 'Treble (G)', 'ks.bass': 'Bass (F)', 'ks.alto': 'Alto (C)', 'ks.tenor': 'Tenor (C)', 'ks.percussion': 'Percussion',
+        'ks.endBar': 'Closed final barline',
+        'ks.color': 'SVG color:',
+        'ks.download': 'Download SVG',
+        'ks.key.C': 'C major / A minor (0)',
+        'ks.key.G': 'G major / E minor (1♯)',
+        'ks.key.D': 'D major / B minor (2♯)',
+        'ks.key.A': 'A major / F♯ minor (3♯)',
+        'ks.key.E': 'E major / C♯ minor (4♯)',
+        'ks.key.B': 'B major / G♯ minor (5♯)',
+        'ks.key.F#': 'F♯ major / D♯ minor (6♯)',
+        'ks.key.C#': 'C♯ major / A♯ minor (7♯)',
+        'ks.key.F': 'F major / D minor (1♭)',
+        'ks.key.Bb': 'B♭ major / G minor (2♭)',
+        'ks.key.Eb': 'E♭ major / C minor (3♭)',
+        'ks.key.Ab': 'A♭ major / F minor (4♭)',
+        'ks.key.Db': 'D♭ major / B♭ minor (5♭)',
+        'ks.key.Gb': 'G♭ major / E♭ minor (6♭)',
+        'ks.key.Cb': 'C♭ major / A♭ minor (7♭)'
+      }
+    });
+    // Les titres des cartes et les boutons portent data-i18n : le module les retraduit seul.
+    FxI18n.onChange(function () { document.title = FxI18n.t('ks.pageTitle'); });
+
     const { Renderer, Stave, StaveConnector, Barline } = Vex.Flow;
 
     const keySignatures = [
@@ -262,7 +322,8 @@
         card.className = 'card';
 
         const title = document.createElement('h3');
-        title.innerText = keyInfo.name;
+        title.setAttribute('data-i18n', 'ks.key.' + keyInfo.code);
+        title.innerText = FxI18n.t('ks.key.' + keyInfo.code);
         card.appendChild(title);
 
         const paperDiv = document.createElement('div');
@@ -272,7 +333,8 @@
 
         const btn = document.createElement('button');
         btn.className = 'btn-download';
-        btn.innerText = 'Télécharger SVG';
+        btn.setAttribute('data-i18n', 'ks.download');
+        btn.innerText = FxI18n.t('ks.download');
         
         // Construction du nom des clés (ex: treble+bass)
         const clefsName = clefsToDraw.join('+');

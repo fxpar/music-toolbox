@@ -412,41 +412,45 @@
       padding-bottom: env(safe-area-inset-bottom);
     }
   </style>
+  <script src="./js/i18n-fx.js"></script>
 </head>
 <body>
 
   <!-- Top App Bar -->
   <header class="top-bar">
-    <button class="icon-btn" id="btn-menu" aria-label="Menu">☰</button>
+    <button class="icon-btn" id="btn-menu" aria-label="Menu" data-i18n-aria="aria.menu">☰</button>
     <div class="title-container">
-      <h1>Transformer un accord</h1>
+      <h1 data-i18n="app.title">Transformer un accord</h1>
       <div class="instruction" id="instruction-text">Majeur ➔ Mineur</div>
     </div>
-    <button class="icon-btn" id="btn-theme" aria-label="Changer de thème">🌙</button>
+    <div style="display: flex; gap: 4px;">
+      <button type="button" class="icon-btn" data-i18n-toggle>FR</button>
+      <button class="icon-btn" id="btn-theme" aria-label="Changer de thème" data-i18n-aria="aria.theme">🌙</button>
+    </div>
   </header>
 
   <!-- Navigation Drawer -->
   <div class="drawer-overlay" id="drawer-overlay">
     <nav class="drawer">
 	<button id="btn-close-drawer" class="btn btn-secondary" style="width: 100%; height:2em; margin-top: 15px;padding:5px"onclick="closeDrawer()">
-      ✕ Fermer
+      ✕ <span data-i18n="drawer.close">Fermer</span>
     </button>
-      <h2>Mode de jeu</h2>
+      <h2 data-i18n="drawer.mode">Mode de jeu</h2>
 
       <div class="menu-item active">
-        <span>Transformer un accord</span>
+        <span data-i18n="app.title">Transformer un accord</span>
       </div>
-      <h2 style="margin-top: 8px;">Comment jouer</h2>
+      <h2 style="margin-top: 8px;" data-i18n="drawer.how">Comment jouer</h2>
       <ul style="font-size: 0.9rem; line-height: 1.5; color: var(--md-sys-color-on-surface-variant); padding-left: 20px;">
-        <li>Le manche est vu de face : les cordes G, C, E, A de gauche à droite, les cases de haut en bas.</li>
-        <li>L'accord de départ est affiché. La pastille rouge est la racine : elle ne bouge pas.</li>
-        <li>Touchez une case pour y déplacer la note de cette corde (une note par corde).</li>
-        <li>Toutes les notes de l'accord cible doivent être présentes, sans note étrangère, sur 5 cases au plus.</li>
-        <li>« Indice » affiche les formules ; « Correction » montre une forme possible (la question ne rapporte alors plus de points).</li>
+        <li data-i18n="how.1">Le manche est vu de face : les cordes G, C, E, A de gauche à droite, les cases de haut en bas.</li>
+        <li data-i18n="how.2">L'accord de départ est affiché. La pastille rouge est la racine : elle ne bouge pas.</li>
+        <li data-i18n="how.3">Touchez une case pour y déplacer la note de cette corde (une note par corde).</li>
+        <li data-i18n="how.4">Toutes les notes de l'accord cible doivent être présentes, sans note étrangère, sur 5 cases au plus.</li>
+        <li data-i18n="how.5">« Indice » affiche les formules ; « Correction » montre une forme possible (la question ne rapporte alors plus de points).</li>
       </ul>
       <hr style="border: 0.5px solid var(--md-sys-color-outline-variant); margin: 8px 0;">
       <div style="font-size: 0.9rem; color: var(--md-sys-color-on-surface-variant)">
-        Score : <span class="score-badge" id="total-score">0 pts</span>
+        <span data-i18n="lbl.score">Score :</span> <span class="score-badge" id="total-score">0 pts</span>
       </div>
     
 	
@@ -460,20 +464,20 @@
 		  <!-- Colonne 1 : Copyright & Titre -->
 		  <div class="col-12 col-md-6 text-center text-md-start">
 			<span class="small">
-			  CC BY-NC 4.0 <span id="currentYear"></span><script>document.getElementById("currentYear").textContent = new Date().getFullYear();</script> <strong>François Parlant</strong> &mdash; Créé avec passion pour le ukulélé.
+			  CC BY-NC 4.0 <span id="currentYear"></span><script>document.getElementById("currentYear").textContent = new Date().getFullYear();</script> <strong>François Parlant</strong> &mdash; <span data-i18n="footer.made">Créé avec passion pour le ukulélé.</span>
 			</span>
 		  </div>
 
 		  <!-- Colonne 2 : Liens Réseaux Sociaux -->
 		  <div class="col-12 col-md-6 text-center text-md-end">
 			<div class="d-inline-flex gap-3 align-items-center">
-			  <a href="https://github.com/fxpar/music-toolbox/blob/main/ukulele-position-accord-quiz.html" target="_blank" rel="noopener noreferrer" class="text-body-secondary text-decoration-none fs-5 hover-accent" title="Code source GitHub">
+			  <a href="https://github.com/fxpar/music-toolbox/blob/main/ukulele-position-accord-quiz.html" target="_blank" rel="noopener noreferrer" class="text-body-secondary text-decoration-none fs-5 hover-accent" title="Code source GitHub" data-i18n-title="footer.github">
 				<i class="bi bi-github"></i> Github
 			  </a> &mdash; 
-			  <a href="https://www.linkedin.com/in/francois-parlant" target="_blank" rel="noopener noreferrer" class="text-body-secondary text-decoration-none fs-5 hover-accent" title="LinkedIn: François Parlant">
+			  <a href="https://www.linkedin.com/in/francois-parlant" target="_blank" rel="noopener noreferrer" class="text-body-secondary text-decoration-none fs-5 hover-accent" title="LinkedIn: François Parlant" data-i18n-title="footer.linkedin">
 				<i class="bi bi-linkedin"></i>LinkedIn
 			  </a> &mdash; 
-			  <a href="https://www.youtube.com/c/enparlantdebureautiqueformezvous" target="_blank" rel="noopener noreferrer" class="text-body-secondary text-decoration-none fs-5 hover-accent" title="Tutos YouTube: En parlant de bureautique">
+			  <a href="https://www.youtube.com/c/enparlantdebureautiqueformezvous" target="_blank" rel="noopener noreferrer" class="text-body-secondary text-decoration-none fs-5 hover-accent" title="Tutos YouTube: En parlant de bureautique" data-i18n-title="footer.youtube">
 				<i class="bi bi-youtube"></i>Youtube
 			  </a> &mdash; 
 			</div>
@@ -510,8 +514,8 @@
   <footer class="bottom-sheet">
     <div class="sheet-handle"></div>
     <div class="score-line">
-      Score : <span class="score-badge" id="score-live">0 pts</span>
-      &nbsp;·&nbsp; Réussies sans aide : <b id="solved-live">0 / 0</b>
+      <span data-i18n="lbl.score">Score :</span> <span class="score-badge" id="score-live">0 pts</span>
+      &nbsp;·&nbsp; <span data-i18n="lbl.solved">Réussies sans aide :</span> <b id="solved-live">0 / 0</b>
     </div>
     <div class="feedback-text" id="feedback">Transformez l'accord de départ en accord cible en gardant la même racine.</div>
     
@@ -520,10 +524,10 @@
     </div>
 
     <div class="actions-row">
-      <button class="btn btn-outlined" id="btn-hint">❓ Indice</button>
-      <button class="btn btn-secondary" id="btn-correct">💡 Correction</button>
-      <button class="btn btn-primary" id="btn-validate">✓ Valider</button>
-      <button class="btn btn-primary" id="btn-next" style="display: none;">Suivant ➔</button>
+      <button class="btn btn-outlined" id="btn-hint" data-i18n="btn.hint">❓ Indice</button>
+      <button class="btn btn-secondary" id="btn-correct" data-i18n="btn.correct">💡 Correction</button>
+      <button class="btn btn-primary" id="btn-validate" data-i18n="btn.validate">✓ Valider</button>
+      <button class="btn btn-primary" id="btn-next" style="display: none;" data-i18n="btn.next">Suivant ➔</button>
     </div>
   </footer>
 
@@ -531,21 +535,105 @@
     /* ==========================================================================
        0. TEXTES DE L'INTERFACE (regroupés pour une future traduction FR/EN)
        ========================================================================== */
-    var TXT = {
-      instruction: "Transformez l'accord de départ ({from}) en accord {to} en gardant la même racine (pastille rouge). Touchez une case pour y déplacer la note de la corde.",
-      rootMoved: "❌ La racine (pastille rouge) ne doit pas être déplacée.",
-      missing: "Il manque : {list}.",
-      extra: "Hors accord : {list}.",
-      tooWide: "❌ Notes trop écartées : 4 cases d'écart au maximum entre la plus basse et la plus haute.",
-      wrongPrefix: "❌ ",
-      success: "🎉 Bravo ! C'est bien un accord {to}. +{pts} pts",
-      successNoPoints: "✓ Forme correcte. Pas de points cette fois (correction affichée).",
-      correctionShown: "Les cercles en pointillés montrent une forme correcte : touchez-les pour y placer vos notes, puis validez (cette question ne rapportera pas de points).",
-      hintFrom: "Départ",
-      hintTo: "Cible",
-      points: "{n} pts",
-      solvedCounter: "{ok} / {done}"
-    };
+    FxI18n.add({
+      fr: {
+        'page.title': "Ukulélé : transformer un accord",
+        'app.title': "Transformer un accord",
+        'aria.menu': "Menu",
+        'aria.theme': "Changer de thème",
+        'drawer.close': "Fermer",
+        'drawer.mode': "Mode de jeu",
+        'drawer.how': "Comment jouer",
+        'how.1': "Le manche est vu de face : les cordes G, C, E, A de gauche à droite, les cases de haut en bas.",
+        'how.2': "L'accord de départ est affiché. La pastille rouge est la racine : elle ne bouge pas.",
+        'how.3': "Touchez une case pour y déplacer la note de cette corde (une note par corde).",
+        'how.4': "Toutes les notes de l'accord cible doivent être présentes, sans note étrangère, sur 5 cases au plus.",
+        'how.5': "« Indice » affiche les formules ; « Correction » montre une forme possible (la question ne rapporte alors plus de points).",
+        'lbl.score': "Score :",
+        'lbl.solved': "Réussies sans aide :",
+        'fb.initial': "Transformez l'accord de départ en accord cible en gardant la même racine.",
+        'btn.hint': "❓ Indice",
+        'btn.correct': "💡 Correction",
+        'btn.validate': "✓ Valider",
+        'btn.next': "Suivant ➔",
+        'footer.made': "Créé avec passion pour le ukulélé.",
+        'footer.github': "Code source GitHub",
+        'footer.linkedin': "LinkedIn: François Parlant",
+        'footer.youtube': "Tutos YouTube: En parlant de bureautique",
+        'chord.Majeur': "Majeur",
+        'chord.Mineur': "Mineur",
+        'chord.7 (Dom)': "7 (Dom)",
+        'chord.m7': "m7",
+        'chord.maj7': "maj7",
+        'chord.Diminué': "Diminué",
+        'chord.Augmenté': "Augmenté",
+        'chord.sus4': "sus4",
+        instruction: "Transformez l'accord de départ ({from}) en accord {to} en gardant la même racine (pastille rouge). Touchez une case pour y déplacer la note de la corde.",
+        rootMoved: "❌ La racine (pastille rouge) ne doit pas être déplacée.",
+        missing: "Il manque : {list}.",
+        extra: "Hors accord : {list}.",
+        tooWide: "❌ Notes trop écartées : 4 cases d'écart au maximum entre la plus basse et la plus haute.",
+        wrongPrefix: "❌ ",
+        success: "🎉 Bravo ! C'est bien un accord {to}. +{pts} pts",
+        successNoPoints: "✓ Forme correcte. Pas de points cette fois (correction affichée).",
+        correctionShown: "Les cercles en pointillés montrent une forme correcte : touchez-les pour y placer vos notes, puis validez (cette question ne rapportera pas de points).",
+        hintFrom: "Départ",
+        hintTo: "Cible",
+        points: "{n} pts",
+        solvedCounter: "{ok} / {done}"
+      },
+      en: {
+        'page.title': "Ukulele: transform a chord",
+        'app.title': "Transform a chord",
+        'aria.menu': "Menu",
+        'aria.theme': "Change theme",
+        'drawer.close': "Close",
+        'drawer.mode': "Game mode",
+        'drawer.how': "How to play",
+        'how.1': "The neck is seen face on: strings G, C, E, A from left to right, frets from top to bottom.",
+        'how.2': "The starting chord is shown. The red dot is the root: it does not move.",
+        'how.3': "Tap a fret to move that string's note there (one note per string).",
+        'how.4': "Every note of the target chord must be present, with no outside note, within 5 frets at most.",
+        'how.5': "“Hint” shows the formulas; “Solution” shows one possible shape (the question then scores no points).",
+        'lbl.score': "Score:",
+        'lbl.solved': "Solved without help:",
+        'fb.initial': "Turn the starting chord into the target chord, keeping the same root.",
+        'btn.hint': "❓ Hint",
+        'btn.correct': "💡 Solution",
+        'btn.validate': "✓ Check",
+        'btn.next': "Next ➔",
+        'footer.made': "Made with passion for the ukulele.",
+        'footer.github': "Source code on GitHub",
+        'footer.linkedin': "LinkedIn: François Parlant",
+        'footer.youtube': "YouTube tutorials: En parlant de bureautique",
+        'chord.Majeur': "Major",
+        'chord.Mineur': "Minor",
+        'chord.7 (Dom)': "7 (Dom)",
+        'chord.m7': "m7",
+        'chord.maj7': "maj7",
+        'chord.Diminué': "Diminished",
+        'chord.Augmenté': "Augmented",
+        'chord.sus4': "sus4",
+        instruction: "Turn the starting chord ({from}) into a {to} chord, keeping the same root (red dot). Tap a fret to move that string's note there.",
+        rootMoved: "❌ The root (red dot) must not be moved.",
+        missing: "Missing: {list}.",
+        extra: "Not in the chord: {list}.",
+        tooWide: "❌ Notes too far apart: at most 4 frets between the lowest and the highest.",
+        wrongPrefix: "❌ ",
+        success: "🎉 Well done! That is a {to} chord. +{pts} pts",
+        successNoPoints: "✓ Correct shape. No points this time (solution shown).",
+        correctionShown: "The dotted circles show a correct shape: tap them to place your notes, then check (this question will not score points).",
+        hintFrom: "Start",
+        hintTo: "Target",
+        points: "{n} pts",
+        solvedCounter: "{ok} / {done}"
+      }
+    });
+
+    // Nom d'accord affiché (les clés de CHORDS restent en français : ce sont des identifiants)
+    function chordName(key) {
+      return FxI18n.t('chord.' + key);
+    }
 
     function fmt(str, values) {
       return str.replace(/\{(\w+)\}/g, function (m, key) {
@@ -761,10 +849,10 @@ function findBestShape(chordDef, rootRow, rootString, refRows) {
     }
 
     function updateScore() {
-      const pts = fmt(TXT.points, { n: score });
+      const pts = FxI18n.t('points', { n: score });
       totalScoreEl.innerText = pts;
       scoreLiveEl.innerText = pts;
-      solvedLiveEl.innerText = fmt(TXT.solvedCounter, { ok: solvedCount, done: doneCount });
+      solvedLiveEl.innerText = FxI18n.t('solvedCounter', { ok: solvedCount, done: doneCount });
     }
 
     function renderState() {
@@ -816,10 +904,12 @@ function findBestShape(chordDef, rootRow, rootString, refRows) {
   }
   correctionUsed = false;
   questionDone = false;
-  instructionEl.innerText = `${currentQuestion.from} ➔ ${currentQuestion.to}`;
+  instructionEl.innerText = `${chordName(currentQuestion.from)} ➔ ${chordName(currentQuestion.to)}`;
   userState = currentQuestion.initialRows.slice();
 
-  feedbackEl.innerText = fmt(TXT.instruction, { from: currentQuestion.from, to: currentQuestion.to });
+  setFeedback(function () {
+    return FxI18n.t('instruction', { from: chordName(currentQuestion.from), to: chordName(currentQuestion.to) });
+  });
   feedbackEl.style.color = "var(--md-sys-color-on-surface)";
   hintBoxEl.style.display = "none";
 
@@ -867,11 +957,11 @@ btnValidate.addEventListener('click', () => {
     questionDone = true;
     doneCount += 1;
     if (correctionUsed) {
-      feedbackEl.innerText = TXT.successNoPoints;
+      setFeedback(function () { return FxI18n.t('successNoPoints'); });
     } else {
       score += POINTS_PER_SHAPE;
       solvedCount += 1;
-      feedbackEl.innerText = fmt(TXT.success, { to: q.to, pts: POINTS_PER_SHAPE });
+      setFeedback(function () { return FxI18n.t('success', { to: chordName(q.to), pts: POINTS_PER_SHAPE }); });
     }
     feedbackEl.style.color = "var(--md-sys-color-primary)";
     updateScore();
@@ -881,22 +971,21 @@ btnValidate.addEventListener('click', () => {
     return;
   }
 
-  let msg;
-  if (res.reason === 'root') {
-    msg = TXT.rootMoved;
-  } else if (res.reason === 'span') {
-    msg = TXT.tooWide;
-  } else {
+  setFeedback(function () {
+    if (res.reason === 'root') {
+      return FxI18n.t('rootMoved');
+    } else if (res.reason === 'span') {
+      return FxI18n.t('tooWide');
+    }
     const parts = [];
     if (res.missing.length) {
-      parts.push(fmt(TXT.missing, { list: res.missing.map(i => intervalLabel(targetChord, i)).join(', ') }));
+      parts.push(FxI18n.t('missing', { list: res.missing.map(i => intervalLabel(targetChord, i)).join(', ') }));
     }
     if (res.extra.length) {
-      parts.push(fmt(TXT.extra, { list: res.extra.map(i => INTERVAL_MAP[i].name).join(', ') }));
+      parts.push(FxI18n.t('extra', { list: res.extra.map(i => INTERVAL_MAP[i].name).join(', ') }));
     }
-    msg = TXT.wrongPrefix + parts.join(' ');
-  }
-  feedbackEl.innerText = msg;
+    return FxI18n.t('wrongPrefix') + parts.join(' ');
+  });
   feedbackEl.style.color = "var(--chord-error)";
 });
 
@@ -906,14 +995,18 @@ btnValidate.addEventListener('click', () => {
   correctionUsed = true;
   renderState();
   centerViewportOnRows(q.solution);
-  feedbackEl.innerText = TXT.correctionShown;
+  setFeedback(function () { return FxI18n.t('correctionShown'); });
   feedbackEl.style.color = "var(--md-sys-color-on-surface)";
 });
 
     // Indice dynamique
-btnHint.addEventListener('click', () => {
+function renderHint() {
   const q = currentQuestion;
-  hintBoxEl.innerHTML = `<b>${TXT.hintFrom} (${q.from}) :</b> ${CHORDS[q.from].hint}<br><b>${TXT.hintTo} (${q.to}) :</b> ${CHORDS[q.to].hint}`;
+  const sep = FxI18n.getLang() === 'fr' ? ' :' : ':';
+  hintBoxEl.innerHTML = `<b>${FxI18n.t('hintFrom')} (${chordName(q.from)})${sep}</b> ${CHORDS[q.from].hint}<br><b>${FxI18n.t('hintTo')} (${chordName(q.to)})${sep}</b> ${CHORDS[q.to].hint}`;
+}
+btnHint.addEventListener('click', () => {
+  renderHint();
   hintBoxEl.style.display = hintBoxEl.style.display === "block" ? "none" : "block";
 });
 
@@ -942,6 +1035,24 @@ btnHint.addEventListener('click', () => {
       if (e.target === drawerOverlay) {
         drawerOverlay.classList.remove('open');
       }
+    });
+
+    // Message de retour courant, mémorisé sous forme de fonction pour être
+    // ré-affiché dans la langue choisie sans toucher à l'état du quiz.
+    let feedbackFn = null;
+    function setFeedback(fn) {
+      feedbackFn = fn;
+      feedbackEl.innerText = fn();
+    }
+
+    FxI18n.onChange(function () {
+      document.title = FxI18n.t('page.title');
+      updateScore();
+      if (currentQuestion) {
+        instructionEl.innerText = `${chordName(currentQuestion.from)} ➔ ${chordName(currentQuestion.to)}`;
+        if (hintBoxEl.style.display === 'block') renderHint();
+      }
+      if (feedbackFn) feedbackEl.innerText = feedbackFn();
     });
 
     // Initialize App

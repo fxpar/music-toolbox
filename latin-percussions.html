@@ -144,25 +144,27 @@
 <body>
 <div class="container">
   <h1>🥁 Songo Percussion Studio</h1>
-  <div class="subtitle">Éditeur de rythmes — cliquez sur les cases pour créer et modifier</div>
+  <div class="subtitle" data-i18n="subtitle">Éditeur de rythmes — cliquez sur les cases pour créer et modifier</div>
 
   <div class="topbar">
-    <button id="playBtn">▶ Lecture</button>
-    <button id="stopBtn">■ Stop</button>
-    <button id="clearBtn" class="danger small">Tout effacer</button>
+    <button id="playBtn" data-i18n="play">▶ Lecture</button>
+    <button id="stopBtn" data-i18n="stop">■ Stop</button>
+    <button id="clearBtn" class="danger small" data-i18n="clearAll">Tout effacer</button>
     <div class="sep"></div>
     <div class="tempo-box">
-      <label for="tempo">Tempo</label>
+      <label for="tempo" data-i18n="tempo">Tempo</label>
       <input type="range" id="tempo" min="50" max="220" value="110">
       <span class="tempo-val" id="tempoVal">110</span>
     </div>
     <div class="sep"></div>
-    <button id="newBtn" class="small">＋ Nouveau</button>
-    <button id="dupBtn" class="small">⧉ Dupliquer</button>
-    <button id="exportBtn" class="small">⬇ Exporter</button>
-    <button id="importBtn" class="small">⬆ Importer</button>
+    <button id="newBtn" class="small" data-i18n="newSong">＋ Nouveau</button>
+    <button id="dupBtn" class="small" data-i18n="duplicate">⧉ Dupliquer</button>
+    <button id="exportBtn" class="small" data-i18n="export">⬇ Exporter</button>
+    <button id="importBtn" class="small" data-i18n="import">⬆ Importer</button>
     <input type="file" id="fileInput" accept=".json" style="display:none">
-    <button id="resetBtn" class="small danger">↺ Restaurer défauts</button>
+    <button id="resetBtn" class="small danger" data-i18n="reset">↺ Restaurer défauts</button>
+    <div class="sep"></div>
+    <button type="button" class="small" data-i18n-toggle>FR</button>
   </div>
 
   <div class="songbar">
@@ -171,12 +173,12 @@
 
   <div class="editor">
     <div class="editor-head">
-      <h2>Éditeur</h2>
-      <input type="text" class="name-input" id="songName" placeholder="Nom du morceau">
+      <h2 data-i18n="editor">Éditeur</h2>
+      <input type="text" class="name-input" id="songName" placeholder="Nom du morceau" data-i18n-placeholder="songNamePh">
     </div>
     <div id="tracks"></div>
     <div class="legend">
-      <span><span class="dot" style="background:#f0a500"></span>frappe</span>
+      <span><span class="dot" style="background:#f0a500"></span><span data-i18n="legendHit">frappe</span></span>
       <span><span class="dot" style="background:#4ecdc4"></span>conga high (o)</span>
       <span><span class="dot" style="background:#ff6b6b"></span>conga low (0)</span>
     </div>
@@ -185,8 +187,8 @@
   <div class="status" id="status"></div>
 
   <details class="help">
-    <summary>❔ Aide &amp; fonctionnement</summary>
-    <p style="line-height:1.6">
+    <summary data-i18n-html="helpSummary">❔ Aide &amp; fonctionnement</summary>
+    <p style="line-height:1.6" data-i18n-html="helpBody">
       <b>Édition :</b> cliquez sur une case pour activer/désactiver une frappe.
       Sur la piste <b>conga</b>, cliquez plusieurs fois pour alterner
       <code>low (0)</code> → <code>high (o)</code> → <code>off</code>.<br>
@@ -200,7 +202,88 @@
   </details>
 </div>
 
+<script src="./js/i18n-fx.js"></script>
 <script>
+/* ============================================================
+   TRADUCTIONS FR / EN (module ./js/i18n-fx.js)
+   ============================================================ */
+FxI18n.add({
+  fr: {
+    subtitle: "Éditeur de rythmes — cliquez sur les cases pour créer et modifier",
+    play: "▶ Lecture",
+    pause: "⏸ Pause",
+    stop: "■ Stop",
+    clearAll: "Tout effacer",
+    tempo: "Tempo",
+    newSong: "＋ Nouveau",
+    duplicate: "⧉ Dupliquer",
+    export: "⬇ Exporter",
+    import: "⬆ Importer",
+    reset: "↺ Restaurer défauts",
+    editor: "Éditeur",
+    songNamePh: "Nom du morceau",
+    legendHit: "frappe",
+    helpSummary: "❔ Aide &amp; fonctionnement",
+    helpBody: "<b>Édition :</b> cliquez sur une case pour activer/désactiver une frappe.\n      Sur la piste <b>conga</b>, cliquez plusieurs fois pour alterner\n      <code>low (0)</code> → <code>high (o)</code> → <code>off</code>.<br>\n      <b>Pistes :</b> <b>🔊/🔇</b> mute une piste. <code>◀</code>/<code>▶</code>\n      décalent le motif d'un pas, <code>×</code> efface la piste.<br>\n      <b>Sauvegarde :</b> tout est conservé automatiquement dans le navigateur\n      (<code>localStorage</code>). <b>Exporter</b>/<b>Importer</b> échangent un fichier JSON.<br>\n      <b>Nouveau</b> crée un morceau vierge, <b>Dupliquer</b> copie le morceau courant.\n      <code>×</code> dans un onglet le supprime.",
+    untitled: "(sans nom)",
+    deleteSongTitle: "Supprimer ce morceau",
+    muteTitle: "Couper / rétablir le son",
+    shiftLeft: "Décaler à gauche",
+    shiftRight: "Décaler à droite",
+    clearTrack: "Effacer la piste",
+    cantDeleteLast: "Impossible de supprimer le dernier morceau.",
+    confirmDelete: "Supprimer ce morceau ?",
+    confirmClearAll: "Effacer toutes les frappes du morceau courant ?",
+    newSongName: "Nouveau morceau",
+    newSongCreated: "Nouveau morceau créé.",
+    copySuffix: " (copie)",
+    duplicated: "Morceau dupliqué.",
+    exported: "Export effectué.",
+    invalidFormat: "Format invalide",
+    imported: "{n} morceau(x) importé(s).",
+    importError: "Impossible d'importer ce fichier : {msg}",
+    confirmReset: "Restaurer les deux morceaux par défaut ? Tous vos morceaux seront supprimés.",
+    resetDone: "Morceaux par défaut restaurés."
+  },
+  en: {
+    subtitle: "Rhythm editor — click the cells to create and edit patterns",
+    play: "▶ Play",
+    pause: "⏸ Pause",
+    stop: "■ Stop",
+    clearAll: "Clear all",
+    tempo: "Tempo",
+    newSong: "＋ New",
+    duplicate: "⧉ Duplicate",
+    export: "⬇ Export",
+    import: "⬆ Import",
+    reset: "↺ Restore defaults",
+    editor: "Editor",
+    songNamePh: "Song name",
+    legendHit: "hit",
+    helpSummary: "❔ Help &amp; how it works",
+    helpBody: "<b>Editing:</b> click a cell to turn a hit on or off.\n      On the <b>conga</b> track, click repeatedly to cycle through\n      <code>low (0)</code> → <code>high (o)</code> → <code>off</code>.<br>\n      <b>Tracks:</b> <b>🔊/🔇</b> mutes a track. <code>◀</code>/<code>▶</code>\n      shift the pattern by one step, <code>×</code> clears the track.<br>\n      <b>Saving:</b> everything is saved automatically in your browser\n      (<code>localStorage</code>). <b>Export</b>/<b>Import</b> exchange a JSON file.<br>\n      <b>New</b> creates a blank song, <b>Duplicate</b> copies the current song.\n      <code>×</code> on a tab deletes that song.",
+    untitled: "(untitled)",
+    deleteSongTitle: "Delete this song",
+    muteTitle: "Mute / unmute",
+    shiftLeft: "Shift left",
+    shiftRight: "Shift right",
+    clearTrack: "Clear track",
+    cantDeleteLast: "You can't delete the last song.",
+    confirmDelete: "Delete this song?",
+    confirmClearAll: "Clear every hit in the current song?",
+    newSongName: "New song",
+    newSongCreated: "New song created.",
+    copySuffix: " (copy)",
+    duplicated: "Song duplicated.",
+    exported: "Export complete.",
+    invalidFormat: "Invalid format",
+    imported: "{n} song(s) imported.",
+    importError: "Unable to import this file: {msg}",
+    confirmReset: "Restore the two default songs? All your songs will be deleted.",
+    resetDone: "Default songs restored."
+  }
+});
+
 /* ============================================================
    DONNÉES PAR DÉFAUT
    ============================================================ */
@@ -440,14 +523,14 @@ function start() {
   state.playing = true;
   state.step = 0;
   state.nextTime = c.currentTime + 0.1;
-  document.getElementById("playBtn").textContent = "⏸ Pause";
+  document.getElementById("playBtn").textContent = FxI18n.t("pause");
   scheduler();
 }
 
 function stop() {
   state.playing = false;
   clearTimeout(state.timer);
-  document.getElementById("playBtn").textContent = "▶ Lecture";
+  document.getElementById("playBtn").textContent = FxI18n.t("play");
   document.querySelectorAll(".step").forEach(el => el.classList.remove("playhead"));
 }
 
@@ -460,7 +543,7 @@ function renderTabs() {
   state.songs.forEach(song => {
     const t = document.createElement("div");
     t.className = "tab" + (song.id === state.currentId ? " active" : "");
-    t.textContent = song.name || "(sans nom)";
+    t.textContent = song.name || FxI18n.t("untitled");
     t.addEventListener("click", (e) => {
       if (e.target.classList.contains("del")) return;
       selectSong(song.id);
@@ -468,7 +551,7 @@ function renderTabs() {
     const del = document.createElement("span");
     del.className = "del";
     del.textContent = "×";
-    del.title = "Supprimer ce morceau";
+    del.title = FxI18n.t("deleteSongTitle");
     del.addEventListener("click", (e) => {
       e.stopPropagation();
       deleteSong(song.id);
@@ -486,8 +569,8 @@ function selectSong(id) {
 }
 
 function deleteSong(id) {
-  if (state.songs.length <= 1) { setStatus("Impossible de supprimer le dernier morceau."); return; }
-  if (!confirm("Supprimer ce morceau ?")) return;
+  if (state.songs.length <= 1) { setStatus(FxI18n.t("cantDeleteLast")); return; }
+  if (!confirm(FxI18n.t("confirmDelete"))) return;
   state.songs = state.songs.filter(s => s.id !== id);
   if (state.currentId === id) state.currentId = state.songs[0].id;
   if (state.playing) stop();
@@ -515,7 +598,7 @@ function renderEditor() {
     const muteBtn = document.createElement("button");
     muteBtn.className = "mute-btn" + (tr.mute ? " muted" : "");
     muteBtn.textContent = tr.mute ? "🔇" : "🔊";
-    muteBtn.title = "Mute / unmute";
+    muteBtn.title = FxI18n.t("muteTitle");
     muteBtn.addEventListener("click", () => {
       tr.mute = !tr.mute;
       saveState();
@@ -553,15 +636,15 @@ function renderEditor() {
     tools.className = "track-tools";
     const leftBtn = document.createElement("button");
     leftBtn.className = "small"; leftBtn.textContent = "◀";
-    leftBtn.title = "Décaler à gauche";
+    leftBtn.title = FxI18n.t("shiftLeft");
     leftBtn.addEventListener("click", () => shiftTrack(ti, -1));
     const rightBtn = document.createElement("button");
     rightBtn.className = "small"; rightBtn.textContent = "▶";
-    rightBtn.title = "Décaler à droite";
+    rightBtn.title = FxI18n.t("shiftRight");
     rightBtn.addEventListener("click", () => shiftTrack(ti, 1));
     const clrBtn = document.createElement("button");
     clrBtn.className = "small danger"; clrBtn.textContent = "×";
-    clrBtn.title = "Effacer la piste";
+    clrBtn.title = FxI18n.t("clearTrack");
     clrBtn.addEventListener("click", () => clearTrack(ti));
     tools.appendChild(leftBtn);
     tools.appendChild(rightBtn);
@@ -623,7 +706,7 @@ function clearTrack(ti) {
    ACTIONS GLOBALES
    ============================================================ */
 function clearAll() {
-  if (!confirm("Effacer toutes les frappes du morceau courant ?")) return;
+  if (!confirm(FxI18n.t("confirmClearAll"))) return;
   getCurrent().tracks.forEach(tr => tr.data = ".".repeat(16));
   saveState();
   renderEditor();
@@ -632,7 +715,7 @@ function clearAll() {
 function newSong() {
   const song = {
     id: uid(),
-    name: "Nouveau morceau",
+    name: FxI18n.t("newSongName"),
     tracks: [
       { label: "2-3 rumba clave", type: "bin",   sound: "clave",  data: "................", mute: false },
       { label: "guagua",          type: "bin",   sound: "guagua", data: "................", mute: false },
@@ -647,19 +730,19 @@ function newSong() {
   if (state.playing) stop();
   renderAll();
   saveState();
-  setStatus("Nouveau morceau créé.");
+  setStatus(FxI18n.t("newSongCreated"));
 }
 
 function duplicateSong() {
   const copy = deepClone(getCurrent());
   copy.id = uid();
-  copy.name = copy.name + " (copie)";
+  copy.name = copy.name + FxI18n.t("copySuffix");
   state.songs.push(copy);
   state.currentId = copy.id;
   if (state.playing) stop();
   renderAll();
   saveState();
-  setStatus("Morceau dupliqué.");
+  setStatus(FxI18n.t("duplicated"));
 }
 
 function exportSongs() {
@@ -673,7 +756,7 @@ function exportSongs() {
   a.click();
   document.body.removeChild(a);
   URL.revokeObjectURL(url);
-  setStatus("Export effectué.");
+  setStatus(FxI18n.t("exported"));
 }
 
 function importSongs(file) {
@@ -683,7 +766,7 @@ function importSongs(file) {
       const parsed = JSON.parse(e.target.result);
       const imported = parsed.songs || (Array.isArray(parsed) ? parsed : null);
       if (!imported || !Array.isArray(imported) || imported.length === 0) {
-        throw new Error("Format invalide");
+        throw new Error(FxI18n.t("invalidFormat"));
       }
       const existingIds = new Set(state.songs.map(s => s.id));
       let lastId = null;
@@ -701,22 +784,22 @@ function importSongs(file) {
       if (state.playing) stop();
       renderAll();
       saveState();
-      setStatus(imported.length + " morceau(x) importé(s).");
+      setStatus(FxI18n.t("imported", { n: imported.length }));
     } catch (err) {
-      alert("Impossible d'importer ce fichier : " + err.message);
+      alert(FxI18n.t("importError", { msg: err.message }));
     }
   };
   reader.readAsText(file);
 }
 
 function resetDefaults() {
-  if (!confirm("Restaurer les deux morceaux par défaut ? Tous vos morceaux seront supprimés.")) return;
+  if (!confirm(FxI18n.t("confirmReset"))) return;
   state.songs = deepClone(DEFAULT_SONGS);
   state.currentId = state.songs[0].id;
   if (state.playing) stop();
   renderAll();
   saveState();
-  setStatus("Morceaux par défaut restaurés.");
+  setStatus(FxI18n.t("resetDone"));
 }
 
 function setStatus(msg) {
@@ -771,6 +854,12 @@ bindUI();
 document.getElementById("tempo").value = state.tempo;
 document.getElementById("tempoVal").textContent = state.tempo;
 renderAll();
+
+/* ---- Changement de langue : re-rendu des onglets / pistes, sans arrêter la lecture ---- */
+FxI18n.onChange(function () {
+  document.getElementById("playBtn").textContent = FxI18n.t(state.playing ? "pause" : "play");
+  renderAll();
+});
 </script>
 </body>
 </html>

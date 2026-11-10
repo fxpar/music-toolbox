@@ -20,6 +20,8 @@ if (!Element.prototype.replaceChildren) {
 }
 </script>
 
+	<script src="./js/i18n-fx.js"></script>
+
 	<script>
 	//alert(window.location.href);
 	// --- CONFIGURATION ---
@@ -250,11 +252,12 @@ function loadAsset(type, paths) {
     <nav id="topbar" class="navbar navbar-expand-lg navbar-dark bg-dark mb-4 shadow">
         <div class="container-fluid">
             <a class="navbar-brand d-flex align-items-center" href="#">
-                <i class="bi bi-music-note-list me-2 text-primary"></i> Grille en diagrammes
+                <i class="bi bi-music-note-list me-2 text-primary"></i> <span data-i18n="ui.brand">Grille en diagrammes</span>
             </a>
-            <button class="btn btn-outline-light btn-sm ms-auto d-flex align-items-center" id="themeToggleBtn" onclick="toggleTheme()">
+            <button class="btn btn-outline-light btn-sm ms-auto d-flex align-items-center" id="themeToggleBtn" onclick="toggleTheme()" title="Mode jour / nuit" data-i18n-title="ui.theme">
                 <i class="bi bi-sun-fill" id="themeIcon"></i>
             </button>
+            <button type="button" class="btn btn-outline-light btn-sm ms-2" data-i18n-toggle>FR</button>
         </div>
     </nav>
 
@@ -264,16 +267,16 @@ function loadAsset(type, paths) {
             <div id="config" class="col-lg-5">
                 <div class="card shadow-sm h-100">
                     <div id="config-title" class="card-header bg-primary text-white py-3">
-                        <h5 class="card-title mb-0"><i class="bi bi-sliders me-2"></i>Configuration</h5>
+                        <h5 class="card-title mb-0"><i class="bi bi-sliders me-2"></i><span data-i18n="ui.config">Configuration</span></h5>
                     </div>
                     <div id="config-body" class="card-body">
                         <div class="mb-3">
-                            <label for="chordGrid" class="form-label fw-bold">Votre grille d'accords :</label>
-                            <textarea class="form-control font-monospace" id="chordGrid" rows="3" placeholder="Ex: C(0003) C7(0001) | % | C F7(5556) C(3433) | F7 C"></textarea>
+                            <label for="chordGrid" class="form-label fw-bold" data-i18n="ui.grid">Votre grille d'accords :</label>
+                            <textarea class="form-control font-monospace" id="chordGrid" rows="3" placeholder="Ex: C(0003) C7(0001) | % | C F7(5556) C(3433) | F7 C" data-i18n-placeholder="ui.gridPh"></textarea>
                         </div>
 						
-						<!-- Bouton / Panneau d'aide sur la syntaxe des accords -->
-<div class="mt-2">
+						<!-- Bouton / Panneau d'aide sur la syntaxe des accords (FR) — affiché selon la langue (FxI18n) -->
+<div class="mt-2" data-help-lang="fr">
     <button class="btn btn-sm btn-outline-info w-100 text-start d-flex align-items-center justify-content-between" 
             type="button" 
             data-bs-toggle="collapse" 
@@ -339,13 +342,13 @@ function loadAsset(type, paths) {
 </div>
 
 
-<!-- English Chord Syntax Help Panel -->
-<div class="mt-2">
+<!-- English Chord Syntax Help Panel — shown when the language is EN (FxI18n) -->
+<div class="mt-2 d-none" data-help-lang="en">
     <button class="btn btn-sm btn-outline-info w-100 text-start d-flex align-items-center justify-content-between" 
             type="button" 
             data-bs-toggle="collapse" 
             data-bs-target="#chordSyntaxHelpEN">
-        <span><i class="bi bi-question-circle-fill me-1"></i> Chord Syntax Help (English)</span>
+        <span><i class="bi bi-question-circle-fill me-1"></i> Chord syntax help</span>
         <i class="bi bi-chevron-down"></i>
     </button>
     
@@ -353,17 +356,17 @@ function loadAsset(type, paths) {
         <div class="card card-body bg-body-tertiary small p-2">
             <p class="mb-2"><strong>Basic Syntax:</strong> </p>
             <ul class="mb-2 ps-3">
-                <li><code>C  G Am</code>: Separate chord names by space. One measure will be applied for each chord in the staff.</li>
-                <li><code>C | G  Am | F</code>: Use <code>|</code> to separate ALL measure if multiple chords are in one measures.</li>
-                <li><code>C | % | G Am | %</code>: Use <code>%</code> to repeat previous mesure.</li>
-                <li><code>G7/D</code>: the chord inversions are not in the db. Only the part before the <code>/</code> is applied, even if the full name is displayed.</li>
-                <li><code>C°</code>, <code>G7/D</code>, <code>Am?</code>, <code>??</code>: Symbols like <code>°</code>, <code>/</code> and <code>?</code> are accepted in chord names.</li>
-				<li>Transposition only applies to diagrams searched in the library (use the ⁝ at the end of the player to transpose).</li>
-				<li><strong>Chords List:</strong> major, m, dim, dim7, sus2, sus4, 7sus4, alt, aug, 6, 69, 7, 7b5, aug7, 9, 9b5, aug9, 7b9, 7b9#5, 7#9, 11, 9#11, 13, 13b9, 13b5b9, b13b9, b13#9, maj7, maj7b5, maj7#5, maj9, maj11, maj13, m6, m7, m7b5, m9, m69, m9b5, m11, mmaj7, mmaj7b5, mmaj9, mmaj11, add9, madd9
+                <li><code>C G Am</code>: separate chords with spaces: one bar per chord.</li>
+                <li><code>C | G Am | F</code>: if a bar holds several chords, use <code>|</code> to separate ALL the bars.</li>
+                <li><code>C | % | G Am | %</code>: use <code>%</code> to repeat the previous bar.</li>
+                <li><code>G7/D</code>: inversions are not in the chord library, so the diagram shows the part before the <code>/</code>, even though the full name is displayed.</li>
+                <li><code>C°</code>, <code>G7/D</code>, <code>Am?</code>, <code>??</code>: the symbols <code>°</code>, <code>/</code> and <code>?</code> are accepted in chord names (see below for fixed fingerings).</li>
+				<li>Transposition only applies to diagrams taken from the chord library (click the ⁝ button at the end of the player to transpose).</li>
+				<li><strong>Chord list:</strong> major, m, dim, dim7, sus2, sus4, 7sus4, alt, aug, 6, 69, 7, 7b5, aug7, 9, 9b5, aug9, 7b9, 7b9#5, 7#9, 11, 9#11, 13, 13b9, 13b5b9, b13b9, b13#9, maj7, maj7b5, maj7#5, maj9, maj11, maj13, m6, m7, m7b5, m9, m69, m9b5, m11, mmaj7, mmaj7b5, mmaj9, mmaj11, add9, madd9
 </li>
             </ul>
 
-            <div class="fw-bold mb-1 border-top pt-2">Fixed fingering Options :</div>
+            <div class="fw-bold mb-1 border-top pt-2">Fixed fingering options:</div>
             <table class="table table-sm table-borderless mb-0 align-middle">
                 <tbody>
 					<tr>
@@ -405,27 +408,27 @@ function loadAsset(type, paths) {
 </div>
 
 						<div id="instrument" class="mb-3">
-							<label for="instrumentSelect" class="form-label fw-bold">Instrument :</label>
+							<label for="instrumentSelect" class="form-label fw-bold" data-i18n="ui.instrument">Instrument :</label>
 							<select class="form-select" id="instrumentSelect">
-								<option value="ukulele" selected>Ukulélé</option>
-								<option value="guitar">Guitare</option>
+								<option value="ukulele" selected data-i18n="ui.uke">Ukulélé</option>
+								<option value="guitar" data-i18n="ui.guitar">Guitare</option>
 							</select>
 						</div>
 						
 						
                         <div class="row g-3 mb-3">
                             <div class="col-sm-6">
-                                <label for="gchordStyle" class="form-label fw-bold">Style :</label>
+                                <label for="gchordStyle" class="form-label fw-bold" data-i18n="ui.style">Style :</label>
                                 <select class="form-select" id="gchordStyle">
 									<option value="boom-chick">Boom Chick (Standard)</option>
-									<option value="strum">Percussion Accords</option>
-									<option value="arpeggio">Arpège</option>
-									<option value="offbeat">Contretemps (Ska/Reggae)</option>
-									<option value="silent">Silencieux</option>
+									<option value="strum" data-i18n="ui.strum">Percussion Accords</option>
+									<option value="arpeggio" data-i18n="ui.arpeggio">Arpège</option>
+									<option value="offbeat" data-i18n="ui.offbeat">Contretemps (Ska/Reggae)</option>
+									<option value="silent" data-i18n="ui.silent">Silencieux</option>
 								</select>
                             </div>
                             <div class="col-sm-6">
-                                <label for="timeSignature" class="form-label fw-bold">Mesure :</label>
+                                <label for="timeSignature" class="form-label fw-bold" data-i18n="ui.timeSig">Mesure :</label>
                                 <select class="form-select" id="timeSignature">
                                     <option value="2/4">2/4</option>
 									<option value="3/4">3/4</option>
@@ -441,14 +444,14 @@ function loadAsset(type, paths) {
 						
 						<div class="form-check form-switch mb-3">
 							<input class="form-check-input" type="checkbox" id="chordRestsToggle">
-							<label class="form-check-label fw-bold" for="chordRestsToggle">
+							<label class="form-check-label fw-bold" for="chordRestsToggle" data-i18n-html="ui.chordRests">
 								Répéter l'accord sur chaque temps (<code>" c"</code>)
 							</label>
 						</div>
 
                         <div class="d-grid gap-2 pt-2">
                             <button class="btn btn-success btn-lg" onclick="generateABC()">
-                                <i class="bi bi-play-circle-fill me-2"></i>Appliquer & Générer
+                                <i class="bi bi-play-circle-fill me-2"></i><span data-i18n="ui.generate">Appliquer & Générer</span>
                             </button>
                         </div>
 						
@@ -461,12 +464,12 @@ function loadAsset(type, paths) {
             <div class="col-lg-7">
                 <div id="render-card" class="card shadow-sm h-100">
                     <div id="render-header" class="card-header bg-secondary text-white py-3 d-flex justify-content-between align-items-center">
-                        <h5 class="card-title mb-0"><i class="bi bi-eye me-2"></i>Rendu</h5>
+                        <h5 class="card-title mb-0"><i class="bi bi-eye me-2"></i><span data-i18n="ui.render">Rendu</span></h5>
                         <div>
-                            <button class="btn btn-sm btn-light me-1" type="button" data-bs-toggle="collapse" data-bs-target="#chordsCodeCollapse">
+                            <button class="btn btn-sm btn-light me-1" type="button" data-bs-toggle="collapse" data-bs-target="#chordsCodeCollapse" data-i18n="ui.chordsCode">
                                 Code Accords
                             </button>
-                            <button class="btn btn-sm btn-light" type="button" data-bs-toggle="collapse" data-bs-target="#abcCodeCollapse">
+                            <button class="btn btn-sm btn-light" type="button" data-bs-toggle="collapse" data-bs-target="#abcCodeCollapse" data-i18n="ui.abcCode">
                                 Code ABC
                             </button>
                         </div>
@@ -475,13 +478,13 @@ function loadAsset(type, paths) {
                         
                         <!-- Code HTML pour Chords -->
                         <div class="collapse mb-3" id="chordsCodeCollapse">
-                            <label class="form-label small fw-bold">Code HTML des Diagrammes :</label>
+                            <label class="form-label small fw-bold" data-i18n="ui.chordsHtml">Code HTML des Diagrammes :</label>
                             <textarea class="form-control font-monospace bg-body-secondary small" id="chordsSource" rows="3" readonly></textarea>
                         </div>
 
                         <!-- Code ABC -->
                         <div class="collapse mb-3" id="abcCodeCollapse">
-                            <label class="form-label small fw-bold">Code ABC :</label>
+                            <label class="form-label small fw-bold" data-i18n="ui.abcCodeLbl">Code ABC :</label>
                             <textarea class="form-control font-monospace bg-body-secondary small" id="abcSource" rows="4" readonly></textarea>
                         </div>
 						
@@ -493,7 +496,7 @@ function loadAsset(type, paths) {
                         <div class="mb-3">
                             <div class="d-flex align-items-stretch gap-1">
                                 <div id="audio-player" class="flex-grow-1"></div>
-                                <button class="btn btn-secondary btn-sm" type="button" data-bs-toggle="collapse" data-bs-target="#moreControls" title="Plus d'options">
+                                <button class="btn btn-secondary btn-sm" type="button" data-bs-toggle="collapse" data-bs-target="#moreControls" title="Plus d'options" data-i18n-title="ui.more">
                                     <i class="bi bi-three-dots-vertical"></i>
                                 </button>
                             </div>
@@ -501,9 +504,9 @@ function loadAsset(type, paths) {
                             <div class="collapse border border-top-0 rounded-bottom p-3 bg-body-secondary" id="moreControls">
                                 <div class="row g-3 align-items-end">
                                     <div class="col-auto">
-                                        <label for="abc-sel-transpose" class="form-label small fw-bold">Transposer (demi-tons) :</label>
+                                        <label for="abc-sel-transpose" class="form-label small fw-bold" data-i18n="ui.transpose">Transposer (demi-tons) :</label>
                                         <select id="abc-sel-transpose" class="form-select form-select-sm" style="width: 120px;">
-                                            <option value="0" selected>0 (Défaut)</option>
+                                            <option value="0" selected data-i18n="ui.default0">0 (Défaut)</option>
                                             <option value="1">+1</option>
                                             <option value="2">+2</option>
                                             <option value="3">+3</option>
@@ -523,7 +526,7 @@ function loadAsset(type, paths) {
                                         </select>
                                     </div>
                                     <div class="col-auto">
-                                        <button class="btn btn-primary btn-sm" onclick="generateABC()">Appliquer</button>
+                                        <button class="btn btn-primary btn-sm" onclick="generateABC()" data-i18n="ui.apply">Appliquer</button>
                                     </div>
                                 </div>
                             </div>
@@ -541,7 +544,7 @@ function loadAsset(type, paths) {
 							<div class="accordion accordion-flush" id="accordionAbcOutput">
 								<div class="accordion-item bg-transparent border-top">
 									<h2 class="accordion-header" id="headingAbcOutput">
-										<button class="accordion-button collapsed bg-transparent py-2 px-0 text-muted small" type="button" data-bs-toggle="collapse" data-bs-target="#collapseAbcOutput" aria-expanded="false" aria-controls="collapseAbcOutput">
+										<button class="accordion-button collapsed bg-transparent py-2 px-0 text-muted small" type="button" data-bs-toggle="collapse" data-bs-target="#collapseAbcOutput" aria-expanded="false" aria-controls="collapseAbcOutput" data-i18n="ui.transposedCode">
 											⚙️ Code ABC transposé (source)
 										</button>
 									</h2>
@@ -571,20 +574,20 @@ function loadAsset(type, paths) {
 		  <!-- Colonne 1 : Copyright & Titre -->
 		  <div class="col-12 col-md-6 text-center text-md-start">
 			<span class="small">
-			  CC BY-NC 4.0 <span id="currentYear"></span><script>document.getElementById("currentYear").textContent = new Date().getFullYear();</script> <strong>François Parlant</strong> &mdash; Créé avec passion pour le rythme et la mélodie.
+			  CC BY-NC 4.0 <span id="currentYear"></span><script>document.getElementById("currentYear").textContent = new Date().getFullYear();</script> <strong>François Parlant</strong> &mdash; <span data-i18n="footer.tagline">Créé avec passion pour le rythme et la mélodie.</span>
 			</span>
 		  </div>
 
 		  <!-- Colonne 2 : Liens Réseaux Sociaux -->
 		  <div class="col-12 col-md-6 text-center text-md-end">
 			<div class="d-inline-flex gap-3 align-items-center">
-			  <a href="https://github.com/fxpar/music-toolbox/blob/main/abc-grid+diagrams.html" target="_blank" rel="noopener noreferrer" class="text-body-secondary text-decoration-none fs-5 hover-accent" title="Code source GitHub"> 
+			  <a href="https://github.com/fxpar/music-toolbox/blob/main/abc-grid+diagrams.html" target="_blank" rel="noopener noreferrer" class="text-body-secondary text-decoration-none fs-5 hover-accent" title="Code source GitHub" data-i18n-title="footer.github"> 
 				<i class="bi bi-github"></i> 
 			  </a> 
-			  <a href="https://www.linkedin.com/in/francois-parlant" target="_blank" rel="noopener noreferrer" class="text-body-secondary text-decoration-none fs-5 hover-accent" title="LinkedIn: François Parlant">
+			  <a href="https://www.linkedin.com/in/francois-parlant" target="_blank" rel="noopener noreferrer" class="text-body-secondary text-decoration-none fs-5 hover-accent" title="LinkedIn: François Parlant" data-i18n-title="footer.linkedin">
 				<i class="bi bi-linkedin"></i> 
 			  </a> 
-			  <a href="https://www.youtube.com/c/enparlantdebureautiqueformezvous" target="_blank" rel="noopener noreferrer" class="text-body-secondary text-decoration-none fs-5 hover-accent" title="Tutos YouTube: En parlant de bureautique">
+			  <a href="https://www.youtube.com/c/enparlantdebureautiqueformezvous" target="_blank" rel="noopener noreferrer" class="text-body-secondary text-decoration-none fs-5 hover-accent" title="Tutos YouTube: En parlant de bureautique" data-i18n-title="footer.youtube">
 				<i class="bi bi-youtube"></i> 
 			  </a>
 			</div>
@@ -618,6 +621,56 @@ function loadAsset(type, paths) {
     <!-- <script src="https://cdn.jsdelivr.net/npm/abcjs@6.4.0/dist/abcjs-basic-min.js"></script> -->
 
     <script>
+        // --- Traductions FR / EN (module commun js/i18n-fx.js) ---
+        FxI18n.add({
+            fr: {
+                "page.title": "Générateur de Grille ABCJS",
+                "ui.brand": "Grille en diagrammes", "ui.theme": "Mode jour / nuit", "ui.config": "Configuration",
+                "ui.grid": "Votre grille d'accords :", "ui.gridPh": "Ex: C(0003) C7(0001) | % | C F7(5556) C(3433) | F7 C",
+                "ui.instrument": "Instrument :", "ui.uke": "Ukulélé", "ui.guitar": "Guitare",
+                "ui.style": "Style :", "ui.strum": "Percussion Accords", "ui.arpeggio": "Arpège", "ui.offbeat": "Contretemps (Ska/Reggae)",
+                "ui.silent": "Silencieux", "ui.timeSig": "Mesure :",
+                "ui.chordRests": "Répéter l'accord sur chaque temps (<code>\" c\"</code>)",
+                "ui.generate": "Appliquer & Générer", "ui.render": "Rendu", "ui.chordsCode": "Code Accords", "ui.abcCode": "Code ABC",
+                "ui.chordsHtml": "Code HTML des Diagrammes :", "ui.abcCodeLbl": "Code ABC :", "ui.more": "Plus d'options",
+                "ui.transpose": "Transposer (demi-tons) :", "ui.default0": "0 (Défaut)", "ui.apply": "Appliquer",
+                "ui.transposedCode": "⚙️ Code ABC transposé (source)",
+                "diag.fixed": "Doigté fixe", "diag.notFound": "non trouvé",
+                "abc.title": "Grille Rythmique", "msg.noAudio": "L'audio n'est pas supporté.",
+                "footer.tagline": "Créé avec passion pour le rythme et la mélodie.", "footer.github": "Code source GitHub",
+                "footer.linkedin": "LinkedIn: François Parlant", "footer.youtube": "Tutos YouTube: En parlant de bureautique"
+            },
+            en: {
+                "page.title": "ABCJS Chord Grid Generator",
+                "ui.brand": "Chord grid with diagrams", "ui.theme": "Light / dark mode", "ui.config": "Settings",
+                "ui.grid": "Your chord grid:", "ui.gridPh": "e.g. C(0003) C7(0001) | % | C F7(5556) C(3433) | F7 C",
+                "ui.instrument": "Instrument:", "ui.uke": "Ukulele", "ui.guitar": "Guitar",
+                "ui.style": "Style:", "ui.strum": "Chord strum", "ui.arpeggio": "Arpeggio", "ui.offbeat": "Offbeat (Ska/Reggae)",
+                "ui.silent": "Silent", "ui.timeSig": "Time signature:",
+                "ui.chordRests": "Repeat the chord on every beat (<code>\" c\"</code>)",
+                "ui.generate": "Apply & Generate", "ui.render": "Output", "ui.chordsCode": "Chords code", "ui.abcCode": "ABC code",
+                "ui.chordsHtml": "Diagram HTML code:", "ui.abcCodeLbl": "ABC code:", "ui.more": "More options",
+                "ui.transpose": "Transpose (semitones):", "ui.default0": "0 (Default)", "ui.apply": "Apply",
+                "ui.transposedCode": "⚙️ Transposed ABC code (source)",
+                "diag.fixed": "Fixed fingering", "diag.notFound": "not found",
+                "abc.title": "Rhythm Grid", "msg.noAudio": "Audio is not supported.",
+                "footer.tagline": "Made with passion for rhythm and melody.", "footer.github": "Source code on GitHub",
+                "footer.linkedin": "LinkedIn: François Parlant", "footer.youtube": "YouTube tutorials: En parlant de bureautique"
+            }
+        });
+        // Aide sur la syntaxe : n'afficher que le bloc de la langue courante
+        function showHelpForLang(lang) {
+            var blocks = document.querySelectorAll("[data-help-lang]");
+            for (var i = 0; i < blocks.length; i++) {
+                if (blocks[i].getAttribute("data-help-lang") === lang) blocks[i].classList.remove("d-none");
+                else blocks[i].classList.add("d-none");
+            }
+        }
+        FxI18n.onChange(function (lang) {
+            document.title = FxI18n.t("page.title");
+            showHelpForLang(lang);
+        });
+
         document.getElementById('chordGrid').value = "F7 | C7 | % F6  Em7b5  A7 | Dm | Cm7 F7 |C(0003) C7(0001) | % C7(1211b1111p3s7b,3,5,Rf5R36) F7(2313) | C7(3433)  ";
 
         let synthControl = null;
@@ -1094,7 +1147,7 @@ function parseChordToken(token, knownChords) {
 					header.className = 'mb-1';
 					//header.innerHTML = '<h5 class="m-0">' + titleText + '</h5>' +
 					header.innerHTML = '' +
-									   (transposeValue !== 0 ? '<span class="badge bg-secondary style="font-size: 0.7em;">Doigté fixe</span>' : '');
+									   (transposeValue !== 0 ? '<span data-i18n="diag.fixed" class="badge bg-secondary style="font-size: 0.7em;">' + FxI18n.t("diag.fixed") + '</span>' : '');
 					
 					section.appendChild(header);
 
@@ -1161,7 +1214,7 @@ function parseChordToken(token, knownChords) {
                         chordEl.setAttribute('sub', data.sub || '');
                         section.appendChild(chordEl);
                     } else {
-                        section.innerHTML += '<div class="text-muted fst-italic small"> <strong>' + displayChordName + '</strong><br/> non trouvé</div>';
+                        section.innerHTML += '<div class="text-muted fst-italic small"> <strong>' + displayChordName + '</strong><br/> <span data-i18n="diag.notFound">' + FxI18n.t("diag.notFound") + '</span></div>';
                     }
 					
 					header.appendChild(btnPrev);
@@ -1186,7 +1239,7 @@ function parseChordToken(token, knownChords) {
                 }
             }
 
-            const abcString = `X:1\nT:Grille Rythmique\nM:${timeSig}\nL:1/4\nQ:100\nK:C\n%%MIDI transpose ${transposeValue}\n%%MIDI gchord ${gchord}\n${formattedMeasures}`;
+            const abcString = `X:1\nT:${FxI18n.t("abc.title")}\nM:${timeSig}\nL:1/4\nQ:100\nK:C\n%%MIDI transpose ${transposeValue}\n%%MIDI gchord ${gchord}\n${formattedMeasures}`;
             document.getElementById('abcSource').value = abcString;
 
             const renderOptions = { 
@@ -1222,7 +1275,7 @@ function parseChordToken(token, knownChords) {
                     console.warn("Erreur de création de la synthèse audio :", error);
                 });
             } else {
-                document.getElementById("audio-player").innerHTML = "<div class='alert alert-warning p-2 small'>L'audio n'est pas supporté.</div>";
+                document.getElementById("audio-player").innerHTML = "<div class='alert alert-warning p-2 small'>" + FxI18n.t("msg.noAudio") + "</div>";
             }
 			
 			// Remplace 'abcString' par le nom de ta variable contenant le code ABC final

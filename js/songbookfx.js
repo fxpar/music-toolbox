@@ -1,3 +1,44 @@
+// --- Textes FR / EN (module js/i18n-fx.js, chargé avant ce script) ---
+// Les paroles et les chansons ne sont pas traduites (données utilisateur).
+FxI18n.add({
+    fr: {
+        'sb.pageTitle': 'ChordFlow - Lecteur de Chansons',
+        'sb.menu': 'Menu',
+        'sb.down': "Baisser d'un demi-ton", 'sb.up': "Monter d'un demi-ton",
+        'sb.transpose': 'Ton : {v}',
+        'sb.settings': 'Paramètres', 'sb.close': 'Fermer',
+        'sb.search': '🔍 Rechercher...', 'sb.clearSearch': 'Effacer la recherche',
+        'sb.addSongBtn': '➕ Ajouter une chanson', 'sb.addSong': 'Ajouter une chanson',
+        'sb.songTitle': 'Titre de la chanson', 'sb.artist': 'Artiste',
+        'sb.guitar': '🎸 Guitare', 'sb.ukulele': '🏝️ Ukulélé',
+        'sb.zoomOut': 'Rétrécir', 'sb.zoomIn': 'Agrandir',
+        'sb.theme': 'Thème', 'sb.nightMode': '🌙 Mode Nuit', 'sb.dayMode': '☀️ Mode Clair',
+        'sb.lyricsSize': 'Taille paroles', 'sb.chordSize': 'Taille accords',
+        'sb.pastePh': 'Collez votre texte ici (Format ChordPro : [Am]Titre...)',
+        'sb.save': 'Enregistrer', 'sb.cancel': 'Annuler',
+        'sb.untitled': 'Sans titre', 'sb.unknownAuthor': 'Inconnu',
+        'sb.noResult': 'Aucun résultat', 'sb.noChord': 'Aucun accord'
+    },
+    en: {
+        'sb.pageTitle': 'ChordFlow - Song Reader',
+        'sb.menu': 'Menu',
+        'sb.down': 'Down a semitone', 'sb.up': 'Up a semitone',
+        'sb.transpose': 'Key: {v}',
+        'sb.settings': 'Settings', 'sb.close': 'Close',
+        'sb.search': '🔍 Search...', 'sb.clearSearch': 'Clear search',
+        'sb.addSongBtn': '➕ Add a song', 'sb.addSong': 'Add a song',
+        'sb.songTitle': 'Song title', 'sb.artist': 'Artist',
+        'sb.guitar': '🎸 Guitar', 'sb.ukulele': '🏝️ Ukulele',
+        'sb.zoomOut': 'Smaller', 'sb.zoomIn': 'Larger',
+        'sb.theme': 'Theme', 'sb.nightMode': '🌙 Night mode', 'sb.dayMode': '☀️ Day mode',
+        'sb.lyricsSize': 'Lyrics size', 'sb.chordSize': 'Chord size',
+        'sb.pastePh': 'Paste your text here (ChordPro format: [Am]Title...)',
+        'sb.save': 'Save', 'sb.cancel': 'Cancel',
+        'sb.untitled': 'Untitled', 'sb.unknownAuthor': 'Unknown',
+        'sb.noResult': 'No results', 'sb.noChord': 'No chords'
+    }
+});
+
 // --- État de l'application ---
 let songs = JSON.parse(localStorage.getItem('chordflow_songs')) || myDefaultSongs;
 let settings = JSON.parse(localStorage.getItem('chordflow_settings')) || {
@@ -55,13 +96,19 @@ themeToggle.addEventListener('click', () => {
     const newTheme = isDark ? 'light' : 'dark';
     
     html.setAttribute('data-theme', newTheme);
-    themeToggle.textContent = isDark ? '🌙 Mode Nuit' : '☀️ Mode Clair';
+    renderThemeLabel();
     localStorage.setItem('chordflow_theme', newTheme);
 });
 
+// Libellé du bouton thème : « Mode Clair » quand la nuit est active, sinon « Mode Nuit »
+function renderThemeLabel() {
+    const isDarkNow = document.documentElement.getAttribute('data-theme') === 'dark';
+    themeToggle.textContent = FxI18n.t(isDarkNow ? 'sb.dayMode' : 'sb.nightMode');
+}
+
 if (localStorage.getItem('chordflow_theme') === 'dark') {
     document.documentElement.setAttribute('data-theme', 'dark');
-    themeToggle.textContent = '☀️ Mode Clair';
+    renderThemeLabel();
 }
 
 // --- 2. Gestion des Panels (Burger & Options) ---
@@ -203,6 +250,10 @@ function refreshDiagrams() {
 // --- 5. Gestion de la Modal & Importation ---
 importBtn.addEventListener('click', () => importModal.style.display = 'flex');
 closeModal.addEventListener('click', () => importModal.style.display = 'none');
+// Fermer en cliquant sur le fond (hors de .modal-content)
+importModal.addEventListener('click', (e) => {
+    if (e.target === importModal) importModal.style.display = 'none';
+});
 
 saveSongBtn.addEventListener('click', () => {
     const rawText = document.getElementById('import-text').value;
@@ -211,8 +262,8 @@ saveSongBtn.addEventListener('click', () => {
     const lines = rawText.split('\n');
     const newSong = {
         id: Date.now(),
-        title: lines[0].replace(/#/g, '').trim() || "Sans titre",
-        author: "Inconnu",
+        title: lines[0].replace(/#/g, '').trim() || FxI18n.t('sb.untitled'),
+        author: FxI18n.t('sb.unknownAuthor'),
         content: rawText,
         tags: []
     };
@@ -223,13 +274,21 @@ saveSongBtn.addEventListener('click', () => {
     renderLibrary();
     importModal.style.display = 'none';
     document.getElementById('import-text').value = '';
+    // Affiche directement la chanson ajoutée (et la surligne dans la liste)
+    loadSong(newSong);
+    const idx = songs.indexOf(newSong);
+    const items = document.querySelectorAll('#song-list li');
+    if (idx >= 0 && items[idx]) items[idx].classList.add('active');
 });
 
 // --- 6. Affichage de la Bibliothèque ---
-function renderLibrary(filterText = '') {
+function renderLibrary(filterText) {
+    // (pas de paramètre par défaut : WebView Android 7)
+    if (filterText === undefined) filterText = '';
     songList.innerHTML = '';
     const filteredSongs = songs.filter(song => {
-        const searchStr = `${song.title} ${song.author} ${song.content}`.toLowerCase();
+        const tags = Array.isArray(song.tags) ? song.tags.join(' ') : '';
+        const searchStr = `${song.title} ${song.author} ${tags} ${song.content}`.toLowerCase();
         return searchStr.includes(filterText.toLowerCase());
     });
 
@@ -245,7 +304,7 @@ function renderLibrary(filterText = '') {
     });
 
     if (filteredSongs.length === 0) {
-        songList.innerHTML = '<li style="text-align:center; opacity:0.5; cursor:default;">Aucun résultat</li>';
+        songList.innerHTML = '<li style="text-align:center; opacity:0.5; cursor:default;" data-i18n="sb.noResult">' + FxI18n.t('sb.noResult') + '</li>';
     }
 }
 
@@ -260,6 +319,7 @@ clearSearchBtn.addEventListener('click', () => {
 
 // --- 7. Chargement d'une Chanson ---
 function loadSong(song) {
+    currentSongLoaded = true;
     document.getElementById('display-title').textContent = song.title;
     document.getElementById('display-author').textContent = song.author;
     
@@ -274,6 +334,8 @@ function loadSong(song) {
     });
 
     chordVariantIndices = {};
+    // Tonalité de départ ({key:} ou 1er accord) : sert au choix dièses/bémols
+    Transposer.setKey(song.content, uniqueChords[0]);
     renderAllDiagrams(uniqueChords);
     attachChordEvents();
 
@@ -311,7 +373,7 @@ btnDown.addEventListener('click', () => {
 
 function updateTransposeUI() {
     const prefix = globalTranspose > 0 ? "+" : "";
-    transposeValDisplay.textContent = `Ton : ${prefix}${globalTranspose}`;
+    transposeValDisplay.textContent = FxI18n.t('sb.transpose', { v: prefix + globalTranspose });
 }
 
 instrumentSelect.addEventListener('change', () => {
@@ -319,18 +381,29 @@ instrumentSelect.addEventListener('change', () => {
 });
 
 // --- 9. Diagrammes d'accords ---
+// Variantes d'un accord dans la base ; si le nom exact est absent, on essaie
+// l'enharmonique (A#<->Bb, C#<->Db, D#<->Eb, F#<->Gb, G#<->Ab) avant de renvoyer [].
+function getChordVariants(instrument, chordName) {
+    const db = chordDatabase[instrument];
+    if (!db) return [];
+    if (db[chordName]) return db[chordName];
+    const alt = Transposer.enharmonic(chordName);
+    if (alt && db[alt]) return db[alt];
+    return [];
+}
+
 function renderAllDiagrams(chordList) {
     const container = document.getElementById('chord-diagrams-container');
     const instrument = instrumentSelect.value;
     container.innerHTML = '';
 
     if (chordList.length === 0) {
-        container.innerHTML = '<p style="text-align:center; opacity:0.5; margin-top:20px;">Aucun accord</p>';
+        container.innerHTML = '<p style="text-align:center; opacity:0.5; margin-top:20px;" data-i18n="sb.noChord">' + FxI18n.t('sb.noChord') + '</p>';
         return;
     }
 
     chordList.forEach(chordName => {
-        const variants = (chordDatabase[instrument] && chordDatabase[instrument][chordName]) ? chordDatabase[instrument][chordName] : [];
+        const variants = getChordVariants(instrument, chordName);
 
         if (chordVariantIndices[chordName] === undefined) chordVariantIndices[chordName] = 0;
         let currentIndex = chordVariantIndices[chordName];
@@ -363,7 +436,8 @@ function renderAllDiagrams(chordList) {
         if (variants.length > 0) {
             const data = variants[currentIndex];
             const chordEl = document.createElement('uke-chord');
-            chordEl.setAttribute('name', data.name);
+            // Nom affiché = nom du morceau (ex. "A#" même si le diagramme vient de "Bb")
+            chordEl.setAttribute('name', chordDatabase[instrument][chordName] ? data.name : chordName);
             chordEl.setAttribute('frets', data.frets);
             chordEl.setAttribute('fingers', data.fingers);
             chordEl.setAttribute('position', data.position);
@@ -381,8 +455,8 @@ function renderAllDiagrams(chordList) {
 
 function changeVariant(chordName, direction) {
     const instrument = instrumentSelect.value;
-    const variants = chordDatabase[instrument][chordName];
-    if (!variants) return;
+    const variants = getChordVariants(instrument, chordName);
+    if (!variants.length) return;
 
     let newIndex = (chordVariantIndices[chordName] || 0) + direction;
     if (newIndex < 0) newIndex = variants.length - 1;
@@ -407,6 +481,15 @@ function displayChordDiagram(chordName) {
 
 
 
+// --- BLOC NEUTRALISÉ (ancien second gestionnaire de la modale d'import) ---
+// Désactivé car : (1) il appelait parseChordPro(), songsData et renderSongList()
+// qui n'existent pas -> erreur JS ; (2) branché en plus du gestionnaire de la
+// section 5, il s'exécutait APRÈS lui, trouvait le champ déjà vidé et affichait
+// à tort « Veuillez coller le texte » ; (3) il basculait une classe .active
+// sans CSS (la modale est pilotée par style.display) ; (4) il utilise ?. (non
+// supporté par la WebView Android 7). Tout est géré section 5 : ouverture,
+// fermeture (bouton + clic sur le fond), enregistrement + affichage du morceau.
+/*
 		// Éléments du DOM
 		//const importModal = document.getElementById('import-modal');
 		const quickAddBtn = document.getElementById('quick-add-btn');
@@ -467,9 +550,22 @@ function displayChordDiagram(chordName) {
 				alert('Erreur lors de l\'analyse du texte. Vérifiez le format.');
 			}
 		});
+*/
 
 
 
+
+// --- Changement de langue : re-rendu des textes générés en JS (sans toucher à la chanson) ---
+var currentSongLoaded = false;
+FxI18n.onChange(function () {
+    document.title = FxI18n.t('sb.pageTitle');
+    renderThemeLabel();
+    updateTransposeUI();
+    if (!currentSongLoaded) {
+        document.getElementById('display-title').textContent = FxI18n.t('sb.songTitle');
+        document.getElementById('display-author').textContent = FxI18n.t('sb.artist');
+    }
+});
 
 // Initialisation
 applySettings();

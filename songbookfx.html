@@ -20,32 +20,33 @@
 
     <header class="top-bar">
         <div class="header-left">
-            <button id="menu-toggle" title="Menu">☰</button>
+            <button id="menu-toggle" title="Menu" data-i18n-title="sb.menu">☰</button>
             <div class="logo">ChordFlow</div>
         </div>
 
         <div class="transpose-controls">
-            <button id="transpose-down" title="Baisser d'un demi-ton">➖</button>
+            <button id="transpose-down" title="Baisser d'un demi-ton" data-i18n-title="sb.down">➖</button>
             <span id="transpose-val">Ton : 0</span>
-            <button id="transpose-up" title="Monter d'un demi-ton">➕</button>
+            <button id="transpose-up" title="Monter d'un demi-ton" data-i18n-title="sb.up">➕</button>
         </div>
 
         <div class="header-actions">
             
-            <button id="options-toggle" title="Paramètres">⚙️</button>
+            <button type="button" data-i18n-toggle>FR</button>
+            <button id="options-toggle" title="Paramètres" data-i18n-title="sb.settings">⚙️</button>
         </div>
     </header>
 
     <main class="main-container">
         <aside class="sidebar">
             <div class="search-section">
-                <input type="text" id="search-bar" placeholder="🔍 Rechercher...">
-                <button id="clear-search">✕</button>
+                <input type="text" id="search-bar" placeholder="🔍 Rechercher..." data-i18n-placeholder="sb.search">
+                <button id="clear-search" title="Effacer la recherche" data-i18n-title="sb.clearSearch">✕</button>
             </div>
 			
 
 				<!-- NOUVEAU BOUTON -->
-				<button id="import-btn" class="btn-primary-add">➕ Ajouter une chanson</button>
+				<button id="import-btn" class="btn-primary-add" data-i18n="sb.addSongBtn">➕ Ajouter une chanson</button>
 
 
 
@@ -66,13 +67,13 @@
         <aside class="chord-panel">
             <div class="instrument-box">
                 <select id="instrument-select">
-                    <option value="guitare">🎸 Guitare</option>
-                    <option value="ukulele" selected>🏝️ Ukulélé</option>
+                    <option value="guitare" data-i18n="sb.guitar">🎸 Guitare</option>
+                    <option value="ukulele" selected data-i18n="sb.ukulele">🏝️ Ukulélé</option>
                     <option value="piano">🎹 Piano</option>
                 </select>
                 <div class="zoom-controls">
-                    <button id="diagram-zoom-down" title="Rétrécir">🔍-</button>
-                    <button id="diagram-zoom-up" title="Agrandir">🔍+</button>
+                    <button id="diagram-zoom-down" title="Rétrécir" data-i18n-title="sb.zoomOut">🔍-</button>
+                    <button id="diagram-zoom-up" title="Agrandir" data-i18n-title="sb.zoomIn">🔍+</button>
                 </div>
             </div>
             <div id="chord-diagrams-container"></div>
@@ -81,16 +82,16 @@
 
     <div id="options-panel" class="side-panel">
         <div class="panel-header">
-            <h3>Paramètres</h3>
-            <button id="close-options">✕</button>
+            <h3 data-i18n="sb.settings">Paramètres</h3>
+            <button id="close-options" title="Fermer" data-i18n-title="sb.close">✕</button>
         </div>
         <div class="panel-body">
             <div class="setting-row">
-                <label>Thème</label>
+                <label data-i18n="sb.theme">Thème</label>
                 <button id="theme-toggle" class="btn-full">🌙 Mode Nuit</button>
             </div>
             <div class="setting-row">
-                <label>Taille paroles</label>
+                <label data-i18n="sb.lyricsSize">Taille paroles</label>
                 <div class="btn-group">
                     <button id="lyrics-size-down">A-</button>
                     <span id="lyrics-size-val">1.1rem</span>
@@ -98,7 +99,7 @@
                 </div>
             </div>
             <div class="setting-row">
-                <label>Taille accords</label>
+                <label data-i18n="sb.chordSize">Taille accords</label>
                 <div class="btn-group">
                     <button id="chord-size-down">a-</button>
                     <span id="chord-size-val">0.9rem</span>
@@ -114,15 +115,16 @@
 
     <div id="import-modal" class="modal">
         <div class="modal-content">
-            <h3>Ajouter une chanson</h3>
-            <textarea id="import-text" placeholder="Collez votre texte ici (Format ChordPro : [Am]Titre...)"></textarea>
+            <h3 data-i18n="sb.addSong">Ajouter une chanson</h3>
+            <textarea id="import-text" placeholder="Collez votre texte ici (Format ChordPro : [Am]Titre...)" data-i18n-placeholder="sb.pastePh"></textarea>
             <div class="modal-actions">
-                <button id="save-song">Enregistrer</button>
-                <button id="close-modal">Annuler</button>
+                <button id="save-song" data-i18n="sb.save">Enregistrer</button>
+                <button id="close-modal" data-i18n="sb.cancel">Annuler</button>
             </div>
         </div>
     </div>
 
+    <script src="./js/i18n-fx.js"></script>
     <script src="./js/songbookfx-chords.js"></script>
     <script src="./js/songbookfx-songs_data.js"></script>
     <script src="./js/songbookfx-parser.js"></script>

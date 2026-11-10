@@ -73,9 +73,12 @@
     <nav class="navbar navbar-expand-lg bg-body-tertiary border-bottom mb-4">
         <div class="container">
             <span class="navbar-brand fw-bold"><i class="bi bi-music-note-beamed me-2"></i>Uke & Git Practice</span>
-            <button class="btn btn-outline-secondary" id="themeToggle">
+            <div class="d-flex gap-2">
+            <button type="button" class="btn btn-outline-secondary fw-bold" data-i18n-toggle>FR</button>
+            <button class="btn btn-outline-secondary" id="themeToggle" title="Mode nuit" data-i18n-title="bg.darkMode">
                 <i class="bi bi-moon-stars-fill" id="themeIcon"></i>
             </button>
+            </div>
         </div>
     </nav>
 
@@ -83,36 +86,36 @@
         <!-- Configuration -->
         <div class="card shadow-sm mb-4">
             <div class="card-body">
-                <h5 class="card-title mb-3">Configuration de l'exercice</h5>
+                <h5 class="card-title mb-3" data-i18n="bg.settings">Configuration de l'exercice</h5>
                 <form id="configForm" class="row g-3 align-items-end">
                     <div class="col-md-3">
-                        <label class="form-label fw-semibold">Instrument</label>
+                        <label class="form-label fw-semibold" data-i18n="bg.instrument">Instrument</label>
                         <select class="form-select" id="instrumentSelect">
-                            <option value="ukulele" selected>Ukulélé</option>
-                            <option value="guitar">Guitare</option>
+                            <option value="ukulele" selected data-i18n="bg.ukulele">Ukulélé</option>
+                            <option value="guitar" data-i18n="bg.guitar">Guitare</option>
                         </select>
                     </div>
                     <div class="col-md-3">
-                        <label class="form-label fw-semibold">Gamme / Tonalité</label>
+                        <label class="form-label fw-semibold" data-i18n="bg.key">Gamme / Tonalité</label>
                         <select class="form-select" id="keySelect">
-							<option value="A" selected>La (A)</option>
-							<option value="C">Do (C)</option>
-							<option value="G">Sol (G)</option>
-							<option value="F">Fa (F)</option>
-							<option value="D">Ré (D)</option>
-							<option value="Bb">Si bémol (Bb)</option>
-							<option value="Eb">Mi bémol (Eb)</option>
+							<option value="A" selected data-i18n="bg.keyA">La (A)</option>
+							<option value="C" data-i18n="bg.keyC">Do (C)</option>
+							<option value="G" data-i18n="bg.keyG">Sol (G)</option>
+							<option value="F" data-i18n="bg.keyF">Fa (F)</option>
+							<option value="D" data-i18n="bg.keyD">Ré (D)</option>
+							<option value="Bb" data-i18n="bg.keyBb">Si bémol (Bb)</option>
+							<option value="Eb" data-i18n="bg.keyEb">Mi bémol (Eb)</option>
 						</select>
                     </div>
                     <div class="col-md-3">
-                        <label class="form-label fw-semibold">Structure par défaut</label>
+                        <label class="form-label fw-semibold" data-i18n="bg.structure">Structure par défaut</label>
                         <select class="form-select" id="structureSelect">
-                            <option value="I-IV-V" selected>Blues/Jazz Standard (I-IV-V)</option>
-							<option value="ii-V-I">Jazz Classique (ii-V-I)</option>
+                            <option value="I-IV-V" selected data-i18n="bg.structBlues">Blues/Jazz Standard (I-IV-V)</option>
+							<option value="ii-V-I" data-i18n="bg.structJazz">Jazz Classique (ii-V-I)</option>
                         </select>
                     </div>
                     <div class="col-md-3">
-                        <button type="submit" class="btn btn-primary w-100 fw-bold">Générer les grilles</button>
+                        <button type="submit" class="btn btn-primary w-100 fw-bold" data-i18n="bg.generate">Générer les grilles</button>
                     </div>
                 </form>
             </div>
@@ -124,12 +127,12 @@
             <!-- Grille 1 -->
             <div class="card shadow-sm mb-4 border-start border-primary border-4">
                 <div class="card-body">
-                    <h5 class="card-title text-primary">Grille 1 : Niveau Standard (I - IV - V7)</h5>
-                    <p class="text-muted small">Structure : I-I-I-I | IV-IV-I-I | V7-V7-I-I</p>
+                    <h5 class="card-title text-primary" data-i18n="bg.I-IV-V.grid1.title">Grille 1 : Niveau Standard (I - IV - V7)</h5>
+                    <p class="text-muted small" data-i18n="bg.I-IV-V.grid1.text">Structure : I-I-I-I | IV-IV-I-I | V7-V7-I-I</p>
                     <div class="row row-cols-2 row-cols-sm-4 row-cols-md-6 g-3 content-grid" id="grid1"></div>
                     <div class="mt-3 p-3 bg-body-secondary rounded d-flex flex-wrap align-items-center justify-content-between">
                         <div class="d-flex align-items-center gap-3">
-                            <button class="btn btn-success btn-play" data-grid="1"><i class="bi bi-play-fill"></i> Jouer</button>
+                            <button class="btn btn-success btn-play" data-grid="1"><i class="bi bi-play-fill"></i> <span data-i18n="bg.play">Jouer</span></button>
                             <div class="beats-display" id="beats-grid1">
                                 <span class="beat-indicator"></span>
                                 <span class="beat-indicator"></span>
@@ -138,7 +141,7 @@
                             </div>
                         </div>
                         <div class="d-flex align-items-center gap-2 mt-2 mt-sm-0">
-                            <label class="small text-nowrap">Tempo (BPM) :</label>
+                            <label class="small text-nowrap" data-i18n="bg.tempo">Tempo (BPM) :</label>
                             <input type="number" class="form-control form-control-sm tempo-input" value="100" style="width: 80px;">
                         </div>
                     </div>
@@ -148,12 +151,12 @@
             <!-- Grille 2 -->
             <div class="card shadow-sm mb-4 border-start border-success border-4">
                 <div class="card-body">
-                    <h5 class="card-title text-success">Grille 2 : Tout en Septième (I7 - IV7 - V7)</h5>
-                    <p class="text-muted small">Structure : I7-I7-I7-I7 | IV7-IV7-I7-I7 | V7-V7-I7-I7</p>
+                    <h5 class="card-title text-success" data-i18n="bg.I-IV-V.grid2.title">Grille 2 : Tout en Septième (I7 - IV7 - V7)</h5>
+                    <p class="text-muted small" data-i18n="bg.I-IV-V.grid2.text">Structure : I7-I7-I7-I7 | IV7-IV7-I7-I7 | V7-V7-I7-I7</p>
                     <div class="row row-cols-2 row-cols-sm-4 row-cols-md-6 g-3 content-grid" id="grid2"></div>
                     <div class="mt-3 p-3 bg-body-secondary rounded d-flex flex-wrap align-items-center justify-content-between">
                         <div class="d-flex align-items-center gap-3">
-                            <button class="btn btn-success btn-play" data-grid="2"><i class="bi bi-play-fill"></i> Jouer</button>
+                            <button class="btn btn-success btn-play" data-grid="2"><i class="bi bi-play-fill"></i> <span data-i18n="bg.play">Jouer</span></button>
                             <div class="beats-display" id="beats-grid2">
                                 <span class="beat-indicator"></span>
                                 <span class="beat-indicator"></span>
@@ -162,7 +165,7 @@
                             </div>
                         </div>
                         <div class="d-flex align-items-center gap-2 mt-2 mt-sm-0">
-                            <label class="small text-nowrap">Tempo (BPM) :</label>
+                            <label class="small text-nowrap" data-i18n="bg.tempo">Tempo (BPM) :</label>
                             <input type="number" class="form-control form-control-sm tempo-input" value="100" style="width: 80px;">
                         </div>
                     </div>
@@ -172,12 +175,12 @@
             <!-- Grille 3 -->
             <div class="card shadow-sm mb-4 border-start border-warning border-4">
                 <div class="card-body">
-                    <h5 class="card-title text-warning">Grille 3 : Alternée & Enrichie</h5>
-                    <p class="text-muted small">Structure : I-IV7-I-I7 | IV-IV7-I-I7 | V7-IV7-I-V7</p>
+                    <h5 class="card-title text-warning" data-i18n="bg.I-IV-V.grid3.title">Grille 3 : Alternée & Enrichie</h5>
+                    <p class="text-muted small" data-i18n="bg.I-IV-V.grid3.text">Structure : I-IV7-I-I7 | IV-IV7-I-I7 | V7-IV7-I-V7</p>
                     <div class="row row-cols-2 row-cols-sm-4 row-cols-md-6 g-3 content-grid" id="grid3"></div>
                     <div class="mt-3 p-3 bg-body-secondary rounded d-flex flex-wrap align-items-center justify-content-between">
                         <div class="d-flex align-items-center gap-3">
-                            <button class="btn btn-success btn-play" data-grid="3"><i class="bi bi-play-fill"></i> Jouer</button>
+                            <button class="btn btn-success btn-play" data-grid="3"><i class="bi bi-play-fill"></i> <span data-i18n="bg.play">Jouer</span></button>
                             <div class="beats-display" id="beats-grid3">
                                 <span class="beat-indicator"></span>
                                 <span class="beat-indicator"></span>
@@ -186,7 +189,7 @@
                             </div>
                         </div>
                         <div class="d-flex align-items-center gap-2 mt-2 mt-sm-0">
-                            <label class="small text-nowrap">Tempo (BPM) :</label>
+                            <label class="small text-nowrap" data-i18n="bg.tempo">Tempo (BPM) :</label>
                             <input type="number" class="form-control form-control-sm tempo-input" value="100" style="width: 80px;">
                         </div>
                     </div>
@@ -196,12 +199,12 @@
 			<!-- Grille 4 -->
             <div class="card shadow-sm mb-4 border-start border-danger border-4">
                 <div class="card-body">
-                    <h5 class="card-title text-danger">Grille 4 : variantes d'accords</h5>
-                    <p class="text-muted small">Structure : I_v2-IV7_v2-I_v2-I7 IV-IV7-I-I7 V7_v2-IV7-I-V7"</p>
+                    <h5 class="card-title text-danger" data-i18n="bg.I-IV-V.grid4.title">Grille 4 : variantes d'accords</h5>
+                    <p class="text-muted small" data-i18n="bg.I-IV-V.grid4.text">Structure : I_v2-IV7_v2-I_v2-I7 | IV-IV7-I-I7 | V7_v2-IV7-I-V7</p>
                     <div class="row row-cols-2 row-cols-sm-4 row-cols-md-6 g-3 content-grid" id="grid4"></div>
                     <div class="mt-3 p-3 bg-body-secondary rounded d-flex flex-wrap align-items-center justify-content-between">
                         <div class="d-flex align-items-center gap-3">
-                            <button class="btn btn-success btn-play" data-grid="4"><i class="bi bi-play-fill"></i> Jouer</button>
+                            <button class="btn btn-success btn-play" data-grid="4"><i class="bi bi-play-fill"></i> <span data-i18n="bg.play">Jouer</span></button>
                             <div class="beats-display" id="beats-grid4">
                                 <span class="beat-indicator"></span>
                                 <span class="beat-indicator"></span>
@@ -210,7 +213,7 @@
                             </div>
                         </div>
                         <div class="d-flex align-items-center gap-2 mt-2 mt-sm-0">
-                            <label class="small text-nowrap">Tempo (BPM) :</label>
+                            <label class="small text-nowrap" data-i18n="bg.tempo">Tempo (BPM) :</label>
                             <input type="number" class="form-control form-control-sm tempo-input" value="100" style="width: 80px;">
                         </div>
                     </div>
@@ -226,20 +229,20 @@
 		  <!-- Colonne 1 : Copyright & Titre -->
 		  <div class="col-12 col-md-6 text-center text-md-start">
 			<span class="small">
-			  CC BY-NC 4.0 <span id="currentYear"></span><script>document.getElementById("currentYear").textContent = new Date().getFullYear();</script> <strong>François Parlant</strong> &mdash; Créé avec passion pour le rythme et la mélodie.
+			  CC BY-NC 4.0 <span id="currentYear"></span><script>document.getElementById("currentYear").textContent = new Date().getFullYear();</script> <strong>François Parlant</strong> &mdash; <span data-i18n="ft.passion">Créé avec passion pour le rythme et la mélodie.</span>
 			</span>
 		  </div>
 
 		  <!-- Colonne 2 : Liens Réseaux Sociaux -->
 		  <div class="col-12 col-md-6 text-center text-md-end">
 			<div class="d-inline-flex gap-3 align-items-center">
-			  <a href="https://github.com/fxpar/music-toolbox/blob/main/blues-grids.html" target="_blank" rel="noopener noreferrer" class="text-body-secondary text-decoration-none fs-5 hover-accent" title="Code source GitHub"> 
+			  <a href="https://github.com/fxpar/music-toolbox/blob/main/blues-grids.html" target="_blank" rel="noopener noreferrer" class="text-body-secondary text-decoration-none fs-5 hover-accent" title="Code source GitHub" data-i18n-title="ft.github"> 
 				<i class="bi bi-github"></i> 
 			  </a> 
-			  <a href="https://www.linkedin.com/in/francois-parlant" target="_blank" rel="noopener noreferrer" class="text-body-secondary text-decoration-none fs-5 hover-accent" title="LinkedIn: François Parlant">
+			  <a href="https://www.linkedin.com/in/francois-parlant" target="_blank" rel="noopener noreferrer" class="text-body-secondary text-decoration-none fs-5 hover-accent" title="LinkedIn: François Parlant" data-i18n-title="ft.linkedin">
 				<i class="bi bi-linkedin"></i> 
 			  </a> 
-			  <a href="https://www.youtube.com/c/enparlantdebureautiqueformezvous" target="_blank" rel="noopener noreferrer" class="text-body-secondary text-decoration-none fs-5 hover-accent" title="Tutos YouTube: En parlant de bureautique">
+			  <a href="https://www.youtube.com/c/enparlantdebureautiqueformezvous" target="_blank" rel="noopener noreferrer" class="text-body-secondary text-decoration-none fs-5 hover-accent" title="Tutos YouTube: En parlant de bureautique" data-i18n-title="ft.youtube">
 				<i class="bi bi-youtube"></i> 
 			  </a>
 			</div>
@@ -248,13 +251,94 @@
 	  </div>
 	</footer>
 
-<script></script>
 <!-- // Bibliothèque d'accords corrigée et formatée pour <uke-chord> (Sans les virgules) -->
+<script src="./js/i18n-fx.js"></script>
 <script src="./chord-library.js"></script>
     <!-- Script Logique Applicative -->
     <script>
         
         
+
+        // --- TEXTES FR / EN (module js/i18n-fx.js) ---
+        FxI18n.add({
+            fr: {
+                "bg.pageTitle": "Entraînement Accords - Jazz/Blues",
+                "bg.darkMode": "Mode nuit",
+                "bg.settings": "Configuration de l'exercice",
+                "bg.instrument": "Instrument", "bg.ukulele": "Ukulélé", "bg.guitar": "Guitare",
+                "bg.key": "Gamme / Tonalité",
+                "bg.keyA": "La (A)", "bg.keyC": "Do (C)", "bg.keyG": "Sol (G)", "bg.keyF": "Fa (F)", "bg.keyD": "Ré (D)", "bg.keyBb": "Si bémol (Bb)", "bg.keyEb": "Mi bémol (Eb)",
+                "bg.structure": "Structure par défaut",
+                "bg.structBlues": "Blues/Jazz Standard (I-IV-V)", "bg.structJazz": "Jazz Classique (ii-V-I)",
+                "bg.generate": "Générer les grilles",
+                "bg.play": "Jouer", "bg.stop": "Arrêter",
+                "bg.tempo": "Tempo (BPM) :",
+                "bg.measure": "Mesure {n} ({deg})",
+                "bg.unknown": "Inconnu",
+                "bg.I-IV-V.grid1.title": "Grille 1 : Niveau Standard (I - IV - V7)",
+                "bg.I-IV-V.grid1.text": "Structure : I-I-I-I | IV-IV-I-I | V7-V7-I-I",
+                "bg.I-IV-V.grid2.title": "Grille 2 : Tout en Septième (I7 - IV7 - V7)",
+                "bg.I-IV-V.grid2.text": "Structure : I7-I7-I7-I7 | IV7-IV7-I7-I7 | V7-V7-I7-I7",
+                "bg.I-IV-V.grid3.title": "Grille 3 : Alternée & Enrichie",
+                "bg.I-IV-V.grid3.text": "Structure : I-IV7-I-I7 | IV-IV7-I-I7 | V7-IV7-I-V7",
+                "bg.I-IV-V.grid4.title": "Grille 4 : variantes d'accords",
+                "bg.I-IV-V.grid4.text": "Structure : I_v2-IV7_v2-I_v2-I7 | IV-IV7-I-I7 | V7_v2-IV7-I-V7",
+                "bg.ii-V-I.grid1.title": "Grille 1 : Cadence ii - V - I (triades)",
+                "bg.ii-V-I.grid1.text": "Structure : ii-V-I-I | ii-V-I-I | ii-V-I-I",
+                "bg.ii-V-I.grid2.title": "Grille 2 : ii7 - V7 - Imaj7 (septièmes)",
+                "bg.ii-V-I.grid2.text": "Structure : iim7-V7-Imaj7-Imaj7 | iim7-V7-Imaj7-Imaj7 | iim7-V7-Imaj7-VI7 (VI7 = dominante de ii, relance la boucle)",
+                "bg.ii-V-I.grid3.title": "Grille 3 : Blues Jazz (ii-V-I en fin de grille)",
+                "bg.ii-V-I.grid3.text": "Structure : I7-IV7-I7-I7 | IV7-IV7-I7-VI7 | iim7-V7-I7-V7",
+                "bg.ii-V-I.grid4.title": "Grille 4 : Turnaround I - vi - ii - V",
+                "bg.ii-V-I.grid4.text": "Structure : Imaj7-VI7-iim7-V7 | iiim7-VI7-iim7-V7 | Imaj7-VI7-iim7-V7",
+                "ft.passion": "Créé avec passion pour le rythme et la mélodie.",
+                "ft.github": "Code source GitHub", "ft.linkedin": "LinkedIn: François Parlant", "ft.youtube": "Tutos YouTube: En parlant de bureautique"
+            },
+            en: {
+                "bg.pageTitle": "Chord Practice - Jazz/Blues",
+                "bg.darkMode": "Night mode",
+                "bg.settings": "Exercise settings",
+                "bg.instrument": "Instrument", "bg.ukulele": "Ukulele", "bg.guitar": "Guitar",
+                "bg.key": "Key",
+                "bg.keyA": "A", "bg.keyC": "C", "bg.keyG": "G", "bg.keyF": "F", "bg.keyD": "D", "bg.keyBb": "B flat (Bb)", "bg.keyEb": "E flat (Eb)",
+                "bg.structure": "Default structure",
+                "bg.structBlues": "Standard Blues/Jazz (I-IV-V)", "bg.structJazz": "Classic Jazz (ii-V-I)",
+                "bg.generate": "Generate the grids",
+                "bg.play": "Play", "bg.stop": "Stop",
+                "bg.tempo": "Tempo (BPM):",
+                "bg.measure": "Bar {n} ({deg})",
+                "bg.unknown": "Unknown",
+                "bg.I-IV-V.grid1.title": "Grid 1: Standard level (I - IV - V7)",
+                "bg.I-IV-V.grid1.text": "Structure: I-I-I-I | IV-IV-I-I | V7-V7-I-I",
+                "bg.I-IV-V.grid2.title": "Grid 2: All sevenths (I7 - IV7 - V7)",
+                "bg.I-IV-V.grid2.text": "Structure: I7-I7-I7-I7 | IV7-IV7-I7-I7 | V7-V7-I7-I7",
+                "bg.I-IV-V.grid3.title": "Grid 3: Alternating & enriched",
+                "bg.I-IV-V.grid3.text": "Structure: I-IV7-I-I7 | IV-IV7-I-I7 | V7-IV7-I-V7",
+                "bg.I-IV-V.grid4.title": "Grid 4: chord variants",
+                "bg.I-IV-V.grid4.text": "Structure: I_v2-IV7_v2-I_v2-I7 | IV-IV7-I-I7 | V7_v2-IV7-I-V7",
+                "bg.ii-V-I.grid1.title": "Grid 1: ii - V - I cadence (triads)",
+                "bg.ii-V-I.grid1.text": "Structure: ii-V-I-I | ii-V-I-I | ii-V-I-I",
+                "bg.ii-V-I.grid2.title": "Grid 2: ii7 - V7 - Imaj7 (sevenths)",
+                "bg.ii-V-I.grid2.text": "Structure: iim7-V7-Imaj7-Imaj7 | iim7-V7-Imaj7-Imaj7 | iim7-V7-Imaj7-VI7 (VI7 = dominant of ii, leads back to the top)",
+                "bg.ii-V-I.grid3.title": "Grid 3: Jazz blues (ii-V-I at the end)",
+                "bg.ii-V-I.grid3.text": "Structure: I7-IV7-I7-I7 | IV7-IV7-I7-VI7 | iim7-V7-I7-V7",
+                "bg.ii-V-I.grid4.title": "Grid 4: I - vi - ii - V turnaround",
+                "bg.ii-V-I.grid4.text": "Structure: Imaj7-VI7-iim7-V7 | iiim7-VI7-iim7-V7 | Imaj7-VI7-iim7-V7",
+                "ft.passion": "Made with passion for rhythm and melody.",
+                "ft.github": "GitHub source code", "ft.linkedin": "LinkedIn: François Parlant", "ft.youtube": "YouTube tutorials: En parlant de bureautique"
+            }
+        });
+
+        // Libellés « Mesure n (degré) » générés : retraduits sans régénérer la grille (la lecture continue)
+        function renderMeasureLabels() {
+            document.querySelectorAll('.bg-measure-label').forEach(el => {
+                el.textContent = FxI18n.t('bg.measure', { n: el.getAttribute('data-n'), deg: el.getAttribute('data-deg') });
+            });
+        }
+        FxI18n.onChange(function () {
+            document.title = FxI18n.t('bg.pageTitle');
+            renderMeasureLabels();
+        });
 
         // Définition des structures harmoniques demandées (12 mesures)
         const structures = {
@@ -264,37 +348,93 @@
         grid3: ["I", "IV7", "I", "I7", "IV", "IV7", "I", "I7", "V7", "IV7", "I", "V7"],
 		grid4: ["I_v2", "IV7_v2", "I_v2", "I7", "IV", "IV7", "I", "I7", "V7_v2", "IV7", "I", "V7"]
     },
-    "ii-V-I": { // Exemple de structure jazz différente à adapter avec vos degrés
-        grid1: ["ii", "ii", "V", "V", "I", "I", "I", "I", "ii", "V", "I", "I"],
-        grid2: ["ii7", "ii7", "V7", "V7", "I7", "I7", "I7", "I7", "ii7", "V7", "I7", "I7"],
-        grid3: ["ii", "V7", "I", "I7", "ii", "V7", "I", "I7", "ii7", "V7", "I", "I"],
-		grid4: ["I_v2", "IV7_v2", "I_v2", "I7", "IV", "IV7", "I", "I7", "V7_v2", "IV7", "I", "V7"]
+    // Grilles jazz de 12 mesures (un accord par mesure) :
+    //  grid1 : ii-V-I majeur en triades, répété 3 fois (ii | V | I | I) x3
+    //  grid2 : même cadence en septièmes (iim7 | V7 | Imaj7 | Imaj7) x3, mesure 12 = VI7
+    //          (dominante secondaire V7/ii) qui relance la boucle vers iim7
+    //  grid3 : blues jazz standard simplifié (1 accord/mesure) :
+    //          I7 | IV7 | I7 | I7 | IV7 | IV7 | I7 | VI7 | iim7 | V7 | I7 | V7
+    //          (mesures 8-10 : VI7-iim7-V7 = ii-V-I vers la tonique à la mesure 11)
+    //  grid4 : turnaround « I-vi-ii-V » avec dominante secondaire (type Rhythm Changes, section A) :
+    //          Imaj7 | VI7 | iim7 | V7 | iiim7 | VI7 | iim7 | V7 | Imaj7 | VI7 | iim7 | V7
+    "ii-V-I": {
+        grid1: ["ii", "V", "I", "I", "ii", "V", "I", "I", "ii", "V", "I", "I"],
+        grid2: ["ii7", "V7", "Imaj7", "Imaj7", "ii7", "V7", "Imaj7", "Imaj7", "ii7", "V7", "Imaj7", "VI7"],
+        grid3: ["I7", "IV7", "I7", "I7", "IV7", "IV7", "I7", "VI7", "ii7", "V7", "I7", "V7"],
+		grid4: ["Imaj7", "VI7", "ii7", "V7", "iii7", "VI7", "ii7", "V7", "Imaj7", "VI7", "ii7", "V7"]
     }
 };
+
+        // Titres et descriptions affichés pour chaque grille, selon la structure choisie
+        // (textes FR/EN dans le dictionnaire FxI18n : clés "bg.<structure>.<grille>.title" / ".text")
+        const descriptions = {
+            "I-IV-V": {
+                grid1: { title: "Grille 1 : Niveau Standard (I - IV - V7)", text: "Structure : I-I-I-I | IV-IV-I-I | V7-V7-I-I" },
+                grid2: { title: "Grille 2 : Tout en Septième (I7 - IV7 - V7)", text: "Structure : I7-I7-I7-I7 | IV7-IV7-I7-I7 | V7-V7-I7-I7" },
+                grid3: { title: "Grille 3 : Alternée & Enrichie", text: "Structure : I-IV7-I-I7 | IV-IV7-I-I7 | V7-IV7-I-V7" },
+                grid4: { title: "Grille 4 : variantes d'accords", text: "Structure : I_v2-IV7_v2-I_v2-I7 | IV-IV7-I-I7 | V7_v2-IV7-I-V7" }
+            },
+            "ii-V-I": {
+                grid1: { title: "Grille 1 : Cadence ii - V - I (triades)", text: "Structure : ii-V-I-I | ii-V-I-I | ii-V-I-I" },
+                grid2: { title: "Grille 2 : ii7 - V7 - Imaj7 (septièmes)", text: "Structure : iim7-V7-Imaj7-Imaj7 | iim7-V7-Imaj7-Imaj7 | iim7-V7-Imaj7-VI7 (VI7 = dominante de ii, relance la boucle)" },
+                grid3: { title: "Grille 3 : Blues Jazz (ii-V-I en fin de grille)", text: "Structure : I7-IV7-I7-I7 | IV7-IV7-I7-VI7 | iim7-V7-I7-V7" },
+                grid4: { title: "Grille 4 : Turnaround I - vi - ii - V", text: "Structure : Imaj7-VI7-iim7-V7 | iiim7-VI7-iim7-V7 | Imaj7-VI7-iim7-V7" }
+            }
+        };
+
+        function updateDescriptions(structureName) {
+            const desc = descriptions[structureName];
+            if (!desc) return;
+            Object.keys(desc).forEach(gridId => {
+                const body = document.getElementById(gridId).closest('.card-body');
+                const titleKey = 'bg.' + structureName + '.' + gridId + '.title';
+                const textKey = 'bg.' + structureName + '.' + gridId + '.text';
+                const titleEl = body.querySelector('.card-title');
+                const textEl = body.querySelector('p.text-muted');
+                // data-i18n : le module retraduit ces éléments au changement de langue
+                titleEl.setAttribute('data-i18n', titleKey);
+                textEl.setAttribute('data-i18n', textKey);
+                titleEl.textContent = FxI18n.t(titleKey);
+                textEl.textContent = FxI18n.t(textKey);
+            });
+        }
+
+        // Équivalences enharmoniques : la bibliothèque ukulélé nomme Gb7/Dbm7/Gbm7 ce que la guitare nomme F#7/C#m7/F#m7
+        const enharmonics = { "C#": "Db", "Db": "C#", "D#": "Eb", "Eb": "D#", "F#": "Gb", "Gb": "F#", "G#": "Ab", "Ab": "G#", "A#": "Bb", "Bb": "A#" };
+        function findChord(instrument, lookupKey) {
+            const lib = chordLibrary[instrument];
+            if (lib[lookupKey]) return lib[lookupKey];
+            const root = lookupKey.substring(0, 2);
+            if (enharmonics[root]) {
+                const alt = enharmonics[root] + lookupKey.substring(2);
+                if (lib[alt]) return lib[alt];
+            }
+            return null;
+        }
 
         // Mappage des degrés selon la tonalité choisie (I, IV, V) pour la tonalité "A"
         // Mappage des degrés selon la tonalité choisie
 		const degreesMap = {
 			"A": { 
-				"I": "A", "I7": "A7", "ii": "Bm", "ii7": "Bm7", "IV": "D", "IV7": "D7", "V": "E", "V7": "E7" 
+				"I": "A", "I7": "A7", "ii": "Bm", "ii7": "Bm7", "IV": "D", "IV7": "D7", "V": "E", "V7": "E7", "Imaj7": "Amaj7", "VI7": "F#7", "iii7": "C#m7" 
 			},
 			"C": { 
-				"I": "C", "I7": "C7", "ii": "Dm", "ii7": "Dm7", "IV": "F", "IV7": "F7", "V": "G", "V7": "G7" 
+				"I": "C", "I7": "C7", "ii": "Dm", "ii7": "Dm7", "IV": "F", "IV7": "F7", "V": "G", "V7": "G7", "Imaj7": "Cmaj7", "VI7": "A7", "iii7": "Em7" 
 			},
 			"G": { 
-				"I": "G", "I7": "G7", "ii": "Am", "ii7": "Am7", "IV": "C", "IV7": "C7", "V": "D", "V7": "D7" 
+				"I": "G", "I7": "G7", "ii": "Am", "ii7": "Am7", "IV": "C", "IV7": "C7", "V": "D", "V7": "D7", "Imaj7": "Gmaj7", "VI7": "E7", "iii7": "Bm7" 
 			},
 			"F": { 
-				"I": "F", "I7": "F7", "ii": "Gm", "ii7": "Gm7", "IV": "Bb", "IV7": "Bb7", "V": "C", "V7": "C7" 
+				"I": "F", "I7": "F7", "ii": "Gm", "ii7": "Gm7", "IV": "Bb", "IV7": "Bb7", "V": "C", "V7": "C7", "Imaj7": "Fmaj7", "VI7": "D7", "iii7": "Am7" 
 			},
 			"D": { 
-				"I": "D", "I7": "D7", "ii": "Em", "ii7": "Em7", "IV": "G", "IV7": "G7", "V": "A", "V7": "A7" 
+				"I": "D", "I7": "D7", "ii": "Em", "ii7": "Em7", "IV": "G", "IV7": "G7", "V": "A", "V7": "A7", "Imaj7": "Dmaj7", "VI7": "B7", "iii7": "F#m7" 
 			},
 			"Bb": { 
-				"I": "Bb", "I7": "Bb7", "ii": "Cm", "ii7": "Cm7", "IV": "Eb", "IV7": "Eb7", "V": "F", "V7": "F7" 
+				"I": "Bb", "I7": "Bb7", "ii": "Cm", "ii7": "Cm7", "IV": "Eb", "IV7": "Eb7", "V": "F", "V7": "F7", "Imaj7": "Bbmaj7", "VI7": "G7", "iii7": "Dm7" 
 			},
 			"Eb": { 
-				"I": "Eb", "I7": "Eb7", "ii": "Fm", "ii7": "Fm7", "IV": "Ab", "IV7": "Ab7", "V": "Bb", "V7": "Bb7" 
+				"I": "Eb", "I7": "Eb7", "ii": "Fm", "ii7": "Fm7", "IV": "Ab", "IV7": "Ab7", "V": "Bb", "V7": "Bb7", "Imaj7": "Ebmaj7", "VI7": "C7", "iii7": "Gm7" 
 			}
 		};
 
@@ -321,6 +461,7 @@
             
 			// 1. On récupère la valeur choisie dans la liste (ex: "I-IV-V")
 			const substructure = document.getElementById('structureSelect').value;
+			updateDescriptions(substructure);
 			
 			// 2. CORRECTION : On utilise les crochets [substructure] pour cibler la bonne catégorie
 			generateGrid('grid1', structures[substructure].grid1, inst, key);
@@ -348,7 +489,7 @@
 				const chordLookupKey = suffix ? `${baseChordName}_${suffix}` : baseChordName;
 				
 				// 4. On récupère les données dans la bibliothèque d'accords de l'instrument
-				const chordData = chordLibrary[instrument][chordLookupKey];
+				const chordData = findChord(instrument, chordLookupKey);
 				
 				const col = document.createElement('div');
 				col.className = 'col';
@@ -357,11 +498,11 @@
 				if (chordData) {
 					col.innerHTML = `
 						<div class="chord-card shadow-sm h-100">
-							<!-- On affiche le vrai nom harmonique (ex: "A") sans le "_v2" -->
-							<div class="fw-bold mb-1 fs-5">${chordData.name}</div>
-							<div class="text-muted small mb-2">Mesure ${index + 1} (${deg})</div>
+							<!-- On affiche le nom dans l'orthographe de la tonalité (ex: "F#7" et non "Gb7"), sans le "_v2" -->
+							<div class="fw-bold mb-1 fs-5">${baseChordName}</div>
+							<div class="text-muted small mb-2 bg-measure-label" data-n="${index + 1}" data-deg="${deg}">${FxI18n.t('bg.measure', { n: index + 1, deg: deg })}</div>
 							<uke-chord 
-								name="${chordData.name}" 
+								name="${baseChordName}" 
 								frets="${chordData.frets}" 
 								barre="${chordData.barre || '0000'}" 
 								fingers="${chordData.fingers}" 
@@ -374,7 +515,7 @@
 				} else {
 					col.innerHTML = `
 						<div class="chord-card text-danger">
-							<div>Inconnu</div>
+							<div data-i18n="bg.unknown">${FxI18n.t('bg.unknown')}</div>
 							<small>${chordLookupKey}</small>
 						</div>`;
 				}
@@ -406,7 +547,7 @@
 
         function startPlayback(gridNum, gridId, buttonElement) {
             currentGridPlaying = gridId;
-            buttonElement.innerHTML = '<i class="bi bi-stop-fill"></i> Arrêter';
+            buttonElement.innerHTML = '<i class="bi bi-stop-fill"></i> <span data-i18n="bg.stop">' + FxI18n.t('bg.stop') + '</span>';
             buttonElement.classList.replace('btn-success', 'btn-danger');
 
             const tempo = parseInt(buttonElement.closest('.card-body').querySelector('.tempo-input').value) || 100;
@@ -462,7 +603,7 @@
             
             // Réinitialisation des boutons
             document.querySelectorAll('.btn-play').forEach(btn => {
-                btn.innerHTML = '<i class="bi bi-play-fill"></i> Jouer';
+                btn.innerHTML = '<i class="bi bi-play-fill"></i> <span data-i18n="bg.play">' + FxI18n.t('bg.play') + '</span>';
                 btn.classList.replace('btn-danger', 'btn-success');
             });
             

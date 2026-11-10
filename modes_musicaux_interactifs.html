@@ -274,6 +274,9 @@
       renderInnerModes();
       updateUI();
       initDrag();
+      var storedLang = null;
+      try { storedLang = window.localStorage.getItem('fx.lang'); } catch (err) { storedLang = null; }
+      if (storedLang === 'en') setLanguage('INT');
     });
 
 
@@ -694,6 +697,8 @@ function updateUI() {
 
     function setLanguage(lang) {
       currentLang = lang;
+      // Préférence partagée avec les autres outils (js/i18n-fx.js) : INT = anglais
+      try { window.localStorage.setItem('fx.lang', lang === 'INT' ? 'en' : 'fr'); } catch (err) { /* ignoré */ }
       const t = i18n[lang];
 
       // 1. Boutons de sélection de langue

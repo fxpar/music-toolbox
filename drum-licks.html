@@ -76,9 +76,10 @@ body {
             <a class="navbar-brand d-flex align-items-center" href="#">
                 <i class="bi bi-music-note-beamed me-2 text-primary"></i> Percussion Licks Player
             </a>
-            <button class="btn btn-outline-light btn-sm ms-auto d-flex align-items-center" id="themeToggleBtn" onclick="toggleTheme()">
+            <button class="btn btn-outline-light btn-sm ms-auto d-flex align-items-center" id="themeToggleBtn" onclick="toggleTheme()" data-i18n-title="themeTitle">
                 <i class="bi bi-sun-fill" id="themeIcon"></i>
             </button>
+            <button type="button" class="btn btn-outline-light btn-sm ms-2" data-i18n-toggle>FR</button>
         </div>
     </nav>
 
@@ -89,16 +90,16 @@ body {
             <div class="col-lg-5">
                 <div class="card shadow-sm h-100">
                     <div class="card-header bg-primary text-white py-3">
-                        <h5 class="card-title mb-0"><i class="bi bi-collection-play me-2"></i>Sélection</h5>
+                        <h5 class="card-title mb-0"><i class="bi bi-collection-play me-2"></i><span data-i18n="selection">Sélection</span></h5>
                     </div>
                     <div class="card-body d-flex flex-column gap-3">
                         <div>
-                            <label for="licksBatch" class="form-label fw-bold">Série de Licks (ABC Notation) :</label>
-                            <textarea class="form-control font-monospace" id="licksBatch" rows="6" placeholder="Collez vos licks séparés par une ligne vide..."></textarea>
+                            <label for="licksBatch" class="form-label fw-bold" data-i18n="batchLabel">Série de Licks (ABC Notation) :</label>
+                            <textarea class="form-control font-monospace" id="licksBatch" rows="6" data-i18n-placeholder="batchPh" placeholder="Collez vos licks séparés par une ligne vide..."></textarea>
                         </div>
 
                         <button class="btn btn-primary" onclick="loadBatch()">
-                            <i class="bi bi-download me-2"></i>Charger
+                            <i class="bi bi-download me-2"></i><span data-i18n="load">Charger</span>
                         </button>
 
                         <hr class="my-1">
@@ -106,21 +107,21 @@ body {
                         <!-- Navigation -->
                         <div class="d-flex gap-2 align-items-center">
                             <button class="btn btn-outline-primary" id="btnPrev" onclick="navigateLick(-1)" disabled>
-                                <i class="bi bi-chevron-left"></i> <span class="d-none d-md-inline">Précédent</span>
+                                <i class="bi bi-chevron-left"></i> <span class="d-none d-md-inline" data-i18n="prev">Précédent</span>
                             </button>
                             <select class="form-select font-monospace" id="lickSelect" onchange="selectLick(parseInt(this.value))" disabled>
-                                <option value="">- Aucun lick -</option>
+                                <option value="" data-i18n="noLick">- Aucun lick -</option>
                             </select>
                             <button class="btn btn-outline-primary" id="btnNext" onclick="navigateLick(1)" disabled>
-                                <span class="d-none d-md-inline">Suivant</span> <i class="bi bi-chevron-right"></i>
+                                <span class="d-none d-md-inline" data-i18n="next">Suivant</span> <i class="bi bi-chevron-right"></i>
                             </button>
                         </div>
 
                         <!-- Lick Sélectionné Brut -->
                         <div class="flex-grow-1">
-                            <label class="form-label fw-bold">Lick sélectionné :</label>
+                            <label class="form-label fw-bold" data-i18n="selectedLick">Lick sélectionné :</label>
                             <div class="border rounded p-2 bg-body-secondary font-monospace small text-wrap overflow-auto" id="selectedLickDisplay" style="max-height: 180px; white-space: pre-wrap;">
-                                <em>Aucun lick chargé.</em>
+                                <em data-i18n="noLickLoaded">Aucun lick chargé.</em>
                             </div>
                         </div>
                     </div>
@@ -131,8 +132,8 @@ body {
             <div class="col-lg-7">
                 <div class="card shadow-sm h-100">
                     <div class="card-header bg-secondary text-white py-2 d-flex justify-content-between align-items-center">
-                        <h5 class="card-title mb-0"><i class="bi bi-play-btn me-2"></i>Rendu</h5>
-                        <button class="btn btn-sm btn-light" type="button" data-bs-toggle="collapse" data-bs-target="#abcCodeCollapse">
+                        <h5 class="card-title mb-0"><i class="bi bi-play-btn me-2"></i><span data-i18n="render">Rendu</span></h5>
+                        <button class="btn btn-sm btn-light" type="button" data-bs-toggle="collapse" data-bs-target="#abcCodeCollapse" data-i18n="abcEditor">
                             Éditeur Code ABC
                         </button>
                     </div>
@@ -140,19 +141,19 @@ body {
                     <!-- Barre d'Onglets d'Activités -->
                     <ul class="nav nav-tabs px-3 pt-2 bg-body-secondary" id="activityTabs">
                         <li class="nav-item">
-                            <button class="nav-link active" onclick="switchActivity(1)"><span class="d-none d-md-inline">Activité</span> 1</button>
+                            <button class="nav-link active" onclick="switchActivity(1)"><span class="d-none d-md-inline" data-i18n="activity">Activité</span> 1</button>
                         </li>
                         <li class="nav-item">
-                            <button class="nav-link" onclick="switchActivity(2)"><span class="d-none d-md-inline">Activité</span> 2</button>
+                            <button class="nav-link" onclick="switchActivity(2)"><span class="d-none d-md-inline" data-i18n="activity">Activité</span> 2</button>
                         </li>
                         <li class="nav-item">
-                            <button class="nav-link" onclick="switchActivity(3)"><span class="d-none d-md-inline">Activité</span> 3</button>
+                            <button class="nav-link" onclick="switchActivity(3)"><span class="d-none d-md-inline" data-i18n="activity">Activité</span> 3</button>
                         </li>
                         <li class="nav-item">
-                            <button class="nav-link" onclick="switchActivity(4)"><span class="d-none d-md-inline">Activité</span> 4</button>
+                            <button class="nav-link" onclick="switchActivity(4)"><span class="d-none d-md-inline" data-i18n="activity">Activité</span> 4</button>
                         </li>
                         <li class="nav-item">
-                            <button class="nav-link" onclick="switchActivity(5)"><span class="d-none d-md-inline">Activité</span> 5</button>
+                            <button class="nav-link" onclick="switchActivity(5)"><span class="d-none d-md-inline" data-i18n="activity">Activité</span> 5</button>
                         </li>
                     </ul>
 
@@ -160,13 +161,13 @@ body {
 
                         <!-- Champ spécifique à l'Activité 2 et 3 : Remplissage -->
                         <div id="fillContainer" class="mb-3 d-none">
-                            <label for="fillPattern" class="form-label fw-bold small mb-1">Remplissage (Fill) :</label>
+                            <label for="fillPattern" class="form-label fw-bold small mb-1" data-i18n="fillLabel">Remplissage (Fill) :</label>
                             <textarea class="form-control font-monospace form-control-sm" id="fillPattern" rows="2" oninput="renderCurrentState()">c/2c/2c/2c/2 c/2c/2c/2c/2</textarea>
                         </div>
                         
                         <!-- ÉDITEUR ABC MODIFIABLE EN DIRECT -->
                         <div class="collapse mb-3" id="abcCodeCollapse">
-                            <label for="abcSource" class="form-label fw-bold small mb-1">Code ABC complet (Modifiable) :</label>
+                            <label for="abcSource" class="form-label fw-bold small mb-1" data-i18n="abcFull">Code ABC complet (Modifiable) :</label>
                             <textarea class="form-control font-monospace bg-body-secondary small" id="abcSource" rows="6" oninput="renderFromEditor()"></textarea>
                         </div>
 						
@@ -177,7 +178,7 @@ body {
                         <div id="hiddenPaperMsg" class="flex-grow-1 border rounded p-4 bg-body-secondary d-none align-items-center justify-content-center text-center text-muted">
                             <div>
                                 <i class="bi bi-eye-slash fs-1 d-block mb-2"></i>
-                                Partition masquée pour cette activité. Écoutez puis répétez !
+                                <span data-i18n="hiddenScore">Partition masquée pour cette activité. Écoutez puis répétez !</span>
                             </div>
                         </div>
 
@@ -195,7 +196,7 @@ body {
 							<div class="form-check form-switch m-0">
 								<input class="form-check-input" type="checkbox" id="enableMetronome" onchange="renderCurrentState()">
 								<label class="form-check-label fw-bold small" for="enableMetronome">
-									<i class="bi bi-metronome me-1"></i>Métronome
+									<i class="bi bi-metronome me-1"></i><span data-i18n="metronome">Métronome</span>
 								</label>
 							</div>
 
@@ -203,7 +204,7 @@ body {
 
 							<!-- Contrôle du Tempo (BPM) -->
 							<div class="d-flex align-items-center gap-1">
-								<label for="tempoInput" class="form-label fw-bold small mb-0 me-1">Tempo :</label>
+								<label for="tempoInput" class="form-label fw-bold small mb-0 me-1" data-i18n="tempo">Tempo :</label>
 								<button class="btn btn-outline-secondary btn-sm px-2 py-0" type="button" onclick="adjustTempo(-5)">-5</button>
 								<input type="number" class="form-control form-control-sm text-center font-monospace" id="tempoInput" value="60" min="30" max="280" style="width: 65px;" onchange="updateTempoFromInput()">
 								<button class="btn btn-outline-secondary btn-sm px-2 py-0" type="button" onclick="adjustTempo(5)">+5</button>
@@ -214,7 +215,7 @@ body {
 							
 							
 							<div class="d-flex justify-content-between gap-1">
-								<label for="swingInput" class="form-label small fw-bold text-muted mb-1">Swing</label>
+								<label for="swingInput" class="form-label small fw-bold text-muted mb-1" data-i18n="swing">Swing</label>
 								<span id="swing-val" class="small text-secondary fw-bold">50</span>
 								<input type="range" id="swingInput" class="form-range" min="50" max="70" value="50" oninput="updateSwingFromInput();document.getElementById('swing-val').innerText = this.value">
 							</div>
@@ -246,20 +247,20 @@ body {
 		  <!-- Colonne 1 : Copyright & Titre -->
 		  <div class="col-12 col-md-6 text-center text-md-start">
 			<span class="small">
-			  CC BY-NC 4.0 <span id="currentYear"></span><script>document.getElementById("currentYear").textContent = new Date().getFullYear();</script> <strong>François Parlant</strong> &mdash; Créé avec passion pour le rythme et les percussions.
+			  CC BY-NC 4.0 <span id="currentYear"></span><script>document.getElementById("currentYear").textContent = new Date().getFullYear();</script> <strong>François Parlant</strong> &mdash; <span data-i18n="footerMade">Créé avec passion pour le rythme et les percussions.</span>
 			</span>
 		  </div>
 
 		  <!-- Colonne 2 : Liens Réseaux Sociaux -->
 		  <div class="col-12 col-md-6 text-center text-md-end">
 			<div class="d-inline-flex gap-3 align-items-center">
-			  <a href="https://github.com/fxpar/music-toolbox/blob/main/drum-licks.html" target="_blank" rel="noopener noreferrer" class="text-body-secondary text-decoration-none fs-5 hover-accent" title="Code source GitHub"> 
+			  <a href="https://github.com/fxpar/music-toolbox/blob/main/drum-licks.html" target="_blank" rel="noopener noreferrer" class="text-body-secondary text-decoration-none fs-5 hover-accent" title="Code source GitHub" data-i18n-title="ftGithub"> 
 				<i class="bi bi-github"></i>
 			  </a>
 			  <a href="https://www.linkedin.com/in/francois-parlant" target="_blank" rel="noopener noreferrer" class="text-body-secondary text-decoration-none fs-5 hover-accent" title="LinkedIn: François Parlant">
 				<i class="bi bi-linkedin"></i>
 			  </a>
-			  <a href="https://www.youtube.com/c/enparlantdebureautiqueformezvous" target="_blank" rel="noopener noreferrer" class="text-body-secondary text-decoration-none fs-5 hover-accent" title="Tutos YouTube: En parlant de bureautique">
+			  <a href="https://www.youtube.com/c/enparlantdebureautiqueformezvous" target="_blank" rel="noopener noreferrer" class="text-body-secondary text-decoration-none fs-5 hover-accent" title="Tutos YouTube: En parlant de bureautique" data-i18n-title="ftYoutube">
 				<i class="bi bi-youtube"></i>
 			  </a>
 			</div>
@@ -273,8 +274,71 @@ body {
 	
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/abcjs@6.4.0/dist/abcjs-basic-min.js"></script>
+    <script src="./js/i18n-fx.js"></script>
 
     <script>
+        // --- Traductions FR / EN (module ./js/i18n-fx.js) ---
+        FxI18n.add({
+            fr: {
+                pageTitle: "Générateur ABCJS - Percussions",
+                selection: "Sélection",
+                batchLabel: "Série de Licks (ABC Notation) :",
+                batchPh: "Collez vos licks séparés par une ligne vide...",
+                load: "Charger",
+                prev: "Précédent",
+                next: "Suivant",
+                noLick: "- Aucun lick -",
+                selectedLick: "Lick sélectionné :",
+                noLickLoaded: "Aucun lick chargé.",
+                noLickFound: "Aucun lick trouvé.",
+                lickN: "Lick N° {n}",
+                render: "Rendu",
+                abcEditor: "Éditeur Code ABC",
+                activity: "Activité",
+                fillLabel: "Remplissage (Fill) :",
+                abcFull: "Code ABC complet (Modifiable) :",
+                hiddenScore: "Partition masquée pour cette activité. Écoutez puis répétez !",
+                metronome: "Métronome",
+                tempo: "Tempo :",
+                swing: "Swing",
+                midiDl: "Télécharger le fichier MIDI",
+                noAudio: "L'audio n'est pas supporté par ce navigateur.",
+                themeTitle: "Thème clair / sombre",
+                footerMade: "Créé avec passion pour le rythme et les percussions.",
+                ftGithub: "Code source GitHub",
+                ftYoutube: "Tutos YouTube: En parlant de bureautique"
+            },
+            en: {
+                pageTitle: "ABCJS Generator - Percussion",
+                selection: "Selection",
+                batchLabel: "Lick set (ABC notation):",
+                batchPh: "Paste your licks, separated by a blank line...",
+                load: "Load",
+                prev: "Previous",
+                next: "Next",
+                noLick: "- No lick -",
+                selectedLick: "Selected lick:",
+                noLickLoaded: "No lick loaded.",
+                noLickFound: "No lick found.",
+                lickN: "Lick #{n}",
+                render: "Score",
+                abcEditor: "ABC code editor",
+                activity: "Activity",
+                fillLabel: "Fill:",
+                abcFull: "Full ABC code (editable):",
+                hiddenScore: "Score hidden for this activity. Listen, then play it back!",
+                metronome: "Metronome",
+                tempo: "Tempo:",
+                swing: "Swing",
+                midiDl: "Download MIDI file",
+                noAudio: "Audio is not supported by this browser.",
+                themeTitle: "Light / dark theme",
+                footerMade: "Made with passion for rhythm and percussion.",
+                ftGithub: "GitHub source code",
+                ftYoutube: "YouTube tutorials: En parlant de bureautique"
+            }
+        });
+
         let licksList = [];
         let currentIndex = -1;
         let currentActivity = 1;
@@ -514,7 +578,7 @@ V:2 stem=down
         }
 
         // Si aucun titre n'est trouvé, nom par défaut "Lick N° X"
-        const displayName = lickTitle ? `${lickCount}. ${lickTitle}` : `Lick N° ${lickCount}`;
+        const displayName = lickTitle ? `${lickCount}. ${lickTitle}` : FxI18n.t('lickN', { n: lickCount });
 
         // Sauvegarde du lick dans le tableau global
         licksList.push(block);
@@ -524,6 +588,7 @@ V:2 stem=down
         const opt = document.createElement('option');
         opt.value = lickIndex;
         opt.textContent = displayName;
+        if (!lickTitle) opt.setAttribute('data-lick-n', lickCount); // libellé par défaut, traduit au changement de langue
 
         // Ajout dans l'optgroup actuel ou directement dans le select
         if (currentGroup) {
@@ -534,8 +599,8 @@ V:2 stem=down
     });
 
     if (licksList.length === 0) {
-        select.innerHTML = '<option value="">- Aucun lick -</option>';
-        document.getElementById('selectedLickDisplay').innerText = 'Aucun lick trouvé.';
+        select.innerHTML = '<option value="" data-i18n="noLick">' + FxI18n.t('noLick') + '</option>';
+        document.getElementById('selectedLickDisplay').innerText = FxI18n.t('noLickFound');
         updateNavButtons();
         return;
     }
@@ -881,9 +946,10 @@ V:2 stem=down
 			// 2. Génération du lien de téléchargement MIDI (Moderne ABCJS)
 			if (downloadContainer && visualObj) {
 				// Option 1 : ABCJS génère directement la balise HTML <a>
+				lastMidiLabel = FxI18n.t('midiDl');
 				var midiHtml = ABCJS.synth.getMidiFile(visualObj, {
 					midiOutputType: "link",
-					downloadLabel: "Télécharger le fichier MIDI (%T)"
+					downloadLabel: lastMidiLabel + " (%T)"
 				});
 				downloadContainer.innerHTML = midiHtml;
 
@@ -933,13 +999,33 @@ V:2 stem=down
 					console.warn("Erreur de création de la synthèse audio :", error);
 				});
 			} else {
-				document.getElementById("audio-player").innerHTML = "<div class='alert alert-warning p-2 small'>L'audio n'est pas supporté par ce navigateur.</div>";
+				document.getElementById("audio-player").innerHTML = "<div class='alert alert-warning p-2 small' data-i18n='noAudio'>" + FxI18n.t('noAudio') + "</div>";
 			}
 		}
 
         window.onload = function() {
             loadBatch();
         };
+
+        // Changement de langue : on ne met à jour que les libellés générés (pas de re-rendu, l'audio continue)
+        var lastMidiLabel = null;
+        FxI18n.onChange(function () {
+            document.title = FxI18n.t('pageTitle');
+            var opts = document.querySelectorAll('#lickSelect option[data-lick-n]');
+            for (var i = 0; i < opts.length; i++) {
+                opts[i].textContent = FxI18n.t('lickN', { n: opts[i].getAttribute('data-lick-n') });
+            }
+            var disp = document.getElementById('selectedLickDisplay');
+            if (licksList.length === 0 && !disp.querySelector('em')) {
+                disp.innerText = FxI18n.t('noLickFound');
+            }
+            var link = document.querySelector('#midi-download a');
+            if (link && lastMidiLabel) {
+                var newLabel = FxI18n.t('midiDl');
+                link.innerHTML = link.innerHTML.split(lastMidiLabel).join(newLabel);
+                lastMidiLabel = newLabel;
+            }
+        });
     </script>
 </body>
 </html>

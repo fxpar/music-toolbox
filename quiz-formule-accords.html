@@ -464,21 +464,23 @@
       padding-bottom: env(safe-area-inset-bottom);
     }
   </style>
+  <script src="./js/i18n-fx.js"></script>
 </head>
 <body>
 
 <div class="app-container">
     <!-- En-tête -->
     <div class="header-bar">
-        <button class="icon-btn" onclick="toggleDrawer()" aria-label="Ouvrir les leçons">
+        <button class="icon-btn" onclick="toggleDrawer()" aria-label="Ouvrir les leçons" data-i18n-aria="aria.lessons">
             <span class="material-icons-outlined">menu_book</span>
         </button>
         <div style="text-align: center;">
-            <h1 style="font-size:1.2rem;">Accords Jazz</h1>
-            <p style="font-size:0.75rem; color: var(--md-sys-color-outline)">Formules d'intervalles</p>
+            <h1 style="font-size:1.2rem;" data-i18n="app.title">Accords Jazz</h1>
+            <p style="font-size:0.75rem; color: var(--md-sys-color-outline)" data-i18n="app.subtitle">Formules d'intervalles</p>
         </div>
         <div class="header-actions">
-            <button class="icon-btn" onclick="toggleTheme()" aria-label="Changer de thème">
+            <button type="button" class="icon-btn" data-i18n-toggle style="font-weight:700; font-size:0.8rem;">FR</button>
+            <button class="icon-btn" onclick="toggleTheme()" aria-label="Changer de thème" data-i18n-aria="aria.theme">
                 <span class="material-icons-outlined" id="theme-icon">dark_mode</span>
             </button>
         </div>
@@ -486,23 +488,23 @@
 
     <!-- Sélecteur de niveau -->
     <div class="level-selector">
-        <button class="level-btn active" onclick="setLevel('simple', this)">Simple</button>
-        <button class="level-btn" onclick="setLevel('advanced', this)">Avancé</button>
+        <button class="level-btn active" onclick="setLevel('simple', this)" data-i18n="level.simple">Simple</button>
+        <button class="level-btn" onclick="setLevel('advanced', this)" data-i18n="level.advanced">Avancé</button>
     </div>
 
     <!-- Tableau de score (toujours visible) -->
     <div class="score-board top">
-        <span>Question <strong id="qnum-val">1 / 10</strong></span>
-        <span>Réussites <strong id="score-val">0 / 0</strong> <span id="rate-val"></span></span>
-        <span>Série <strong id="streak-val">0</strong></span>
+        <span><span data-i18n="sb.question">Question</span> <strong id="qnum-val">1 / 10</strong></span>
+        <span><span data-i18n="sb.success">Réussites</span> <strong id="score-val">0 / 0</strong> <span id="rate-val"></span></span>
+        <span><span data-i18n="sb.streak">Série</span> <strong id="streak-val">0</strong></span>
     </div>
 
     <!-- Question (fixe, ne saute plus) -->
     <div class="card" id="question-card">
-        <p class="instruction">Trouvez l'intervalle manquant dans la formule de l'accord.<br>R = fondamentale (la note qui donne son nom à l'accord).</p>
+        <p class="instruction" data-i18n-html="q.instruction">Trouvez l'intervalle manquant dans la formule de l'accord.<br>R = fondamentale (la note qui donne son nom à l'accord).</p>
         <div class="card-header">
             <div class="chord-name" id="chord-name">m7</div>
-            <button class="hint-btn" onclick="toggleHint()" title="Afficher l'indice">
+            <button class="hint-btn" onclick="toggleHint()" title="Afficher l'indice" data-i18n-title="q.hintBtn">
                 <span class="material-icons-outlined">lightbulb</span>
             </button>
         </div>
@@ -520,12 +522,12 @@
 
     <!-- Écran de fin de série -->
     <div class="card end-screen" id="end-screen">
-        <h2 style="font-size:1.2rem;">Série terminée</h2>
+        <h2 style="font-size:1.2rem;" data-i18n="end.title">Série terminée</h2>
         <div class="big-score" id="end-score">0 / 10</div>
         <p id="end-rate"></p>
         <p id="end-best" style="font-size:0.9rem; color: var(--md-sys-color-outline); margin-top:4px;"></p>
         <ul id="end-missed"></ul>
-        <button class="next-btn show" onclick="startSession()">Rejouer</button>
+        <button class="next-btn show" onclick="startSession()" data-i18n="end.replay">Rejouer</button>
     </div>
 </div>
 
@@ -533,71 +535,71 @@
 <div class="drawer-scrim" id="drawer-scrim" onclick="toggleDrawer()"></div>
 <div class="drawer" id="drawer">
     <div class="drawer-header">
-        <h2>Cours &amp; repères</h2>
-        <button class="icon-btn" onclick="toggleDrawer()">
+        <h2 data-i18n="c.title">Cours &amp; repères</h2>
+        <button class="icon-btn" onclick="toggleDrawer()" aria-label="Fermer" data-i18n-aria="aria.close">
             <span class="material-icons-outlined">close</span>
         </button>
     </div>
     <div class="drawer-content">
-        <h3>Comment jouer</h3>
-        <p>Une série compte 10 questions. Pour chaque accord, une note de la formule est remplacée par « ? » : touchez l'intervalle manquant. Une seule réponse est acceptée ; la bonne réponse et une courte explication s'affichent ensuite. L'ampoule donne un indice.</p>
+        <h3 data-i18n="c.how">Comment jouer</h3>
+        <p data-i18n="c.howText">Une série compte 10 questions. Pour chaque accord, une note de la formule est remplacée par « ? » : touchez l'intervalle manquant. Une seule réponse est acceptée ; la bonne réponse et une courte explication s'affichent ensuite. L'ampoule donne un indice.</p>
 
-        <h3>Rappels de théorie</h3>
-        <p>Une formule d'accord indique la distance (l'intervalle) entre la <strong>fondamentale (R)</strong> et chacune des autres notes. R vient de l'anglais <em>Root</em> (racine).</p>
+        <h3 data-i18n="c.theory">Rappels de théorie</h3>
+        <p data-i18n-html="c.theoryText">Une formule d'accord indique la distance (l'intervalle) entre la <strong>fondamentale (R)</strong> et chacune des autres notes. R vient de l'anglais <em>Root</em> (racine).</p>
 
-        <h3>Symboles</h3>
+        <h3 data-i18n="c.symbols">Symboles</h3>
         <ul>
-            <li><strong>R</strong> : fondamentale</li>
-            <li><strong>b3 / 3</strong> : tierce mineure / majeure</li>
-            <li><strong>4</strong> : quarte juste</li>
-            <li><strong>b5 / 5 / #5</strong> : quinte diminuée / juste / augmentée</li>
-            <li><strong>6</strong> : sixte majeure</li>
-            <li><strong>bb7 / b7 / 7</strong> : septième diminuée / mineure / majeure</li>
-            <li><strong>b9 / 9 / #9</strong> : neuvième mineure / majeure / augmentée</li>
-            <li><strong>11 / #11 / 13</strong> : onzième juste / augmentée, treizième</li>
+            <li data-i18n-html="c.sym.R"><strong>R</strong> : fondamentale</li>
+            <li data-i18n-html="c.sym.3"><strong>b3 / 3</strong> : tierce mineure / majeure</li>
+            <li data-i18n-html="c.sym.4"><strong>4</strong> : quarte juste</li>
+            <li data-i18n-html="c.sym.5"><strong>b5 / 5 / #5</strong> : quinte diminuée / juste / augmentée</li>
+            <li data-i18n-html="c.sym.6"><strong>6</strong> : sixte majeure</li>
+            <li data-i18n-html="c.sym.7"><strong>bb7 / b7 / 7</strong> : septième diminuée / mineure / majeure</li>
+            <li data-i18n-html="c.sym.9"><strong>b9 / 9 / #9</strong> : neuvième mineure / majeure / augmentée</li>
+            <li data-i18n-html="c.sym.11"><strong>11 / #11 / 13</strong> : onzième juste / augmentée, treizième</li>
         </ul>
 
-        <h3>Les familles d'accords</h3>
+        <h3 data-i18n="c.families">Les familles d'accords</h3>
         <table class="chord-table">
             <thead>
                 <tr>
-                    <th>Type</th>
-                    <th>Formule</th>
+                    <th data-i18n="c.th.type">Type</th>
+                    <th data-i18n="c.th.formula">Formule</th>
                 </tr>
             </thead>
             <tbody>
-                <tr class="group-row"><td colspan="2">Triades (3 sons)</td></tr>
-                <tr><td><strong>Majeur</strong></td><td>R - 3 - 5</td></tr>
-                <tr><td><strong>Mineur</strong> (m)</td><td>R - b3 - 5</td></tr>
-                <tr><td><strong>Diminué</strong> (dim)</td><td>R - b3 - b5</td></tr>
-                <tr><td><strong>Augmenté</strong> (aug)</td><td>R - 3 - #5</td></tr>
-                <tr><td><strong>Suspendu 4</strong> (sus4)</td><td>R - 4 - 5</td></tr>
-                <tr><td><strong>Suspendu 2</strong> (sus2)</td><td>R - 2 - 5</td></tr>
-                <tr><td><strong>Power chord</strong> (5)</td><td>R - 5</td></tr>
-                <tr class="group-row"><td colspan="2">Accords de septième (4 sons)</td></tr>
-                <tr><td><strong>Majeur 7</strong> (maj7)</td><td>R - 3 - 5 - 7</td></tr>
-                <tr><td><strong>Dominante</strong> (7)</td><td>R - 3 - 5 - b7</td></tr>
-                <tr><td><strong>Mineur 7</strong> (m7)</td><td>R - b3 - 5 - b7</td></tr>
-                <tr><td><strong>Demi-diminué</strong> (m7b5)</td><td>R - b3 - b5 - b7</td></tr>
-                <tr><td><strong>Diminué 7</strong> (dim7)</td><td>R - b3 - b5 - bb7</td></tr>
-                <tr><td><strong>Mineur-majeur 7</strong> (mMaj7)</td><td>R - b3 - 5 - 7</td></tr>
-                <tr class="group-row"><td colspan="2">Accords de sixte</td></tr>
-                <tr><td><strong>Majeur 6</strong> (6)</td><td>R - 3 - 5 - 6</td></tr>
-                <tr><td><strong>Mineur 6</strong> (m6)</td><td>R - b3 - 5 - 6</td></tr>
-                <tr class="group-row"><td colspan="2">Extensions et altérations</td></tr>
-                <tr><td><strong>Dominante 9</strong> (9)</td><td>R - 3 - 5 - b7 - 9</td></tr>
-                <tr><td><strong>Majeur 9</strong> (maj9)</td><td>R - 3 - 5 - 7 - 9</td></tr>
-                <tr><td><strong>Mineur 9</strong> (m9)</td><td>R - b3 - 5 - b7 - 9</td></tr>
-                <tr><td><strong>Dominante b9 / #9</strong> (7b9 / 7#9)</td><td>R - 3 - 5 - b7 - b9 (ou #9)</td></tr>
-                <tr><td><strong>Altéré</strong> (7alt)</td><td>R - 3 - b5 (ou #5) - b7 - b9 (ou #9)</td></tr>
-                <tr><td><strong>Dominante 11</strong> (11)</td><td>R - (3) - 5 - b7 - (9) - 11</td></tr>
-                <tr><td><strong>Dominante 13</strong> (13)</td><td>R - 3 - 5 - b7 - (9) - 13</td></tr>
+                <tr class="group-row"><td colspan="2" data-i18n="c.g.triads">Triades (3 sons)</td></tr>
+                <tr><td data-i18n-html="c.t.maj"><strong>Majeur</strong></td><td>R - 3 - 5</td></tr>
+                <tr><td data-i18n-html="c.t.min"><strong>Mineur</strong> (m)</td><td>R - b3 - 5</td></tr>
+                <tr><td data-i18n-html="c.t.dim"><strong>Diminué</strong> (dim)</td><td>R - b3 - b5</td></tr>
+                <tr><td data-i18n-html="c.t.aug"><strong>Augmenté</strong> (aug)</td><td>R - 3 - #5</td></tr>
+                <tr><td data-i18n-html="c.t.sus4"><strong>Suspendu 4</strong> (sus4)</td><td>R - 4 - 5</td></tr>
+                <tr><td data-i18n-html="c.t.sus2"><strong>Suspendu 2</strong> (sus2)</td><td>R - 2 - 5</td></tr>
+                <tr><td data-i18n-html="c.t.power"><strong>Power chord</strong> (5)</td><td>R - 5</td></tr>
+                <tr class="group-row"><td colspan="2" data-i18n="c.g.sevenths">Accords de septième (4 sons)</td></tr>
+                <tr><td data-i18n-html="c.t.maj7"><strong>Majeur 7</strong> (maj7)</td><td>R - 3 - 5 - 7</td></tr>
+                <tr><td data-i18n-html="c.t.dom7"><strong>Dominante</strong> (7)</td><td>R - 3 - 5 - b7</td></tr>
+                <tr><td data-i18n-html="c.t.m7"><strong>Mineur 7</strong> (m7)</td><td>R - b3 - 5 - b7</td></tr>
+                <tr><td data-i18n-html="c.t.m7b5"><strong>Demi-diminué</strong> (m7b5)</td><td>R - b3 - b5 - b7</td></tr>
+                <tr><td data-i18n-html="c.t.dim7"><strong>Diminué 7</strong> (dim7)</td><td>R - b3 - b5 - bb7</td></tr>
+                <tr><td data-i18n-html="c.t.mMaj7"><strong>Mineur-majeur 7</strong> (mMaj7)</td><td>R - b3 - 5 - 7</td></tr>
+                <tr class="group-row"><td colspan="2" data-i18n="c.g.sixths">Accords de sixte</td></tr>
+                <tr><td data-i18n-html="c.t.6"><strong>Majeur 6</strong> (6)</td><td>R - 3 - 5 - 6</td></tr>
+                <tr><td data-i18n-html="c.t.m6"><strong>Mineur 6</strong> (m6)</td><td>R - b3 - 5 - 6</td></tr>
+                <tr class="group-row"><td colspan="2" data-i18n="c.g.ext">Extensions et altérations</td></tr>
+                <tr><td data-i18n-html="c.t.9"><strong>Dominante 9</strong> (9)</td><td>R - 3 - 5 - b7 - 9</td></tr>
+                <tr><td data-i18n-html="c.t.maj9"><strong>Majeur 9</strong> (maj9)</td><td>R - 3 - 5 - 7 - 9</td></tr>
+                <tr><td data-i18n-html="c.t.m9"><strong>Mineur 9</strong> (m9)</td><td>R - b3 - 5 - b7 - 9</td></tr>
+                <tr><td data-i18n-html="c.t.7b9"><strong>Dominante b9 / #9</strong> (7b9 / 7#9)</td><td data-i18n="c.f.7b9">R - 3 - 5 - b7 - b9 (ou #9)</td></tr>
+                <tr><td data-i18n-html="c.t.alt"><strong>Altéré</strong> (7alt)</td><td data-i18n="c.f.alt">R - 3 - b5 (ou #5) - b7 - b9 (ou #9)</td></tr>
+                <tr><td data-i18n-html="c.t.11"><strong>Dominante 11</strong> (11)</td><td>R - (3) - 5 - b7 - (9) - 11</td></tr>
+                <tr><td data-i18n-html="c.t.13"><strong>Dominante 13</strong> (13)</td><td>R - 3 - 5 - b7 - (9) - 13</td></tr>
             </tbody>
         </table>
-        <p style="margin-top:8px;">Les notes entre parenthèses sont souvent omises.</p>
+        <p style="margin-top:8px;" data-i18n="c.omitted">Les notes entre parenthèses sont souvent omises.</p>
 
-        <h3>Notes équivalentes (enharmonies)</h3>
-        <p>Certains intervalles sonnent pareil mais s'écrivent différemment selon leur rôle : <strong>b5 = #11</strong>, <strong>#5 = b13</strong>, <strong>#9 = b3</strong>, <strong>bb7 = 6 = 13</strong>. Le quiz ne vous proposera jamais deux réponses équivalentes à la fois.</p>
+        <h3 data-i18n="c.enh">Notes équivalentes (enharmonies)</h3>
+        <p data-i18n-html="c.enhText">Certains intervalles sonnent pareil mais s'écrivent différemment selon leur rôle : <strong>b5 = #11</strong>, <strong>#5 = b13</strong>, <strong>#9 = b3</strong>, <strong>bb7 = 6 = 13</strong>. Le quiz ne vous proposera jamais deux réponses équivalentes à la fois.</p>
     </div>
 	
 	
@@ -608,20 +610,20 @@
 		  <!-- Colonne 1 : Copyright & Titre -->
 		  <div class="col-12 col-md-6 text-center text-md-start">
 			<span class="small">
-			  CC BY-NC 4.0 <span id="currentYear"></span><script>document.getElementById("currentYear").textContent = new Date().getFullYear();</script> <strong>François Parlant</strong> &mdash; Créé avec passion pour le rythme et la mélodie.
+			  CC BY-NC 4.0 <span id="currentYear"></span><script>document.getElementById("currentYear").textContent = new Date().getFullYear();</script> <strong>François Parlant</strong> &mdash; <span data-i18n="footer.made">Créé avec passion pour le rythme et la mélodie.</span>
 			</span>
 		  </div>
 
 		  <!-- Colonne 2 : Liens Réseaux Sociaux -->
 		  <div class="col-12 col-md-6 text-center text-md-end">
 			<div class="d-inline-flex gap-3 align-items-center">
-			  <a href="https://github.com/fxpar/music-toolbox/blob/main/quiz-formule-accords.html" target="_blank" rel="noopener noreferrer" class="text-body-secondary text-decoration-none fs-5 hover-accent" title="Code source GitHub"> 
+			  <a href="https://github.com/fxpar/music-toolbox/blob/main/quiz-formule-accords.html" target="_blank" rel="noopener noreferrer" class="text-body-secondary text-decoration-none fs-5 hover-accent" title="Code source GitHub" data-i18n-title="footer.github"> 
 				<i class="bi bi-github"></i> Github
 			  </a> &mdash;
-			  <a href="https://www.linkedin.com/in/francois-parlant" target="_blank" rel="noopener noreferrer" class="text-body-secondary text-decoration-none fs-5 hover-accent" title="LinkedIn: François Parlant">
+			  <a href="https://www.linkedin.com/in/francois-parlant" target="_blank" rel="noopener noreferrer" class="text-body-secondary text-decoration-none fs-5 hover-accent" title="LinkedIn: François Parlant" data-i18n-title="footer.linkedin">
 				<i class="bi bi-linkedin"></i> LinkedIn
 			  </a> &mdash;
-			  <a href="https://www.youtube.com/c/enparlantdebureautiqueformezvous" target="_blank" rel="noopener noreferrer" class="text-body-secondary text-decoration-none fs-5 hover-accent" title="Tutos YouTube: En parlant de bureautique">
+			  <a href="https://www.youtube.com/c/enparlantdebureautiqueformezvous" target="_blank" rel="noopener noreferrer" class="text-body-secondary text-decoration-none fs-5 hover-accent" title="Tutos YouTube: En parlant de bureautique" data-i18n-title="footer.youtube">
 				<i class="bi bi-youtube"></i> Youtube
 			  </a>
 			</div>
@@ -641,7 +643,7 @@
             <span class="material-icons-outlined">lightbulb</span>
             <span id="hint-title">Indice</span>
         </h3>
-        <button class="icon-btn" onclick="toggleHint()" style="background:transparent; color:inherit;">
+        <button class="icon-btn" onclick="toggleHint()" style="background:transparent; color:inherit;" aria-label="Fermer" data-i18n-aria="aria.close">
             <span class="material-icons-outlined">close</span>
         </button>
     </div>
@@ -653,26 +655,323 @@
 
 
 <script>
-    // TEXTES DE L'INTERFACE (regroupés ici pour une future traduction FR/EN)
-    var TXT = {
-        questionCounter: "{n} / {total}",
-        scoreCounter: "{ok} / {done}",
-        rate: "({pct} %)",
-        correct: "Bonne réponse !",
-        incorrect: "Raté : la bonne réponse est {answer}.",
-        missingIs: "La note manquante est {answer} : {info}.",
-        hintLabel: "Indice : ",
-        hintDefault: "Trouvez l'intervalle manquant dans la formule.",
-        next: "Question suivante",
-        seeResults: "Voir le bilan",
-        endRate: "Taux de réussite : {pct} %",
-        bestScore: "Meilleur score (niveau {level}) : {best} / {total}",
-        newRecord: "Nouveau record !",
-        noMistake: "Aucune erreur, bravo !",
-        missedTitle: "À revoir :",
-        missedItem: "{chord} : {formula} (il manquait {answer})",
-        levelNames: { simple: "Simple", advanced: "Avancé" }
-    };
+    // TEXTES DE L'INTERFACE (FR / EN, module commun js/i18n-fx.js)
+    FxI18n.add({
+        fr: {
+            "page.title": "Entraînement Accords Jazz",
+            "app.title": "Accords Jazz",
+            "app.subtitle": "Formules d'intervalles",
+            "aria.lessons": "Ouvrir les leçons",
+            "aria.theme": "Changer de thème",
+            "aria.close": "Fermer",
+            "level.simple": "Simple",
+            "level.advanced": "Avancé",
+            "sb.question": "Question",
+            "sb.success": "Réussites",
+            "sb.streak": "Série",
+            "q.instruction": "Trouvez l'intervalle manquant dans la formule de l'accord.<br>R = fondamentale (la note qui donne son nom à l'accord).",
+            "q.hintBtn": "Afficher l'indice",
+            "end.title": "Série terminée",
+            "end.replay": "Rejouer",
+            "footer.made": "Créé avec passion pour le rythme et la mélodie.",
+            "footer.github": "Code source GitHub",
+            "footer.linkedin": "LinkedIn: François Parlant",
+            "footer.youtube": "Tutos YouTube: En parlant de bureautique",
+
+            "c.title": "Cours & repères",
+            "c.how": "Comment jouer",
+            "c.howText": "Une série compte 10 questions. Pour chaque accord, une note de la formule est remplacée par « ? » : touchez l'intervalle manquant. Une seule réponse est acceptée ; la bonne réponse et une courte explication s'affichent ensuite. L'ampoule donne un indice.",
+            "c.theory": "Rappels de théorie",
+            "c.theoryText": "Une formule d'accord indique la distance (l'intervalle) entre la <strong>fondamentale (R)</strong> et chacune des autres notes. R vient de l'anglais <em>Root</em> (racine).",
+            "c.symbols": "Symboles",
+            "c.sym.R": "<strong>R</strong> : fondamentale",
+            "c.sym.3": "<strong>b3 / 3</strong> : tierce mineure / majeure",
+            "c.sym.4": "<strong>4</strong> : quarte juste",
+            "c.sym.5": "<strong>b5 / 5 / #5</strong> : quinte diminuée / juste / augmentée",
+            "c.sym.6": "<strong>6</strong> : sixte majeure",
+            "c.sym.7": "<strong>bb7 / b7 / 7</strong> : septième diminuée / mineure / majeure",
+            "c.sym.9": "<strong>b9 / 9 / #9</strong> : neuvième mineure / majeure / augmentée",
+            "c.sym.11": "<strong>11 / #11 / 13</strong> : onzième juste / augmentée, treizième",
+            "c.families": "Les familles d'accords",
+            "c.th.type": "Type",
+            "c.th.formula": "Formule",
+            "c.g.triads": "Triades (3 sons)",
+            "c.g.sevenths": "Accords de septième (4 sons)",
+            "c.g.sixths": "Accords de sixte",
+            "c.g.ext": "Extensions et altérations",
+            "c.t.maj": "<strong>Majeur</strong>",
+            "c.t.min": "<strong>Mineur</strong> (m)",
+            "c.t.dim": "<strong>Diminué</strong> (dim)",
+            "c.t.aug": "<strong>Augmenté</strong> (aug)",
+            "c.t.sus4": "<strong>Suspendu 4</strong> (sus4)",
+            "c.t.sus2": "<strong>Suspendu 2</strong> (sus2)",
+            "c.t.power": "<strong>Power chord</strong> (5)",
+            "c.t.maj7": "<strong>Majeur 7</strong> (maj7)",
+            "c.t.dom7": "<strong>Dominante</strong> (7)",
+            "c.t.m7": "<strong>Mineur 7</strong> (m7)",
+            "c.t.m7b5": "<strong>Demi-diminué</strong> (m7b5)",
+            "c.t.dim7": "<strong>Diminué 7</strong> (dim7)",
+            "c.t.mMaj7": "<strong>Mineur-majeur 7</strong> (mMaj7)",
+            "c.t.6": "<strong>Majeur 6</strong> (6)",
+            "c.t.m6": "<strong>Mineur 6</strong> (m6)",
+            "c.t.9": "<strong>Dominante 9</strong> (9)",
+            "c.t.maj9": "<strong>Majeur 9</strong> (maj9)",
+            "c.t.m9": "<strong>Mineur 9</strong> (m9)",
+            "c.t.7b9": "<strong>Dominante b9 / #9</strong> (7b9 / 7#9)",
+            "c.t.alt": "<strong>Altéré</strong> (7alt)",
+            "c.t.11": "<strong>Dominante 11</strong> (11)",
+            "c.t.13": "<strong>Dominante 13</strong> (13)",
+            "c.f.7b9": "R - 3 - 5 - b7 - b9 (ou #9)",
+            "c.f.alt": "R - 3 - b5 (ou #5) - b7 - b9 (ou #9)",
+            "c.omitted": "Les notes entre parenthèses sont souvent omises.",
+            "c.enh": "Notes équivalentes (enharmonies)",
+            "c.enhText": "Certains intervalles sonnent pareil mais s'écrivent différemment selon leur rôle : <strong>b5 = #11</strong>, <strong>#5 = b13</strong>, <strong>#9 = b3</strong>, <strong>bb7 = 6 = 13</strong>. Le quiz ne vous proposera jamais deux réponses équivalentes à la fois.",
+
+            "questionCounter": "{n} / {total}",
+            "scoreCounter": "{ok} / {done}",
+            "rate": "({pct} %)",
+            "correct": "Bonne réponse !",
+            "incorrect": "Raté : la bonne réponse est {answer}.",
+            "missingIs": "La note manquante est {answer} : {info}.",
+            "hintLabel": "Indice : ",
+            "hintDefault": "Trouvez l'intervalle manquant dans la formule.",
+            "next": "Question suivante",
+            "seeResults": "Voir le bilan",
+            "endRate": "Taux de réussite : {pct} %",
+            "bestScore": "Meilleur score (niveau {level}) : {best} / {total}",
+            "newRecord": "Nouveau record !",
+            "noMistake": "Aucune erreur, bravo !",
+            "missedTitle": "À revoir :",
+            "missedItem": "{chord} : {formula} (il manquait {answer})",
+
+            "ch.maj7.name": "maj7",
+            "ch.maj7.desc": "L'accord majeur 7 a une sonorité très douce et stable.",
+            "ch.maj7.h.3": "Tierce majeure : elle donne la couleur majeure de l'accord.",
+            "ch.maj7.h.5": "Quinte juste : le pilier de stabilité de l'accord.",
+            "ch.maj7.h.7": "Septième majeure : située un demi-ton sous la fondamentale.",
+            "ch.7.name": "7 (dominante)",
+            "ch.7.desc": "L'accord de dominante crée une tension qui demande à se résoudre.",
+            "ch.7.h.3": "Tierce majeure : essentielle au caractère de dominante.",
+            "ch.7.h.5": "Quinte juste : elle apporte du corps à l'accord.",
+            "ch.7.h.b7": "Septième mineure : elle forme avec la tierce le triton, source de la tension.",
+            "ch.m7.name": "m7",
+            "ch.m7.desc": "L'accord mineur 7 de base du jazz (ex. : le ii de la cadence ii-V-I).",
+            "ch.m7.h.b3": "Tierce mineure : la tierce abaissée d'un demi-ton assombrit l'accord.",
+            "ch.m7.h.5": "Quinte juste : elle reste inchangée dans un accord m7.",
+            "ch.m7.h.b7": "Septième mineure : présente dans tous les accords m7.",
+            "ch.m7b5.name": "m7b5 (demi-diminué)",
+            "ch.m7b5.desc": "Souvent utilisé sur le ii d'une cadence en mineur.",
+            "ch.m7b5.h.b3": "Tierce mineure : elle donne la base mineure.",
+            "ch.m7b5.h.b5": "Quinte diminuée : c'est elle que désigne le « b5 » du nom.",
+            "ch.m7b5.h.b7": "Septième mineure : elle le distingue de l'accord diminué 7 (bb7).",
+            "ch.dim7.name": "dim7",
+            "ch.dim7.desc": "Accord symétrique formé uniquement de tierces mineures superposées.",
+            "ch.dim7.h.b3": "Tierce mineure : premier empilement d'un ton et demi.",
+            "ch.dim7.h.b5": "Quinte diminuée : elle forme un triton avec la fondamentale.",
+            "ch.dim7.h.bb7": "Septième diminuée (double bémol) : elle sonne comme une sixte majeure, mais s'écrit bb7 car c'est une septième.",
+            "ch.6.name": "6",
+            "ch.6.desc": "L'accord majeur 6 est une alternative très courante au maj7.",
+            "ch.6.h.3": "Tierce majeure.",
+            "ch.6.h.5": "Quinte juste.",
+            "ch.6.h.6": "Sixte majeure : elle remplace la septième pour un son plus consonant.",
+            "ch.7b9.name": "7b9",
+            "ch.7b9.desc": "Accord de dominante avec une neuvième mineure (il se résout souvent vers un accord mineur).",
+            "ch.7b9.h.b7": "Septième mineure, celle de tout accord de dominante.",
+            "ch.7b9.h.b9": "Neuvième mineure : un demi-ton au-dessus de la fondamentale (une octave plus haut), très expressive.",
+            "ch.7#9.name": "7#9",
+            "ch.7#9.desc": "Le célèbre « accord Hendrix », qui mélange couleurs majeure et mineure.",
+            "ch.7#9.h.3": "Tierce majeure.",
+            "ch.7#9.h.#9": "Neuvième augmentée : elle sonne comme une tierce mineure !",
+            "ch.7alt.name": "7alt",
+            "ch.7alt.desc": "L'accord altéré réunit les altérations de la quinte et de la neuvième (b5, #5, b9, #9).",
+            "ch.7alt.h.3": "Tierce majeure : indispensable.",
+            "ch.7alt.h.b7": "Septième mineure.",
+            "ch.7alt.h.b5": "Quinte diminuée (abaissée d'un demi-ton), équivalente à #11.",
+            "ch.7alt.h.#5": "Quinte augmentée (haussée d'un demi-ton), équivalente à b13.",
+            "ch.maj7#11.name": "maj7(#11)",
+            "ch.maj7#11.desc": "Accord majeur lydien : le #11 apporte une couleur moderne et aérienne.",
+            "ch.maj7#11.h.7": "Septième majeure.",
+            "ch.maj7#11.h.#11": "Onzième augmentée : la note caractéristique du mode lydien.",
+
+            "iv.R": "fondamentale",
+            "iv.1": "fondamentale",
+            "iv.b9": "neuvième mineure (un demi-ton au-dessus de R, une octave plus haut)",
+            "iv.bb3": "tierce diminuée (2 demi-tons)",
+            "iv.9": "neuvième majeure (un ton au-dessus de R, une octave plus haut)",
+            "iv.b3": "tierce mineure (3 demi-tons)",
+            "iv.#9": "neuvième augmentée (sonne comme une tierce mineure)",
+            "iv.3": "tierce majeure (4 demi-tons)",
+            "iv.4": "quarte juste (5 demi-tons)",
+            "iv.11": "onzième juste (une quarte, une octave plus haut)",
+            "iv.b5": "quinte diminuée (6 demi-tons)",
+            "iv.#11": "onzième augmentée (sonne comme une quinte diminuée)",
+            "iv.5": "quinte juste (7 demi-tons)",
+            "iv.#5": "quinte augmentée (8 demi-tons)",
+            "iv.b13": "treizième mineure (sonne comme une quinte augmentée)",
+            "iv.6": "sixte majeure (9 demi-tons)",
+            "iv.bb7": "septième diminuée (9 demi-tons, sonne comme une sixte)",
+            "iv.13": "treizième (une sixte, une octave plus haut)",
+            "iv.b7": "septième mineure (10 demi-tons)",
+            "iv.7": "septième majeure (11 demi-tons)"
+        },
+        en: {
+            "page.title": "Jazz Chord Training",
+            "app.title": "Jazz Chords",
+            "app.subtitle": "Interval formulas",
+            "aria.lessons": "Open the lessons",
+            "aria.theme": "Change theme",
+            "aria.close": "Close",
+            "level.simple": "Simple",
+            "level.advanced": "Advanced",
+            "sb.question": "Question",
+            "sb.success": "Correct",
+            "sb.streak": "Streak",
+            "q.instruction": "Find the missing interval in the chord formula.<br>R = root (the note that gives the chord its name).",
+            "q.hintBtn": "Show hint",
+            "end.title": "Round complete",
+            "end.replay": "Play again",
+            "footer.made": "Made with passion for rhythm and melody.",
+            "footer.github": "Source code on GitHub",
+            "footer.linkedin": "LinkedIn: François Parlant",
+            "footer.youtube": "YouTube tutorials: En parlant de bureautique",
+
+            "c.title": "Lessons & reference",
+            "c.how": "How to play",
+            "c.howText": "A round has 10 questions. For each chord, one note of the formula is replaced by “?”: tap the missing interval. Only one answer is accepted; the correct answer and a short explanation are then shown. The light bulb gives a hint.",
+            "c.theory": "Theory reminders",
+            "c.theoryText": "A chord formula gives the distance (the interval) between the <strong>root (R)</strong> and each of the other notes.",
+            "c.symbols": "Symbols",
+            "c.sym.R": "<strong>R</strong>: root",
+            "c.sym.3": "<strong>b3 / 3</strong>: minor / major third",
+            "c.sym.4": "<strong>4</strong>: perfect fourth",
+            "c.sym.5": "<strong>b5 / 5 / #5</strong>: diminished / perfect / augmented fifth",
+            "c.sym.6": "<strong>6</strong>: major sixth",
+            "c.sym.7": "<strong>bb7 / b7 / 7</strong>: diminished / minor / major seventh",
+            "c.sym.9": "<strong>b9 / 9 / #9</strong>: minor / major / augmented ninth",
+            "c.sym.11": "<strong>11 / #11 / 13</strong>: perfect / augmented eleventh, thirteenth",
+            "c.families": "Chord families",
+            "c.th.type": "Type",
+            "c.th.formula": "Formula",
+            "c.g.triads": "Triads (3 notes)",
+            "c.g.sevenths": "Seventh chords (4 notes)",
+            "c.g.sixths": "Sixth chords",
+            "c.g.ext": "Extensions and alterations",
+            "c.t.maj": "<strong>Major</strong>",
+            "c.t.min": "<strong>Minor</strong> (m)",
+            "c.t.dim": "<strong>Diminished</strong> (dim)",
+            "c.t.aug": "<strong>Augmented</strong> (aug)",
+            "c.t.sus4": "<strong>Suspended 4</strong> (sus4)",
+            "c.t.sus2": "<strong>Suspended 2</strong> (sus2)",
+            "c.t.power": "<strong>Power chord</strong> (5)",
+            "c.t.maj7": "<strong>Major 7</strong> (maj7)",
+            "c.t.dom7": "<strong>Dominant</strong> (7)",
+            "c.t.m7": "<strong>Minor 7</strong> (m7)",
+            "c.t.m7b5": "<strong>Half-diminished</strong> (m7b5)",
+            "c.t.dim7": "<strong>Diminished 7</strong> (dim7)",
+            "c.t.mMaj7": "<strong>Minor-major 7</strong> (mMaj7)",
+            "c.t.6": "<strong>Major 6</strong> (6)",
+            "c.t.m6": "<strong>Minor 6</strong> (m6)",
+            "c.t.9": "<strong>Dominant 9</strong> (9)",
+            "c.t.maj9": "<strong>Major 9</strong> (maj9)",
+            "c.t.m9": "<strong>Minor 9</strong> (m9)",
+            "c.t.7b9": "<strong>Dominant b9 / #9</strong> (7b9 / 7#9)",
+            "c.t.alt": "<strong>Altered</strong> (7alt)",
+            "c.t.11": "<strong>Dominant 11</strong> (11)",
+            "c.t.13": "<strong>Dominant 13</strong> (13)",
+            "c.f.7b9": "R - 3 - 5 - b7 - b9 (or #9)",
+            "c.f.alt": "R - 3 - b5 (or #5) - b7 - b9 (or #9)",
+            "c.omitted": "Notes in brackets are often left out.",
+            "c.enh": "Equivalent notes (enharmonics)",
+            "c.enhText": "Some intervals sound the same but are written differently depending on their role: <strong>b5 = #11</strong>, <strong>#5 = b13</strong>, <strong>#9 = b3</strong>, <strong>bb7 = 6 = 13</strong>. The quiz will never offer two equivalent answers at the same time.",
+
+            "questionCounter": "{n} / {total}",
+            "scoreCounter": "{ok} / {done}",
+            "rate": "({pct}%)",
+            "correct": "Correct!",
+            "incorrect": "Missed: the correct answer is {answer}.",
+            "missingIs": "The missing note is {answer}: {info}.",
+            "hintLabel": "Hint: ",
+            "hintDefault": "Find the missing interval in the formula.",
+            "next": "Next question",
+            "seeResults": "See results",
+            "endRate": "Success rate: {pct}%",
+            "bestScore": "Best score ({level} level): {best} / {total}",
+            "newRecord": "New record!",
+            "noMistake": "No mistakes, well done!",
+            "missedTitle": "To review:",
+            "missedItem": "{chord}: {formula} ({answer} was missing)",
+
+            "ch.maj7.name": "maj7",
+            "ch.maj7.desc": "The major 7 chord has a very soft, stable sound.",
+            "ch.maj7.h.3": "Major third: it gives the chord its major colour.",
+            "ch.maj7.h.5": "Perfect fifth: the chord's pillar of stability.",
+            "ch.maj7.h.7": "Major seventh: a half step below the root.",
+            "ch.7.name": "7 (dominant)",
+            "ch.7.desc": "The dominant chord creates tension that wants to resolve.",
+            "ch.7.h.3": "Major third: essential to the dominant sound.",
+            "ch.7.h.5": "Perfect fifth: it gives the chord body.",
+            "ch.7.h.b7": "Minor seventh: together with the third it forms the tritone, the source of the tension.",
+            "ch.m7.name": "m7",
+            "ch.m7.desc": "The basic minor 7 chord of jazz (e.g. the ii of the ii-V-I cadence).",
+            "ch.m7.h.b3": "Minor third: the third lowered by a half step darkens the chord.",
+            "ch.m7.h.5": "Perfect fifth: it stays unchanged in an m7 chord.",
+            "ch.m7.h.b7": "Minor seventh: found in every m7 chord.",
+            "ch.m7b5.name": "m7b5 (half-diminished)",
+            "ch.m7b5.desc": "Often used on the ii of a minor cadence.",
+            "ch.m7b5.h.b3": "Minor third: it provides the minor base.",
+            "ch.m7b5.h.b5": "Diminished fifth: this is the “b5” in the name.",
+            "ch.m7b5.h.b7": "Minor seventh: it sets it apart from the diminished 7 chord (bb7).",
+            "ch.dim7.name": "dim7",
+            "ch.dim7.desc": "A symmetrical chord built only from stacked minor thirds.",
+            "ch.dim7.h.b3": "Minor third: the first stack of a step and a half.",
+            "ch.dim7.h.b5": "Diminished fifth: it forms a tritone with the root.",
+            "ch.dim7.h.bb7": "Diminished seventh (double flat): it sounds like a major sixth, but is written bb7 because it is a seventh.",
+            "ch.6.name": "6",
+            "ch.6.desc": "The major 6 chord is a very common alternative to maj7.",
+            "ch.6.h.3": "Major third.",
+            "ch.6.h.5": "Perfect fifth.",
+            "ch.6.h.6": "Major sixth: it replaces the seventh for a more consonant sound.",
+            "ch.7b9.name": "7b9",
+            "ch.7b9.desc": "A dominant chord with a minor ninth (it often resolves to a minor chord).",
+            "ch.7b9.h.b7": "Minor seventh, the one found in every dominant chord.",
+            "ch.7b9.h.b9": "Minor ninth: a half step above the root (an octave higher), very expressive.",
+            "ch.7#9.name": "7#9",
+            "ch.7#9.desc": "The famous “Hendrix chord”, mixing major and minor colours.",
+            "ch.7#9.h.3": "Major third.",
+            "ch.7#9.h.#9": "Augmented ninth: it sounds like a minor third!",
+            "ch.7alt.name": "7alt",
+            "ch.7alt.desc": "The altered chord combines the altered fifths and ninths (b5, #5, b9, #9).",
+            "ch.7alt.h.3": "Major third: essential.",
+            "ch.7alt.h.b7": "Minor seventh.",
+            "ch.7alt.h.b5": "Diminished fifth (lowered by a half step), equivalent to #11.",
+            "ch.7alt.h.#5": "Augmented fifth (raised by a half step), equivalent to b13.",
+            "ch.maj7#11.name": "maj7(#11)",
+            "ch.maj7#11.desc": "Lydian major chord: the #11 adds a modern, airy colour.",
+            "ch.maj7#11.h.7": "Major seventh.",
+            "ch.maj7#11.h.#11": "Augmented eleventh: the characteristic note of the Lydian mode.",
+
+            "iv.R": "root",
+            "iv.1": "root",
+            "iv.b9": "minor ninth (a half step above R, an octave higher)",
+            "iv.bb3": "diminished third (2 half steps)",
+            "iv.9": "major ninth (a whole step above R, an octave higher)",
+            "iv.b3": "minor third (3 half steps)",
+            "iv.#9": "augmented ninth (sounds like a minor third)",
+            "iv.3": "major third (4 half steps)",
+            "iv.4": "perfect fourth (5 half steps)",
+            "iv.11": "perfect eleventh (a fourth, an octave higher)",
+            "iv.b5": "diminished fifth (6 half steps)",
+            "iv.#11": "augmented eleventh (sounds like a diminished fifth)",
+            "iv.5": "perfect fifth (7 half steps)",
+            "iv.#5": "augmented fifth (8 half steps)",
+            "iv.b13": "minor thirteenth (sounds like an augmented fifth)",
+            "iv.6": "major sixth (9 half steps)",
+            "iv.bb7": "diminished seventh (9 half steps, sounds like a sixth)",
+            "iv.13": "thirteenth (a sixth, an octave higher)",
+            "iv.b7": "minor seventh (10 half steps)",
+            "iv.7": "major seventh (11 half steps)"
+        }
+    });
 
     function fmt(str, values) {
         return str.replace(/\{(\w+)\}/g, function (m, key) {
@@ -683,135 +982,59 @@
     var SESSION_LENGTH = 10;
 
     // BASE DE DONNÉES ENRICHIE D'INDICES PÉDAGOGIQUES
+    // Les textes (nom affiché, description, indices) sont dans FxI18n : ch.<id>.name / .desc / .h.<intervalle>
+    // hints : intervalles pour lesquels un indice spécifique existe.
     const CHORDS = {
         simple: [
-            {
-                name: "maj7",
-                formula: ["R", "3", "5", "7"],
-                desc: "L'accord majeur 7 a une sonorité très douce et stable.",
-                hints: {
-                    "3": "Tierce majeure : elle donne la couleur majeure de l'accord.",
-                    "5": "Quinte juste : le pilier de stabilité de l'accord.",
-                    "7": "Septième majeure : située un demi-ton sous la fondamentale."
-                }
-            },
-            {
-                name: "7 (dominante)",
-                formula: ["R", "3", "5", "b7"],
-                desc: "L'accord de dominante crée une tension qui demande à se résoudre.",
-                hints: {
-                    "3": "Tierce majeure : essentielle au caractère de dominante.",
-                    "5": "Quinte juste : elle apporte du corps à l'accord.",
-                    "b7": "Septième mineure : elle forme avec la tierce le triton, source de la tension."
-                }
-            },
-            {
-                name: "m7",
-                formula: ["R", "b3", "5", "b7"],
-                desc: "L'accord mineur 7 de base du jazz (ex. : le ii de la cadence ii-V-I).",
-                hints: {
-                    "b3": "Tierce mineure : la tierce abaissée d'un demi-ton assombrit l'accord.",
-                    "5": "Quinte juste : elle reste inchangée dans un accord m7.",
-                    "b7": "Septième mineure : présente dans tous les accords m7."
-                }
-            },
-            {
-                name: "m7b5 (demi-diminué)",
-                formula: ["R", "b3", "b5", "b7"],
-                desc: "Souvent utilisé sur le ii d'une cadence en mineur.",
-                hints: {
-                    "b3": "Tierce mineure : elle donne la base mineure.",
-                    "b5": "Quinte diminuée : c'est elle que désigne le « b5 » du nom.",
-                    "b7": "Septième mineure : elle le distingue de l'accord diminué 7 (bb7)."
-                }
-            },
-            {
-                name: "dim7",
-                formula: ["R", "b3", "b5", "bb7"],
-                desc: "Accord symétrique formé uniquement de tierces mineures superposées.",
-                hints: {
-                    "b3": "Tierce mineure : premier empilement d'un ton et demi.",
-                    "b5": "Quinte diminuée : elle forme un triton avec la fondamentale.",
-                    "bb7": "Septième diminuée (double bémol) : elle sonne comme une sixte majeure, mais s'écrit bb7 car c'est une septième."
-                }
-            },
-            {
-                name: "6",
-                formula: ["R", "3", "5", "6"],
-                desc: "L'accord majeur 6 est une alternative très courante au maj7.",
-                hints: {
-                    "3": "Tierce majeure.",
-                    "5": "Quinte juste.",
-                    "6": "Sixte majeure : elle remplace la septième pour un son plus consonant."
-                }
-            }
+            { id: "maj7",  name: "maj7",  formula: ["R", "3", "5", "7"],    hints: ["3", "5", "7"] },
+            { id: "7",     name: "7 (dominante)", formula: ["R", "3", "5", "b7"], hints: ["3", "5", "b7"] },
+            { id: "m7",    name: "m7",    formula: ["R", "b3", "5", "b7"],  hints: ["b3", "5", "b7"] },
+            { id: "m7b5",  name: "m7b5 (demi-diminué)", formula: ["R", "b3", "b5", "b7"], hints: ["b3", "b5", "b7"] },
+            { id: "dim7",  name: "dim7",  formula: ["R", "b3", "b5", "bb7"], hints: ["b3", "b5", "bb7"] },
+            { id: "6",     name: "6",     formula: ["R", "3", "5", "6"],    hints: ["3", "5", "6"] }
         ],
         advanced: [
-            {
-                name: "7b9",
-                formula: ["R", "3", "5", "b7", "b9"],
-                desc: "Accord de dominante avec une neuvième mineure (il se résout souvent vers un accord mineur).",
-                hints: {
-                    "b7": "Septième mineure, celle de tout accord de dominante.",
-                    "b9": "Neuvième mineure : un demi-ton au-dessus de la fondamentale (une octave plus haut), très expressive."
-                }
-            },
-            {
-                name: "7#9",
-                formula: ["R", "3", "5", "b7", "#9"],
-                desc: "Le célèbre « accord Hendrix », qui mélange couleurs majeure et mineure.",
-                hints: {
-                    "3": "Tierce majeure.",
-                    "#9": "Neuvième augmentée : elle sonne comme une tierce mineure !"
-                }
-            },
-            {
-                name: "7alt",
-                formula: ["R", "3", "b7", "b9", "#9", "b5", "#5"],
-                desc: "L'accord altéré réunit les altérations de la quinte et de la neuvième (b5, #5, b9, #9).",
-                hints: {
-                    "3": "Tierce majeure : indispensable.",
-                    "b7": "Septième mineure.",
-                    "b5": "Quinte diminuée (abaissée d'un demi-ton), équivalente à #11.",
-                    "#5": "Quinte augmentée (haussée d'un demi-ton), équivalente à b13."
-                }
-            },
-            {
-                name: "maj7(#11)",
-                formula: ["R", "3", "5", "7", "#11"],
-                desc: "Accord majeur lydien : le #11 apporte une couleur moderne et aérienne.",
-                hints: {
-                    "7": "Septième majeure.",
-                    "#11": "Onzième augmentée : la note caractéristique du mode lydien."
-                }
-            }
+            { id: "7b9",   name: "7b9",   formula: ["R", "3", "5", "b7", "b9"], hints: ["b7", "b9"] },
+            { id: "7#9",   name: "7#9",   formula: ["R", "3", "5", "b7", "#9"], hints: ["3", "#9"] },
+            { id: "7alt",  name: "7alt",  formula: ["R", "3", "b7", "b9", "#9", "b5", "#5"], hints: ["3", "b7", "b5", "#5"] },
+            { id: "maj7#11", name: "maj7(#11)", formula: ["R", "3", "5", "7", "#11"], hints: ["7", "#11"] }
         ]
     };
+
+    function chordName(chord) { return FxI18n.t('ch.' + chord.id + '.name'); }
+    function chordDesc(chord) { return FxI18n.t('ch.' + chord.id + '.desc'); }
+    function chordHint(chord, interval) {
+        return chord.hints.indexOf(interval) !== -1 ? FxI18n.t('ch.' + chord.id + '.h.' + interval) : '';
+    }
 
     // Nom et taille (en demi-tons) de chaque intervalle : sert à l'explication
     // et à écarter les réponses enharmoniquement équivalentes.
     const INTERVAL_INFO = {
-        "R":   { st: 0,  label: "fondamentale" },
-        "1":   { st: 0,  label: "fondamentale" },
-        "b9":  { st: 1,  label: "neuvième mineure (un demi-ton au-dessus de R, une octave plus haut)" },
-        "bb3": { st: 2,  label: "tierce diminuée (2 demi-tons)" },
-        "9":   { st: 2,  label: "neuvième majeure (un ton au-dessus de R, une octave plus haut)" },
-        "b3":  { st: 3,  label: "tierce mineure (3 demi-tons)" },
-        "#9":  { st: 3,  label: "neuvième augmentée (sonne comme une tierce mineure)" },
-        "3":   { st: 4,  label: "tierce majeure (4 demi-tons)" },
-        "4":   { st: 5,  label: "quarte juste (5 demi-tons)" },
-        "11":  { st: 5,  label: "onzième juste (une quarte, une octave plus haut)" },
-        "b5":  { st: 6,  label: "quinte diminuée (6 demi-tons)" },
-        "#11": { st: 6,  label: "onzième augmentée (sonne comme une quinte diminuée)" },
-        "5":   { st: 7,  label: "quinte juste (7 demi-tons)" },
-        "#5":  { st: 8,  label: "quinte augmentée (8 demi-tons)" },
-        "b13": { st: 8,  label: "treizième mineure (sonne comme une quinte augmentée)" },
-        "6":   { st: 9,  label: "sixte majeure (9 demi-tons)" },
-        "bb7": { st: 9,  label: "septième diminuée (9 demi-tons, sonne comme une sixte)" },
-        "13":  { st: 9,  label: "treizième (une sixte, une octave plus haut)" },
-        "b7":  { st: 10, label: "septième mineure (10 demi-tons)" },
-        "7":   { st: 11, label: "septième majeure (11 demi-tons)" }
+        "R":   { st: 0 },
+        "1":   { st: 0 },
+        "b9":  { st: 1 },
+        "bb3": { st: 2 },
+        "9":   { st: 2 },
+        "b3":  { st: 3 },
+        "#9":  { st: 3 },
+        "3":   { st: 4 },
+        "4":   { st: 5 },
+        "11":  { st: 5 },
+        "b5":  { st: 6 },
+        "#11": { st: 6 },
+        "5":   { st: 7 },
+        "#5":  { st: 8 },
+        "b13": { st: 8 },
+        "6":   { st: 9 },
+        "bb7": { st: 9 },
+        "13":  { st: 9 },
+        "b7":  { st: 10 },
+        "7":   { st: 11 }
     };
+    // Libellé de l'intervalle (clé iv.<intervalle> dans FxI18n)
+    function intervalLabel(interval) {
+        return INTERVAL_INFO[interval] ? FxI18n.t('iv.' + interval) : '';
+    }
 
     const INTERVAL_CATEGORIES = {
         root: ["R", "1"],
@@ -830,7 +1053,9 @@
     let answeredCount = 0;
     let correctCount = 0;
     let streak = 0;
-    let missed = [];
+    let missed = [];          // { chord, answer } : mis en forme à l'affichage (langue courante)
+    let lastCorrect = false;  // résultat de la dernière réponse (pour ré-afficher le retour)
+    let endBest = null;       // { record, best } pour l'écran de fin
 
     // --- STOCKAGE (protégé : localStorage peut être absent dans une WebView) ---
     function storageGet(key) {
@@ -902,10 +1127,10 @@
 
     function updateScoreBoard() {
         const shownNum = Math.min(Math.max(questionNum, 1), SESSION_LENGTH);
-        document.getElementById('qnum-val').innerText = fmt(TXT.questionCounter, { n: shownNum, total: SESSION_LENGTH });
-        document.getElementById('score-val').innerText = fmt(TXT.scoreCounter, { ok: correctCount, done: answeredCount });
+        document.getElementById('qnum-val').innerText = FxI18n.t('questionCounter', { n: shownNum, total: SESSION_LENGTH });
+        document.getElementById('score-val').innerText = FxI18n.t('scoreCounter', { ok: correctCount, done: answeredCount });
         document.getElementById('rate-val').innerText = answeredCount > 0
-            ? fmt(TXT.rate, { pct: Math.round(100 * correctCount / answeredCount) })
+            ? FxI18n.t('rate', { pct: Math.round(100 * correctCount / answeredCount) })
             : "";
         document.getElementById('streak-val').innerText = streak;
     }
@@ -959,19 +1184,34 @@
         missingIndex = Math.floor(Math.random() * (currentChord.formula.length - 1)) + 1;
         correctAnswer = currentChord.formula[missingIndex];
 
-        document.getElementById('chord-name').innerText = currentChord.name;
         document.getElementById('formula-display').innerHTML = formulaHtml(currentChord, missingIndex, false);
 
-        // Mettre à jour l'indice contextuel
-        const specificHint = currentChord.hints && currentChord.hints[correctAnswer]
-            ? currentChord.hints[correctAnswer]
-            : TXT.hintDefault;
-
-        document.getElementById('hint-title').innerText = currentChord.name;
-        document.getElementById('hint-text').innerText = currentChord.desc + "\n\n💡 " + TXT.hintLabel + specificHint;
+        // Nom de l'accord et indice contextuel
+        renderQuestionTexts();
 
         updateScoreBoard();
         generateOptions();
+    }
+
+    // Textes de la question dans la langue courante (nom de l'accord, indice)
+    function renderQuestionTexts() {
+        document.getElementById('chord-name').innerText = chordName(currentChord);
+        const specificHint = chordHint(currentChord, correctAnswer) || FxI18n.t('hintDefault');
+        document.getElementById('hint-title').innerText = chordName(currentChord);
+        document.getElementById('hint-text').innerText = chordDesc(currentChord) + "\n\n💡 " + FxI18n.t('hintLabel') + specificHint;
+    }
+
+    // Textes affichés après la réponse (retour, explication, bouton suivant)
+    function renderAnswerTexts() {
+        const feedbackEl = document.getElementById('feedback');
+        feedbackEl.innerText = lastCorrect
+            ? "✓ " + FxI18n.t('correct')
+            : "✗ " + FxI18n.t('incorrect', { answer: correctAnswer });
+        let expl = FxI18n.t('missingIs', { answer: correctAnswer, info: intervalLabel(correctAnswer) });
+        const h = chordHint(currentChord, correctAnswer);
+        if (h) expl += "\n" + h;
+        document.getElementById('explanation').innerText = expl;
+        document.getElementById('next-btn').innerText = questionNum >= SESSION_LENGTH ? FxI18n.t('seeResults') : FxI18n.t('next');
     }
 
     // Formule affichée : "?" à la place de la note manquante, ou la réponse une fois révélée
@@ -1031,37 +1271,23 @@
             if (buttons[i].getAttribute('data-value') === correctAnswer) buttons[i].classList.add('is-correct');
         }
 
+        lastCorrect = isCorrect;
         if (isCorrect) {
             correctCount += 1;
             streak += 1;
-            feedbackEl.innerText = "✓ " + TXT.correct;
             feedbackEl.className = "feedback correct";
         } else {
             streak = 0;
             btnEl.classList.add('is-wrong');
-            feedbackEl.innerText = "✗ " + fmt(TXT.incorrect, { answer: correctAnswer });
             feedbackEl.className = "feedback incorrect";
-            missed.push(fmt(TXT.missedItem, {
-                chord: currentChord.name,
-                formula: currentChord.formula.join(' - '),
-                answer: correctAnswer
-            }));
+            missed.push({ chord: currentChord, answer: correctAnswer });
         }
 
         // Révéler la réponse dans la formule + explication courte
         document.getElementById('formula-display').innerHTML = formulaHtml(currentChord, missingIndex, true);
-        const info = INTERVAL_INFO[correctAnswer] ? INTERVAL_INFO[correctAnswer].label : "";
-        let expl = fmt(TXT.missingIs, { answer: correctAnswer, info: info });
-        if (currentChord.hints && currentChord.hints[correctAnswer]) {
-            expl += "\n" + currentChord.hints[correctAnswer];
-        }
-        const explEl = document.getElementById('explanation');
-        explEl.innerText = expl;
-        explEl.className = "explanation show";
-
-        const nextBtn = document.getElementById('next-btn');
-        nextBtn.innerText = questionNum >= SESSION_LENGTH ? TXT.seeResults : TXT.next;
-        nextBtn.classList.add('show');
+        renderAnswerTexts();
+        document.getElementById('explanation').className = "explanation show";
+        document.getElementById('next-btn').classList.add('show');
 
         updateScoreBoard();
     }
@@ -1071,48 +1297,74 @@
         document.getElementById('options-grid').classList.add('hidden');
         document.getElementById('next-btn').classList.remove('show');
 
-        const pct = answeredCount > 0 ? Math.round(100 * correctCount / answeredCount) : 0;
         const bestKey = 'quizFormuleAccords.best.' + currentLevel;
         const previousBest = parseInt(storageGet(bestKey), 10);
-        let bestText;
         if (isNaN(previousBest) || correctCount > previousBest) {
             storageSet(bestKey, String(correctCount));
-            bestText = TXT.newRecord;
+            endBest = { record: true, best: correctCount };
         } else {
-            bestText = fmt(TXT.bestScore, {
-                level: TXT.levelNames[currentLevel] || currentLevel,
-                best: previousBest,
-                total: SESSION_LENGTH
-            });
+            endBest = { record: false, best: previousBest };
         }
 
-        document.getElementById('end-score').innerText = fmt(TXT.scoreCounter, { ok: correctCount, done: answeredCount });
-        document.getElementById('end-rate').innerText = fmt(TXT.endRate, { pct: pct });
+        renderEndScreen();
+        document.getElementById('end-screen').classList.add('show');
+        updateScoreBoard();
+        window.scrollTo(0, 0);
+    }
+
+    // Textes de l'écran de fin dans la langue courante
+    function renderEndScreen() {
+        const pct = answeredCount > 0 ? Math.round(100 * correctCount / answeredCount) : 0;
+        const bestText = endBest.record
+            ? FxI18n.t('newRecord')
+            : FxI18n.t('bestScore', {
+                level: FxI18n.t('level.' + currentLevel),
+                best: endBest.best,
+                total: SESSION_LENGTH
+            });
+
+        document.getElementById('end-score').innerText = FxI18n.t('scoreCounter', { ok: correctCount, done: answeredCount });
+        document.getElementById('end-rate').innerText = FxI18n.t('endRate', { pct: pct });
         document.getElementById('end-best').innerText = bestText;
 
         const missedEl = document.getElementById('end-missed');
         missedEl.innerHTML = '';
         if (missed.length === 0) {
             const li = document.createElement('li');
-            li.innerText = TXT.noMistake;
+            li.innerText = FxI18n.t('noMistake');
             missedEl.appendChild(li);
         } else {
             const title = document.createElement('li');
             title.style.listStyle = 'none';
             title.style.marginLeft = '-20px';
             title.style.fontWeight = '700';
-            title.innerText = TXT.missedTitle;
+            title.innerText = FxI18n.t('missedTitle');
             missedEl.appendChild(title);
             missed.forEach(m => {
                 const li = document.createElement('li');
-                li.innerText = m;
+                li.innerText = FxI18n.t('missedItem', {
+                    chord: chordName(m.chord),
+                    formula: m.chord.formula.join(' - '),
+                    answer: m.answer
+                });
                 missedEl.appendChild(li);
             });
         }
-        document.getElementById('end-screen').classList.add('show');
-        updateScoreBoard();
-        window.scrollTo(0, 0);
     }
+
+    // Changement de langue : ré-afficher les textes générés sans relancer la série
+    FxI18n.onChange(function () {
+        document.title = FxI18n.t('page.title');
+        updateScoreBoard();
+        if (document.getElementById('end-screen').classList.contains('show')) {
+            if (endBest) renderEndScreen();
+            return;
+        }
+        if (currentChord) {
+            renderQuestionTexts();
+            if (locked) renderAnswerTexts();
+        }
+    });
 
     // Initialisation
     initTheme();

@@ -54,67 +54,70 @@
     <!-- Barre de navigation / Header -->
     <nav class="navbar navbar-expand-lg bg-body-tertiary border-bottom mb-4">
         <div class="container">
-            <span class="navbar-brand fw-bold"><i class="bi bi-music-note-beamed me-2"></i>Uke encyclopédie</span>
-            <button class="btn btn-outline-secondary" id="themeToggle">
+            <span class="navbar-brand fw-bold"><i class="bi bi-music-note-beamed me-2"></i><span data-i18n="brand">Uke encyclopédie</span></span>
+            <div class="d-flex gap-2">
+            <button type="button" class="btn btn-outline-secondary" data-i18n-toggle>FR</button>
+            <button class="btn btn-outline-secondary" id="themeToggle" data-i18n-title="theme.toggle" title="Mode jour / nuit">
                 <i class="bi bi-moon-stars-fill" id="themeIcon"></i>
             </button>
+            </div>
         </div>
     </nav>
 
     <div class="container mb-5">
         <!-- Formulaire de Recherche & Filtrage -->
         <div class="card p-4 mb-4 shadow-sm">
-            <h5 class="card-title mb-3"><i class="bi bi-search me-2"></i>Moteur de recherche d'accords</h5>
+            <h5 class="card-title mb-3"><i class="bi bi-search me-2"></i><span data-i18n="search.title">Moteur de recherche d'accords</span></h5>
             <div class="row g-3">
                 
                 <!-- Sélection des Fondamentales (Keys) -->
                 <div class="col-md-3">
-                    <label class="form-label fw-semibold">Fondamentale(s) (Ctrl+Clic)</label>
+                    <label class="form-label fw-semibold" data-i18n="lbl.keys">Fondamentale(s) (Ctrl+Clic)</label>
                     <select id="selectKeys" class="form-select search-select" multiple>
                         <!-- Rempli dynamiquement -->
                     </select>
-                    <div class="form-text">Laissez vide pour tout afficher</div>
+                    <div class="form-text" data-i18n="hint.empty">Laissez vide pour tout afficher</div>
                 </div>
 
                 <!-- Sélection des Suffixes (Types d'accord) -->
                 <div class="col-md-3">
-                    <label class="form-label fw-semibold">Type(s) d'accord (Ctrl+Clic)</label>
+                    <label class="form-label fw-semibold" data-i18n="lbl.types">Type(s) d'accord (Ctrl+Clic)</label>
                     <select id="selectSuffixes" class="form-select search-select" multiple>
                         <!-- Rempli dynamiquement -->
                     </select>
-                    <div class="form-text">Laissez vide pour tout afficher</div>
+                    <div class="form-text" data-i18n="hint.empty">Laissez vide pour tout afficher</div>
                 </div>
 
                 <!-- Sélection des Variantes (Positions) -->
                 <div class="col-md-3">
-                    <label class="form-label fw-semibold">Position / Variante (Ctrl+Clic)</label>
+                    <label class="form-label fw-semibold" data-i18n="lbl.pos">Position / Variante (Ctrl+Clic)</label>
                     <select id="selectPositions" class="form-select search-select" multiple>
-                        <option value="0" selected>1ère Position</option>
-                        <option value="1">2ème Position</option>
-                        <option value="2">3ème Position</option>
-                        <option value="3">4ème Position</option>
+                        <option value="0" selected data-i18n="pos.1">1ère Position</option>
+                        <option value="1" data-i18n="pos.2">2ème Position</option>
+                        <option value="2" data-i18n="pos.3">3ème Position</option>
+                        <option value="3" data-i18n="pos.4">4ème Position</option>
                     </select>
-                    <div class="form-text">Sélectionnez les variantes voulues</div>
+                    <div class="form-text" data-i18n="hint.pos">Sélectionnez les variantes voulues</div>
                 </div>
 
                 <!-- Options de tri et bouton de réinitialisation -->
                 <div class="col-md-3 d-flex flex-column justify-content-between">
                     <div>
-                        <label class="form-label fw-semibold">Trier les résultats par :</label>
+                        <label class="form-label fw-semibold" data-i18n="lbl.sort">Trier les résultats par :</label>
                         <div class="form-check">
                             <input class="form-check-input" type="radio" name="sortOrder" id="sortByGamma" value="gamma" checked>
-                            <label class="form-check-label" for="sortByGamma">
+                            <label class="form-check-label" for="sortByGamma" data-i18n="sort.key">
                                 Gamme / Fondamentale (A, B, C...)
                             </label>
                         </div>
                         <div class="form-check">
                             <input class="form-check-input" type="radio" name="sortOrder" id="sortByType" value="type">
-                            <label class="form-check-label" for="sortByType">
+                            <label class="form-check-label" for="sortByType" data-i18n="sort.type">
                                 Type d'accord (major, minor...)
                             </label>
                         </div>
                     </div>
-                    <button class="btn btn-outline-danger w-100 mt-3" id="btnReset"><i class="bi bi-arrow-counterclockwise me-1"></i>Réinitialiser</button>
+                    <button class="btn btn-outline-danger w-100 mt-3" id="btnReset"><i class="bi bi-arrow-counterclockwise me-1"></i><span data-i18n="btn.reset">Réinitialiser</span></button>
                 </div>
 
             </div>
@@ -133,20 +136,20 @@
 		  <!-- Colonne 1 : Copyright & Titre -->
 		  <div class="col-12 col-md-6 text-center text-md-start">
 			<span class="small">
-			  CC BY-NC 4.0 <span id="currentYear"></span><script>document.getElementById("currentYear").textContent = new Date().getFullYear();</script> <strong>François Parlant</strong> &mdash; Créé avec passion pour l'ukulélé.
+			  CC BY-NC 4.0 <span id="currentYear"></span><script>document.getElementById("currentYear").textContent = new Date().getFullYear();</script> <strong>François Parlant</strong> &mdash; <span data-i18n="footer.made">Créé avec passion pour l'ukulélé.</span>
 			</span>
 		  </div>
 
 		  <!-- Colonne 2 : Liens Réseaux Sociaux -->
 		  <div class="col-12 col-md-6 text-center text-md-end">
 			<div class="d-inline-flex gap-3 align-items-center">
-			  <a href="https://github.com/fxpar/music-toolbox/blob/main/ukulele-chords-search.html" target="_blank" rel="noopener noreferrer" class="text-body-secondary text-decoration-none fs-5 hover-accent" title="Code source GitHub"> 
+			  <a href="https://github.com/fxpar/music-toolbox/blob/main/ukulele-chords-search.html" target="_blank" rel="noopener noreferrer" class="text-body-secondary text-decoration-none fs-5 hover-accent" title="Code source GitHub" data-i18n-title="footer.github"> 
 				<i class="bi bi-github"></i> 
 			  </a> 
-			  <a href="https://www.linkedin.com/in/francois-parlant" target="_blank" rel="noopener noreferrer" class="text-body-secondary text-decoration-none fs-5 hover-accent" title="LinkedIn: François Parlant">
+			  <a href="https://www.linkedin.com/in/francois-parlant" target="_blank" rel="noopener noreferrer" class="text-body-secondary text-decoration-none fs-5 hover-accent" title="LinkedIn: François Parlant" data-i18n-title="footer.linkedin">
 				<i class="bi bi-linkedin"></i> 
 			  </a> 
-			  <a href="https://www.youtube.com/c/enparlantdebureautiqueformezvous" target="_blank" rel="noopener noreferrer" class="text-body-secondary text-decoration-none fs-5 hover-accent" title="Tutos YouTube: En parlant de bureautique">
+			  <a href="https://www.youtube.com/c/enparlantdebureautiqueformezvous" target="_blank" rel="noopener noreferrer" class="text-body-secondary text-decoration-none fs-5 hover-accent" title="Tutos YouTube: En parlant de bureautique" data-i18n-title="footer.youtube">
 				<i class="bi bi-youtube"></i> 
 			  </a>
 			</div>
@@ -155,11 +158,61 @@
 	  </div>
 	</footer>
 
+    <script src="./js/i18n-fx.js"></script>
     <!-- Chargement de la bibliothèque de données -->
     <script src="./ukulele.js"></script>
 
     <!-- Script Logique Applicative -->
     <script>
+        FxI18n.add({
+            fr: {
+                'page.title': 'Ukulele accords encyclopédie',
+                'brand': 'Uke encyclopédie',
+                'theme.toggle': 'Mode jour / nuit',
+                'search.title': "Moteur de recherche d'accords",
+                'lbl.keys': 'Fondamentale(s) (Ctrl+Clic)',
+                'lbl.types': "Type(s) d'accord (Ctrl+Clic)",
+                'lbl.pos': 'Position / Variante (Ctrl+Clic)',
+                'hint.empty': 'Laissez vide pour tout afficher',
+                'hint.pos': 'Sélectionnez les variantes voulues',
+                'pos.1': '1ère Position', 'pos.2': '2ème Position', 'pos.3': '3ème Position', 'pos.4': '4ème Position',
+                'lbl.sort': 'Trier les résultats par :',
+                'sort.key': 'Gamme / Fondamentale (A, B, C...)',
+                'sort.type': "Type d'accord (major, minor...)",
+                'btn.reset': 'Réinitialiser',
+                'count.one': '{n} accord trouvé',
+                'count.many': '{n} accords trouvés',
+                'pos.short': 'Pos. {n}',
+                'footer.made': "Créé avec passion pour l'ukulélé.",
+                'footer.github': 'Code source GitHub',
+                'footer.linkedin': 'LinkedIn: François Parlant',
+                'footer.youtube': 'Tutos YouTube: En parlant de bureautique'
+            },
+            en: {
+                'page.title': 'Ukulele chord encyclopedia',
+                'brand': 'Uke encyclopedia',
+                'theme.toggle': 'Light / dark mode',
+                'search.title': 'Chord search engine',
+                'lbl.keys': 'Root(s) (Ctrl+Click)',
+                'lbl.types': 'Chord type(s) (Ctrl+Click)',
+                'lbl.pos': 'Position / Voicing (Ctrl+Click)',
+                'hint.empty': 'Leave empty to show all',
+                'hint.pos': 'Select the voicings you want',
+                'pos.1': '1st position', 'pos.2': '2nd position', 'pos.3': '3rd position', 'pos.4': '4th position',
+                'lbl.sort': 'Sort results by:',
+                'sort.key': 'Key / Root (A, B, C...)',
+                'sort.type': 'Chord type (major, minor...)',
+                'btn.reset': 'Reset',
+                'count.one': '{n} chord found',
+                'count.many': '{n} chords found',
+                'pos.short': 'Pos. {n}',
+                'footer.made': 'Made with passion for the ukulele.',
+                'footer.github': 'Source code on GitHub',
+                'footer.linkedin': 'LinkedIn: François Parlant',
+                'footer.youtube': 'YouTube tutorials: En parlant de bureautique'
+            }
+        });
+
         // --- 1. Gestion des thèmes (Sombre / Clair) ---
         const themeToggle = document.getElementById('themeToggle');
         const themeIcon = document.getElementById('themeIcon');
@@ -289,7 +342,7 @@
         // --- 4. Rendu visuel dans la grille ---
         function renderResults(chords) {
             container.innerHTML = "";
-            resultsCountText.textContent = `${chords.length} accord${chords.length > 1 ? 's' : ''} trouvé${chords.length > 1 ? 's' : ''}`;
+            resultsCountText.textContent = FxI18n.t(chords.length > 1 ? 'count.many' : 'count.one', { n: chords.length });
 
             chords.forEach(chord => {
                 const col = document.createElement('div');
@@ -298,7 +351,7 @@
                 col.innerHTML = `
                     <div class="chord-card shadow-sm">
                         <div class="fw-bold fs-5 text-primary">${chord.key} <span class="text-muted fs-6">${chord.suffix}</span></div>
-                        <div class="badge bg-secondary mb-2">Pos. ${chord.positionIndex}</div>
+                        <div class="badge bg-secondary mb-2">${FxI18n.t('pos.short', { n: chord.positionIndex })}</div>
                         <uke-chord 
                             name="${chord.key}${chord.suffix === 'major' ? '' : ' ' + chord.suffix}" 
                             frets="${chord.frets}" 
@@ -338,6 +391,12 @@
 
         // Lancement initial de la recherche au chargement de la page
         searchChords();
+
+        // Changement de langue : titre et compteur de résultats (les filtres restent)
+        FxI18n.onChange(function () {
+            document.title = FxI18n.t('page.title');
+            searchChords();
+        });
     </script>
     
     <!-- Script Bootstrap Bundle -->

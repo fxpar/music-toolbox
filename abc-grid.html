@@ -7,6 +7,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/abcjs@6.6.3/abcjs-audio.min.css">
+    <script src="./js/i18n-fx.js"></script>
     <style>
         .abc-paper {
             background: transparent;
@@ -49,11 +50,12 @@
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4 shadow">
         <div class="container-fluid">
             <a class="navbar-brand d-flex align-items-center" href="#">
-                <i class="bi bi-music-note-list me-2 text-primary"></i> Grille-To-ABC Editor
+                <i class="bi bi-music-note-list me-2 text-primary"></i> <span data-i18n="ui.brand">Grille-To-ABC Editor</span>
             </a>
-            <button class="btn btn-outline-light btn-sm ms-auto d-flex align-items-center" id="themeToggleBtn" onclick="toggleTheme()">
+            <button class="btn btn-outline-light btn-sm ms-auto d-flex align-items-center" id="themeToggleBtn" onclick="toggleTheme()" title="Mode jour / nuit" data-i18n-title="ui.theme">
                 <i class="bi bi-sun-fill" id="themeIcon"></i>
             </button>
+            <button type="button" class="btn btn-outline-light btn-sm ms-2" data-i18n-toggle>FR</button>
         </div>
     </nav>
 
@@ -63,27 +65,27 @@
             <div class="col-lg-5">
                 <div class="card shadow-sm h-100">
                     <div class="card-header bg-primary text-white py-3">
-                        <h5 class="card-title mb-0"><i class="bi bi-sliders me-2"></i>Configuration</h5>
+                        <h5 class="card-title mb-0"><i class="bi bi-sliders me-2"></i><span data-i18n="ui.config">Configuration</span></h5>
                     </div>
                     <div class="card-body">
                         <div class="mb-3">
-                            <label for="chordGrid" class="form-label fw-bold">Votre grille d'accords :</label>
-                            <textarea class="form-control font-monospace" id="chordGrid" rows="3" placeholder="Ex: C /// G // C7 // Am"></textarea>
-                            <div class="form-text">Séparez par des espaces. Utilisez <code>/</code> pour répéter la mesure.</div>
+                            <label for="chordGrid" class="form-label fw-bold" data-i18n="ui.grid">Votre grille d'accords :</label>
+                            <textarea class="form-control font-monospace" id="chordGrid" rows="3" placeholder="Ex: C /// G // C7 // Am" data-i18n-placeholder="ui.gridPh"></textarea>
+                            <div class="form-text" data-i18n-html="ui.gridHelp">Séparez par des espaces. Utilisez <code>/</code> pour répéter la mesure.</div>
                         </div>
 
                         <div class="row g-3 mb-3">
                             <div class="col-sm-6">
-                                <label for="gchordStyle" class="form-label fw-bold">Style :</label>
+                                <label for="gchordStyle" class="form-label fw-bold" data-i18n="ui.style">Style :</label>
                                 <select class="form-select" id="gchordStyle">
                                     <option value="zczczczc">Boom Chick (Standard)</option>
                                     <option value="bzzcbzcz">Tango</option>
-                                    <option value="GIGIGJHJ">Arpège</option>
-                                    <option value="zzzz">Silencieux</option>
+                                    <option value="GIGIGJHJ" data-i18n="ui.arpeggio">Arpège</option>
+                                    <option value="zzzz" data-i18n="ui.silent">Silencieux</option>
                                 </select>
                             </div>
                             <div class="col-sm-6">
-                                <label for="timeSignature" class="form-label fw-bold">Mesure :</label>
+                                <label for="timeSignature" class="form-label fw-bold" data-i18n="ui.timeSig">Mesure :</label>
                                 <select class="form-select" id="timeSignature">
                                     <option value="4/4" selected>4/4</option>
                                     <option value="3/4">3/4</option>
@@ -93,7 +95,7 @@
 
                         <div class="d-grid gap-2 pt-2">
                             <button class="btn btn-success btn-lg" onclick="generateABC()">
-                                <i class="bi bi-play-circle-fill me-2"></i>Appliquer & Générer
+                                <i class="bi bi-play-circle-fill me-2"></i><span data-i18n="ui.generate">Appliquer & Générer</span>
                             </button>
                         </div>
                     </div>
@@ -103,8 +105,8 @@
             <div class="col-lg-7">
                 <div class="card shadow-sm h-100">
                     <div class="card-header bg-secondary text-white py-3 d-flex justify-content-between align-items-center">
-                        <h5 class="card-title mb-0"><i class="bi bi-eye me-2"></i>Rendu</h5>
-                        <button class="btn btn-sm btn-light" type="button" data-bs-toggle="collapse" data-bs-target="#abcCodeCollapse">
+                        <h5 class="card-title mb-0"><i class="bi bi-eye me-2"></i><span data-i18n="ui.render">Rendu</span></h5>
+                        <button class="btn btn-sm btn-light" type="button" data-bs-toggle="collapse" data-bs-target="#abcCodeCollapse" data-i18n="ui.abcCode">
                             Code ABC
                         </button>
                     </div>
@@ -117,7 +119,7 @@
                         <div class="mb-3">
                             <div class="d-flex align-items-stretch gap-1">
                                 <div id="audio-player" class="flex-grow-1"></div>
-                                <button class="btn btn-secondary btn-sm" type="button" data-bs-toggle="collapse" data-bs-target="#moreControls" title="Plus d'options">
+                                <button class="btn btn-secondary btn-sm" type="button" data-bs-toggle="collapse" data-bs-target="#moreControls" title="Plus d'options" data-i18n-title="ui.more">
                                     <i class="bi bi-three-dots-vertical"></i>
                                 </button>
                             </div>
@@ -125,9 +127,9 @@
                             <div class="collapse border border-top-0 rounded-bottom p-3 bg-body-secondary" id="moreControls">
                                 <div class="row g-3 align-items-end">
                                     <div class="col-auto">
-                                        <label for="abc-sel-transpose" class="form-label small fw-bold">Transposer (demi-tons) :</label>
+                                        <label for="abc-sel-transpose" class="form-label small fw-bold" data-i18n="ui.transpose">Transposer (demi-tons) :</label>
                                         <select id="abc-sel-transpose" class="form-select form-select-sm" style="width: 120px;">
-                                            <option value="0" selected>0 (Défaut)</option>
+                                            <option value="0" selected data-i18n="ui.default0">0 (Défaut)</option>
                                             <option value="1">+1</option>
                                             <option value="2">+2</option>
                                             <option value="3">+3</option>
@@ -147,7 +149,7 @@
                                         </select>
                                     </div>
                                     <div class="col-auto">
-                                        <button class="btn btn-primary btn-sm" onclick="generateABC()">Appliquer</button>
+                                        <button class="btn btn-primary btn-sm" onclick="generateABC()" data-i18n="ui.apply">Appliquer</button>
                                     </div>
                                 </div>
                             </div>
@@ -169,20 +171,20 @@
 		  <!-- Colonne 1 : Copyright & Titre -->
 		  <div class="col-12 col-md-6 text-center text-md-start">
 			<span class="small">
-			  CC BY-NC 4.0 <span id="currentYear"></span><script>document.getElementById("currentYear").textContent = new Date().getFullYear();</script> <strong>François Parlant</strong> &mdash; Créé avec passion pour le rythme et la mélodie.
+			  CC BY-NC 4.0 <span id="currentYear"></span><script>document.getElementById("currentYear").textContent = new Date().getFullYear();</script> <strong>François Parlant</strong> &mdash; <span data-i18n="footer.tagline">Créé avec passion pour le rythme et la mélodie.</span>
 			</span>
 		  </div>
 
 		  <!-- Colonne 2 : Liens Réseaux Sociaux -->
 		  <div class="col-12 col-md-6 text-center text-md-end">
 			<div class="d-inline-flex gap-3 align-items-center">
-			  <a href="https://github.com/fxpar/music-toolbox/blob/main/abc-grid.html" target="_blank" rel="noopener noreferrer" class="text-body-secondary text-decoration-none fs-5 hover-accent" title="Code source GitHub"> 
+			  <a href="https://github.com/fxpar/music-toolbox/blob/main/abc-grid.html" target="_blank" rel="noopener noreferrer" class="text-body-secondary text-decoration-none fs-5 hover-accent" title="Code source GitHub" data-i18n-title="footer.github"> 
 				<i class="bi bi-github"></i> 
 			  </a> 
-			  <a href="https://www.linkedin.com/in/francois-parlant" target="_blank" rel="noopener noreferrer" class="text-body-secondary text-decoration-none fs-5 hover-accent" title="LinkedIn: François Parlant">
+			  <a href="https://www.linkedin.com/in/francois-parlant" target="_blank" rel="noopener noreferrer" class="text-body-secondary text-decoration-none fs-5 hover-accent" title="LinkedIn: François Parlant" data-i18n-title="footer.linkedin">
 				<i class="bi bi-linkedin"></i> 
 			  </a> 
-			  <a href="https://www.youtube.com/c/enparlantdebureautiqueformezvous" target="_blank" rel="noopener noreferrer" class="text-body-secondary text-decoration-none fs-5 hover-accent" title="Tutos YouTube: En parlant de bureautique">
+			  <a href="https://www.youtube.com/c/enparlantdebureautiqueformezvous" target="_blank" rel="noopener noreferrer" class="text-body-secondary text-decoration-none fs-5 hover-accent" title="Tutos YouTube: En parlant de bureautique" data-i18n-title="footer.youtube">
 				<i class="bi bi-youtube"></i> 
 			  </a>
 			</div>
@@ -197,6 +199,37 @@
     <script src="https://cdn.jsdelivr.net/npm/abcjs@6.4.0/dist/abcjs-basic-min.js"></script>
 
     <script>
+        // --- Traductions FR / EN (module commun js/i18n-fx.js) ---
+        FxI18n.add({
+            fr: {
+                "page.title": "Générateur de Grille ABCJS",
+                "ui.brand": "Grille-To-ABC Editor", "ui.theme": "Mode jour / nuit", "ui.config": "Configuration",
+                "ui.grid": "Votre grille d'accords :", "ui.gridPh": "Ex: C /// G // C7 // Am",
+                "ui.gridHelp": "Séparez par des espaces. Utilisez <code>/</code> pour répéter la mesure.",
+                "ui.style": "Style :", "ui.arpeggio": "Arpège", "ui.silent": "Silencieux", "ui.timeSig": "Mesure :",
+                "ui.generate": "Appliquer & Générer", "ui.render": "Rendu", "ui.abcCode": "Code ABC", "ui.more": "Plus d'options",
+                "ui.transpose": "Transposer (demi-tons) :", "ui.default0": "0 (Défaut)", "ui.apply": "Appliquer",
+                "abc.title": "Grille Rythmique", "msg.noAudio": "L'audio n'est pas supporté.",
+                "footer.tagline": "Créé avec passion pour le rythme et la mélodie.", "footer.github": "Code source GitHub",
+                "footer.linkedin": "LinkedIn: François Parlant", "footer.youtube": "Tutos YouTube: En parlant de bureautique"
+            },
+            en: {
+                "page.title": "ABCJS Chord Grid Generator",
+                "ui.brand": "Grid-to-ABC Editor", "ui.theme": "Light / dark mode", "ui.config": "Settings",
+                "ui.grid": "Your chord grid:", "ui.gridPh": "e.g. C /// G // C7 // Am",
+                "ui.gridHelp": "Separate with spaces. Use <code>/</code> to repeat the bar.",
+                "ui.style": "Style:", "ui.arpeggio": "Arpeggio", "ui.silent": "Silent", "ui.timeSig": "Time signature:",
+                "ui.generate": "Apply & Generate", "ui.render": "Output", "ui.abcCode": "ABC code", "ui.more": "More options",
+                "ui.transpose": "Transpose (semitones):", "ui.default0": "0 (Default)", "ui.apply": "Apply",
+                "abc.title": "Rhythm Grid", "msg.noAudio": "Audio is not supported.",
+                "footer.tagline": "Made with passion for rhythm and melody.", "footer.github": "Source code on GitHub",
+                "footer.linkedin": "LinkedIn: François Parlant", "footer.youtube": "YouTube tutorials: En parlant de bureautique"
+            }
+        });
+        FxI18n.onChange(function () {
+            document.title = FxI18n.t("page.title");
+        });
+
         document.getElementById('chordGrid').value = "C /// G // C7 // Am";
 
         let synthControl = null;
@@ -304,7 +337,7 @@
             }
 
             // Utilisation combinée de %%MIDI transpose pour l'audio gchord
-            const abcString = `X:1\nT:Grille Rythmique\nM:${timeSig}\nL:1/4\nQ:100\nK:C\n%%MIDI transpose ${transposeValue}\n%%MIDI gchord ${gchord}\n${formattedMeasures}`;
+            const abcString = `X:1\nT:${FxI18n.t("abc.title")}\nM:${timeSig}\nL:1/4\nQ:100\nK:C\n%%MIDI transpose ${transposeValue}\n%%MIDI gchord ${gchord}\n${formattedMeasures}`;
             document.getElementById('abcSource').value = abcString;
 
             const renderOptions = { 
@@ -342,7 +375,7 @@
                     console.warn("Erreur de création de la synthèse audio :", error);
                 });
             } else {
-                document.getElementById("audio-player").innerHTML = "<div class='alert alert-warning p-2 small'>L'audio n'est pas supporté.</div>";
+                document.getElementById("audio-player").innerHTML = "<div class='alert alert-warning p-2 small'>" + FxI18n.t("msg.noAudio") + "</div>";
             }
         }
 

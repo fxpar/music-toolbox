@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Suivi du Volume - Ukulélé</title>
+    <script src="./js/i18n-fx.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.min.css">
     <style>
@@ -28,11 +29,14 @@
 <body>
 
     <div class="container">
-        <h1>Suivi de la dynamique au Ukulélé</h1>
-        <p>Jouez pour observer la régularité de votre volume sur les 10 dernières secondes.</p>
-        
+        <div style="text-align: right;">
+            <button type="button" data-i18n-toggle style="padding: 4px 12px; font-size: 14px; margin-bottom: 0; background: #6c757d;">FR</button>
+        </div>
+        <h1 data-i18n="vt.h1">Suivi de la dynamique au Ukulélé</h1>
+        <p data-i18n="vt.intro">Jouez pour observer la régularité de votre volume sur les 10 dernières secondes.</p>
+
         <button id="startBtn">Démarrer l'analyse</button>
-        <p>Volume actuel : <span id="volumeValue">0</span>%</p>
+        <p><span data-i18n="vt.current">Volume actuel :</span> <span id="volumeValue">0</span>%</p>
 
         <div class="chart-container">
             <canvas id="volumeChart"></canvas>
@@ -45,20 +49,20 @@
 		  <!-- Colonne 1 : Copyright & Titre -->
 		  <div class="col-12 col-md-6 text-center text-md-start">
 			<span class="small">
-			  CC BY-NC 4.0 <span id="currentYear"></span><script>document.getElementById("currentYear").textContent = new Date().getFullYear();</script> <strong>François Parlant</strong> &mdash; Créé avec passion pour le rythme et la mélodie.
+			  CC BY-NC 4.0 <span id="currentYear"></span><script>document.getElementById("currentYear").textContent = new Date().getFullYear();</script> <strong>François Parlant</strong> &mdash; <span data-i18n="footer.made">Créé avec passion pour le rythme et la mélodie.</span>
 			</span>
 		  </div>
 
 		  <!-- Colonne 2 : Liens Réseaux Sociaux -->
 		  <div class="col-12 col-md-6 text-center text-md-end">
 			<div class="d-inline-flex gap-3 align-items-center">
-			  <a href="https://github.com/fxpar/music-toolbox/blob/main/volume-tester.html" target="_blank" rel="noopener noreferrer" class="text-body-secondary text-decoration-none fs-5 hover-accent" title="Code source GitHub"> 
+			  <a href="https://github.com/fxpar/music-toolbox/blob/main/volume-tester.html" target="_blank" rel="noopener noreferrer" class="text-body-secondary text-decoration-none fs-5 hover-accent" title="Code source GitHub" data-i18n-title="footer.github"> 
 				<i class="bi bi-github"></i> 
 			  </a> 
-			  <a href="https://www.linkedin.com/in/francois-parlant" target="_blank" rel="noopener noreferrer" class="text-body-secondary text-decoration-none fs-5 hover-accent" title="LinkedIn: François Parlant">
+			  <a href="https://www.linkedin.com/in/francois-parlant" target="_blank" rel="noopener noreferrer" class="text-body-secondary text-decoration-none fs-5 hover-accent" title="LinkedIn: François Parlant" data-i18n-title="footer.linkedin">
 				<i class="bi bi-linkedin"></i> 
 			  </a> 
-			  <a href="https://www.youtube.com/c/enparlantdebureautiqueformezvous" target="_blank" rel="noopener noreferrer" class="text-body-secondary text-decoration-none fs-5 hover-accent" title="Tutos YouTube: En parlant de bureautique">
+			  <a href="https://www.youtube.com/c/enparlantdebureautiqueformezvous" target="_blank" rel="noopener noreferrer" class="text-body-secondary text-decoration-none fs-5 hover-accent" title="Tutos YouTube: En parlant de bureautique" data-i18n-title="footer.youtube">
 				<i class="bi bi-youtube"></i> 
 			  </a>
 			</div>
@@ -69,6 +73,41 @@
 
 
     <script>
+        FxI18n.add({
+            fr: {
+                "page.title": "Suivi du Volume - Ukulélé",
+                "vt.h1": "Suivi de la dynamique au Ukulélé",
+                "vt.intro": "Jouez pour observer la régularité de votre volume sur les 10 dernières secondes.",
+                "vt.current": "Volume actuel :",
+                "vt.start": "Démarrer l'analyse",
+                "vt.running": "Analyse en cours...",
+                "vt.dataset": "Intensité sonore (%)",
+                "vt.axisY": "Volume (%)",
+                "vt.axisX": "Temps (10 dernières secondes)",
+                "vt.micError": "Erreur d'accès au micro : {err}",
+                "footer.made": "Créé avec passion pour le rythme et la mélodie.",
+                "footer.github": "Code source GitHub",
+                "footer.linkedin": "LinkedIn: François Parlant",
+                "footer.youtube": "Tutos YouTube: En parlant de bureautique"
+            },
+            en: {
+                "page.title": "Volume Tracker - Ukulele",
+                "vt.h1": "Ukulele Dynamics Tracker",
+                "vt.intro": "Play to see how steady your volume is over the last 10 seconds.",
+                "vt.current": "Current volume:",
+                "vt.start": "Start analysis",
+                "vt.running": "Analysing...",
+                "vt.dataset": "Sound level (%)",
+                "vt.axisY": "Volume (%)",
+                "vt.axisX": "Time (last 10 seconds)",
+                "vt.micError": "Microphone access error: {err}",
+                "footer.made": "Made with passion for rhythm and melody.",
+                "footer.github": "GitHub source code",
+                "footer.linkedin": "LinkedIn: François Parlant",
+                "footer.youtube": "YouTube tutorials: En parlant de bureautique"
+            }
+        });
+
         const startBtn = document.getElementById('startBtn');
         const volumeValue = document.getElementById('volumeValue');
         
@@ -85,7 +124,7 @@
             data: {
                 labels: labels,
                 datasets: [{
-                    label: 'Intensité sonore (%)',
+                    label: FxI18n.t('vt.dataset'),
                     data: dataData,
                     borderColor: '#007bff',
                     backgroundColor: 'rgba(0, 123, 255, 0.1)',
@@ -102,10 +141,10 @@
                     y: {
                         beginAtZero: true,
                         max: 100, // Le volume va de 0 à 100%
-                        title: { display: true, text: 'Volume (%)' }
+                        title: { display: true, text: FxI18n.t('vt.axisY') }
                     },
                     x: {
-                        title: { display: true, text: 'Temps (10 dernières secondes)' },
+                        title: { display: true, text: FxI18n.t('vt.axisX') },
                         ticks: { display: false } // Cache les textes de l'axe X pour que ce soit plus propre
                     }
                 }
@@ -125,7 +164,7 @@
                 });
                 
                 startBtn.disabled = true;
-                startBtn.textContent = "Analyse en cours...";
+                startBtn.textContent = FxI18n.t('vt.running');
 
                 const audioContext = new (window.AudioContext || window.webkitAudioContext)();
                 const source = audioContext.createMediaStreamSource(stream);
@@ -170,8 +209,18 @@
                 }, 100);
 
             } catch (err) {
-                alert("Erreur d'accès au micro : " + err);
+                alert(FxI18n.t('vt.micError', { err: err }));
             }
+        });
+
+        // Re-traduit les textes générés en JS (bouton, graphique) sans arrêter l'analyse
+        FxI18n.onChange(function () {
+            document.title = FxI18n.t('page.title');
+            startBtn.textContent = FxI18n.t(startBtn.disabled ? 'vt.running' : 'vt.start');
+            volumeChart.data.datasets[0].label = FxI18n.t('vt.dataset');
+            volumeChart.options.scales.y.title.text = FxI18n.t('vt.axisY');
+            volumeChart.options.scales.x.title.text = FxI18n.t('vt.axisX');
+            volumeChart.update();
         });
     </script>
 </body>

@@ -2,8 +2,13 @@ const Parser = {
     // Liste des notes pour la transposition (Gamme Chromatique)
     notes: ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'],
 
-    // Regex pour détecter un accord (ex: Am7, F#m, Bb/D)
-    chordRegex: /[A-G][b#]?(?:m|maj|min|aug|dim|sus|add|[\d])*(?:\/[A-G][b#]?)?/g,
+    // Regex pour détecter un accord (ex: Am7, F#m, Bb/D, Cmaj7, Bm7b5, G7b9)
+    // L'accord doit être un token entier : précédé d'un début de ligne, d'un blanc
+    // ou d'un crochet (groupe 1, capturé car pas de lookbehind sur Android 7),
+    // et suivi d'un blanc, d'une fin de ligne ou d'un crochet (lookahead).
+    // Groupe 2 = l'accord lui-même. "maj"/"min" sont testés avant "m".
+    // Ex. : "Bonjour Dame Emma" ne contient plus aucun accord.
+    chordRegex: /(^|[\s\[\]])([A-G][b#]?(?:maj|min|aug|dim|sus|add|m|M|\+|°|ø|[b#](?=\d)|\d)*(?:\/[A-G][b#]?)?)(?=$|[\s\[\]])/g,
 
     parse(text) {
         const lines = text.split('\n');
@@ -56,8 +61,8 @@ const Parser = {
 
     // CORRECTION : Transforme les accords d'une ligne seule en spans avec texte
     wrapChordsInLine(line) {
-        const wrapped = line.replace(this.chordRegex, (chord) => {
-            return `<span class="chord" data-chord="${chord}">${chord}</span>`;
+        const wrapped = line.replace(this.chordRegex, (match, before, chord) => {
+            return `${before}<span class="chord" data-chord="${chord}">${chord}</span>`;
         });
         return `<div class="chord-only-line">${wrapped}</div>`;
     },
@@ -71,12 +76,13 @@ const Parser = {
         this.chordRegex.lastIndex = 0;
 
         while ((match = this.chordRegex.exec(chordLine)) !== null) {
-            const pos = match.index;
-            const chord = match[0];
+            // match[1] = séparateur avant l'accord (vide en début de ligne)
+            const pos = match.index + match[1].length;
+            const chord = match[2];
 
             // Si la ligne de texte est plus courte que la position de l'accord, on complète avec des espaces
             if (textLine.length < pos) {
-                textLine = textLine.padEnd(pos, ' ');
+                while (textLine.length < pos) textLine += ' '; // équivalent de padEnd (ES2017) pour vieux WebView
             }
 
             result += textLine.substring(lastIdx, pos);

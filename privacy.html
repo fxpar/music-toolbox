@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Politique de Confidentialité / Privacy Policy</title>
+    <script src="./js/i18n-fx.js"></script>
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
@@ -15,6 +16,8 @@
         }
         h1, h2 { color: #111; }
         hr { margin: 40px 0; border: 0; border-top: 1px solid #ddd; }
+        .lang-bar { text-align: right; }
+        .lang-bar button { font: inherit; font-size: 14px; padding: 4px 12px; border: 1px solid #999; border-radius: 4px; background: #fff; color: #333; cursor: pointer; }
     </style>
   <!-- Zone sûre (encoche / barre d'état), nécessite viewport-fit=cover. Ignoré par les vieux navigateurs. -->
   <style id="fx-safe-area">
@@ -32,8 +35,10 @@
 </head>
 <body>
 
+    <div class="lang-bar"><button type="button" data-i18n-toggle>FR</button></div>
+
     <!-- VERSION FRANÇAISE -->
-    <section>
+    <section id="privacy-fr">
         <h1>Politique de Confidentialité</h1>
         <p><strong>Dernière mise à jour :</strong> Octobre 2026</p>
         
@@ -57,7 +62,7 @@
         <p>Si vous avez des questions concernant cette politique de confidentialité, vous pouvez nous contacter directement sur la page du dépôt du projet.</p>
     </section>
 
-    <hr>
+    <hr id="privacy-sep">
 
     <!-- ENGLISH VERSION -->
     <section lang="en">
@@ -83,6 +88,21 @@
         <h2>4. Contact</h2>
         <p>If you have any questions regarding this privacy policy, you can reach out via the repository contact page.</p>
     </section>
+
+    <script>
+        // La page contient déjà les deux versions : en anglais on masque la partie française ;
+        // en français la page reste identique (les deux versions visibles).
+        FxI18n.add({
+            fr: { "page.title": "Politique de Confidentialité / Privacy Policy" },
+            en: { "page.title": "Privacy Policy" }
+        });
+        FxI18n.onChange(function (lang) {
+            var hide = lang === 'en' ? 'none' : '';
+            document.getElementById('privacy-fr').style.display = hide;
+            document.getElementById('privacy-sep').style.display = hide;
+            document.title = FxI18n.t('page.title');
+        });
+    </script>
 
 </body>
 </html>

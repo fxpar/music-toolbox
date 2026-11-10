@@ -52,6 +52,10 @@
 [data-bs-theme="dark"] #notation-render {
     background-color: transparent !important;
 }
+/* abcjs dessine en noir (currentColor) : on inverse le SVG pour le rendre lisible sur fond sombre */
+[data-bs-theme="dark"] #notation-render svg {
+    filter: invert(0.9) hue-rotate(180deg);
+}
 
 /* Sécurité pour masquer proprement le container de flux audio en mode nuit */
 [data-bs-theme="dark"] #audio-player-container {
@@ -172,7 +176,8 @@
 </head>
 <body>
 <div class="position-absolute top-0 end-0 p-3" style="z-index: 1050;">
-    <button id="btn-dark-mode" class="btn btn-outline-secondary rounded-circle shadow-sm" title="Mode Nuit">
+    <button type="button" data-i18n-toggle class="btn btn-outline-secondary rounded-circle shadow-sm fw-bold small me-1" style="width:42px;height:38px;padding:0;">FR</button>
+    <button id="btn-dark-mode" class="btn btn-outline-secondary rounded-circle shadow-sm" title="Mode Nuit" data-i18n-title="cet.darkMode">
         <i class="bi bi-moon-fill" id="dark-mode-icon"></i>
     </button>
 </div>
@@ -184,7 +189,7 @@
     <div class="card main-card text-center p-2 shadow-sm mb-2 bg-white" id="display-card">
         <div id="phase-question" class="py-2">
             <div class="hidden-chord"><i class="bi bi-question-circle-fill text-warning animate-pulse"></i></div>
-            <h4 class="mt-3 text-muted">Écoutez attentivement...</h4>
+            <h4 class="mt-3 text-muted" data-i18n="cet.listen">Écoutez attentivement...</h4>
         </div>
 
         <div id="phase-answer" class="d-none">
@@ -203,17 +208,17 @@
     <div id="audio-player-container" class="d-none"></div>
 
     <div class="d-flex justify-content-between text-muted small px-2 mb-4">
-        <span id="info-status">Prêt à commencer</span>
+        <span id="info-status" data-i18n="cet.ready">Prêt à commencer</span>
         <span id="info-progress">Accord : 0/0</span>
     </div>
 
     <div class="d-grid gap-2 mb-4">
-        <button id="btn-start" class="btn btn-success btn-lg shadow"><i class="bi bi-play-fill"></i> Lancer le test d'oreille</button>
-        <button id="btn-stop" class="btn btn-danger btn-lg shadow d-none"><i class="bi bi-stop-fill"></i> Arrêter</button>
+        <button id="btn-start" class="btn btn-success btn-lg shadow"><i class="bi bi-play-fill"></i> <span data-i18n="cet.start">Lancer le test d'oreille</span></button>
+        <button id="btn-stop" class="btn btn-danger btn-lg shadow d-none"><i class="bi bi-stop-fill"></i> <span data-i18n="cet.stop">Arrêter</span></button>
     </div>
 
     <div class="card p-3 mb-4 shadow-sm">
-        <h6 class="fw-bold mb-3 text-secondary text-uppercase" style="font-size:0.8rem;"><i class="bi bi-hand-index-thumb"></i> Cliquez sur votre réponse :</h6>
+        <h6 class="fw-bold mb-3 text-secondary text-uppercase" style="font-size:0.8rem;"><i class="bi bi-hand-index-thumb"></i> <span data-i18n="cet.clickAnswer">Cliquez sur votre réponse :</span></h6>
         <div id="possible-chords-list" class="d-flex flex-wrap gap-2 justify-content-center">
             </div>
     </div>
@@ -222,36 +227,36 @@
         <div class="accordion-item">
             <h2 class="accordion-header">
                 <button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapseParams">
-                    <i class="bi bi-sliders me-2"></i> Configuration de l'exercice
+                    <i class="bi bi-sliders me-2"></i> <span data-i18n="cet.settings">Configuration de l'exercice</span>
                 </button>
             </h2>
             <div id="collapseParams" class="accordion-collapse collapse" data-bs-parent="#paramAccordion">
                 <div class="accordion-body bg-white">
                     
                     <div class="mb-3">
-                        <label class="form-label fw-bold">Instrument cible</label>
+                        <label class="form-label fw-bold" data-i18n="cet.instrument">Instrument cible</label>
                         <select id="param-instrument" class="form-select">
-                            <option value="ukulele" selected>Ukulélé</option>
-                            <option value="guitar">Guitare</option>
+                            <option value="ukulele" selected data-i18n="cet.ukulele">Ukulélé</option>
+                            <option value="guitar" data-i18n="cet.guitar">Guitare</option>
                         </select>
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label fw-bold">Niveau / Catégorie</label>
+                        <label class="form-label fw-bold" data-i18n="cet.level">Niveau / Catégorie</label>
                         <div id="category-checkboxes">
-                            <div class="form-check"><input class="form-check-input cat-check" type="checkbox" value="debutant" id="cat-deb" checked><label class="form-check-label" for="cat-deb">Débutant</label></div>
-                            <div class="form-check"><input class="form-check-input cat-check" type="checkbox" value="intermediaire" id="cat-int"><label class="form-check-label" for="cat-int">Intermédiaire</label></div>
-                            <div class="form-check"><input class="form-check-input cat-check" type="checkbox" value="avance" id="cat-av"><label class="form-check-label" for="cat-av">Avancé</label></div>
+                            <div class="form-check"><input class="form-check-input cat-check" type="checkbox" value="debutant" id="cat-deb" checked><label class="form-check-label" for="cat-deb" data-i18n="cet.beginner">Débutant</label></div>
+                            <div class="form-check"><input class="form-check-input cat-check" type="checkbox" value="intermediaire" id="cat-int"><label class="form-check-label" for="cat-int" data-i18n="cet.intermediate">Intermédiaire</label></div>
+                            <div class="form-check"><input class="form-check-input cat-check" type="checkbox" value="avance" id="cat-av"><label class="form-check-label" for="cat-av" data-i18n="cet.advanced">Avancé</label></div>
                         </div>
                     </div>
 
                     <div class="row g-2 mb-3">
                         <div class="col-6">
-                            <label class="form-label fw-bold">Mesures Question</label>
+                            <label class="form-label fw-bold" data-i18n="cet.measQ">Mesures Question</label>
                             <input type="number" id="param-meas-q" class="form-control" value="3" min="1">
                         </div>
                         <div class="col-6">
-                            <label class="form-label fw-bold">Mesures Réponse</label>
+                            <label class="form-label fw-bold" data-i18n="cet.measA">Mesures Réponse</label>
                             <input type="number" id="param-meas-a" class="form-control" value="2" min="1">
                         </div>
                     </div>
@@ -262,29 +267,29 @@
                             <input type="number" id="param-bpm" class="form-control" value="100" min="50">
                         </div>
                         <div class="col-6">
-                            <label class="form-label fw-bold">Signature</label>
+                            <label class="form-label fw-bold" data-i18n="cet.timeSig">Signature</label>
                             <select id="param-beats" class="form-select">
-                                <option value="4" selected>4 Temps</option>
-                                <option value="3">3 Temps</option>
+                                <option value="4" selected data-i18n="cet.beats4">4 Temps</option>
+                                <option value="3" data-i18n="cet.beats3">3 Temps</option>
                             </select>
                         </div>
                     </div>
 					
 					<div class="form-check form-switch mb-3">
     <input class="form-check-input" type="checkbox" id="param-show-notes" checked>
-    <label class="form-check-label fw-bold" for="param-show-notes">Afficher le nom des notes</label>
+    <label class="form-check-label fw-bold" for="param-show-notes" data-i18n="cet.showNotes">Afficher le nom des notes</label>
 </div>
 					
 					<div class="form-check form-switch mb-3">
                         <input class="form-check-input" type="checkbox" id="param-random" checked>
-                        <label class="form-check-label fw-bold" for="param-random">Défilement aléatoire</label>
+                        <label class="form-check-label fw-bold" for="param-random" data-i18n="cet.random">Défilement aléatoire</label>
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label fw-bold">Fin de l'exercice</label>
+                        <label class="form-label fw-bold" data-i18n="cet.endMode">Fin de l'exercice</label>
                         <select id="param-loop-mode" class="form-select">
-                            <option value="loop" selected>En boucle (Infini)</option>
-                            <option value="once">1 fois chaque accord</option>
+                            <option value="loop" selected data-i18n="cet.endLoop">En boucle (Infini)</option>
+                            <option value="once" data-i18n="cet.endOnce">1 fois chaque accord</option>
                         </select>
                     </div>
 
@@ -300,20 +305,20 @@
 		  <!-- Colonne 1 : Copyright & Titre -->
 		  <div class="col-12 col-md-6 text-center text-md-start">
 			<span class="small">
-			  CC BY-NC 4.0 <span id="currentYear"></span><script>document.getElementById("currentYear").textContent = new Date().getFullYear();</script> <strong>François Parlant</strong> &mdash; Créé avec passion pour le rythme et la mélodie.
+			  CC BY-NC 4.0 <span id="currentYear"></span><script>document.getElementById("currentYear").textContent = new Date().getFullYear();</script> <strong>François Parlant</strong> &mdash; <span data-i18n="ft.passion">Créé avec passion pour le rythme et la mélodie.</span>
 			</span>
 		  </div>
 
 		  <!-- Colonne 2 : Liens Réseaux Sociaux -->
 		  <div class="col-12 col-md-6 text-center text-md-end">
 			<div class="d-inline-flex gap-3 align-items-center">
-			  <a href="https://github.com/fxpar/music-toolbox/blob/main/chord-ear-trainer.html" target="_blank" rel="noopener noreferrer" class="text-body-secondary text-decoration-none fs-5 hover-accent" title="Code source GitHub"> 
+			  <a href="https://github.com/fxpar/music-toolbox/blob/main/chord-ear-trainer.html" target="_blank" rel="noopener noreferrer" class="text-body-secondary text-decoration-none fs-5 hover-accent" title="Code source GitHub" data-i18n-title="ft.github"> 
 				<i class="bi bi-github"></i> 
 			  </a> 
-			  <a href="https://www.linkedin.com/in/francois-parlant" target="_blank" rel="noopener noreferrer" class="text-body-secondary text-decoration-none fs-5 hover-accent" title="LinkedIn: François Parlant">
+			  <a href="https://www.linkedin.com/in/francois-parlant" target="_blank" rel="noopener noreferrer" class="text-body-secondary text-decoration-none fs-5 hover-accent" title="LinkedIn: François Parlant" data-i18n-title="ft.linkedin">
 				<i class="bi bi-linkedin"></i> 
 			  </a> 
-			  <a href="https://www.youtube.com/c/enparlantdebureautiqueformezvous" target="_blank" rel="noopener noreferrer" class="text-body-secondary text-decoration-none fs-5 hover-accent" title="Tutos YouTube: En parlant de bureautique">
+			  <a href="https://www.youtube.com/c/enparlantdebureautiqueformezvous" target="_blank" rel="noopener noreferrer" class="text-body-secondary text-decoration-none fs-5 hover-accent" title="Tutos YouTube: En parlant de bureautique" data-i18n-title="ft.youtube">
 				<i class="bi bi-youtube"></i> 
 			  </a>
 			</div>
@@ -322,6 +327,7 @@
 	  </div>
 	</footer>
 
+<script src="./js/i18n-fx.js"></script>
 <script src="./js/abcjs-basicfx.js"></script>
 <script>
     // Patch de sécurité Android 7
@@ -334,44 +340,145 @@
 </script>
 <script src="https://pianosnake.github.io/uke-chord/uke-chord.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/abcjs@6.4.0/dist/abcjs-basic-min.js"></script>
+    <!-- abcjs : version locale ./js/abcjs-basicfx.js (6.6.3, hors ligne + GitHub Pages) chargée plus haut ; CDN gardé en secours -->
+    <!-- <script src="https://cdn.jsdelivr.net/npm/abcjs@6.4.0/dist/abcjs-basic-min.js"></script> -->
 
 <script>
-    // --- BDD CORRIGÉE (Notes avec octaves ABC explicites) ---
+    // --- TEXTES FR / EN (module js/i18n-fx.js) ---
+    FxI18n.add({
+        fr: {
+            "cet.pageTitle": "Ear Trainer - Accords Guitare & Ukulélé",
+            "cet.darkMode": "Mode Nuit",
+            "cet.listen": "Écoutez attentivement...",
+            "cet.ready": "Prêt à commencer",
+            "cet.progressInit": "Accord : 0/0",
+            "cet.progress": "Accord : {n}/{total}",
+            "cet.start": "Lancer le test d'oreille", "cet.stop": "Arrêter",
+            "cet.clickAnswer": "Cliquez sur votre réponse :",
+            "cet.settings": "Configuration de l'exercice",
+            "cet.instrument": "Instrument cible", "cet.ukulele": "Ukulélé", "cet.guitar": "Guitare",
+            "cet.level": "Niveau / Catégorie", "cet.beginner": "Débutant", "cet.intermediate": "Intermédiaire", "cet.advanced": "Avancé",
+            "cet.measQ": "Mesures Question", "cet.measA": "Mesures Réponse",
+            "cet.timeSig": "Signature", "cet.beats4": "4 Temps", "cet.beats3": "3 Temps",
+            "cet.showNotes": "Afficher le nom des notes",
+            "cet.random": "Défilement aléatoire",
+            "cet.endMode": "Fin de l'exercice", "cet.endLoop": "En boucle (Infini)", "cet.endOnce": "1 fois chaque accord",
+            "cet.noCat": "Aucune catégorie sélectionnée",
+            "cet.right": "Bravo ! C'est la bonne réponse !",
+            "cet.wrong": "Ce n'est pas cet accord, réécoutez attentivement...",
+            "cet.finished": "Exercice terminé !",
+            "cet.phaseListen": "Phase Écoute...",
+            "cet.phaseReveal": "Visualisation des notes & schémas",
+            "cet.notes": "Notes : {notes}",
+            "cet.noAudio": "Audio non pris en charge par ce navigateur : impossible de jouer les accords.",
+            "cet.audioUnavailable": "Audio indisponible",
+            "cet.stopped": "Exercice arrêté.",
+            "cet.selectCat": "Sélectionnez au moins une catégorie !",
+            "ft.passion": "Créé avec passion pour le rythme et la mélodie.",
+            "ft.github": "Code source GitHub", "ft.linkedin": "LinkedIn: François Parlant", "ft.youtube": "Tutos YouTube: En parlant de bureautique"
+        },
+        en: {
+            "cet.pageTitle": "Ear Trainer - Guitar & Ukulele Chords",
+            "cet.darkMode": "Night mode",
+            "cet.listen": "Listen carefully...",
+            "cet.ready": "Ready to start",
+            "cet.progressInit": "Chord: 0/0",
+            "cet.progress": "Chord: {n}/{total}",
+            "cet.start": "Start the ear test", "cet.stop": "Stop",
+            "cet.clickAnswer": "Click your answer:",
+            "cet.settings": "Exercise settings",
+            "cet.instrument": "Target instrument", "cet.ukulele": "Ukulele", "cet.guitar": "Guitar",
+            "cet.level": "Level / Category", "cet.beginner": "Beginner", "cet.intermediate": "Intermediate", "cet.advanced": "Advanced",
+            "cet.measQ": "Question bars", "cet.measA": "Answer bars",
+            "cet.timeSig": "Time signature", "cet.beats4": "4 beats", "cet.beats3": "3 beats",
+            "cet.showNotes": "Show note names",
+            "cet.random": "Random order",
+            "cet.endMode": "End of exercise", "cet.endLoop": "Loop (endless)", "cet.endOnce": "Each chord once",
+            "cet.noCat": "No category selected",
+            "cet.right": "Well done! That's the right answer!",
+            "cet.wrong": "Not this chord, listen again carefully...",
+            "cet.finished": "Exercise finished!",
+            "cet.phaseListen": "Listening phase...",
+            "cet.phaseReveal": "Showing notes & diagrams",
+            "cet.notes": "Notes: {notes}",
+            "cet.noAudio": "Audio is not supported by this browser: the chords cannot be played.",
+            "cet.audioUnavailable": "Audio unavailable",
+            "cet.stopped": "Exercise stopped.",
+            "cet.selectCat": "Select at least one category!",
+            "ft.passion": "Made with passion for rhythm and melody.",
+            "ft.github": "GitHub source code", "ft.linkedin": "LinkedIn: François Parlant", "ft.youtube": "YouTube tutorials: En parlant de bureautique"
+        }
+    });
+
+    // Noms de notes : la BDD est en français (Do Ré Mi...) ; en anglais on les convertit à l'affichage.
+    const FR_TO_EN_NOTES = { "Do": "C", "Ré": "D", "Mi": "E", "Fa": "F", "Sol": "G", "La": "A", "Si": "B" };
+    function localizeNotes(notes) {
+        if (FxI18n.getLang() !== 'en') return notes;
+        return notes.split(' ').map(function (tok) {
+            const m = /^(Do|Ré|Mi|Fa|Sol|La|Si)(.*)$/.exec(tok);
+            return m ? FR_TO_EN_NOTES[m[1]] + m[2] : tok;
+        }).join(' ');
+    }
+
+    // Textes à variables : on mémorise l'état pour les retraduire au changement de langue
+    let progressVars = null;      // { n, total } ou null (texte initial)
+    let revealedNotes = null;     // notes (en français, comme la BDD) actuellement affichées
+    function setI18nText(el, key) {
+        // l'attribut data-i18n permet au module de retraduire l'élément tout seul
+        el.setAttribute('data-i18n', key);
+        el.textContent = FxI18n.t(key);
+    }
+    function renderProgress() {
+        document.getElementById('info-progress').innerText = progressVars ? FxI18n.t('cet.progress', progressVars) : FxI18n.t('cet.progressInit');
+    }
+    function renderNotes() {
+        document.getElementById('chord-notes-text').innerText = FxI18n.t('cet.notes', { notes: localizeNotes(revealedNotes) });
+    }
+    FxI18n.onChange(function () {
+        document.title = FxI18n.t('cet.pageTitle');
+        renderProgress();
+        if (revealedNotes) renderNotes();
+    });
+
+    // --- BDD : champs abc/notes recalculés depuis les doigtés (frets) et l'accordage réel ---
+    // Ukulélé réentrant G4 C4 E4 A4 ; guitare E2 A2 D3 G3 B3 E4 (hauteur réelle).
+    // abc : C = Do4, c = Do5, C, = Do3, E,, = Mi2 ; notes sans durée (la durée est ajoutée à la génération).
+    // Notes listées du grave à l'aigu, unissons fusionnés.
     const chordLibrary = {
         ukulele: {
 			debutant: [
-				{ name: "C", frets: "0003", abc: "[G4c4e4g4]", notes: "Sol Do Mi Sol" },
-				{ name: "Am", frets: "2000", abc: "[A4c4e4a4]", notes: "La Do Mi La" },
-				{ name: "F", frets: "2010", abc: "[A4c4f4a4]", notes: "La Do Fa La" },
-				{ name: "G", frets: "0232", abc: "[G4b4d'4g'4]", notes: "Sol Si Ré Sol" }
+				{ name: "C", frets: "0003", abc: "[CEGc]", notes: "Do Mi Sol Do" },
+				{ name: "Am", frets: "2000", abc: "[CEA]", notes: "Do Mi La" },
+				{ name: "F", frets: "2010", abc: "[CFA]", notes: "Do Fa La" },
+				{ name: "G", frets: "0232", abc: "[DGB]", notes: "Ré Sol Si" }
 			],
 			intermediaire: [
-				{ name: "C7", frets: "0001", abc: "[G4_b4c4e4]", notes: "Sol Sib Do Mi" }, // Exemple avec bémol
-				{ name: "Dm", frets: "2210", abc: "[A4d4f4a4]", notes: "La Ré Fa La" }
+				{ name: "C7", frets: "0001", abc: "[CEG_B]", notes: "Do Mi Sol Si♭" },
+				{ name: "Dm", frets: "2210", abc: "[DFA]", notes: "Ré Fa La" }
 			],
 			avance: [
-				{ name: "Cdim7", frets: "2323", abc: "[^F4^c4_e4a4]", notes: "Fa# Do# Mib La" } // Exemple avec dièses/bémols
+				{ name: "Cdim7", frets: "2323", abc: "[_E_GAc]", notes: "Mi♭ Sol♭ La Do" } // La = Si♭♭ (7e diminuée) écrit enharmoniquement
 			]
 		},
         guitar: {
             debutant: [
-                { name: "Em", frets: "022000", abc: "[E,4B,4E4G4B4e4]" },
-                { name: "G", frets: "320003", abc: "[G,,4B,,4D4G4B4g4]" },
-                { name: "C", frets: "x32010", abc: "[C,4E4G4B4c4]" },
-                { name: "Am", frets: "x02210", abc: "[A,,4E4A4c4f4a4]" }
+                { name: "Em", frets: "022000", abc: "[E,,B,,E,G,B,E]", notes: "Mi Si Mi Sol Si Mi" },
+                { name: "G", frets: "320003", abc: "[G,,B,,D,G,B,G]", notes: "Sol Si Ré Sol Si Sol" },
+                { name: "C", frets: "x32010", abc: "[C,E,G,CE]", notes: "Do Mi Sol Do Mi" },
+                { name: "Am", frets: "x02210", abc: "[A,,E,A,CE]", notes: "La Mi La Do Mi" }
             ],
             intermediaire: [
-                { name: "E", frets: "022100", abc: "[E,4B,4E4^G4B4e4]" },
-                { name: "Dm", frets: "xx0231", abc: "[D4F4A4d4f4]" }
+                { name: "E", frets: "022100", abc: "[E,,B,,E,^G,B,E]", notes: "Mi Si Mi Sol♯ Si Mi" },
+                { name: "Dm", frets: "xx0231", abc: "[D,A,DF]", notes: "Ré La Ré Fa" }
             ],
             avance: [
-                { name: "F", frets: "133211", position: "1", abc: "[F,,4C,4F4A4c4f4]" }
+                { name: "F", frets: "133211", position: "1", abc: "[F,,C,F,A,CF]", notes: "Fa Do Fa La Do Fa" }
             ]
         }
     };
 
     let sessionChords = [];
+    let sessionInstrument = 'ukulele'; // instrument figé au lancement (clé de la portée)
     let currentIndex = 0;
     let isPlaying = false;
     
@@ -404,7 +511,7 @@
         container.innerHTML = '';
         
         if (uniqueList.length === 0) {
-            container.innerHTML = "<span class='text-muted small'>Aucune catégorie sélectionnée</span>";
+            container.innerHTML = "<span class='text-muted small' data-i18n='cet.noCat'>" + FxI18n.t('cet.noCat') + "</span>";
             return;
         }
 
@@ -432,24 +539,28 @@
         if (clickedName === correctName) {
             buttonElement.className = "btn btn-success chord-guess-btn text-white shadow";
             feedbackBox.className = "alert alert-success text-center fw-bold mb-3 shadow-sm";
-            feedbackBox.innerHTML = "<i class='bi bi-check-circle-fill'></i> Bravo ! C'est la bonne réponse !";
+            feedbackBox.innerHTML = "<i class='bi bi-check-circle-fill'></i> <span data-i18n='cet.right'>" + FxI18n.t('cet.right') + "</span>";
         } else {
             buttonElement.className = "btn btn-danger chord-guess-btn text-white shadow";
             feedbackBox.className = "alert alert-danger text-center fw-bold mb-3 shadow-sm";
-            feedbackBox.innerHTML = "<i class='bi bi-x-circle-fill'></i> Ce n'est pas cet accord, réécoutez attentivement...";
+            feedbackBox.innerHTML = "<i class='bi bi-x-circle-fill'></i> <span data-i18n='cet.wrong'>" + FxI18n.t('cet.wrong') + "</span>";
         }
     }
 
     // 1. Nouvelle fonction : On génère deux chaînes ABC distinctes
     // Une courte pour le visuel (1 seule mesure), une longue pour l'audio
     // Nouvelle fonction adaptative
-    function generateAbcString(chordAbc, measures, beats, bpm, isVisualOnly = false) {
+    // chordAbc est sans durée (ex. "[CEGc]") : avec L: 1/4, un accord = une noire = un temps.
+    function generateAbcString(chordAbc, measures, beats, bpm, isVisualOnly, clef) {
         if (isVisualOnly) {
-            // Version épurée : Juste la clé de Sol (K:C) et l'accord une seule fois
-            return `X:1\nK: C\nL: 1/4\n${chordAbc} ||`;
+            // Version épurée : l'accord une seule fois, en ronde ("4" après le crochet)
+            // Guitare : clé de Fa (hauteur réelle, Mi2 à Mi4), ukulélé : clé de Sol
+            const clefStr = clef ? ` clef=${clef}` : "";
+            return `X:1\nK: C${clefStr}\nL: 1/4\n${chordAbc}4 ||`;
         }
 
         // Version complète pour l'audio (avec tempo, métrique et répétitions)
+        // Un accord par temps : chaque mesure de ${beats}/4 contient ${beats} noires.
         let measurePattern = "";
         for(let i=0; i<beats; i++) { measurePattern += chordAbc + " "; }
         
@@ -465,7 +576,7 @@
     function playCurrentChordSequence() {
         if(!isPlaying || currentIndex >= sessionChords.length) {
             stopTrainer();
-            if(currentIndex >= sessionChords.length) alert("Exercice terminé !");
+            if(currentIndex >= sessionChords.length) alert(FxI18n.t('cet.finished'));
             return;
         }
 
@@ -486,18 +597,19 @@
         const mA = parseInt(document.getElementById('param-meas-a').value);
         const totalMeasures = mQ + mA;
 
-        document.getElementById('info-progress').innerText = `Accord : ${currentIndex + 1}/${sessionChords.length}`;
+        progressVars = { n: currentIndex + 1, total: sessionChords.length };
+        renderProgress();
         
         document.getElementById('phase-question').classList.remove('d-none');
         document.getElementById('phase-answer').classList.add('d-none');
-        document.getElementById('info-status').innerText = "Phase Écoute...";
+        setI18nText(document.getElementById('info-status'), 'cet.phaseListen');
 
         // --- LA MODIFICATION EST ICI ---
         // On génère le code ABC pour l'AUDIO (complet)
-        const abcAudioString = generateAbcString(chord.abc, totalMeasures, beats, bpm, false);
+        const abcAudioString = generateAbcString(chord.abc, totalMeasures, beats, bpm, false, '');
         
         // On génère le code ABC pour le VISUEL (épuré : true)
-        const abcVisualString = generateAbcString(chord.abc, 1, beats, bpm, true);
+        const abcVisualString = generateAbcString(chord.abc, 1, beats, bpm, true, sessionInstrument === 'guitar' ? 'bass' : '');
         
         // Rendu à l'écran (sans le responsive: "resize" comme vous l'avez ajusté)
         const currentTuneObject = ABCJS.renderAbc("notation-render", abcVisualString)[0];
@@ -526,22 +638,25 @@
                 // TIMEOUT PHASE RÉPONSE
                 currentTimeout1 = setTimeout(() => {
                     if(!isPlaying) return;
-                    document.getElementById('info-status').innerText = "Visualisation des notes & schémas";
+                    setI18nText(document.getElementById('info-status'), 'cet.phaseReveal');
                     document.getElementById('phase-question').classList.add('d-none');
                     document.getElementById('phase-answer').classList.remove('d-none');
                     
                     document.getElementById('revealed-chord-name').innerText = chord.name;
                     const pos = chord.position !== undefined ? chord.position : "0";
-                    document.getElementById('chord-diagram-render').innerHTML = `<uke-chord frets="${chord.frets}" position="${pos}"></uke-chord>`;
+                    // uke-chord dessine autant de cordes que de caractères dans frets (6 pour la guitare) ;
+                    // size réduit pour que le diagramme 6 cordes tienne dans la largeur de 100px
+                    const sizeAttr = chord.frets.length > 4 ? ' size="0.72"' : '';
+                    document.getElementById('chord-diagram-render').innerHTML = `<uke-chord frets="${chord.frets}" position="${pos}"${sizeAttr}></uke-chord>`;
 					
 					// Affiche le nom des notes si la propriété existe dans le JSON, sinon laisse vide
 					// --- MODIFICATION ICI : Affichage conditionnel du nom des notes ---
 					const showNotesCheckbox = document.getElementById('param-show-notes').checked;
 					
 					if (showNotesCheckbox && chord.notes) {
-						document.getElementById('chord-notes-text').innerText = `Notes : ${chord.notes}`;
+						revealedNotes = chord.notes; renderNotes(); // notes converties en C D E... en anglais
 					} else {
-						document.getElementById('chord-notes-text').innerText = ""; // On vide si décoché
+						revealedNotes = null; document.getElementById('chord-notes-text').innerText = ""; // On vide si décoché
 					}
                     
                     document.querySelectorAll('.chord-guess-btn').forEach(btn => {
@@ -569,6 +684,12 @@
                     playCurrentChordSequence();
                 }, durationTotalMs + 1200);
             }).catch(err => console.error("Erreur Synthé:", err));
+        } else {
+            // Navigateur/WebView sans Web Audio : on prévient au lieu de rester bloqué
+            stopTrainer();
+            feedbackBox.className = "alert alert-danger text-center fw-bold mb-3 shadow-sm";
+            feedbackBox.innerHTML = "<i class='bi bi-volume-mute-fill'></i> <span data-i18n='cet.noAudio'>" + FxI18n.t('cet.noAudio') + "</span>";
+            setI18nText(document.getElementById('info-status'), 'cet.audioUnavailable');
         }
     }
 
@@ -590,7 +711,7 @@
         btnStop.classList.add('d-none');    // On cache le bouton Arrêter
         
         feedbackBox.classList.add('d-none');
-        document.getElementById('info-status').innerText = "Exercice arrêté.";
+        setI18nText(document.getElementById('info-status'), 'cet.stopped');
     }
 
     function startTrainer() {
@@ -602,10 +723,11 @@
             if(chordLibrary[inst] && chordLibrary[inst][cat]) { pool = pool.concat(chordLibrary[inst][cat]); }
         });
 
-        if(pool.length === 0) { alert("Sélectionnez au moins une catégorie !"); return; }
+        if(pool.length === 0) { alert(FxI18n.t('cet.selectCat')); return; }
 
         sessionChords = [...pool];
-        
+        sessionInstrument = inst;
+
         const isRandom = document.getElementById('param-random').checked;
         if (isRandom) {
             shuffleArray(sessionChords);

@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Analyseur d'Accords à la carte</title>
+    <script src="./js/i18n-fx.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.min.css">
     <style>
@@ -50,8 +51,11 @@
 <div class="container py-5">
     <div class="row justify-content-center text-center">
         <div class="col-md-8">
-            <h1 class="fw-bold mb-3">🎯 Analyseur d'Accords Précis</h1>
-            <p class="text-muted mb-4">Sélectionnez un accord, jouez-le sans vous presser et vérifiez si chaque corde sonne juste.</p>
+            <div class="text-end">
+                <button type="button" class="btn btn-outline-secondary btn-sm" data-i18n-toggle>FR</button>
+            </div>
+            <h1 class="fw-bold mb-3" data-i18n="cr.h1">🎯 Analyseur d'Accords Précis</h1>
+            <p class="text-muted mb-4" data-i18n="cr.intro">Sélectionnez un accord, jouez-le sans vous presser et vérifiez si chaque corde sonne juste.</p>
 
             <div class="mb-4">
                 <button id="controlBtn" class="btn btn-success btn-lg px-5 fw-bold shadow-sm">🚀 Activer le Micro</button>
@@ -61,29 +65,29 @@
                 <div class="card-header bg-white">
                     <ul class="nav nav-pills nav-fill" id="chordTabs">
                         <li class="nav-item">
-                            <button class="nav-link active fw-bold py-3" onclick="selectChord(0)">Accord de C (Do)</button>
+                            <button class="nav-link active fw-bold py-3" onclick="selectChord(0)" data-i18n="cr.tabC">Accord de C (Do)</button>
                         </li>
                         <li class="nav-item">
-                            <button class="nav-link fw-bold py-3 text-secondary" onclick="selectChord(1)">Accord de G (Sol)</button>
+                            <button class="nav-link fw-bold py-3 text-secondary" onclick="selectChord(1)" data-i18n="cr.tabG">Accord de G (Sol)</button>
                         </li>
                         <li class="nav-item">
-                            <button class="nav-link fw-bold py-3 text-secondary" onclick="selectChord(2)">Accord de Am (La min)</button>
+                            <button class="nav-link fw-bold py-3 text-secondary" onclick="selectChord(2)" data-i18n="cr.tabAm">Accord de Am (La min)</button>
                         </li>
                         <li class="nav-item">
-                            <button class="nav-link fw-bold py-3 text-secondary" onclick="selectChord(3)">Accord de F (Fa)</button>
+                            <button class="nav-link fw-bold py-3 text-secondary" onclick="selectChord(3)" data-i18n="cr.tabF">Accord de F (Fa)</button>
                         </li>
                     </ul>
                 </div>
                 
                 <div class="card-body py-5 bg-white">
-                    <h3 class="text-muted mb-4">Notes attendues :</h3>
+                    <h3 class="text-muted mb-4" data-i18n="cr.expected">Notes attendues :</h3>
                     <div id="badgesContainer">
                         </div>
                 </div>
             </div>
 
             <div class="card p-4 shadow-sm bg-white">
-                <h4 class="text-muted mb-2">Résultat global :</h4>
+                <h4 class="text-muted mb-2" data-i18n="cr.result">Résultat global :</h4>
                 <div id="chordStatus" class="status-box text-secondary">Micro désactivé</div>
             </div>
 
@@ -97,20 +101,20 @@
 		  <!-- Colonne 1 : Copyright & Titre -->
 		  <div class="col-12 col-md-6 text-center text-md-start">
 			<span class="small">
-			  CC BY-NC 4.0 <span id="currentYear"></span><script>document.getElementById("currentYear").textContent = new Date().getFullYear();</script> <strong>François Parlant</strong> &mdash; Créé avec passion pour le rythme et la mélodie.
+			  CC BY-NC 4.0 <span id="currentYear"></span><script>document.getElementById("currentYear").textContent = new Date().getFullYear();</script> <strong>François Parlant</strong> &mdash; <span data-i18n="footer.made">Créé avec passion pour le rythme et la mélodie.</span>
 			</span>
 		  </div>
 
 		  <!-- Colonne 2 : Liens Réseaux Sociaux -->
 		  <div class="col-12 col-md-6 text-center text-md-end">
 			<div class="d-inline-flex gap-3 align-items-center">
-			  <a href="https://github.com/fxpar/music-toolbox/blob/main/chord-recognition.html" target="_blank" rel="noopener noreferrer" class="text-body-secondary text-decoration-none fs-5 hover-accent" title="Code source GitHub"> 
+			  <a href="https://github.com/fxpar/music-toolbox/blob/main/chord-recognition.html" target="_blank" rel="noopener noreferrer" class="text-body-secondary text-decoration-none fs-5 hover-accent" title="Code source GitHub" data-i18n-title="footer.github"> 
 				<i class="bi bi-github"></i> 
 			  </a> 
-			  <a href="https://www.linkedin.com/in/francois-parlant" target="_blank" rel="noopener noreferrer" class="text-body-secondary text-decoration-none fs-5 hover-accent" title="LinkedIn: François Parlant">
+			  <a href="https://www.linkedin.com/in/francois-parlant" target="_blank" rel="noopener noreferrer" class="text-body-secondary text-decoration-none fs-5 hover-accent" title="LinkedIn: François Parlant" data-i18n-title="footer.linkedin">
 				<i class="bi bi-linkedin"></i> 
 			  </a> 
-			  <a href="https://www.youtube.com/c/enparlantdebureautiqueformezvous" target="_blank" rel="noopener noreferrer" class="text-body-secondary text-decoration-none fs-5 hover-accent" title="Tutos YouTube: En parlant de bureautique">
+			  <a href="https://www.youtube.com/c/enparlantdebureautiqueformezvous" target="_blank" rel="noopener noreferrer" class="text-body-secondary text-decoration-none fs-5 hover-accent" title="Tutos YouTube: En parlant de bureautique" data-i18n-title="footer.youtube">
 				<i class="bi bi-youtube"></i> 
 			  </a>
 			</div>
@@ -120,6 +124,60 @@
 	</footer>
 
 <script>
+    FxI18n.add({
+        fr: {
+            "page.title": "Analyseur d'Accords à la carte",
+            "cr.h1": "🎯 Analyseur d'Accords Précis",
+            "cr.intro": "Sélectionnez un accord, jouez-le sans vous presser et vérifiez si chaque corde sonne juste.",
+            "cr.tabC": "Accord de C (Do)",
+            "cr.tabG": "Accord de G (Sol)",
+            "cr.tabAm": "Accord de Am (La min)",
+            "cr.tabF": "Accord de F (Fa)",
+            "cr.expected": "Notes attendues :",
+            "cr.result": "Résultat global :",
+            "cr.micOn": "🚀 Activer le Micro",
+            "cr.micOff": "🛑 Arrêter le Micro",
+            "cr.statusOff": "Micro désactivé",
+            "cr.listening": "Écoute en cours... Jouez votre accord !",
+            "cr.adjusting": "En cours d'ajustement...",
+            "cr.perfect": "🎉 ACCORD DE {chord} PARFAIT !",
+            "cr.micError": "Erreur d'accès au micro : {err}",
+            "footer.made": "Créé avec passion pour le rythme et la mélodie.",
+            "footer.github": "Code source GitHub",
+            "footer.linkedin": "LinkedIn: François Parlant",
+            "footer.youtube": "Tutos YouTube: En parlant de bureautique"
+        },
+        en: {
+            "page.title": "Chord Analyser",
+            "cr.h1": "🎯 Precise Chord Analyser",
+            "cr.intro": "Pick a chord, play it slowly and check that every string rings true.",
+            "cr.tabC": "C chord",
+            "cr.tabG": "G chord",
+            "cr.tabAm": "Am chord",
+            "cr.tabF": "F chord",
+            "cr.expected": "Expected notes:",
+            "cr.result": "Overall result:",
+            "cr.micOn": "🚀 Turn on the mic",
+            "cr.micOff": "🛑 Turn off the mic",
+            "cr.statusOff": "Mic off",
+            "cr.listening": "Listening... Play your chord!",
+            "cr.adjusting": "Adjusting...",
+            "cr.perfect": "🎉 PERFECT {chord} CHORD!",
+            "cr.micError": "Microphone access error: {err}",
+            "footer.made": "Made with passion for rhythm and melody.",
+            "footer.github": "GitHub source code",
+            "footer.linkedin": "LinkedIn: François Parlant",
+            "footer.youtube": "YouTube tutorials: En parlant de bureautique"
+        }
+    });
+
+    // Libellé de note : "SOL (G)" en français, "G" en anglais (lettre entre parenthèses)
+    function noteLabel(label) {
+        if (FxI18n.getLang() !== 'en') return label;
+        var m = /\(([A-G][#b]?)\)/.exec(label);
+        return m ? m[1] : label;
+    }
+
     // Base de données des accords (gère le Sol grave/aigu, Si aigu, etc.)
     const CHORDS_DB = [
         { name: "C",  notes: [
@@ -165,7 +223,7 @@ let noteTimestamps = [0, 0, 0]; // Stocke le moment où chaque note a été vue
             const badge = document.createElement('div');
             badge.id = `note-badge-${index}`;
             badge.className = "note-badge";
-            badge.textContent = note.label;
+            badge.textContent = noteLabel(note.label);
             badgesContainer.appendChild(badge);
         });
     }
@@ -210,15 +268,15 @@ let noteTimestamps = [0, 0, 0]; // Stocke le moment où chaque note a été vue
             source.connect(analyser);
 
             isRunning = true;
-            controlBtn.textContent = "🛑 Arrêter le Micro";
+            controlBtn.textContent = FxI18n.t('cr.micOff');
             controlBtn.className = "btn btn-danger btn-lg px-5 fw-bold shadow-sm";
-            chordStatus.textContent = "Écoute en cours... Jouez votre accord !";
+            chordStatus.textContent = FxI18n.t('cr.listening');
             chordStatus.className = "status-box text-warning";
             
             analyzeLoop();
 
         } catch (err) {
-            alert("Erreur d'accès au micro : " + err);
+            alert(FxI18n.t('cr.micError', { err: err }));
         }
     });
 
@@ -227,9 +285,9 @@ let noteTimestamps = [0, 0, 0]; // Stocke le moment où chaque note a été vue
         cancelAnimationFrame(animationFrameId);
         if (audioContext) audioContext.close();
         
-        controlBtn.textContent = "🚀 Activer le Micro";
+        controlBtn.textContent = FxI18n.t('cr.micOn');
         controlBtn.className = "btn btn-success btn-lg px-5 fw-bold shadow-sm";
-        chordStatus.textContent = "Micro désactivé";
+        chordStatus.textContent = FxI18n.t('cr.statusOff');
         chordStatus.className = "status-box text-secondary";
         
         // Éteindre tous les badges
@@ -289,10 +347,10 @@ let noteTimestamps = [0, 0, 0]; // Stocke le moment où chaque note a été vue
 
         // Mettre à jour le texte de statut global
         if (totalValidated) {
-            chordStatus.textContent = `🎉 ACCORD DE ${activeChord.name} PARFAIT !`;
+            chordStatus.textContent = FxI18n.t('cr.perfect', { chord: activeChord.name });
             chordStatus.className = "status-box text-success text-uppercase";
         } else {
-            chordStatus.textContent = "En cours d'ajustement...";
+            chordStatus.textContent = FxI18n.t('cr.adjusting');
             chordStatus.className = "status-box text-warning";
         }
 
@@ -301,6 +359,14 @@ let noteTimestamps = [0, 0, 0]; // Stocke le moment où chaque note a été vue
 
     // Initialisation au chargement de la page pour afficher le premier accord (C)
     renderNotesBadges();
+
+    // Changement de langue : re-rendre les textes générés sans couper le micro
+    FxI18n.onChange(function () {
+        document.title = FxI18n.t('page.title');
+        controlBtn.textContent = FxI18n.t(isRunning ? 'cr.micOff' : 'cr.micOn');
+        if (!isRunning) chordStatus.textContent = FxI18n.t('cr.statusOff');
+        renderNotesBadges(); // la boucle d'analyse rallume les badges détectés à l'image suivante
+    });
 </script>
 
 </body>

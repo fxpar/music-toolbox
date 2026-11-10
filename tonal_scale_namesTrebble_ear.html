@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+	<title>Reconnaître une gamme à l'oreille</title>
+	<meta name="description" content="Quiz d'oreille : écoutez une gamme jouée à partir d'une tonique donnée et trouvez son type (majeure, mineure, modes, pentatonique, blues…).">
+	<script>
+	// Thème mémorisé (appliqué avant l'affichage pour éviter un flash)
+	(function () {
+		var th = 'light';
+		try { th = localStorage.getItem('theme') === 'dark' ? 'dark' : 'light'; } catch (e) { th = 'light'; }
+		document.documentElement.setAttribute('data-bs-theme', th);
+	})();
+	</script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<!-- <link rel="stylesheet" href="./css/bootstrap.min.css"/> -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<!-- <link rel="stylesheet" href="./css/bootstrap-icons.min.css"> -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/abcjs@6.6.3/abcjs-audio.css">
+<!-- <link rel="stylesheet" href="./css/abcjs-audio.css"/> -->
+<!-- <link rel="stylesheet" href="./css/abcfx.css"/> -->
+<!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous"> -->
+	<!-- <script src="tonal.min.js"></script> -->
+
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+	<!-- <script src="./js/popper.min.js"></script> -->
+	<!-- <script src="./js/bootstrap.min.js"></script> -->
+	<script src="./js/tonalfx.js"></script>
+	<script src="./js/abcjs-basicfx.js"></script>
+	<!-- <script type="text/javascript" src="js/abcjs-basicfxv3.js"></script> -->
+	<!-- <script type="text/javascript" src="lesson.js"></script> -->
+	<script src="./js/i18n-fx.js"></script>
+	<!-- <script src="./js/tonalIntervals-abcplayer.js"></script> -->
+<style>
+body {
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+}
+.offcanvas-end {
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+/* la partition reste noire sur blanc, même en thème sombre */
+.staff-card {
+	background: #fff;
+	color: #000;
+	border-radius: .5rem;
+	padding: 4px 0;
+}
+#questionText { font-size: 1.5rem; }
+.scale-btn { width: 100%; }
+.group-label { font-size: .8rem; text-transform: uppercase; letter-spacing: .05em; opacity: .7; margin: .5rem 0 .25rem; }
+.lastResult { font-size: 1.1rem; }
+#history > div { border-bottom: 1px solid var(--bs-border-color); padding: .4rem 0; }
+.note-diff { font-weight: bold; color: var(--bs-danger); }
+.abcjs-tempo-wrapper {
+	padding: 10px;
+	min-width: 200px;
+}
+.abcjs-inline-audio {
+	padding: 5px !important;
+	display: flex;
+	flex-wrap: wrap;
+	height: auto !important;
+}
+.help summary { cursor: pointer; font-weight: bold; }
+.help table { font-size: .9rem; }
+</style>
+</head>
+
+<body>
+
+<!-- panneau Paramètres -->
+<div class="offcanvas offcanvas-end" tabindex="-1" id="settingsPanel" aria-labelledby="settingsPanelLabel">
+	<div class="offcanvas-header">
+		<h5 id="settingsPanelLabel" data-i18n="settings.title">Paramètres</h5>
+		<button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Fermer" data-i18n-aria="settings.close"></button>
+	</div>
+	<div class="offcanvas-body">
+		<div class="mb-2 fw-bold" data-i18n="settings.theme">Thème</div>
+		<div class="btn-group mb-4" role="group">
+			<button type="button" class="btn btn-outline-secondary" id="themeLight" onclick="setTheme('light')"><i class="bi bi-sun"></i> <span data-i18n="settings.light">Clair</span></button>
+			<button type="button" class="btn btn-outline-secondary" id="themeDark" onclick="setTheme('dark')"><i class="bi bi-moon"></i> <span data-i18n="settings.dark">Sombre</span></button>
+		</div>
+		<div class="mb-2 fw-bold" data-i18n="settings.lang">Langue</div>
+		<div class="btn-group mb-4" role="group">
+			<button type="button" class="btn btn-outline-secondary" onclick="FxI18n.setLang('fr')">Français</button>
+			<button type="button" class="btn btn-outline-secondary" onclick="FxI18n.setLang('en')">English</button>
+		</div>
+		<div class="mb-2 fw-bold" data-i18n="settings.score">Score</div>
+		<button type="button" class="btn btn-outline-danger" onclick="resetScore()"><i class="bi bi-arrow-counterclockwise"></i> <span data-i18n="settings.reset">Remettre le score à zéro</span></button>
+	</div>
+</div>
+
+<!-- contenu -->
+<div class="container py-2">
+	<div class="d-flex align-items-center gap-2 mb-1">
+		<h1 class="h5 mb-0 flex-grow-1" data-i18n="app.title">Reconnaître une gamme à l'oreille</h1>
+		<span class="badge text-bg-primary fs-6" title="Score"><span data-i18n="lbl.score">Score</span> <span id="points">0</span> / <span id="asked">0</span></span>
+		<button type="button" class="btn btn-outline-secondary btn-sm" data-i18n-toggle>FR</button>
+		<button type="button" class="btn btn-outline-secondary btn-sm" data-bs-toggle="offcanvas" data-bs-target="#settingsPanel" aria-controls="settingsPanel" aria-label="Paramètres" data-i18n-aria="settings.title"><i class="bi bi-list fs-5"></i></button>
+	</div>
+	<p class="small text-body-secondary mb-2" data-i18n="app.instructions">La tonique est donnée : écoutez la gamme (de la tonique à son octave) et choisissez son type.</p>
+
+	<div class="alert alert-primary text-center py-2 mb-2">
+		<div id="questionText"></div>
+		<button type="button" class="btn btn-primary btn-lg mt-2" onclick="listen()"><i class="bi bi-play-fill"></i> <span data-i18n="btn.listen">Écouter la gamme</span></button>
+	</div>
+
+	<div id="audio_abc_ex_01" class="mt-1"></div>
+	<div id="warnings_abc_ex_01" style="display:none"></div>
+
+	<div class="d-flex justify-content-end gap-2 mt-2">
+		<button type="button" class="btn btn-outline-secondary" onclick="toggleBox('hint')"><i class="bi bi-music-note-list"></i> <span data-i18n="btn.hint">Indice : voir la portée</span></button>
+		<button type="button" class="btn btn-outline-secondary" onclick="toggleBox('solution')"><i class="bi bi-eye"></i> <span data-i18n="btn.solution">Voir la solution</span></button>
+	</div>
+
+	<!-- indice : la portée (un seul rendu abcjs) et le nom des notes -->
+	<div id="hint" class="alert alert-info mt-2" style="display:none">
+		<div class="staff-card">
+			<div id="paper_abc_ex_01" style="width:100%;"></div>
+		</div>
+		<div id="hintText" class="mt-2"></div>
+	</div>
+	<div id="solution" class="alert alert-success text-center mt-2" style="display:none"></div>
+
+	<div id="answerButtons" class="mt-2"></div>
+
+	<div id="history" class="mt-3"></div>
+
+	<details class="help mt-4 mb-3">
+		<summary data-i18n="help.summary">❔ Aide : comment se construit une gamme ?</summary>
+		<div class="mt-2" style="line-height:1.6" data-i18n-html="help.body"></div>
+		<div class="table-responsive">
+			<table class="table table-sm mt-2">
+				<thead><tr><th data-i18n="help.colName">Gamme</th><th data-i18n="help.colSteps">Écarts (en tons)</th><th data-i18n="help.colExample">Exemple sur Do</th></tr></thead>
+				<tbody id="formulaTable"></tbody>
+			</table>
+		</div>
+		<p class="small" data-i18n="help.excluded">Les gammes augmentées de Mi et de Si (qui demanderaient des doubles dièses) ne sont pas proposées.</p>
+	</details>
+
+	<textarea id="abc_ex_01" cols="20" rows="10" style="display:none; width:100%"></textarea>
+</div>
+
+<!-- Footer -->
+<footer class="mt-auto py-3 bg-body-tertiary border-top text-body-secondary">
+	<div class="container">
+		<div class="row align-items-center gy-2">
+			<!-- Colonne 1 : Copyright & Titre -->
+			<div class="col-12 col-md-6 text-center text-md-start">
+				<span class="small">
+					CC BY-NC 4.0 <span id="currentYear"></span><script>document.getElementById("currentYear").textContent = new Date().getFullYear();</script> <strong>François Parlant</strong> &mdash; <span data-i18n="footer.made">Créé avec passion pour la théorie musicale.</span>
+				</span>
+			</div>
+			<!-- Colonne 2 : Liens Réseaux Sociaux -->
+			<div class="col-12 col-md-6 text-center text-md-end">
+				<div class="d-inline-flex gap-3 align-items-center">
+					<a href="https://github.com/fxpar/music-toolbox/blob/main/tonal_scale_namesTrebble_ear.html" target="_blank" rel="noopener noreferrer" class="text-body-secondary text-decoration-none fs-5" title="Code source GitHub" data-i18n-title="footer.github">
+						<i class="bi bi-github"></i> Github
+					</a> &mdash;
+					<a href="https://www.linkedin.com/in/francois-parlant" target="_blank" rel="noopener noreferrer" class="text-body-secondary text-decoration-none fs-5" title="LinkedIn: François Parlant" data-i18n-title="footer.linkedin">
+						<i class="bi bi-linkedin"></i>LinkedIn
+					</a> &mdash;
+					<a href="https://www.youtube.com/c/enparlantdebureautiqueformezvous" target="_blank" rel="noopener noreferrer" class="text-body-secondary text-decoration-none fs-5" title="Tutos YouTube: En parlant de bureautique" data-i18n-title="footer.youtube">
+						<i class="bi bi-youtube"></i>Youtube
+					</a>
+				</div>
+			</div>
+		</div>
+	</div>
+</footer>
+
+<script>
+/* ============================================================
+   TRADUCTIONS FR / EN (module ./js/i18n-fx.js)
+   ============================================================ */
+FxI18n.add({
+	fr: {
+		'app.title': "Reconnaître une gamme à l'oreille",
+		'app.instructions': "La tonique est donnée : écoutez la gamme (de la tonique à son octave) et choisissez son type.",
+		'question': "Tonique : <b>{tonic}</b> — écoutez : quelle est cette gamme ?",
+		'btn.listen': "Écouter la gamme",
+		'lbl.score': "Score",
+		'btn.hint': "Indice : voir la portée",
+		'btn.solution': "Voir la solution",
+		'hint.notes': "Notes : <b>{notes}</b>",
+		'hint.steps': "Écarts en tons : <b>{steps}</b> (1 = ton, ½ = demi-ton)",
+		'solution.text': "C'est la gamme <b>{scale}</b> de {tonic}.",
+		'solution.formula': "Intervalles : {intervals}",
+		'fb.right': "✔ Juste : gamme {scale} de {tonic}.",
+		'fb.rightNoPoint': "✔ Juste : gamme {scale} de {tonic} (solution vue : pas de point).",
+		'fb.wrong': "✘ Faux : c'était la gamme <b>{scale}</b> de {tonic}, vous avez répondu « {answer} ».",
+		'fb.expected': "Attendu : {notes}",
+		'fb.yours': "Votre réponse : {notes}",
+		'fb.diffNote': "Les notes en rouge diffèrent entre les deux gammes.",
+		'group.major': "Majeure et mineures",
+		'group.modes': "Modes",
+		'group.other': "Pentatoniques, blues et autres",
+		'scale.major': "majeure",
+		'scale.minor': "mineure naturelle",
+		'scale.harmonic minor': "mineure harmonique",
+		'scale.melodic minor': "mineure mélodique",
+		'scale.dorian': "dorienne",
+		'scale.phrygian': "phrygienne",
+		'scale.lydian': "lydienne",
+		'scale.mixolydian': "mixolydienne",
+		'scale.locrian': "locrienne",
+		'scale.major pentatonic': "pentatonique majeure",
+		'scale.major blues': "blues majeure",
+		'scale.minor blues': "blues mineure",
+		'scale.bebop': "bebop (dominante)",
+		'scale.diminished': "diminuée (ton / demi-ton)",
+		'scale.augmented': "augmentée",
+		'settings.title': "Paramètres",
+		'settings.close': "Fermer",
+		'settings.theme': "Thème",
+		'settings.light': "Clair",
+		'settings.dark': "Sombre",
+		'settings.lang': "Langue",
+		'settings.score': "Score",
+		'settings.reset': "Remettre le score à zéro",
+		'help.summary': "❔ Aide : comment se construit une gamme ?",
+		'help.body': "<b>Le jeu :</b> la tonique (première note) est indiquée. <b>Écouter la gamme</b> la joue en montant jusqu'à l'octave (le lecteur permet aussi de boucler et de ralentir). Cliquez sur le type de gamme. <b>Indice</b> affiche la portée, le nom des notes et les écarts ; <b>Voir la solution</b> donne la réponse (la question ne rapporte alors pas de point).<br>"
+			+ "<b>Tons et demi-tons :</b> une gamme est une suite de notes séparées par des tons (1) et des demi-tons (½). Entre les notes naturelles, il n'y a qu'un demi-ton entre Mi–Fa et Si–Do ; partout ailleurs, un ton. Un dièse (♯) monte la note d'un demi-ton, un bémol (♭) la descend d'un demi-ton.<br>"
+			+ "<b>Une lettre par degré :</b> dans une gamme de 7 notes, chaque nom de note (Do Ré Mi Fa Sol La Si) apparaît une seule fois, dans l'ordre. C'est pourquoi Si lydienne s'écrit avec Mi♯ et non Fa, et Fa locrienne avec Do♭ et non Si. Les gammes de 5, 6 ou 8 notes (pentatonique, blues, bebop, diminuée, augmentée) ne peuvent pas suivre cette règle : une lettre peut manquer ou être répétée.<br>"
+			+ "<b>À l'oreille :</b> comptez d'abord les notes (5 : pentatonique, 6 : blues ou augmentée, 8 : bebop ou diminuée). Écoutez ensuite la tierce (claire = majeure, sombre = mineure), puis la fin de la gamme : la sensible (demi-ton sous l'octave) des gammes majeure, harmonique et mélodique, l'écart d'un ton et demi typique de la mineure harmonique. Le demi-ton juste après la tonique signale la phrygienne ou la locrienne, la quarte augmentée la lydienne.",
+		'help.colName': "Gamme",
+		'help.colSteps': "Écarts (en tons)",
+		'help.colExample': "Exemple sur Do",
+		'help.excluded': "Les gammes augmentées de Mi et de Si (qui demanderaient des doubles dièses) ne sont pas proposées.",
+		'footer.made': "Créé avec passion pour la théorie musicale.",
+		'footer.github': "Code source GitHub",
+		'footer.linkedin': "LinkedIn: François Parlant",
+		'footer.youtube': "Tutos YouTube: En parlant de bureautique"
+	},
+	en: {
+		'app.title': "Identify the scale by ear",
+		'app.instructions': "The tonic is given: listen to the scale (from the tonic up to its octave) and pick its type.",
+		'question': "Tonic: <b>{tonic}</b> — listen: which scale is this?",
+		'btn.listen': "Play the scale",
+		'lbl.score': "Score",
+		'btn.hint': "Hint: show the staff",
+		'btn.solution': "Show solution",
+		'hint.notes': "Notes: <b>{notes}</b>",
+		'hint.steps': "Steps in tones: <b>{steps}</b> (1 = whole step, ½ = half step)",
+		'solution.text': "This is the <b>{tonic} {scale}</b> scale.",
+		'solution.formula': "Intervals: {intervals}",
+		'fb.right': "✔ Correct: {tonic} {scale}.",
+		'fb.rightNoPoint': "✔ Correct: {tonic} {scale} (solution shown: no point).",
+		'fb.wrong': "✘ Wrong: it was <b>{tonic} {scale}</b>, you answered “{answer}”.",
+		'fb.expected': "Expected: {notes}",
+		'fb.yours': "Your answer: {notes}",
+		'fb.diffNote': "Notes in red differ between the two scales.",
+		'group.major': "Major and minors",
+		'group.modes': "Modes",
+		'group.other': "Pentatonic, blues and others",
+		'scale.major': "major",
+		'scale.minor': "natural minor",
+		'scale.harmonic minor': "harmonic minor",
+		'scale.melodic minor': "melodic minor",
+		'scale.dorian': "Dorian",
+		'scale.phrygian': "Phrygian",
+		'scale.lydian': "Lydian",
+		'scale.mixolydian': "Mixolydian",
+		'scale.locrian': "Locrian",
+		'scale.major pentatonic': "major pentatonic",
+		'scale.major blues': "major blues",
+		'scale.minor blues': "minor blues",
+		'scale.bebop': "bebop (dominant)",
+		'scale.diminished': "diminished (whole-half)",
+		'scale.augmented': "augmented",
+		'settings.title': "Settings",
+		'settings.close': "Close",
+		'settings.theme': "Theme",
+		'settings.light': "Light",
+		'settings.dark': "Dark",
+		'settings.lang': "Language",
+		'settings.score': "Score",
+		'settings.reset': "Reset score",
+		'help.summary': "❔ Help: how is a scale built?",
+		'help.body': "<b>The game:</b> the tonic (first note) is given. <b>Play the scale</b> plays it ascending up to the octave (the player also lets you loop and slow down). Click the scale type. <b>Hint</b> shows the staff, the note names and steps; <b>Show solution</b> gives the answer (the question then scores no point).<br>"
+			+ "<b>Whole and half steps:</b> a scale is a series of notes separated by whole steps (1) and half steps (½). Between natural notes there is only a half step between E–F and B–C; everywhere else, a whole step. A sharp (♯) raises a note by a half step, a flat (♭) lowers it by a half step.<br>"
+			+ "<b>One letter per degree:</b> in a 7-note scale, each letter (C D E F G A B) appears exactly once, in order. That is why B Lydian is written with E♯ rather than F, and F Locrian with C♭ rather than B. 5, 6 or 8-note scales (pentatonic, blues, bebop, diminished, augmented) cannot follow this rule: a letter may be missing or repeated.<br>"
+			+ "<b>By ear:</b> first count the notes (5: pentatonic, 6: blues or augmented, 8: bebop or diminished). Then listen to the third (bright = major, dark = minor), then the top of the scale: the leading tone (half step below the octave) of major, harmonic and melodic minor, and the step and a half typical of harmonic minor. A half step right after the tonic points to Phrygian or Locrian, a raised fourth to Lydian.",
+		'help.colName': "Scale",
+		'help.colSteps': "Steps (in tones)",
+		'help.colExample': "Example on C",
+		'help.excluded': "E and B augmented scales (which would need double sharps) are not asked.",
+		'footer.made': "Made with passion for music theory.",
+		'footer.github': "Source code on GitHub",
+		'footer.linkedin': "LinkedIn: François Parlant",
+		'footer.youtube': "YouTube tutorials: En parlant de bureautique"
+	}
+});
+
+/* ============================================================
+   DONNÉES MUSICALES (librairie Tonal, ./js/tonalfx.js)
+   ============================================================ */
+// noms internes = noms Tonal (ne pas traduire), regroupés pour l'affichage
+var SCALE_GROUPS = [
+	{ key: 'group.major', scales: ["major", "minor", "harmonic minor", "melodic minor"] },
+	{ key: 'group.modes', scales: ["dorian", "phrygian", "lydian", "mixolydian", "locrian"] },
+	{ key: 'group.other', scales: ["major pentatonic", "major blues", "minor blues", "bebop", "diminished", "augmented"] }
+];
+var SCALES = [];
+for (var g = 0; g < SCALE_GROUPS.length; g++) SCALES = SCALES.concat(SCALE_GROUPS[g].scales);
+
+// toniques naturelles, octave 4 : la gamme tient sur la portée de sol (Do4 à Si5)
+var TONICS = ["C4", "D4", "E4", "F4", "G4", "A4", "B4"];
+var NOTE_FR = { C: "Do", D: "Ré", E: "Mi", F: "Fa", G: "Sol", A: "La", B: "Si" };
+
+var defaultAbc = "X:1\nL:1/4\nQ:1/4=100\nK:C\n";
+
+function hasDoubleAccidental(notes) {
+	for (var i = 0; i < notes.length; i++) {
+		if (/##|bb/.test(notes[i])) return true;
+	}
+	return false;
+}
+
+// toutes les questions possibles ; on écarte les gammes à doubles altérations (Mi et Si augmentées)
+function buildQuestions() {
+	var list = [];
+	for (var t = 0; t < TONICS.length; t++) {
+		for (var s = 0; s < SCALES.length; s++) {
+			var notes = Tonal.Scale.get(TONICS[t] + " " + SCALES[s]).notes;
+			if (notes.length && !hasDoubleAccidental(notes)) list.push({ tonic: TONICS[t], scale: SCALES[s], notes: notes });
+		}
+	}
+	return list;
+}
+
+// gamme montante + octave, une note par mesure : les altérations ne se reportent pas d'une note à l'autre (K:C, sans armure)
+function scaleToAbc(notes, tonic) {
+	var all = notes.concat([Tonal.Note.transpose(tonic, "8P")]);
+	var parts = [];
+	for (var i = 0; i < all.length; i++) parts.push(Tonal.AbcNotation.scientificToAbcNotation(all[i]));
+	return defaultAbc + parts.join(" | ") + " |]";
+}
+
+// nom de note affiché : Do Ré Mi… en français, C D E… en anglais, avec ♯ ♭
+function noteLabel(note) {
+	var pc = Tonal.Note.pitchClass(note);
+	var letter = pc.charAt(0);
+	var acc = pc.substring(1).replace(/#/g, "♯").replace(/b/g, "♭");
+	return (FxI18n.getLang() === "fr" ? NOTE_FR[letter] : letter) + acc;
+}
+function scaleLabel(scale) { return FxI18n.t("scale." + scale); }
+function notesLabel(notes) {
+	var out = [];
+	for (var i = 0; i < notes.length; i++) out.push(noteLabel(notes[i]));
+	return out.join(" ");
+}
+function stepLabel(semitones) {
+	if (semitones === 1) return "½";
+	if (semitones === 2) return "1";
+	if (semitones === 3) return "1½";
+	return String(semitones / 2);
+}
+// écarts entre notes successives, octave comprise
+function stepsOf(notes, tonic) {
+	var all = notes.concat([Tonal.Note.transpose(tonic, "8P")]);
+	var out = [];
+	for (var i = 1; i < all.length; i++) out.push(stepLabel(Tonal.Note.midi(all[i]) - Tonal.Note.midi(all[i - 1])));
+	return out.join(" – ");
+}
+
+/* ============================================================
+   ÉTAT DU JEU
+   ============================================================ */
+var questions = buildQuestions();
+var current = null;
+var score = 0;
+var asked = 0;
+var solutionSeen = false;
+var answerLog = []; // { q: question, answer: nom interne, ok: bool, noPoint: bool }
+var editor = null;
+var lastWidth = 0;
+
+function staffWidth() {
+	var w = document.getElementById("questionText").getBoundingClientRect().width;
+	return Math.max(260, Math.floor(w) - 50);
+}
+
+function CursorControl(selector) {
+	var self = this;
+	self.onStart = function () {
+		var svg = document.querySelector("#" + selector + " svg");
+		if (!svg) return;
+		var cursor = document.createElementNS("http://www.w3.org/2000/svg", "line");
+		cursor.setAttribute("class", "abcjs-cursor");
+		cursor.setAttributeNS(null, 'x1', 0);
+		cursor.setAttributeNS(null, 'y1', 0);
+		cursor.setAttributeNS(null, 'x2', 0);
+		cursor.setAttributeNS(null, 'y2', 0);
+		svg.appendChild(cursor);
+	};
+	self.beatSubdivisions = 2;
+	self.onEvent = function (ev) {
+		if (ev.measureStart && ev.left === null) return; // seconde moitié d'une liaison : ignorer
+		var lastSelection = document.querySelectorAll("#" + selector + " svg .highlight");
+		for (var k = 0; k < lastSelection.length; k++) lastSelection[k].classList.remove("highlight");
+		for (var i = 0; i < ev.elements.length; i++) {
+			var note = ev.elements[i];
+			for (var j = 0; j < note.length; j++) note[j].classList.add("highlight");
+		}
+		var cursor = document.querySelector("#" + selector + " svg .abcjs-cursor");
+		if (cursor) {
+			cursor.setAttribute("x1", ev.left - 2);
+			cursor.setAttribute("x2", ev.left - 2);
+			cursor.setAttribute("y1", ev.top);
+			cursor.setAttribute("y2", ev.top + ev.height);
+		}
+	};
+	self.onFinished = function () {
+		var els = document.querySelectorAll("#" + selector + " svg .highlight");
+		for (var i = 0; i < els.length; i++) els[i].classList.remove("highlight");
+		var cursor = document.querySelector("#" + selector + " svg .abcjs-cursor");
+		if (cursor) {
+			cursor.setAttribute("x1", 0);
+			cursor.setAttribute("x2", 0);
+			cursor.setAttribute("y1", 0);
+			cursor.setAttribute("y2", 0);
+		}
+	};
+}
+
+// l'éditeur abcjs est créé une seule fois, puis on remplace seulement le texte ABC
+function showAbc(abc) {
+	var ta = document.getElementById("abc_ex_01");
+	ta.value = abc;
+	// curseur en début de texte : sinon abcjs surligne en rouge la dernière barre
+	try { ta.setSelectionRange(0, 0); } catch (e) { /* textarea masqué */ }
+	if (!editor) {
+		lastWidth = staffWidth();
+		editor = new ABCJS.Editor("abc_ex_01", {
+			canvas_id: "paper_abc_ex_01",
+			warnings_id: "warnings_abc_ex_01",
+			synth: {
+				el: "#audio_abc_ex_01",
+				cursorControl: new CursorControl("paper_abc_ex_01"),
+				options: { displayLoop: true, displayRestart: true, displayPlay: true, displayProgress: true, displayWarp: true }
+			},
+			render_options: { initialClef: true, staffwidth: lastWidth, wrap: { maxSpacing: 2.7, preferredMeasuresPerLine: 9 } },
+			abcjsParams: {}
+		});
+	} else if (editor.parseABC()) {
+		// rendu immédiat ; setTune() arrête la lecture de la gamme précédente
+		editor.modelChanged();
+	}
+}
+
+var resizeTimer = null;
+window.addEventListener('resize', function () {
+	clearTimeout(resizeTimer);
+	resizeTimer = setTimeout(function () {
+		var w = staffWidth();
+		if (editor && Math.abs(w - lastWidth) > 20) {
+			lastWidth = w;
+			editor.paramChanged({ staffwidth: w });
+		}
+	}, 250);
+});
+
+/* ============================================================
+   QUESTIONS / RÉPONSES
+   ============================================================ */
+function newQuestion() {
+	var next;
+	do {
+		next = questions[Math.floor(Math.random() * questions.length)];
+	} while (current && questions.length > 1 && next.tonic === current.tonic && next.scale === current.scale);
+	current = next;
+	solutionSeen = false;
+	document.getElementById("hint").style.display = "none";
+	document.getElementById("solution").style.display = "none";
+	renderQuestion();
+	showAbc(scaleToAbc(current.notes, current.tonic));
+}
+
+function renderQuestion() {
+	if (!current) return;
+	document.getElementById("questionText").innerHTML = FxI18n.t("question", { tonic: noteLabel(current.tonic) });
+	document.getElementById("hintText").innerHTML =
+		FxI18n.t("hint.notes", { notes: notesLabel(current.notes) }) + "<br>" +
+		FxI18n.t("hint.steps", { steps: stepsOf(current.notes, current.tonic) });
+	document.getElementById("solution").innerHTML =
+		"<div class='fs-5'>" + FxI18n.t("solution.text", { tonic: noteLabel(current.tonic), scale: scaleLabel(current.scale) }) + "</div>" +
+		"<div class='small'>" + FxI18n.t("solution.formula", { intervals: Tonal.ScaleType.get(current.scale).intervals.join(" ") }) + "</div>";
+}
+
+// joue la gamme depuis le début (abcjs charge les sons au premier appel)
+function listen() {
+	if (!editor || !editor.synth || !editor.synth.synthControl) return;
+	var sc = editor.synth.synthControl;
+	sc.restart();
+	if (!sc.isStarted) sc.play();
+}
+
+function toggleBox(id) {
+	var e = document.getElementById(id);
+	var show = e.style.display === "none";
+	e.style.display = show ? "" : "none";
+	if (show && id === "solution") solutionSeen = true;
+}
+
+function answer(scale) {
+	if (!current) return;
+	var ok = scale === current.scale;
+	asked++;
+	if (ok && !solutionSeen) score++;
+	answerLog.unshift({ q: current, answer: scale, ok: ok, noPoint: ok && solutionSeen });
+	if (answerLog.length > 10) answerLog.pop();
+	updateScore();
+	renderHistory();
+	newQuestion();
+}
+
+// notes de la gamme, celles absentes de l'autre gamme en rouge
+function markedNotes(notes, other) {
+	var otherPc = [];
+	for (var i = 0; i < other.length; i++) otherPc.push(Tonal.Note.pitchClass(other[i]));
+	var out = [];
+	for (var j = 0; j < notes.length; j++) {
+		var label = noteLabel(notes[j]);
+		out.push(otherPc.indexOf(Tonal.Note.pitchClass(notes[j])) === -1 ? "<span class='note-diff'>" + label + "</span>" : label);
+	}
+	return out.join(" ");
+}
+
+function historyHtml(h) {
+	var vars = { tonic: noteLabel(h.q.tonic), scale: scaleLabel(h.q.scale), answer: scaleLabel(h.answer) };
+	if (h.ok) return "<span class='text-success'>" + FxI18n.t(h.noPoint ? "fb.rightNoPoint" : "fb.right", vars) + "</span><br><span class='small'>" + notesLabel(h.q.notes) + "</span>";
+	var yours = Tonal.Scale.get(h.q.tonic + " " + h.answer).notes;
+	return "<span class='text-danger'>" + FxI18n.t("fb.wrong", vars) + "</span>" +
+		"<div class='small'>" + FxI18n.t("fb.expected", { notes: markedNotes(h.q.notes, yours) }) + "<br>" +
+		FxI18n.t("fb.yours", { notes: markedNotes(yours, h.q.notes) }) + "<br><i>" + FxI18n.t("fb.diffNote") + "</i></div>";
+}
+
+function renderHistory() {
+	var html = "";
+	for (var i = 0; i < answerLog.length; i++) {
+		var cls = i === 0 ? "lastResult" : "small opacity-75";
+		html += "<div class='" + cls + "'>" + historyHtml(answerLog[i]) + "</div>";
+	}
+	document.getElementById("history").innerHTML = html;
+}
+
+function updateScore() {
+	document.getElementById("points").textContent = score;
+	document.getElementById("asked").textContent = asked;
+}
+
+function resetScore() {
+	score = 0;
+	asked = 0;
+	answerLog = [];
+	updateScore();
+	renderHistory();
+}
+
+function renderButtons() {
+	var html = "";
+	for (var g = 0; g < SCALE_GROUPS.length; g++) {
+		html += "<div class='group-label'>" + FxI18n.t(SCALE_GROUPS[g].key) + "</div><div class='row g-2'>";
+		var list = SCALE_GROUPS[g].scales;
+		for (var i = 0; i < list.length; i++) {
+			html += "<div class='col-6 col-sm-4 col-lg-3'><button type='button' class='btn btn-primary scale-btn' id='btn_" + list[i].replace(/ /g, "_") +
+				"' data-scale='" + list[i] + "'>" + scaleLabel(list[i]) + "</button></div>";
+		}
+		html += "</div>";
+	}
+	document.getElementById("answerButtons").innerHTML = html;
+}
+
+function renderFormulaTable() {
+	var html = "";
+	for (var i = 0; i < SCALES.length; i++) {
+		var notes = Tonal.Scale.get("C4 " + SCALES[i]).notes;
+		html += "<tr><td>" + scaleLabel(SCALES[i]) + "</td><td>" + stepsOf(notes, "C4") + "</td><td>" + notesLabel(notes) + "</td></tr>";
+	}
+	document.getElementById("formulaTable").innerHTML = html;
+}
+
+/* ============================================================
+   THÈME
+   ============================================================ */
+function setTheme(th) {
+	document.documentElement.setAttribute('data-bs-theme', th);
+	try { localStorage.setItem('theme', th); } catch (e) { /* stockage indisponible */ }
+	document.getElementById("themeLight").classList.toggle("active", th === "light");
+	document.getElementById("themeDark").classList.toggle("active", th === "dark");
+}
+
+/* ============================================================
+   DÉMARRAGE
+   ============================================================ */
+function renderTexts() {
+	document.title = FxI18n.t("app.title");
+	renderButtons();
+	renderFormulaTable();
+	renderQuestion();
+	renderHistory();
+}
+
+document.getElementById("answerButtons").addEventListener("click", function (ev) {
+	var btn = ev.target.closest ? ev.target.closest(".scale-btn") : null;
+	if (btn) answer(btn.getAttribute("data-scale"));
+});
+
+FxI18n.onChange(renderTexts);
+
+window.addEventListener("load", function () {
+	setTheme(document.documentElement.getAttribute('data-bs-theme'));
+	renderTexts();
+	newQuestion();
+});
+</script>
+</body>
+</html>

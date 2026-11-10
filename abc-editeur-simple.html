@@ -18,6 +18,7 @@
     <script src="https://cdn.jsdelivr.net/npm/abcjs@6.2.2/dist/abcjs-basic-min.js"></script>
 	
 	
+    <script src="./js/i18n-fx.js"></script>
     <style>
         body { transition: background-color 0.3s, color 0.3s; }
         #paper { background-color: #ffffff; border-radius: 8px; padding: 15px; min-height: 150px; }
@@ -46,17 +47,18 @@
         <div class="card shadow-sm mb-3">
             <div class="card-body d-flex flex-wrap align-items-center justify-content-between gap-2 py-2">
                 <div class="d-flex align-items-center gap-2 flex-grow-1" style="max-width: 500px;">
-                    <label for="songSelect" class="form-label fw-bold mb-0 text-nowrap"><i class="bi bi-music-note-list me-1"></i>Morceau :</label>
+                    <label for="songSelect" class="form-label fw-bold mb-0 text-nowrap"><i class="bi bi-music-note-list me-1"></i><span data-i18n="ui.song">Morceau :</span></label>
                     <select id="songSelect" class="form-select form-select-sm" onchange="loadSelectedSong()">
                         <!-- Rempli en JS -->
                     </select>
                 </div>
 
                 <div class="d-flex align-items-center gap-2">
-                    <button class="btn btn-sm btn-success" onclick="createNewSong()"><i class="bi bi-plus-lg me-1"></i><span class="d-none d-md-inline">Nouveau</span></button>
-                    <button class="btn btn-sm btn-outline-primary" onclick="renameCurrentSong()"><i class="bi bi-pencil me-1"></i><span class="d-none d-md-inline">Renommer</span></button>
-                    <button class="btn btn-sm btn-outline-danger" onclick="deleteCurrentSong()"><i class="bi bi-trash me-1"></i><span class="d-none d-md-inline">Supprimer</span></button>
-                    <button id="themeToggleBtn" class="btn btn-sm btn-outline-secondary" onclick="toggleTheme()"><i class="bi bi-moon-stars"></i></button>
+                    <button class="btn btn-sm btn-success" onclick="createNewSong()"><i class="bi bi-plus-lg me-1"></i><span class="d-none d-md-inline" data-i18n="ui.new">Nouveau</span></button>
+                    <button class="btn btn-sm btn-outline-primary" onclick="renameCurrentSong()"><i class="bi bi-pencil me-1"></i><span class="d-none d-md-inline" data-i18n="ui.rename">Renommer</span></button>
+                    <button class="btn btn-sm btn-outline-danger" onclick="deleteCurrentSong()"><i class="bi bi-trash me-1"></i><span class="d-none d-md-inline" data-i18n="ui.delete">Supprimer</span></button>
+                    <button id="themeToggleBtn" class="btn btn-sm btn-outline-secondary" onclick="toggleTheme()" data-i18n-title="ui.theme" title="Mode jour / nuit"><i class="bi bi-moon-stars"></i></button>
+                    <button type="button" class="btn btn-sm btn-outline-secondary" data-i18n-toggle>FR</button>
                 </div>
             </div>
         </div>
@@ -68,32 +70,32 @@
                     
                     <!-- Transposition -->
                     <div class="col-6 col-sm-3 col-md-2">
-                        <label for="transposeInput" class="form-label small fw-bold mb-0">Transposer</label>
+                        <label for="transposeInput" class="form-label small fw-bold mb-0" data-i18n="ui.transpose">Transposer</label>
                         <select id="transposeInput" class="form-select form-select-sm" onchange="renderCurrentState()">
-                            <option value="-6">-6 demi-tons</option>
+                            <option value="-6" data-i18n="ui.minus6">-6 demi-tons</option>
                             <option value="-5">-5</option>
                             <option value="-4">-4</option>
                             <option value="-3">-3</option>
                             <option value="-2">-2</option>
                             <option value="-1">-1</option>
-                            <option value="0" selected>Original (0)</option>
+                            <option value="0" selected data-i18n="ui.original">Original (0)</option>
                             <option value="1">+1</option>
                             <option value="2">+2</option>
                             <option value="3">+3</option>
                             <option value="4">+4</option>
                             <option value="5">+5</option>
-                            <option value="6">+6 demi-tons</option>
+                            <option value="6" data-i18n="ui.plus6">+6 demi-tons</option>
                         </select>
                     </div>
 
                     <!-- Tablature -->
                     <div class="col-6 col-sm-3 col-md-2">
-                        <label for="tabSelect" class="form-label small fw-bold mb-0">Tablature</label>
+                        <label for="tabSelect" class="form-label small fw-bold mb-0" data-i18n="ui.tab">Tablature</label>
                         <select id="tabSelect" class="form-select form-select-sm" onchange="renderCurrentState()">
-                            <option value="none" selected>Aucune</option>
-                            <option value="ukulele">Ukulélé (GCEA)</option>
-                            <option value="violin">Violon (GDAE)</option>
-                            <option value="guitar">Guitare (EADGBE)</option>
+                            <option value="none" selected data-i18n="ui.none">Aucune</option>
+                            <option value="ukulele" data-i18n="ui.uke">Ukulélé (GCEA)</option>
+                            <option value="violin" data-i18n="ui.violin">Violon (GDAE)</option>
+                            <option value="guitar" data-i18n="ui.guitar">Guitare (EADGBE)</option>
                         </select>
                     </div>
 
@@ -116,7 +118,7 @@
                     <div class="col-12 col-md-3 d-flex align-items-center justify-content-start justify-content-md-end pt-2 pt-md-0">
                         <div class="form-check form-switch">
                             <input class="form-check-input" type="checkbox" id="enableMetronome" onchange="renderCurrentState()">
-                            <label class="form-check-label small fw-bold" for="enableMetronome">Métronome</label>
+                            <label class="form-check-label small fw-bold" for="enableMetronome" data-i18n="ui.metronome">Métronome</label>
                         </div>
                     </div>
 
@@ -142,8 +144,8 @@
         <!-- Zone Éditeur de Code ABC -->
         <div class="card shadow-sm mb-3">
             <div class="card-header bg-body-secondary py-1 d-flex justify-content-between align-items-center">
-                <span class="fw-bold small"><i class="bi bi-code-slash me-1"></i>Code ABC</span>
-                <button class="btn btn-sm btn-primary" onclick="saveCurrentSong()"><i class="bi bi-floppy me-1"></i>Enregistrer</button>
+                <span class="fw-bold small"><i class="bi bi-code-slash me-1"></i><span data-i18n="ui.abcCode">Code ABC</span></span>
+                <button class="btn btn-sm btn-primary" onclick="saveCurrentSong()"><i class="bi bi-floppy me-1"></i><span data-i18n="ui.save">Enregistrer</span></button>
             </div>
             <div class="card-body p-2">
                 <textarea id="abcCode" class="form-control abc-editor" rows="8" oninput="renderCurrentState()"></textarea>
@@ -153,8 +155,8 @@
 		<!-- Bloc de débogage visuel -->
 <div class="mt-3 p-3 bg-dark text-light rounded font-monospace small">
   <div class="d-flex justify-content-between align-items-center mb-2">
-    <strong><i class="bi bi-bug"></i> Inspecteur Code ABC généré :</strong>
-    <span class="badge bg-secondary" id="debugStatus">En attente</span>
+    <strong><i class="bi bi-bug"></i> <span data-i18n="dbg.title">Inspecteur Code ABC généré :</span></strong>
+    <span class="badge bg-secondary" id="debugStatus" data-i18n="dbg.waiting">En attente</span>
   </div>
   <pre id="debugAbcOutput" style="white-space: pre-wrap; margin: 0; max-height: 200px; overflow-y: auto; font-size: 0.8rem;"></pre>
 </div>
@@ -168,20 +170,20 @@
 		  <!-- Colonne 1 : Copyright & Titre -->
 		  <div class="col-12 col-md-6 text-center text-md-start">
 			<span class="small">
-			  CC BY-NC 4.0 <span id="currentYear"></span><script>document.getElementById("currentYear").textContent = new Date().getFullYear();</script> <strong>François Parlant</strong> &mdash; Créé avec passion pour le rythme et la mélodie.
+			  CC BY-NC 4.0 <span id="currentYear"></span><script>document.getElementById("currentYear").textContent = new Date().getFullYear();</script> <strong>François Parlant</strong> &mdash; <span data-i18n="footer.tagline">Créé avec passion pour le rythme et la mélodie.</span>
 			</span>
 		  </div>
 
 		  <!-- Colonne 2 : Liens Réseaux Sociaux -->
 		  <div class="col-12 col-md-6 text-center text-md-end">
 			<div class="d-inline-flex gap-3 align-items-center">
-			  <a href="https://github.com/fxpar/music-toolbox/blob/main/abc-editeur-simple.html" target="_blank" rel="noopener noreferrer" class="text-body-secondary text-decoration-none fs-5 hover-accent" title="Code source GitHub"> 
+			  <a href="https://github.com/fxpar/music-toolbox/blob/main/abc-editeur-simple.html" target="_blank" rel="noopener noreferrer" class="text-body-secondary text-decoration-none fs-5 hover-accent" title="Code source GitHub" data-i18n-title="footer.github"> 
 				<i class="bi bi-github"></i>
 			  </a>
-			  <a href="https://www.linkedin.com/in/francois-parlant" target="_blank" rel="noopener noreferrer" class="text-body-secondary text-decoration-none fs-5 hover-accent" title="LinkedIn: François Parlant">
+			  <a href="https://www.linkedin.com/in/francois-parlant" target="_blank" rel="noopener noreferrer" class="text-body-secondary text-decoration-none fs-5 hover-accent" title="LinkedIn: François Parlant" data-i18n-title="footer.linkedin">
 				<i class="bi bi-linkedin"></i>
 			  </a>
-			  <a href="https://www.youtube.com/c/enparlantdebureautiqueformezvous" target="_blank" rel="noopener noreferrer" class="text-body-secondary text-decoration-none fs-5 hover-accent" title="Tutos YouTube: En parlant de bureautique">
+			  <a href="https://www.youtube.com/c/enparlantdebureautiqueformezvous" target="_blank" rel="noopener noreferrer" class="text-body-secondary text-decoration-none fs-5 hover-accent" title="Tutos YouTube: En parlant de bureautique" data-i18n-title="footer.youtube">
 				<i class="bi bi-youtube"></i>
 			  </a>
 			</div>
@@ -193,6 +195,49 @@
     <!-- Script JavaScript -->
     <!-- <script src="app.js"> -->
     <script>
+// --- Traductions FR / EN (module commun js/i18n-fx.js) ---
+FxI18n.add({
+    fr: {
+        "page.title": "Éditeur ABC & Tablatures",
+        "ui.song": "Morceau :", "ui.new": "Nouveau", "ui.rename": "Renommer", "ui.delete": "Supprimer",
+        "ui.theme": "Mode jour / nuit", "ui.transpose": "Transposer",
+        "ui.minus6": "-6 demi-tons", "ui.original": "Original (0)", "ui.plus6": "+6 demi-tons",
+        "ui.tab": "Tablature", "ui.none": "Aucune", "ui.uke": "Ukulélé (GCEA)", "ui.violin": "Violon (GDAE)", "ui.guitar": "Guitare (EADGBE)",
+        "ui.metronome": "Métronome", "ui.abcCode": "Code ABC", "ui.save": "Enregistrer",
+        "dbg.title": "Inspecteur Code ABC généré :", "dbg.waiting": "En attente", "dbg.empty": "Code vide",
+        "dbg.ok": "Visuel OK", "dbg.error": "Erreur Rendu",
+        "song.numbered": "Morceau numéro {n}", "song.untitled": "Morceau sans titre",
+        "msg.renamePrompt": "Nouveau titre du morceau :", "msg.keepOne": "Vous devez conserver au moins un morceau !",
+        "msg.confirmDelete": "Voulez-vous vraiment supprimer ce morceau ?",
+        "footer.tagline": "Créé avec passion pour le rythme et la mélodie.", "footer.github": "Code source GitHub",
+        "footer.linkedin": "LinkedIn: François Parlant", "footer.youtube": "Tutos YouTube: En parlant de bureautique"
+    },
+    en: {
+        "page.title": "ABC & Tab Editor",
+        "ui.song": "Tune:", "ui.new": "New", "ui.rename": "Rename", "ui.delete": "Delete",
+        "ui.theme": "Light / dark mode", "ui.transpose": "Transpose",
+        "ui.minus6": "-6 semitones", "ui.original": "Original (0)", "ui.plus6": "+6 semitones",
+        "ui.tab": "Tablature", "ui.none": "None", "ui.uke": "Ukulele (GCEA)", "ui.violin": "Violin (GDAE)", "ui.guitar": "Guitar (EADGBE)",
+        "ui.metronome": "Metronome", "ui.abcCode": "ABC code", "ui.save": "Save",
+        "dbg.title": "Generated ABC code inspector:", "dbg.waiting": "Waiting", "dbg.empty": "Empty code",
+        "dbg.ok": "Render OK", "dbg.error": "Render error",
+        "song.numbered": "Tune number {n}", "song.untitled": "Untitled tune",
+        "msg.renamePrompt": "New tune title:", "msg.keepOne": "You must keep at least one tune!",
+        "msg.confirmDelete": "Do you really want to delete this tune?",
+        "footer.tagline": "Made with passion for rhythm and melody.", "footer.github": "Source code on GitHub",
+        "footer.linkedin": "LinkedIn: François Parlant", "footer.youtube": "YouTube tutorials: En parlant de bureautique"
+    }
+});
+FxI18n.onChange(function () {
+    document.title = FxI18n.t("page.title");
+});
+// Badge de statut : la clé est posée en data-i18n pour suivre les changements de langue
+function setDebugStatus(elem, key, cls) {
+    elem.setAttribute("data-i18n", key);
+    elem.textContent = FxI18n.t(key);
+    elem.className = cls;
+}
+
 	// Variable globale pour le contrôleur audio ABCJS
 var synthControl = null;
 // Implémentation du suivi de curseur
@@ -244,7 +289,7 @@ var cursorControl = {
 };
 
 // Chaine modèle pour un nouveau morceau
-var DEFAULT_TEMPLATE = "X:1\nT:Nouveau morceau\nM:4/4\nL:1/8\nQ:60\nK:C\nC D E F | G A B c |";
+var DEFAULT_TEMPLATE = "X:1\nT:{title}\nM:4/4\nL:1/8\nQ:60\nK:C\nC D E F | G A B c |";
 
 // Initialisation au chargement de la page
 window.onload = function () {
@@ -262,7 +307,7 @@ function getStoredSongs() {
     if (!rawData) {
         // Exemples par défaut si le stockage est vide
         var defaultSongs = [
-            { id: "song_1", title: "Morceau numéro 1", code: "X:1\nT:Morceau numéro 1\nM:4/4\nL:1/8\nQ:60\nK:C\nC D E F | G A B c | c B A G | F E D C |" },
+            { id: "song_1", title: FxI18n.t("song.numbered", { n: 1 }), code: "X:1\nT:" + FxI18n.t("song.numbered", { n: 1 }) + "\nM:4/4\nL:1/8\nQ:60\nK:C\nC D E F | G A B c | c B A G | F E D C |" },
             { id: "song_2", title: "Ukulele Tune", code: "X:2\nT:Ukulele Tune\nM:4/4\nL:1/8\nQ:80\nK:G\nG2 B2 d2 g2 | f2 e2 d4 | c2 B2 A2 G2 | F2 A2 G4 |" },
 			{ id: "song_3", title: "swing", code: "X:2\nT:Ukulele Tune\nM:4/4\nL:1/8\nQ:80\nK:G\nCC CC CC CC | CC CC CC CC |" }
         ];
@@ -317,7 +362,7 @@ function saveCurrentSong() {
 
     // Extraire le titre du code ABC (T:...)
     var tMatch = code.match(/^T:\s*(.+)$/m);
-    var newTitle = tMatch ? tMatch[1].trim() : "Morceau sans titre";
+    var newTitle = tMatch ? tMatch[1].trim() : FxI18n.t("song.untitled");
 
     for (var i = 0; i < songs.length; i++) {
         if (songs[i].id === currentId) {
@@ -336,9 +381,9 @@ function createNewSong() {
     var songs = getStoredSongs();
     var newId = "song_" + new Date().getTime();
     var newNum = songs.length + 1;
-    var newTitle = "Morceau numéro " + newNum;
+    var newTitle = FxI18n.t("song.numbered", { n: newNum });
 
-    var newCode = DEFAULT_TEMPLATE.replace("Nouveau morceau", newTitle);
+    var newCode = DEFAULT_TEMPLATE.replace("{title}", newTitle);
 
     songs.push({ id: newId, title: newTitle, code: newCode });
     saveStoredSongs(songs);
@@ -356,7 +401,7 @@ function renameCurrentSong() {
     var tMatch = code.match(/^T:\s*(.+)$/m);
     var currentTitle = tMatch ? tMatch[1].trim() : "";
 
-    var newTitle = prompt("Nouveau titre du morceau :", currentTitle);
+    var newTitle = prompt(FxI18n.t("msg.renamePrompt"), currentTitle);
     if (newTitle && newTitle.trim() !== "") {
         // Remplacer ou ajouter l'en-tête T:
         if (/^T:/m.test(code)) {
@@ -372,11 +417,11 @@ function renameCurrentSong() {
 function deleteCurrentSong() {
     var songs = getStoredSongs();
     if (songs.length <= 1) {
-        alert("Vous devez conserver au moins un morceau !");
+        alert(FxI18n.t("msg.keepOne"));
         return;
     }
 
-    if (confirm("Voulez-vous vraiment supprimer ce morceau ?")) {
+    if (confirm(FxI18n.t("msg.confirmDelete"))) {
         var select = document.getElementById("songSelect");
         var currentId = select.value;
 
@@ -574,8 +619,7 @@ function renderCurrentState() {
         document.getElementById("paper").innerHTML = "";
         document.getElementById("audio-player").innerHTML = "";
         if (statusElem) {
-            statusElem.textContent = "Code vide";
-            statusElem.className = "badge bg-warning";
+            setDebugStatus(statusElem, "dbg.empty", "badge bg-warning");
         }
         console.groupEnd();
         return;
@@ -600,14 +644,12 @@ function renderCurrentState() {
         var visualObj = ABCJS.renderAbc("paper", abcString, renderOptions)[0];
         console.log("✅ Rendu visuel ABCJS réussi :", visualObj);
         if (statusElem) {
-            statusElem.textContent = "Visuel OK";
-            statusElem.className = "badge bg-success";
+            setDebugStatus(statusElem, "dbg.ok", "badge bg-success");
         }
     } catch (e) {
         console.error("❌ Erreur de rendu visuel ABCJS :", e);
         if (statusElem) {
-            statusElem.textContent = "Erreur Rendu";
-            statusElem.className = "badge bg-danger";
+            setDebugStatus(statusElem, "dbg.error", "badge bg-danger");
         }
         console.groupEnd();
         return;
